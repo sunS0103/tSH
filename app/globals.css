@@ -125,6 +125,11 @@
   --color-natural-800: #ffffff;
 }
 
+.max-container {
+ max-width: 1440px;
+ margin: 0 auto;
+}
+
 :root {
   --radius: 0.625rem;
   --background: oklch(1 0 0);
