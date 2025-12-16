@@ -126,7 +126,7 @@ export default function Footer({ className }: FooterProps) {
       {/* Bottom Bar */}
       <div className="bg-gray-800 flex flex-col md:flex-row md:items-center justify-between gap-4 py-3 px-4 rounded-xl w-full">
         {/* Copyright */}
-        <p className="text-gray-500 text-sm font-normal whitespace-nowrap">
+        <p className="text-gray-400 text-xs sm:text-sm font-normal whitespace-nowrap">
           ©techSmartHire 2025, All rights reserved.
         </p>
 
@@ -136,12 +136,13 @@ export default function Footer({ className }: FooterProps) {
             <Link
               key={index}
               href={social.href}
-              className="border border-gray-500 flex items-center justify-center rounded size-8 hover:border-gray-400 transition-colors"
+              className="border border-gray-400 flex items-center justify-center rounded size-8 hover:border-gray-400 transition-colors"
               aria-label={social.label}
             >
               <Icon
                 icon={social.icon}
-                className="size-4 text-gray-500 hover:text-gray-400 transition-colors"
+                className="size-4 text-gray-400 hover:text-gray-300 transition-colors"
+                aria-hidden="true"
               />
             </Link>
           ))}

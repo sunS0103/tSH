@@ -12,6 +12,7 @@ export interface AssessmentCardProps {
   duration: string;
   questionCount: number;
   className?: string;
+  link: string;
 }
 
 export default function AssessmentCard({
@@ -22,18 +23,21 @@ export default function AssessmentCard({
   duration,
   questionCount,
   className,
+  link,
 }: AssessmentCardProps) {
   const displayedTopics = topics.slice(0, 2);
   const remainingCount = topics.length - 2;
 
   return (
-    <div
+    <Link
+      href={link}
+      aria-label="Start assessment"
       className={cn(
-        "bg-white border border-gray-200 flex flex-col items-start rounded-2xl w-full cursor-pointer group hover:shadow-lg duration-500",
+        "bg-white border border-gray-200 flex flex-col items-start rounded-2xl w-full group hover:shadow-lg duration-500",
         className
       )}
     >
-      <div className="flex flex-col gap-6 items-start p-3 w-full">
+      <div className="p-3 w-full">
         <div className="flex items-center justify-between w-full">
           <div className="bg-gray-100 group-hover:bg-primary-500 transition-colors flex items-center justify-center rounded-lg size-8">
             {icon ? (
@@ -42,24 +46,24 @@ export default function AssessmentCard({
                 className="size-5 text-black group-hover:text-white transition-colors"
               />
             ) : (
-             <></>
+              <></>
             )}
           </div>
 
           <Badge
             variant="outline"
-            className="bg-gray-100 border-gray-300 text-black text-xs font-normal px-2 py-1 rounded-full"
+            className="bg-gray-100 border-none text-black text-xs font-normal px-2 py-1 rounded-full"
           >
             <span className="size-1 bg-gray-400 rounded-full mr-1" />
             {category}
           </Badge>
         </div>
 
-        <h3 className="font-semibold leading-normal text-black text-lg">
+        <h3 className="font-semibold leading-normal text-black text-lg mt-6">
           {title}
         </h3>
 
-        <div className="flex flex-col gap-2 items-start w-full">
+        <div className="flex flex-col gap-2 items-start w-full mt-3">
           <span className="text-black text-xs uppercase font-normal tracking-normal">
             Topics
           </span>
@@ -109,18 +113,14 @@ export default function AssessmentCard({
             </div>
           </div>
 
-          <Link
-            href="/assesments"
-            className="bg-transparent border border-primary-500 size-8 rounded-lg flex items-center justify-center group-hover:bg-primary-500 transition-colors"
-            aria-label="Start assessment"
-          >
+          <div className="bg-transparent border border-primary-500 size-8 rounded-lg flex items-center justify-center group-hover:bg-primary-500 transition-colors">
             <Icon
               icon="mdi:arrow-top-right"
               className="size-5 text-primary-500 group-hover:text-white transition-colors"
             />
-          </Link>
+          </div>
         </div>
       </div>
-    </div>
+    </Link>
   );
 }

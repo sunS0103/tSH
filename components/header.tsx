@@ -1,6 +1,5 @@
 "use client";
 
-import { LayoutDashboard, FileText, Briefcase } from "lucide-react";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import { cn } from "@/lib/utils";
 import Link from "next/link";
@@ -44,7 +43,7 @@ export default function Header() {
   return (
     <>
       {/* Desktop & Mobile Header */}
-      <header className="bg-white border-b border-gray-200">
+      <header className="bg-white border-b border-gray-200 sticky top-0 z-50">
         <div className="max-container mx-auto flex items-center justify-between px-4 md:px-6 h-16 w-full">
           {/* Logo */}
           <div className="flex items-center h-8">
@@ -100,11 +99,17 @@ export default function Header() {
 
             <DropdownMenu>
               <DropdownMenuTrigger asChild>
-                <Avatar className="bg-gray-50 border border-zinc-300 size-8">
-                  <AvatarFallback className="bg-zinc-300 text-white text-sm font-semibold">
-                    TA
-                  </AvatarFallback>
-                </Avatar>
+                <button
+                  type="button"
+                  aria-label="User account menu"
+                  className="focus:outline-none focus:ring-2 focus:ring-primary-500 focus:ring-offset-2 rounded-full"
+                >
+                  <Avatar className="border border-primary size-8">
+                    <AvatarFallback className="bg-primary-50 text-primary text-sm font-semibold">
+                      TA
+                    </AvatarFallback>
+                  </Avatar>
+                </button>
               </DropdownMenuTrigger>
               <DropdownMenuContent>
                 <DropdownMenuItem>

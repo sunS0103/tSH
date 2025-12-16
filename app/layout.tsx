@@ -24,12 +24,12 @@ export default function RootLayout({
     <html lang="en">
       <body className={`${plusJakartaSans.variable} antialiased bg-gray-50`}>
         <Header />
-        <div className="max-container mx-auto bg-gray-50">
+        <main className="max-container mx-auto bg-gray-50">
           {children}
           <div className="px-4">
             <Footer />
           </div>
-        </div>
+        </main>
       </body>
     </html>
   );
