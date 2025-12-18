@@ -19,6 +19,28 @@ interface NavItem {
   icon: string;
 }
 
+// Routes where bottom navigation should be visible
+// Supports exact routes (e.g., "/") and route patterns (e.g., "/assesments/*")
+const BOTTOM_NAV_VISIBLE_ROUTES: string[] = ["/", "/assesments", "/jobs"];
+
+/**
+ * Checks if the current pathname matches any route in the visible routes array
+ * Supports exact matches and wildcard patterns (e.g., "/route/*")
+ */
+function shouldShowBottomNav(pathname: string | null): boolean {
+  if (!pathname) return false;
+
+  return BOTTOM_NAV_VISIBLE_ROUTES.some((route) => {
+    // Handle wildcard patterns (e.g., "/route/*")
+    if (route.endsWith("/*")) {
+      const baseRoute = route.slice(0, -2); // Remove "/*"
+      return pathname === baseRoute || pathname.startsWith(`${baseRoute}/`);
+    }
+    // Handle exact matches
+    return pathname === route;
+  });
+}
+
 export default function Header() {
   const pathname = usePathname();
 
@@ -121,48 +143,50 @@ export default function Header() {
         </div>
       </header>
 
-      {/* Mobile Bottom Navigation - Only visible on mobile */}
-      <nav className="md:hidden fixed bottom-0 left-0 right-0 bg-white border-t border-gray-100 flex items-center justify-center h-20 z-50">
-        <div className="flex items-center justify-center w-full max-w-md">
-          {navItems.map((item) => {
-            const isActive =
-              pathname === item.href ||
-              (item.href === "/assesments" &&
-                pathname?.startsWith("/assesments"));
+      {/* Mobile Bottom Navigation - Only visible on mobile and configured routes */}
+      {shouldShowBottomNav(pathname) && (
+        <nav className="md:hidden fixed bottom-0 left-0 right-0 bg-white border-t border-gray-100 flex items-center justify-center h-20 z-50">
+          <div className="flex items-center justify-center w-full max-w-md">
+            {navItems.map((item) => {
+              const isActive =
+                pathname === item.href ||
+                (item.href === "/assesments" &&
+                  pathname?.startsWith("/assesments"));
 
-            return (
-              <Link
-                key={item.href}
-                href={item.href}
-                className="flex flex-col gap-1 h-20 items-center justify-center w-32 group"
-              >
-                <div
-                  className={cn(
-                    "flex h-8 items-center justify-center rounded-full w-16 group-hover:bg-primary-50 transition-colors",
-                    isActive && "bg-primary-50"
-                  )}
+              return (
+                <Link
+                  key={item.href}
+                  href={item.href}
+                  className="flex flex-col gap-1 h-20 items-center justify-center w-32 group"
                 >
-                  <Icon
+                  <div
                     className={cn(
-                      "size-6 group-hover:text-primary-500 transition-colors text-gray-400",
-                      isActive && "text-primary-500"
+                      "flex h-8 items-center justify-center rounded-full w-16 group-hover:bg-primary-50 transition-colors",
+                      isActive && "bg-primary-50"
                     )}
-                    icon={item.icon}
-                  />
-                </div>
-                <span
-                  className={cn(
-                    "text-xs text-center whitespace-nowrap font-medium group-hover:text-black transition-colors",
-                    isActive ? "text-black" : "text-gray-400"
-                  )}
-                >
-                  {item.label === "Assessment" ? "Assessments" : item.label}
-                </span>
-              </Link>
-            );
-          })}
-        </div>
-      </nav>
+                  >
+                    <Icon
+                      className={cn(
+                        "size-6 group-hover:text-primary-500 transition-colors text-gray-400",
+                        isActive && "text-primary-500"
+                      )}
+                      icon={item.icon}
+                    />
+                  </div>
+                  <span
+                    className={cn(
+                      "text-xs text-center whitespace-nowrap font-medium group-hover:text-black transition-colors",
+                      isActive ? "text-black" : "text-gray-400"
+                    )}
+                  >
+                    {item.label === "Assessment" ? "Assessments" : item.label}
+                  </span>
+                </Link>
+              );
+            })}
+          </div>
+        </nav>
+      )}
     </>
   );
 }

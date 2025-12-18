@@ -18,7 +18,7 @@ export const ASSESSMENTS_DATA: Assessment[] = [
     duration: "10 minutes",
     questionCount: 10,
     taken: false,
-    link: "/assesments",
+    link: "/assesments/test-framework-analysis",
   },
   {
     icon: "material-symbols:flutter",
@@ -219,3 +219,10 @@ export const ASSESSMENTS_DATA: Assessment[] = [
     link: "/assesments",
   },
 ];
+
+export function getAssessmentBySlug(slug: string): Assessment | undefined {
+  return ASSESSMENTS_DATA.find((assessment) => {
+    const assessmentSlug = assessment.link?.split("/").pop();
+    return assessmentSlug === slug;
+  });
+}
