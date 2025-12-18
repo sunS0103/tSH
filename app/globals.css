@@ -125,6 +125,11 @@
   --color-natural-800: #ffffff;
 }
 
+.max-container {
+  max-width: 1440px;
+  margin: 0 auto;
+}
+
 :root {
   --radius: 0.625rem;
   --background: oklch(1 0 0);
@@ -200,5 +205,15 @@
   }
   body {
     @apply bg-background text-foreground font-sans;
+  }
+}
+
+@layer utilities {
+  .scrollbar-hide {
+    -ms-overflow-style: none;
+    scrollbar-width: none;
+  }
+  .scrollbar-hide::-webkit-scrollbar {
+    display: none;
   }
 }
