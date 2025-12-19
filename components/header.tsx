@@ -19,6 +19,15 @@ interface NavItem {
   icon: string;
 }
 
+const HIDE_HEADER_ROUTES = ["/authentication"];
+
+function shouldHideHeader(pathname: string | null): boolean {
+  if (!pathname) return false;
+
+  return HIDE_HEADER_ROUTES.some(
+    (route) => pathname === route || pathname.startsWith(`${route}/`)
+  );
+}
 // Routes where bottom navigation should be visible
 // Supports exact routes (e.g., "/") and route patterns (e.g., "/assesments/*")
 const BOTTOM_NAV_VISIBLE_ROUTES: string[] = ["/", "/assesments", "/jobs"];
@@ -43,6 +52,10 @@ function shouldShowBottomNav(pathname: string | null): boolean {
 
 export default function Header() {
   const pathname = usePathname();
+
+  if (shouldHideHeader(pathname)) {
+    return null;
+  }
 
   const navItems: NavItem[] = [
     {

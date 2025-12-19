@@ -24,10 +24,7 @@ export default function RootLayout({
       <body
         className={`${plusJakartaSans.variable} antialiased bg-gray-50 overflow-x-clip`}
       >
-        <Header />
-        <main className="max-container mx-auto bg-gray-50 px-4 pt-4">
-          {children}
-        </main>
+        <main className="">{children}</main>
       </body>
     </html>
   );
