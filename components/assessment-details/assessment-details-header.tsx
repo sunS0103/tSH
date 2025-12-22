@@ -22,7 +22,7 @@ export default function AssessmentDetailsHeader({
           <BreadcrumbItem>
             <BreadcrumbLink asChild>
               <Link
-                href="/assesments"
+                href="/assessments"
                 className="text-gray-700 hover:text-black text-xs"
               >
                 Assessment

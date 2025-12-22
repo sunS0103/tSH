@@ -52,7 +52,7 @@ export default function AssessmentWrapper() {
   const assessmentId = params?.id as string;
 
   // Check if we're on an assessment route
-  const isAssessmentRoute = pathname?.startsWith("/assesments/") ?? false;
+  const isAssessmentRoute = pathname?.startsWith("/assessments/") ?? false;
 
   // Create localStorage keys based on assessment ID (scoped to assessment routes)
   const STORAGE_KEY_STEP = `assessment-step-${assessmentId}`;
@@ -95,9 +95,9 @@ export default function AssessmentWrapper() {
       // If we were on an assessment route and now we're not, clear localStorage
       if (
         previousPath !== null &&
-        previousPath.startsWith("/assesments/") &&
+        previousPath.startsWith("/assessments/") &&
         currentPath &&
-        !currentPath.startsWith("/assesments/")
+        !currentPath.startsWith("/assessments/")
       ) {
         localStorage.removeItem(STORAGE_KEY_STEP);
         localStorage.removeItem(STORAGE_KEY_CONFIRMATIONS);

@@ -1,7 +1,6 @@
 "use client";
 
 import { Icon } from "@iconify/react";
-import Filters from "@/components/assesments/filters";
 import {
   Sheet,
   SheetContent,
@@ -10,6 +9,7 @@ import {
   SheetTrigger,
 } from "@/components/ui/sheet";
 import { Button } from "../ui/button";
+import Filters from "./filters";
 
 interface FilterSheetProps {
   selectedFilters: string[];

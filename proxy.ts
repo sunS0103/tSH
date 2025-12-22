@@ -1,11 +1,8 @@
-// proxy.ts (root of project)
 import { NextResponse } from "next/server";
 import type { NextRequest } from "next/server";
 
-const PUBLIC_ROUTES = [
+const publicRoutes = [
   "/authentication",
-  "/authentication/login",
-  "/authentication/register",
   "/favicon.ico",
   "/auth.png",
   "/Logo.svg",
@@ -14,27 +11,42 @@ const PUBLIC_ROUTES = [
 export function proxy(request: NextRequest) {
   const { pathname } = request.nextUrl;
 
-  // allow public routes
-  const isPublicRoute = PUBLIC_ROUTES.some((route) =>
-    pathname.startsWith(route)
-  );
-  if (isPublicRoute) {
+  // Skip static files and Next.js internals
+  if (
+    pathname.startsWith("/_next") ||
+    pathname.startsWith("/api") ||
+    pathname.includes(".") // Skip files with extensions
+  ) {
     return NextResponse.next();
   }
 
-  // read token from cookies (server side)
   const token = request.cookies.get("token")?.value;
 
-  // if no token, redirect
+  // Root redirect
+  if (pathname === "/") {
+    const roles = request.cookies.get("user_roles")?.value;
+    if (roles === "candidate") {
+      return NextResponse.redirect(new URL("/assessments", request.url));
+    } else if (roles === "recruiter") {
+      return NextResponse.redirect(new URL("/jobs", request.url));
+    }
+    return NextResponse.redirect(new URL("/assessments", request.url));
+  }
+
+  // Allow public routes without token
+  if (!token && publicRoutes.some((path) => pathname.startsWith(path))) {
+    return NextResponse.next();
+  }
+
+  // Prevent logged-in user accessing auth
+  if (token && pathname.startsWith("/authentication")) {
+    return NextResponse.redirect(new URL("/assessments", request.url));
+  }
+
+  // Protect private routes
   if (!token) {
-    const loginUrl = new URL("/authentication", request.url);
-    return NextResponse.redirect(loginUrl);
+    return NextResponse.redirect(new URL("/authentication", request.url));
   }
 
   return NextResponse.next();
 }
-
-// optional matcher to control where proxy runs
-export const config = {
-  matcher: ["/((?!_next/static|_next/image|favicon.ico).*)"],
-};

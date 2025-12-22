@@ -1,4 +1,4 @@
-import AssessmentCard from "@/components/assesments/assessment-card";
+import AssessmentCard from "./assessment-card";
 
 interface Assessment {
   icon: string;
@@ -14,9 +14,7 @@ interface AssessmentGridProps {
   assessments: Assessment[];
 }
 
-export default function AssessmentGrid({
-  assessments,
-}: AssessmentGridProps) {
+export default function AssessmentGrid({ assessments }: AssessmentGridProps) {
   if (assessments.length === 0) {
     return (
       <div className="col-span-full text-center py-12 text-gray-500">
@@ -36,10 +34,9 @@ export default function AssessmentGrid({
           topics={assessment.topics}
           duration={assessment.duration}
           questionCount={assessment.questionCount}
-          link={assessment.link || "/assesments"}
+          link={assessment.link || "/assessment"}
         />
       ))}
     </>
   );
 }
-

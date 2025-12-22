@@ -33,7 +33,7 @@ export default function AssessmentCard({
       href={link}
       aria-label="Start assessment"
       className={cn(
-        "bg-white border border-gray-200 flex flex-col items-start rounded-2xl w-full group hover:shadow-lg duration-500",
+        "bg-white border border-gray-200 flex flex-col items-start justify-between rounded-2xl w-full group hover:shadow-lg duration-500",
         className
       )}
     >

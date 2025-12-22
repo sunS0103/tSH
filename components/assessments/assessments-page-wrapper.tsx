@@ -1,15 +1,15 @@
 "use client";
 
 import { useState, useMemo } from "react";
-import AssessmentHeader from "@/components/assesments/assessment-header";
-import AssessmentControls from "@/components/assesments/assessment-controls";
-import AssessmentGrid from "@/components/assesments/assessment-grid";
-import AssessmentPagination from "@/components/assesments/assessment-pagination";
-import FilterSidebar from "@/components/assesments/filter-sidebar";
 
 const ITEMS_PER_PAGE = 12;
 
 import type { Assessment } from "@/lib/data/assessments";
+import FilterSidebar from "./filter-sidebar";
+import AssessmentHeader from "./assessment-header";
+import AssessmentControls from "./assessment-controls";
+import AssessmentGrid from "./assessment-grid";
+import AssessmentPagination from "./assessment-pagination";
 
 interface AssessmentsPageWrapperProps {
   assessments: Assessment[];
@@ -44,11 +44,8 @@ export default function AssessmentsPageWrapper({
 
     if (searchQuery.trim()) {
       const query = searchQuery.toLowerCase();
-      filtered = filtered.filter(
-        (assessment) =>
-          assessment.title.toLowerCase().includes(query) ||
-          assessment.category.toLowerCase().includes(query) ||
-          assessment.topics.some((topic) => topic.toLowerCase().includes(query))
+      filtered = filtered.filter((assessment) =>
+        assessment.title.toLowerCase().includes(query)
       );
     }
 

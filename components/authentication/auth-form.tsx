@@ -1,28 +1,22 @@
 "use client";
 
 import { useState } from "react";
-import { Button } from "../ui/button";
-import { Input } from "../ui/input";
 import { Tabs, TabsList, TabsTrigger } from "../ui/tabs";
 import { TabsContent } from "@radix-ui/react-tabs";
 import Logo from "../logo";
 import EmailForm from "./email-form";
 
 export default function AuthForm() {
-  const [role, setRole] = useState("candidate");
-
-  function handleRequestOtp() {
-    console.log("otp");
-  }
+  const [role, setRole] = useState<"candidate" | "recruiter">("candidate");
 
   return (
-    <div className="w-1/2 flex flex-col justify-center items-center">
+    <div className="flex flex-col justify-center items-center w-full max-w-md mx-auto">
       <Logo />
 
       <Tabs
         value={role}
-        onValueChange={(v) => setRole(v)}
-        className="items-center"
+        onValueChange={(v) => setRole(v as "candidate" | "recruiter")}
+        className="items-center w-full"
       >
         <TabsList className="rounded-full bg-white border border-gray-200 mt-5">
           <TabsTrigger
@@ -39,18 +33,14 @@ export default function AuthForm() {
           </TabsTrigger>
         </TabsList>
 
-        <TabsContent value="candidate" className="mt-6">
-          <EmailForm />
+        <TabsContent value="candidate" className="mt-6 w-full">
+          <EmailForm role="candidate" />
         </TabsContent>
 
-        <TabsContent value="recruiter">
-          <EmailForm />
+        <TabsContent value="recruiter" className="mt-6 w-full">
+          <EmailForm role="recruiter" />
         </TabsContent>
       </Tabs>
-
-      <Button className="" onClick={handleRequestOtp}>
-        Request OTP
-      </Button>
     </div>
   );
 }
