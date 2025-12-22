@@ -1,4 +1,4 @@
-import AssessmentsPageWrapper from "@/components/assesments/assessments-page-wrapper";
+import AssessmentsPageWrapper from "@/components/assessments/assessments-page-wrapper";
 import Footer from "@/components/footer";
 import { ASSESSMENTS_DATA } from "@/lib/data/assessments";
 

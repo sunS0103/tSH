@@ -1,7 +1,7 @@
 "use client";
 
 import { Icon } from "@iconify/react";
-import Filters from "@/components/assesments/filters";
+import Filters from "./filters";
 
 interface FilterSidebarProps {
   selectedFilters: string[];

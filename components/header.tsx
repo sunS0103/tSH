@@ -5,13 +5,15 @@ import { cn } from "@/lib/utils";
 import Link from "next/link";
 import { Icon } from "@iconify/react";
 import { Button } from "./ui/button";
-import { usePathname } from "next/navigation";
+import { usePathname, useRouter } from "next/navigation";
 import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from "./ui/dropdown-menu";
+import { deleteCookie } from "cookies-next/client";
+import { toast } from "sonner";
 
 interface NavItem {
   label: string;
@@ -19,9 +21,18 @@ interface NavItem {
   icon: string;
 }
 
+const HIDE_HEADER_ROUTES = ["/authentication"];
+
+function shouldHideHeader(pathname: string | null): boolean {
+  if (!pathname) return false;
+
+  return HIDE_HEADER_ROUTES.some(
+    (route) => pathname === route || pathname.startsWith(`${route}/`)
+  );
+}
 // Routes where bottom navigation should be visible
-// Supports exact routes (e.g., "/") and route patterns (e.g., "/assesments/*")
-const BOTTOM_NAV_VISIBLE_ROUTES: string[] = ["/", "/assesments", "/jobs"];
+// Supports exact routes (e.g., "/") and route patterns (e.g., "/assessments/*")
+const BOTTOM_NAV_VISIBLE_ROUTES: string[] = ["/", "/assessments", "/jobs"];
 
 /**
  * Checks if the current pathname matches any route in the visible routes array
@@ -43,6 +54,11 @@ function shouldShowBottomNav(pathname: string | null): boolean {
 
 export default function Header() {
   const pathname = usePathname();
+  const router = useRouter();
+
+  if (shouldHideHeader(pathname)) {
+    return null;
+  }
 
   const navItems: NavItem[] = [
     {
@@ -52,7 +68,7 @@ export default function Header() {
     },
     {
       label: "Assessment",
-      href: "/assesments",
+      href: "/assessments",
       icon: "mdi:help-box-multiple-outline",
     },
     {
@@ -77,8 +93,8 @@ export default function Header() {
             {navItems.map((item) => {
               const isActive =
                 pathname === item.href ||
-                (item.href === "/assesments" &&
-                  pathname?.startsWith("/assesments"));
+                (item.href === "/assessments" &&
+                  pathname?.startsWith("/assessments"));
 
               return (
                 <Link
@@ -134,8 +150,17 @@ export default function Header() {
                 </button>
               </DropdownMenuTrigger>
               <DropdownMenuContent>
-                <DropdownMenuItem>
-                  <span>Logout</span>
+                <DropdownMenuItem
+                  className="cursor-pointer"
+                  onClick={() => {
+                    deleteCookie("token");
+                    deleteCookie("user_email");
+                    deleteCookie("user_roles");
+                    toast.success("Logged out successfully");
+                    router.refresh();
+                  }}
+                >
+                  Logout
                 </DropdownMenuItem>
               </DropdownMenuContent>
             </DropdownMenu>
@@ -150,8 +175,8 @@ export default function Header() {
             {navItems.map((item) => {
               const isActive =
                 pathname === item.href ||
-                (item.href === "/assesments" &&
-                  pathname?.startsWith("/assesments"));
+                (item.href === "/assessments" &&
+                  pathname?.startsWith("/assessments"));
 
               return (
                 <Link
