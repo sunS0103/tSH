@@ -1,0 +1,46 @@
+"use client";
+
+import { useState } from "react";
+import { Tabs, TabsList, TabsTrigger } from "../ui/tabs";
+import { TabsContent } from "@radix-ui/react-tabs";
+import Logo from "../logo";
+import EmailForm from "./email-form";
+
+export default function AuthForm() {
+  const [role, setRole] = useState<"candidate" | "recruiter">("candidate");
+
+  return (
+    <div className="flex flex-col justify-center items-center w-full max-w-md mx-auto">
+      <Logo />
+
+      <Tabs
+        value={role}
+        onValueChange={(v) => setRole(v as "candidate" | "recruiter")}
+        className="items-center w-full"
+      >
+        <TabsList className="rounded-full bg-white border border-gray-200 mt-5">
+          <TabsTrigger
+            value="candidate"
+            className="aria-selected:text-primary rounded-full"
+          >
+            Candidate
+          </TabsTrigger>
+          <TabsTrigger
+            value="recruiter"
+            className="aria-selected:text-primary rounded-full"
+          >
+            Recruiter
+          </TabsTrigger>
+        </TabsList>
+
+        <TabsContent value="candidate" className="mt-6 w-full">
+          <EmailForm role="candidate" />
+        </TabsContent>
+
+        <TabsContent value="recruiter" className="mt-6 w-full">
+          <EmailForm role="recruiter" />
+        </TabsContent>
+      </Tabs>
+    </div>
+  );
+}

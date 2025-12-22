@@ -7,7 +7,7 @@ import {
   InputGroupAddon,
   InputGroupInput,
 } from "@/components/ui/input-group";
-import FilterSheet from "@/components/assesments/filter-sheet";
+import FilterSheet from "./filter-sheet";
 
 interface AssessmentControlsProps {
   selectedTab: string;

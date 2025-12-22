@@ -16,7 +16,7 @@ export default function Footer({ className }: FooterProps) {
   const quickLinkGroups: QuickLinkGroup[] = [
     {
       links: [
-        { label: "Assessments", href: "/assesments" },
+        { label: "Assessments", href: "/assessments" },
         { label: "Jobs", href: "/jobs" },
       ],
     },
