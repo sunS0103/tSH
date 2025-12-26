@@ -23,7 +23,7 @@ import { sendOtp, verifyOtp } from "@/api/auth";
 import { toast } from "sonner";
 
 interface EmailFormProps {
-  role: "candidate" | "recruiter";
+  role: "CANDIDATE" | "RECRUITER";
 }
 
 // Regex to block common free email providers for recruiter
@@ -35,7 +35,7 @@ const isCompanyEmail = (email: string) => {
   return !FREE_EMAIL_DOMAINS.test(email);
 };
 
-const createEmailSchema = (role: "candidate" | "recruiter") => {
+const createEmailSchema = (role: "CANDIDATE" | "RECRUITER") => {
   return z.object({
     email: z
       .string()
@@ -43,7 +43,7 @@ const createEmailSchema = (role: "candidate" | "recruiter") => {
       .email("Please enter a valid email address")
       .refine(
         (email) => {
-          if (role === "recruiter") {
+          if (role === "RECRUITER") {
             return isCompanyEmail(email);
           }
           return true;
@@ -146,12 +146,12 @@ export default function EmailForm({ role }: EmailFormProps) {
 
     const email = form.getValues("email");
 
-    await verifyOtp(email, otp)
+    await verifyOtp(email, otp, role)
       .then((response) => {
         if (response.success) {
           toast.success(response.message || "OTP verified successfully");
-          setCookie("register_email", email);
-          setCookie("register_role", role);
+          setCookie("user_email", email);
+          setCookie("user_role", role);
 
           if (response.is_registered) {
             router.push("/");

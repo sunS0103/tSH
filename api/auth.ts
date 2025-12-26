@@ -7,10 +7,15 @@ export const sendOtp = async (email: string) => {
   return response.data;
 };
 
-export const verifyOtp = async (email: string, otp: string) => {
+export const verifyOtp = async (
+  email: string,
+  otp: string,
+  role: "CANDIDATE" | "RECRUITER"
+) => {
   const response = await axios.post("auth/verify-otp", {
     email,
     otp,
+    role,
   });
   return response.data;
 };
@@ -22,7 +27,7 @@ export const signUp = async ({
   country_code,
   mobile_number,
   gender,
-  roles,
+  role,
   account_type,
   date_of_birth,
   country,
@@ -37,7 +42,7 @@ export const signUp = async ({
   country_code: string;
   mobile_number: string;
   gender: "MALE" | "FEMALE";
-  roles: "CANDIDATE" | "RECRUITER";
+  role: "CANDIDATE" | "RECRUITER";
   account_type?: "Fresher" | "Working Professional" | "Student" | "Other";
   date_of_birth?: string;
   country:
@@ -58,15 +63,15 @@ export const signUp = async ({
     country_code,
     mobile_number,
     gender,
-    roles,
+    role,
     country,
-    ...(roles === "RECRUITER" && {
+    ...(role === "RECRUITER" && {
       company_name,
       primary_job_category,
       platform_primary_role,
       city,
     }),
-    ...(roles === "CANDIDATE" && {
+    ...(role === "CANDIDATE" && {
       account_type,
       date_of_birth,
     }),
