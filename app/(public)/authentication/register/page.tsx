@@ -2,19 +2,19 @@
 
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
-import { getCookie, deleteCookie } from "cookies-next/client";
+import { getCookie } from "cookies-next/client";
 import RegisterForm from "@/components/authentication/register-form";
 
 export default function RegisterPage() {
   const router = useRouter();
   const [data, setData] = useState<{
-    role: "candidate" | "recruiter";
+    role: "CANDIDATE" | "RECRUITER";
     email: string;
   } | null>(null);
 
   useEffect(() => {
-    const email = getCookie("register_email") as string;
-    const role = getCookie("register_role") as "candidate" | "recruiter";
+    const email = getCookie("user_email") as string;
+    const role = getCookie("user_role") as "CANDIDATE" | "RECRUITER";
 
     if (!email || !role) {
       // No registration data found, redirect back to authentication
@@ -27,12 +27,6 @@ export default function RegisterPage() {
     });
   }, [router]);
 
-  // Clear cookies after successful registration
-  const handleRegistrationComplete = () => {
-    deleteCookie("register_email");
-    deleteCookie("register_role");
-  };
-
   if (!data) {
     return (
       <div className="flex items-center justify-center h-full">
@@ -41,11 +35,5 @@ export default function RegisterPage() {
     );
   }
 
-  return (
-    <RegisterForm
-      role={data.role}
-      email={data.email}
-      onComplete={handleRegistrationComplete}
-    />
-  );
+  return <RegisterForm role={data.role} email={data.email} />;
 }
