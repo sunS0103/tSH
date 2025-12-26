@@ -100,7 +100,7 @@ The application serves three distinct user roles: **Candidates**, **Recruiters**
 ### 👨‍💻 Candidate Module
 
 - **Assessments Engine:**
-  - View list of assessments with details (Image, Skill, Duration, Difficulty).
+  - View list of assessments with details (Skill, Duration, Difficulty).
   - Search and filter assessments by skill or name.
   - Detailed assessment pages with syllabi, video descriptions, and "Need Help" options.
   - Secure assessment environment with integrity checks and code of conduct acknowledgment.

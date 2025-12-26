@@ -149,17 +149,33 @@ export default function Header() {
                   </Avatar>
                 </button>
               </DropdownMenuTrigger>
-              <DropdownMenuContent>
+              <DropdownMenuContent className="p-0 divide-y divide-gray-200">
                 <DropdownMenuItem
-                  className="cursor-pointer"
+                  className="cursor-pointer rounded-b-none"
+                  onClick={() => {
+                    router.push("/profile");
+                  }}
+                >
+                  <Icon
+                    icon="material-symbols:person-outline-rounded"
+                    className="size-4 text-inherit!"
+                  />
+                  My Profile
+                </DropdownMenuItem>
+                <DropdownMenuItem
+                  className="cursor-pointer text-red-500 hover:text-red-500!"
                   onClick={() => {
                     deleteCookie("token");
                     deleteCookie("user_email");
-                    deleteCookie("user_roles");
+                    deleteCookie("user_role");
                     toast.success("Logged out successfully");
                     router.refresh();
                   }}
                 >
+                  <Icon
+                    icon="material-symbols:logout-rounded"
+                    className="size-4 text-inherit!"
+                  />
                   Logout
                 </DropdownMenuItem>
               </DropdownMenuContent>

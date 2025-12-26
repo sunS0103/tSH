@@ -32,9 +32,8 @@ import { signUp } from "@/api/auth";
 import { toast } from "sonner";
 
 interface RegisterFormProps {
-  role: "candidate" | "recruiter";
+  role: "CANDIDATE" | "RECRUITER";
   email: string;
-  onComplete?: () => void;
 }
 
 // Base schema for candidate
@@ -42,7 +41,11 @@ const candidateSchema = z.object({
   firstName: z.string().min(1, "First name is required"),
   lastName: z.string().min(1, "Last name is required"),
   gender: z.enum(["male", "female"], { message: "Please select gender" }),
-  phone: z.string().min(10, "Phone number must be at least 10 digits"),
+  phone: z
+    .string()
+    .min(1, "Phone number is required")
+    .regex(/^\d+$/, "Phone number must contain only numbers")
+    .length(10, "Phone number must be exactly 10 digits"),
   dateOfBirth: z.string().min(1, "Date of birth is required"),
   accountType: z.enum(["Student", "Working Professional", "Fresher", "Other"], {
     message: "Please select account type",
@@ -54,7 +57,11 @@ const recruiterSchema = z.object({
   firstName: z.string().min(1, "First name is required"),
   lastName: z.string().min(1, "Last name is required"),
   gender: z.enum(["male", "female"], { message: "Please select gender" }),
-  phone: z.string().min(10, "Phone number must be at least 10 digits"),
+  phone: z
+    .string()
+    .min(1, "Phone number is required")
+    .regex(/^\d+$/, "Phone number must contain only numbers")
+    .length(10, "Phone number must be exactly 10 digits"),
   country: z.string().min(1, "Please select country"),
   city: z.string().min(1, "Please select city"),
   companyName: z.string().min(1, "Company name is required"),
@@ -115,13 +122,9 @@ const platformRoles = [
   { value: "team_lead", label: "Team Lead" },
 ];
 
-export default function RegisterForm({
-  role,
-  email,
-  onComplete,
-}: RegisterFormProps) {
+export default function RegisterForm({ role, email }: RegisterFormProps) {
   const router = useRouter();
-  const isRecruiter = role === "recruiter";
+  const isRecruiter = role === "RECRUITER";
   const schema = isRecruiter ? recruiterSchema : candidateSchema;
 
   const form = useForm<CandidateFormData | RecruiterFormData>({
@@ -152,7 +155,7 @@ export default function RegisterForm({
   const handleSubmit = async (data: CandidateFormData | RecruiterFormData) => {
     if (isRecruiter) {
       await signUp({
-        roles: "RECRUITER",
+        role: "RECRUITER",
         company_name: (data as RecruiterFormData).companyName,
         first_name: data.firstName,
         last_name: data.lastName,
@@ -170,8 +173,7 @@ export default function RegisterForm({
             toast.success("Registration successful!");
             setCookie("token", response.token);
             setCookie("user_email", email);
-            setCookie("user_roles", role);
-            onComplete?.();
+            setCookie("user_role", role);
             router.push("/");
           } else {
             toast.error(
@@ -187,7 +189,7 @@ export default function RegisterForm({
         });
     } else {
       await signUp({
-        roles: "CANDIDATE",
+        role: "CANDIDATE",
         first_name: data.firstName,
         last_name: data.lastName,
         gender: data.gender === "male" ? "MALE" : "FEMALE",
@@ -210,8 +212,7 @@ export default function RegisterForm({
             toast.success(response.message || "Registration successful!");
             setCookie("token", response.token);
             setCookie("user_email", email);
-            setCookie("user_roles", role);
-            onComplete?.();
+            setCookie("user_role", role);
             router.push("/");
           } else {
             toast.error(
@@ -220,7 +221,6 @@ export default function RegisterForm({
           }
         })
         .catch((error) => {
-          console.log(error);
           toast.error(
             error?.response?.data?.message ||
               "An error occurred during registration. Please try again."
@@ -230,7 +230,6 @@ export default function RegisterForm({
   };
 
   const handleBack = () => {
-    onComplete?.();
     router.push("/authentication");
   };
 
@@ -356,9 +355,39 @@ export default function RegisterForm({
                       <span className="text-xs text-gray-600">+91</span>
                     </div>
                     <Input
+                      type="tel"
+                      maxLength={10}
                       placeholder="99999 99999"
                       className="rounded-l-none"
                       {...field}
+                      onChange={(e) => {
+                        // Remove any non-numeric characters
+                        const numericValue = e.target.value.replace(/\D/g, "");
+                        e.target.value = numericValue;
+                        field.onChange(numericValue);
+                      }}
+                      onKeyDown={(e) => {
+                        // Allow: backspace, delete, tab, escape, enter
+                        if (
+                          [8, 9, 27, 13, 46].indexOf(e.keyCode) !== -1 ||
+                          // Allow: Ctrl+A, Ctrl+C, Ctrl+V, Ctrl+X
+                          (e.keyCode === 65 && e.ctrlKey === true) ||
+                          (e.keyCode === 67 && e.ctrlKey === true) ||
+                          (e.keyCode === 86 && e.ctrlKey === true) ||
+                          (e.keyCode === 88 && e.ctrlKey === true) ||
+                          // Allow: home, end, left, right
+                          (e.keyCode >= 35 && e.keyCode <= 39)
+                        ) {
+                          return;
+                        }
+                        // Ensure that it is a number and stop the keypress
+                        if (
+                          (e.shiftKey || e.keyCode < 48 || e.keyCode > 57) &&
+                          (e.keyCode < 96 || e.keyCode > 105)
+                        ) {
+                          e.preventDefault();
+                        }
+                      }}
                     />
                   </div>
                 </FormControl>

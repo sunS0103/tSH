@@ -1,0 +1,373 @@
+"use client";
+
+import { updateCandidateProfile } from "@/api/profile";
+import { Button } from "@/components/ui/button";
+import { Calendar } from "@/components/ui/calendar";
+import {
+  Form,
+  FormControl,
+  FormField,
+  FormItem,
+  FormMessage,
+} from "@/components/ui/form";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import {
+  Popover,
+  PopoverContent,
+  PopoverTrigger,
+} from "@/components/ui/popover";
+import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+import { cn } from "@/lib/utils";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { getCookie } from "cookies-next/client";
+import { format } from "date-fns";
+import { CalendarIcon } from "lucide-react";
+import { useForm } from "react-hook-form";
+import { toast } from "sonner";
+import z from "zod";
+
+export default function EditIdentityAndAccount() {
+  const cookieValue = getCookie("candidate_profile_data");
+
+  const profileData = cookieValue ? JSON.parse(cookieValue as string) : null;
+
+  const editAccountSchema = z.object({
+    first_name: z.string().min(1, "First name is required"),
+    last_name: z.string().min(1, "Last name is required"),
+    gender: z.enum(["Male", "Female"], { message: "Please select gender" }),
+    email: z.string().email("Invalid email address"),
+    mobile_number: z
+      .string()
+      .min(1, "Phone number is required")
+      .regex(/^\d+$/, "Phone number must contain only numbers")
+      .length(10, "Phone number must be exactly 10 digits"),
+    // countryCode: z.string().min(1, "Country code is required"),
+    // country: z.string().min(1, "Country is required"),
+    date_of_birth: z.string().min(1, "Date of birth is required"),
+    account_type: z.enum(
+      ["Student", "Working Professional", "Fresher", "Other"],
+      {
+        message: "Please select account type",
+      }
+    ),
+  });
+
+  const form = useForm<z.infer<typeof editAccountSchema>>({
+    resolver: zodResolver(editAccountSchema),
+    defaultValues: {
+      first_name: profileData?.first_name,
+      last_name: profileData?.last_name,
+      gender: profileData?.gender === "MALE" ? "Male" : "Female",
+      email: profileData?.email,
+      mobile_number: profileData?.mobile_number,
+      date_of_birth: profileData?.date_of_birth,
+      account_type: profileData?.account_type,
+      // countryCode: profileData?.country_code,
+      // country: profileData?.country,
+    },
+  });
+
+  const handleSubmit = async (data: z.infer<typeof editAccountSchema>) => {
+    const role = getCookie("user_role");
+    await updateCandidateProfile({
+      first_name: data.first_name,
+      last_name: data.last_name,
+      gender: data.gender,
+      email: data.email,
+      mobile_number: data.mobile_number,
+      date_of_birth: format(new Date(data.date_of_birth), "dd-MM-yyyy"),
+      account_type: data.account_type,
+      country_code: profileData?.country_code,
+      country: profileData?.country,
+      role: role === "CANDIDATE" ? "CANDIDATE" : "RECRUITER",
+    })
+      .then((response) => {
+        if (response.success) {
+          toast.success(response.message);
+        }
+      })
+      .catch((error) => {
+        toast.error(error.response.data.message);
+      });
+  };
+
+  return (
+    <div className="bg-white border border-gray-200 rounded-2xl w-full max-w-3xl mx-auto mt-4">
+      <div className="bg-primary-50 py-3 md:py-4 px-4 md:px-6 rounded-t-2xl">
+        <h1 className="text-lg md:text-xl font-bold">
+          Edit Account and Identity
+        </h1>
+      </div>
+      <div className="p-4 md:p-6">
+        <Form {...form}>
+          <form
+            onSubmit={form.handleSubmit(handleSubmit)}
+            className="w-full space-y-4 mt-4"
+          >
+            {/* First Name */}
+            <div className="flex flex-col md:flex-row gap-4">
+              <FormField
+                control={form.control}
+                name="first_name"
+                render={({ field }) => (
+                  <FormItem className="w-full">
+                    <Label>First name</Label>
+                    <FormControl>
+                      <Input
+                        placeholder="Enter first name"
+                        {...field}
+                        className="border-black"
+                      />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+
+              {/* Last Name */}
+              <FormField
+                control={form.control}
+                name="last_name"
+                render={({ field }) => (
+                  <FormItem className="w-full">
+                    <Label>Last name</Label>
+                    <FormControl>
+                      <Input
+                        placeholder="Enter last name"
+                        {...field}
+                        className="border-black"
+                      />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+            </div>
+            {/* Gender */}
+            <FormField
+              control={form.control}
+              name="gender"
+              render={({ field }) => (
+                <FormItem>
+                  <Label>Gender</Label>
+                  <FormControl>
+                    <RadioGroup
+                      onValueChange={field.onChange}
+                      value={field.value}
+                      className="flex flex-col gap-2 mt-2"
+                    >
+                      <div className="flex items-center gap-3">
+                        <RadioGroupItem value="Male" id="male" />
+                        <Label
+                          htmlFor="male"
+                          className="font-normal text-gray-500"
+                        >
+                          Male
+                        </Label>
+                      </div>
+                      <div className="flex items-center gap-3">
+                        <RadioGroupItem value="Female" id="female" />
+                        <Label
+                          htmlFor="female"
+                          className="font-normal text-gray-500"
+                        >
+                          Female
+                        </Label>
+                      </div>
+                    </RadioGroup>
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+
+            <div className="flex flex-col md:flex-row gap-4 w-full">
+              {/* Email ID - Disabled */}
+              <FormField
+                control={form.control}
+                name="email"
+                render={({ field }) => (
+                  <FormItem className="w-full md:w-1/2">
+                    <Label>Email ID</Label>
+                    <FormControl>
+                      <Input placeholder="Enter email" {...field} disabled />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+
+              {/* Phone Number */}
+              <FormField
+                control={form.control}
+                name="mobile_number"
+                render={({ field }) => (
+                  <FormItem className="w-full md:w-1/2">
+                    <Label>Phone Number</Label>
+                    <FormControl>
+                      <div className="flex border border-black rounded-lg">
+                        <div className="flex items-center gap-1 px-3 rounded-l-lg bg-white">
+                          <span className="text-sm">
+                            {profileData?.country}
+                          </span>
+                          <span className="text-xs text-gray-600">
+                            {profileData?.country_code}
+                          </span>
+                        </div>
+                        <Input
+                          type="tel"
+                          maxLength={10}
+                          placeholder="99999 99999"
+                          className="border-0 rounded-none"
+                          {...field}
+                          onChange={(e) => {
+                            // Remove any non-numeric characters
+                            const numericValue = e.target.value.replace(
+                              /\D/g,
+                              ""
+                            );
+                            e.target.value = numericValue;
+                            field.onChange(numericValue);
+                          }}
+                          onKeyDown={(e) => {
+                            // Allow: backspace, delete, tab, escape, enter
+                            if (
+                              [8, 9, 27, 13, 46].indexOf(e.keyCode) !== -1 ||
+                              // Allow: Ctrl+A, Ctrl+C, Ctrl+V, Ctrl+X
+                              (e.keyCode === 65 && e.ctrlKey === true) ||
+                              (e.keyCode === 67 && e.ctrlKey === true) ||
+                              (e.keyCode === 86 && e.ctrlKey === true) ||
+                              (e.keyCode === 88 && e.ctrlKey === true) ||
+                              // Allow: home, end, left, right
+                              (e.keyCode >= 35 && e.keyCode <= 39)
+                            ) {
+                              return;
+                            }
+                            // Ensure that it is a number and stop the keypress
+                            if (
+                              (e.shiftKey ||
+                                e.keyCode < 48 ||
+                                e.keyCode > 57) &&
+                              (e.keyCode < 96 || e.keyCode > 105)
+                            ) {
+                              e.preventDefault();
+                            }
+                          }}
+                        />
+                      </div>
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+            </div>
+
+            <div className="flex flex-col md:flex-row gap-4 w-full">
+              {/* Date of Birth - Candidate only */}
+              <FormField
+                control={form.control}
+                name="date_of_birth"
+                render={({ field }) => (
+                  <FormItem className="w-full md:w-1/2">
+                    <Label>Date of Birth</Label>
+                    <Popover>
+                      <PopoverTrigger asChild>
+                        <FormControl className="border border-black">
+                          <Button
+                            variant="outline"
+                            className={cn(
+                              "w-full justify-start text-left font-normal",
+                              !field.value && "text-muted-foreground"
+                            )}
+                          >
+                            <CalendarIcon className="mr-2 h-4 w-4" />
+                            {field.value ? (
+                              format(new Date(field.value), "dd/MM/yyyy")
+                            ) : (
+                              <span>dd/mm/yyyy</span>
+                            )}
+                          </Button>
+                        </FormControl>
+                      </PopoverTrigger>
+                      <PopoverContent className="w-auto p-0" align="start">
+                        <Calendar
+                          mode="single"
+                          selected={
+                            field.value ? new Date(field.value) : undefined
+                          }
+                          onSelect={(date) =>
+                            field.onChange(date ? date.toISOString() : "")
+                          }
+                          disabled={(date) =>
+                            date > new Date() || date < new Date("1900-01-01")
+                          }
+                          captionLayout="dropdown"
+                          fromYear={1950}
+                          toYear={new Date().getFullYear()}
+                        />
+                      </PopoverContent>
+                    </Popover>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+
+              {/* Account Type - Candidate only */}
+              <FormField
+                control={form.control}
+                name="account_type"
+                render={({ field }) => (
+                  <FormItem className="w-full md:w-1/2">
+                    <Label>Account Type</Label>
+                    <Select onValueChange={field.onChange} value={field.value}>
+                      <FormControl>
+                        <SelectTrigger className="w-full border border-black">
+                          <SelectValue placeholder="Select Account Type" />
+                        </SelectTrigger>
+                      </FormControl>
+                      <SelectContent>
+                        <SelectItem value="Student">Student</SelectItem>
+                        <SelectItem value="Working Professional">
+                          Working Professional
+                        </SelectItem>
+                        <SelectItem value="Fresher">Fresher</SelectItem>
+                        <SelectItem value="Other">Other</SelectItem>
+                      </SelectContent>
+                    </Select>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+            </div>
+            {/* Buttons */}
+            <div className="flex gap-3 pt-2 justify-end">
+              <Button
+                type="button"
+                variant="secondary"
+                className="w-fit"
+                // onClick={handleBack}
+              >
+                Cancel
+              </Button>
+              <Button
+                type="submit"
+                disabled={!form.formState.isValid}
+                className="w-fit"
+              >
+                Update
+              </Button>
+            </div>
+          </form>
+        </Form>
+      </div>
+    </div>
+  );
+}

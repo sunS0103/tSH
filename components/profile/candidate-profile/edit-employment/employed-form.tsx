@@ -1,0 +1,495 @@
+"use client";
+
+import { updateEmployedStatus } from "@/api/profile";
+import { Button } from "@/components/ui/button";
+import {
+  Form,
+  FormControl,
+  FormField,
+  FormItem,
+  FormMessage,
+} from "@/components/ui/form";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+import { Switch } from "@/components/ui/switch";
+import { Calendar } from "@/components/ui/calendar";
+import {
+  Popover,
+  PopoverContent,
+  PopoverTrigger,
+} from "@/components/ui/popover";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { useRouter } from "next/navigation";
+import { useForm } from "react-hook-form";
+import { toast } from "sonner";
+import { format } from "date-fns";
+import { CalendarIcon } from "lucide-react";
+import { cn } from "@/lib/utils";
+import z from "zod";
+import { setCookie } from "cookies-next/client";
+
+const noticePeriodOptions = [
+  { label: "Immediate", value: "Immediate" },
+  { label: "0-15 days", value: "0-15 days" },
+  { label: "15-30 days", value: "15-30 days" },
+  { label: "30-45 days", value: "30-45 days" },
+  { label: "45-90 days", value: "45-90 days" },
+  { label: "1 month", value: "1 month" },
+  { label: "2 months", value: "2 months" },
+  { label: "3 months", value: "3 months" },
+  { label: ">3 months", value: ">3 months" },
+];
+
+const ctcPeriodOptions = [
+  { label: "Per annum", value: "LPA" },
+  { label: "Per month", value: "LPM" },
+];
+
+const employedSchema = z
+  .object({
+    company_name: z.string().min(1, "Company name is required"),
+    designation: z.string().min(1, "Designation is required"),
+    total_years_of_experience: z
+      .string()
+      .min(1, "Total experience is required")
+      .refine((val) => !isNaN(parseFloat(val)) && parseFloat(val) >= 0, {
+        message: "Please enter a valid number",
+      }),
+    current_ctc_amount: z
+      .string()
+      .min(1, "Current CTC is required")
+      .refine((val) => !isNaN(parseFloat(val)) && parseFloat(val) >= 0, {
+        message: "Please enter a valid number",
+      }),
+    current_ctc_period_type: z.string().min(1, "Period type is required"),
+    expected_ctc_amount: z
+      .string()
+      .min(1, "Expected CTC is required")
+      .refine((val) => !isNaN(parseFloat(val)) && parseFloat(val) >= 0, {
+        message: "Please enter a valid number",
+      }),
+    expected_ctc_period: z.string().min(1, "Period type is required"),
+    notice_period_type: z.string().min(1, "Notice period is required"),
+    is_serving_notice: z.boolean(),
+    last_working_day: z.date().optional(),
+  })
+  .refine(
+    (data) => {
+      if (data.is_serving_notice) {
+        return data.last_working_day !== undefined;
+      }
+      return true;
+    },
+    {
+      message: "Last working day is required when serving notice",
+      path: ["last_working_day"],
+    }
+  );
+
+type EmployedFormData = z.infer<typeof employedSchema>;
+
+interface EmployedFormProps {
+  defaultValues?: Partial<EmployedFormData & { is_serving_notice: boolean }>;
+  onCancel: () => void;
+}
+
+export default function EmployedForm({
+  defaultValues,
+  onCancel,
+}: EmployedFormProps) {
+  const router = useRouter();
+
+  const form = useForm<EmployedFormData>({
+    resolver: zodResolver(employedSchema),
+    defaultValues: {
+      company_name: defaultValues?.company_name || "",
+      designation: defaultValues?.designation || "",
+      total_years_of_experience:
+        defaultValues?.total_years_of_experience?.toString() || "",
+      current_ctc_amount: defaultValues?.current_ctc_amount?.toString() || "",
+      current_ctc_period_type: defaultValues?.current_ctc_period_type || "LPA",
+      expected_ctc_amount: defaultValues?.expected_ctc_amount?.toString() || "",
+      expected_ctc_period: defaultValues?.expected_ctc_period || "LPA",
+      notice_period_type: defaultValues?.notice_period_type || "",
+      is_serving_notice: defaultValues?.is_serving_notice || false,
+      last_working_day: defaultValues?.last_working_day
+        ? typeof defaultValues.last_working_day === "string"
+          ? new Date(defaultValues.last_working_day)
+          : defaultValues.last_working_day
+        : undefined,
+    },
+  });
+
+  const isServingNotice = form.watch("is_serving_notice");
+
+  const handleSubmit = async (data: EmployedFormData) => {
+    try {
+      const payload = {
+        company_name: data.company_name,
+        designation: data.designation,
+        total_years_of_experience: parseFloat(data.total_years_of_experience),
+        current_ctc_amount: parseFloat(data.current_ctc_amount),
+        current_ctc_currency: "INR",
+        current_ctc_period_type: data.current_ctc_period_type,
+        expected_ctc_amount: parseFloat(data.expected_ctc_amount),
+        expected_ctc_currency: "INR",
+        expected_ctc_period: data.expected_ctc_period,
+        notice_period_type: data.notice_period_type,
+        is_serving_notice: data.is_serving_notice,
+        ...(data.last_working_day && {
+          last_working_day: format(data.last_working_day, "yyyy-MM-dd"),
+        }),
+      };
+      const response = await updateEmployedStatus(payload);
+
+      if (response.success) {
+        setCookie("current_employment_details_data", JSON.stringify(payload));
+        toast.success(
+          response.message || "Employment details updated successfully"
+        );
+        router.push("/profile");
+      }
+    } catch (error: unknown) {
+      if (error instanceof z.ZodError) {
+        toast.error(error.issues[0]?.message || "Validation error");
+      } else {
+        const errorMessage =
+          error &&
+          typeof error === "object" &&
+          "response" in error &&
+          error.response &&
+          typeof error.response === "object" &&
+          "data" in error.response &&
+          error.response.data &&
+          typeof error.response.data === "object" &&
+          "message" in error.response.data &&
+          typeof error.response.data.message === "string"
+            ? error.response.data.message
+            : "Failed to update employment details";
+        toast.error(errorMessage);
+      }
+    }
+  };
+
+  return (
+    <Form {...form}>
+      <form
+        onSubmit={form.handleSubmit(handleSubmit)}
+        className="flex flex-col gap-4"
+      >
+        {/* Company Name */}
+        <div className="flex flex-col md:flex-row gap-4">
+          <FormField
+            control={form.control}
+            name="company_name"
+            render={({ field }) => (
+              <FormItem className="w-full">
+                <Label className="text-sm font-medium text-black">
+                  Current Company Name
+                </Label>
+                <FormControl>
+                  <Input
+                    placeholder="Enter company name"
+                    className="h-8 border-gray-900 w-full md:w-1/2"
+                    {...field}
+                  />
+                </FormControl>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
+        </div>
+
+        {/* Designation and Total Experience */}
+        <div className="flex flex-col md:flex-row gap-4">
+          <FormField
+            control={form.control}
+            name="designation"
+            render={({ field }) => (
+              <FormItem className="w-full md:w-1/2">
+                <Label className="text-sm font-medium text-black">
+                  Current Designation
+                </Label>
+                <FormControl>
+                  <Input
+                    placeholder="Enter designation"
+                    className="h-8 border-gray-900"
+                    {...field}
+                  />
+                </FormControl>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
+
+          <FormField
+            control={form.control}
+            name="total_years_of_experience"
+            render={({ field }) => (
+              <FormItem className="w-full md:w-1/2">
+                <Label className="text-sm font-medium text-black">
+                  Total Experience (Years)
+                </Label>
+                <FormControl>
+                  <Input
+                    type="number"
+                    step="0.1"
+                    placeholder="0.0"
+                    className="h-8 border-gray-900"
+                    {...field}
+                  />
+                </FormControl>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
+        </div>
+
+        {/* Current CTC and Expected CTC */}
+        <div className="flex flex-col md:flex-row gap-4">
+          <div className="w-full md:w-1/2">
+            <Label className="text-sm font-medium text-black mb-2">
+              Current CTC
+            </Label>
+            <div className="flex border border-gray-900 rounded-lg overflow-hidden">
+              <FormField
+                control={form.control}
+                name="current_ctc_amount"
+                render={({ field }) => (
+                  <FormItem className="flex-1">
+                    <FormControl>
+                      <Input
+                        type="number"
+                        step="0.1"
+                        placeholder="0.0"
+                        className="h-8 border-0 rounded-none"
+                        {...field}
+                      />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+
+              <div className="flex items-center border-l border-gray-200 px-2 bg-white">
+                <FormField
+                  control={form.control}
+                  name="current_ctc_period_type"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormControl>
+                        <Select
+                          onValueChange={field.onChange}
+                          value={field.value}
+                        >
+                          <SelectTrigger className="h-8 border-0 w-fit min-w-[100px]">
+                            <SelectValue />
+                          </SelectTrigger>
+                          <SelectContent>
+                            {ctcPeriodOptions.map((option) => (
+                              <SelectItem
+                                key={option.value}
+                                value={option.value}
+                              >
+                                {option.label}
+                              </SelectItem>
+                            ))}
+                          </SelectContent>
+                        </Select>
+                      </FormControl>
+                    </FormItem>
+                  )}
+                />
+              </div>
+            </div>
+          </div>
+
+          <div className="w-full md:w-1/2">
+            <Label className="text-sm font-medium text-black mb-2">
+              Expected CTC
+            </Label>
+            <div className="flex border border-gray-900 rounded-lg overflow-hidden">
+              <FormField
+                control={form.control}
+                name="expected_ctc_amount"
+                render={({ field }) => (
+                  <FormItem className="flex-1">
+                    <FormControl>
+                      <Input
+                        type="number"
+                        step="0.1"
+                        placeholder="0.0"
+                        className="h-8 border-0 rounded-none"
+                        {...field}
+                      />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+
+              <div className="flex items-center border-l border-gray-200 px-2 bg-white">
+                <FormField
+                  control={form.control}
+                  name="expected_ctc_period"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormControl>
+                        <Select
+                          onValueChange={field.onChange}
+                          value={field.value}
+                        >
+                          <SelectTrigger className="h-8 border-0 w-fit min-w-[100px]">
+                            <SelectValue />
+                          </SelectTrigger>
+                          <SelectContent>
+                            {ctcPeriodOptions.map((option) => (
+                              <SelectItem
+                                key={option.value}
+                                value={option.value}
+                              >
+                                {option.label}
+                              </SelectItem>
+                            ))}
+                          </SelectContent>
+                        </Select>
+                      </FormControl>
+                    </FormItem>
+                  )}
+                />
+              </div>
+            </div>
+          </div>
+        </div>
+
+        {/* Notice Period */}
+        <div className="flex flex-col md:flex-row gap-4">
+          <FormField
+            control={form.control}
+            name="notice_period_type"
+            render={({ field }) => (
+              <FormItem className="w-full md:w-1/2">
+                <Label className="text-sm font-medium text-black">
+                  Notice Period
+                </Label>
+                <FormControl>
+                  <Select onValueChange={field.onChange} value={field.value}>
+                    <SelectTrigger className="h-8 border-gray-900 w-full">
+                      <SelectValue placeholder="Select notice period" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      {noticePeriodOptions.map((option) => (
+                        <SelectItem key={option.value} value={option.value}>
+                          {option.label}
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                </FormControl>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
+        </div>
+
+        {/* Currently Serving Notice Toggle */}
+        <div className="flex items-center justify-between w-full md:w-1/2">
+          <Label className="text-sm font-medium text-black">
+            Currently Serving Notice?
+          </Label>
+          <FormField
+            control={form.control}
+            name="is_serving_notice"
+            render={({ field }) => (
+              <FormItem>
+                <FormControl>
+                  <Switch
+                    checked={field.value}
+                    onCheckedChange={field.onChange}
+                  />
+                </FormControl>
+              </FormItem>
+            )}
+          />
+        </div>
+
+        {/* Last Working Day - Conditional */}
+        {isServingNotice && (
+          <div className="flex flex-col md:flex-row gap-4">
+            <FormField
+              control={form.control}
+              name="last_working_day"
+              render={({ field }) => (
+                <FormItem className="w-full md:w-1/2">
+                  <Label className="text-sm font-medium text-black">
+                    Last Working Day
+                  </Label>
+                  <Popover>
+                    <PopoverTrigger asChild>
+                      <FormControl>
+                        <Button
+                          variant="outline"
+                          className={cn(
+                            "h-8 w-full justify-start text-left font-normal border-gray-900",
+                            !field.value && "text-muted-foreground"
+                          )}
+                        >
+                          <CalendarIcon className="mr-2 h-4 w-4" />
+                          {field.value ? (
+                            format(field.value, "dd-MM-yyyy")
+                          ) : (
+                            <span>Pick a date</span>
+                          )}
+                        </Button>
+                      </FormControl>
+                    </PopoverTrigger>
+                    <PopoverContent className="w-auto p-0" align="start">
+                      <Calendar
+                        mode="single"
+                        selected={field.value}
+                        onSelect={field.onChange}
+                        disabled={(date) => {
+                          const today = new Date();
+                          today.setHours(0, 0, 0, 0);
+                          return date < today;
+                        }}
+                        initialFocus
+                      />
+                    </PopoverContent>
+                  </Popover>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+          </div>
+        )}
+
+        {/* Buttons */}
+        <div className="flex gap-3 justify-end pt-2">
+          <Button
+            type="button"
+            variant="secondary"
+            onClick={onCancel}
+            className="h-8 px-4"
+          >
+            Cancel
+          </Button>
+          <Button
+            type="submit"
+            className="h-8 px-4"
+            disabled={form.formState.isSubmitting}
+          >
+            {form.formState.isSubmitting ? "Updating..." : "Update"}
+          </Button>
+        </div>
+      </form>
+    </Form>
+  );
+}
