@@ -25,19 +25,27 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
+import { CountryCodeDropdown } from "@/components/ui/country-code-dropdown";
 import { cn } from "@/lib/utils";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { getCookie } from "cookies-next/client";
+import { getCookie, setCookie } from "cookies-next/client";
 import { format } from "date-fns";
 import { CalendarIcon } from "lucide-react";
+import { useState } from "react";
 import { useForm } from "react-hook-form";
 import { toast } from "sonner";
 import z from "zod";
 
 export default function EditIdentityAndAccount() {
-  const cookieValue = getCookie("candidate_profile_data");
+  const cookieValue = getCookie("profile_data");
 
   const profileData = cookieValue ? JSON.parse(cookieValue as string) : null;
+  const [selectedCountryCode, setSelectedCountryCode] = useState<string>(
+    profileData?.country_code || ""
+  );
+  const [selectedCountryName, setSelectedCountryName] = useState<string>(
+    profileData?.country || ""
+  );
 
   const editAccountSchema = z.object({
     first_name: z.string().min(1, "First name is required"),
@@ -83,15 +91,16 @@ export default function EditIdentityAndAccount() {
       gender: data.gender,
       email: data.email,
       mobile_number: data.mobile_number,
-      date_of_birth: format(new Date(data.date_of_birth), "dd-MM-yyyy"),
+      date_of_birth: format(new Date(data.date_of_birth), "MM-dd-yyyy"),
       account_type: data.account_type,
-      country_code: profileData?.country_code,
-      country: profileData?.country,
+      country_code: selectedCountryCode,
+      country: selectedCountryName,
       role: role === "CANDIDATE" ? "CANDIDATE" : "RECRUITER",
     })
       .then((response) => {
         if (response.success) {
           toast.success(response.message);
+          setCookie("profile_data", JSON.stringify(response.data));
         }
       })
       .catch((error) => {
@@ -214,14 +223,14 @@ export default function EditIdentityAndAccount() {
                     <Label>Phone Number</Label>
                     <FormControl>
                       <div className="flex border border-black rounded-lg">
-                        <div className="flex items-center gap-1 px-3 rounded-l-lg bg-white">
-                          <span className="text-sm">
-                            {profileData?.country}
-                          </span>
-                          <span className="text-xs text-gray-600">
-                            {profileData?.country_code}
-                          </span>
-                        </div>
+                        <CountryCodeDropdown
+                          value={selectedCountryCode}
+                          onValueChange={(dialCode, country) => {
+                            setSelectedCountryCode(dialCode);
+                            setSelectedCountryName(country.name);
+                          }}
+                          className="rounded-r-none border-r border-black"
+                        />
                         <Input
                           type="tel"
                           maxLength={10}
@@ -290,9 +299,16 @@ export default function EditIdentityAndAccount() {
                           >
                             <CalendarIcon className="mr-2 h-4 w-4" />
                             {field.value ? (
-                              format(new Date(field.value), "dd/MM/yyyy")
+                              (() => {
+                                const date = new Date(field.value);
+                                const timestamp =
+                                  date.getTime() -
+                                  date.getTimezoneOffset() * 60 * 1000;
+
+                                return format(timestamp, "MM-dd-yyyy");
+                              })()
                             ) : (
-                              <span>dd/mm/yyyy</span>
+                              <span>MM-dd-yyyy</span>
                             )}
                           </Button>
                         </FormControl>

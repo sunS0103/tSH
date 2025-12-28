@@ -5,6 +5,23 @@ export const getRecruiterProfile = async () => {
   return response.data;
 };
 
+export const updateRecruiterProfile = async (data: {
+  first_name: string;
+  last_name: string;
+  gender: string;
+  email: string;
+  mobile_number: string;
+  country_code: string;
+  country_id: number;
+  city_id: number;
+  company_name: string;
+  job_category: string[];
+  platform_role: string[];
+}) => {
+  const response = await axios.put("/recruiter/profile", data);
+  return response.data;
+};
+
 export const getCandidateProfile = async () => {
   const response = await axios.get("/candidate/profile/basic-details");
   return response.data;
@@ -111,9 +128,9 @@ export const updateStudentFresherStatus = async (data: {
 
 export const updateBetweenJobsStatus = async (data: {
   total_years_of_experience: number;
-  notice_period_type: string;
+  duration_months: number | null;
   last_drawn_ctc_amount: number;
-  reason: string;
+  duration_description: string;
   upskilling_activities: string;
   current_ctc_period_type: string;
 }) => {
@@ -130,11 +147,11 @@ export const getLocationAndWorkPreferences = async () => {
 };
 
 export const updateLocationAndWorkPreferences = async (data: {
-  current_city?: string | null;
-  current_country?: string | null;
-  preferred_work_locations?: string | null;
-  preferred_work_mode?: string | null;
-  is_citizen?: boolean | null;
+  city_id?: number | null;
+  current_country?: number | null;
+  preferred_cities?: number[] | null;
+  preferred_work_modes?: number[] | null;
+  is_citizen_of_work_country?: boolean | null;
   visa_type?: string | null;
   willing_to_relocate?: boolean | null;
   open_to_remote_only?: boolean | null;
@@ -149,7 +166,29 @@ export const getEducation = async () => {
   return response.data;
 };
 
+export const updateEducation = async (data: {
+  degree_type: string;
+  specialization: string;
+  university_name: string;
+  graduation_year: number | null;
+  academic_status: "Completed" | "Final Year" | "Pursuing" | null;
+}) => {
+  const response = await axios.put("/candidate/profile/education", data);
+  return response.data;
+};
+
 export const getSkills = async () => {
   const response = await axios.get("/candidate/profile/skills");
+  return response.data;
+};
+
+export const updateSkills = async (data: {
+  primary_skill_category?: number | null;
+  primary_skills?: number[] | null;
+  secondary_skill?: number[] | null;
+  preferred_role?: number[] | null;
+  certifications?: string | null;
+}) => {
+  const response = await axios.put("/candidate/profile/skills", data);
   return response.data;
 };

@@ -1,7 +1,6 @@
 "use client";
 
 import { useRouter } from "next/navigation";
-import { useState } from "react";
 import { Icon } from "@iconify/react";
 import { Button } from "@/components/ui/button";
 import { Label } from "@/components/ui/label";
@@ -53,17 +52,142 @@ interface EmploymentDetailsData {
   duration_months?: string | null;
 }
 
+interface EducationData {
+  degree_type: string;
+  specialization: string;
+  university_name: string;
+  graduation_year: number | null;
+  academic_status: "Completed" | "Final Year" | "Pursuing" | null;
+}
+
+interface SkillsData {
+  primary_skill_category: {
+    id: number;
+    name: string;
+  };
+  primary_skills: {
+    id: number;
+    name: string;
+    category_name: string;
+  }[];
+  secondary_skills: {
+    id: number;
+    name: string;
+    category_name: string;
+  }[];
+  preferred_roles: {
+    id: number;
+    name: string;
+  }[];
+  certifications: string;
+}
+
+interface LocationAndWorkPreferencesData {
+  current_city: {
+    id: number;
+    name: string;
+  };
+  current_country: string | null;
+  state: string | null;
+  preferred_cities: {
+    id: number;
+    name: string;
+  }[];
+  preferred_work_modes: {
+    id: number;
+    name: string;
+  }[];
+  is_citizen_of_work_country: boolean;
+  citizenship_country: string;
+  visa_type: string;
+  willing_to_relocate: boolean;
+  open_to_remote_only: boolean;
+  open_to_contract_to_hire: boolean;
+}
+
 export default function CandidateProfile({
   profileData,
   personalSocialData,
   currentEmployment,
+  educationData,
+  locationAndWorkPreferencesData,
+  skillsData,
 }: {
   profileData: ProfileData;
   personalSocialData: PersonalSocialData | null;
   currentEmployment: EmploymentDetailsData | null;
+  educationData: EducationData | null;
+  locationAndWorkPreferencesData: LocationAndWorkPreferencesData | null;
+  skillsData: SkillsData | null;
 }) {
-  const [progress] = useState(10);
   const router = useRouter();
+
+  // Calculate profile completion percentage
+  const calculateProgress = (): number => {
+    let progress = 0;
+
+    // Account & Identity: 10%
+    if (profileData?.email) {
+      progress += 10;
+    }
+
+    // Skills & Domains: 10%
+    if (skillsData?.primary_skill_category?.id) {
+      progress += 10;
+    }
+
+    // Personal & Social: 20%
+    if (personalSocialData?.headline) {
+      progress += 20;
+    }
+
+    // Current Employment Details: 20%
+    if (currentEmployment?.employment_status) {
+      if (currentEmployment.employment_status === "Employed") {
+        if (
+          currentEmployment.company_name &&
+          currentEmployment.designation &&
+          currentEmployment.total_years_of_experience !== null
+        ) {
+          progress += 20;
+        }
+      } else if (
+        currentEmployment.employment_status === "Student" ||
+        currentEmployment.employment_status === "Fresher"
+      ) {
+        if (
+          currentEmployment.looking_for_internship !== undefined ||
+          currentEmployment.looking_for_full_time !== undefined ||
+          currentEmployment.looking_for_part_time !== undefined ||
+          currentEmployment.looking_for_remote !== undefined
+        ) {
+          progress += 20;
+        }
+      } else if (currentEmployment.employment_status === "Between Jobs") {
+        if (
+          currentEmployment.total_years_of_experience !== null &&
+          currentEmployment.reason &&
+          currentEmployment.upskilling_activities
+        ) {
+          progress += 20;
+        }
+      }
+    }
+
+    // Location & Work Preferences: 20%
+    if (locationAndWorkPreferencesData?.current_city?.id) {
+      progress += 20;
+    }
+
+    // Education: 20%
+    if (educationData?.academic_status) {
+      progress += 20;
+    }
+
+    return progress;
+  };
+
+  const progress = calculateProgress();
 
   const personalAndSocialData = [
     { label: "Short Headline", value: personalSocialData?.headline },
@@ -87,12 +211,21 @@ export default function CandidateProfile({
       label: "Currently Serving Notice?",
       value: currentEmployment?.is_serving_notice ? "Yes" : "No",
     },
-    {
-      label: "Last Working Day",
-      value: currentEmployment?.last_working_day
-        ? format(new Date(currentEmployment?.last_working_day), "dd-MM-yyyy")
-        : "-",
-    },
+    ...(currentEmployment?.is_serving_notice
+      ? [
+          {
+            label: "Last Working Day",
+            value: currentEmployment?.last_working_day
+              ? (() => {
+                  const date = new Date(currentEmployment?.last_working_day);
+                  const timestamp =
+                    date.getTime() - date.getTimezoneOffset() * 60 * 1000;
+                  return format(timestamp, "MM-dd-yyyy");
+                })()
+              : "-",
+          },
+        ]
+      : []),
   ];
 
   const studentOrFresherData = [
@@ -134,22 +267,104 @@ export default function CandidateProfile({
       ? betweenJobData
       : null;
 
+  const educationDetails = [
+    { label: "Highest Degree", value: educationData?.degree_type },
+    { label: "Specialization", value: educationData?.specialization },
+    { label: "University Name", value: educationData?.university_name },
+    { label: "Year of Graduation", value: educationData?.graduation_year },
+    { label: "Current Academic Status", value: educationData?.academic_status },
+  ];
+
+  const locationAndWorkPreferences = [
+    {
+      label: "Current City",
+      value: locationAndWorkPreferencesData?.current_city?.name,
+    },
+    {
+      label: "Current Country",
+      value: locationAndWorkPreferencesData?.current_country,
+    },
+    {
+      label: "Preferred Work Locations",
+      value: `${locationAndWorkPreferencesData?.preferred_cities
+        .map((city) => city.name)
+        .join(", ")}(${locationAndWorkPreferencesData?.preferred_work_modes
+        .map((mode) => mode.name)
+        .join(", ")})`,
+    },
+    {
+      label:
+        "Are you a citizen or permanent resident of the country where you prefer to work?",
+      value: locationAndWorkPreferencesData?.is_citizen_of_work_country
+        ? "Yes"
+        : "No",
+    },
+    ...(locationAndWorkPreferencesData?.is_citizen_of_work_country
+      ? [
+          {
+            label: "What type of visa do you currently hold",
+            value: locationAndWorkPreferencesData?.visa_type,
+          },
+          {
+            label: "Willing to relocate within your authorized work country?",
+            value: locationAndWorkPreferencesData?.willing_to_relocate
+              ? "Yes"
+              : "No",
+          },
+          {
+            label: "Open to remote-only roles?",
+            value: locationAndWorkPreferencesData?.open_to_remote_only
+              ? "Yes"
+              : "No",
+          },
+          {
+            label: "Are you open to Contract to Hire positions?",
+            value: locationAndWorkPreferencesData?.open_to_contract_to_hire
+              ? "Yes"
+              : "No",
+          },
+        ]
+      : []),
+  ];
+
+  const skillsAndDomainsData = [
+    {
+      label: "Primary Skills Category",
+      value: skillsData?.primary_skill_category?.name,
+    },
+    {
+      label: "Primary Skills",
+      value: skillsData?.primary_skills.map((skill) => skill.name).join(", "),
+    },
+    {
+      label: "Secondary Skills",
+      value: skillsData?.secondary_skills.map((skill) => skill.name).join(", "),
+    },
+    {
+      label: "Preferred Roles",
+      value: skillsData?.preferred_roles.map((role) => role.name).join(", "),
+    },
+    { label: "Certifications", value: skillsData?.certifications },
+  ];
+
   return (
     <div className="flex flex-col md:flex-row w-full gap-4">
-      <div className="max-w-md">
-        <div className="bg-warning-50 border border-warning-500 p-4 rounded-2xl">
-          <h2 className="font-semibold text-base md:text-lg">
-            Complete your profile
-          </h2>
-          <div className="text-xs mt-2">
-            Complete your profile to get more relevant job matches.
+      <div className="md:max-w-md md:sticky md:top-20.5 md:self-start">
+        {progress < 100 && (
+          <div className="bg-warning-50 border border-warning-500 p-4 rounded-2xl mb-4">
+            <h2 className="font-semibold text-base md:text-lg">
+              Complete your profile
+            </h2>
+            <div className="text-xs mt-2">
+              Complete your profile to get more relevant job matches.
+            </div>
+            <div className="flex items-center gap-2 mt-4">
+              <Progress value={progress} />
+              <span className="text-xs">{progress}%</span>
+            </div>
           </div>
-          <div className="flex items-center gap-2 mt-4">
-            <Progress value={progress} />
-            <span className="text-xs">{progress}%</span>
-          </div>
-        </div>
-        <div className="mt-4 p-4 border border-gray-200 rounded-2xl divide-y">
+        )}
+        <div className="p-4 border border-gray-200 rounded-2xl divide-y">
           <div className="flex w-full justify-between items-center pb-2">
             <div className="flex gap-2 items-center">
               <Icon
@@ -184,7 +399,7 @@ export default function CandidateProfile({
             />
             <ProfileItem
               label="Date of Birth"
-              value={format(new Date(profileData?.date_of_birth), "dd/MM/yyyy")}
+              value={format(profileData?.date_of_birth, "MM-dd-yyyy")}
             />
             <ProfileItem
               label="Account Type"
@@ -215,7 +430,11 @@ export default function CandidateProfile({
         <ProfileSection
           title="Location & Work Preferences"
           icon="material-symbols:location-on-outline-rounded"
-          data={null}
+          data={
+            locationAndWorkPreferencesData?.current_city
+              ? locationAndWorkPreferences
+              : null
+          }
           nullStateTitle="Work preferences not provided"
           nullStateDescription="Add your location, visa status, and work preferences to get better matches."
           onEdit={() =>
@@ -226,7 +445,7 @@ export default function CandidateProfile({
         <ProfileSection
           title="Education"
           icon="material-symbols:school-outline-rounded"
-          data={null}
+          data={educationData?.academic_status ? educationDetails : null}
           nullStateTitle="No education details found"
           nullStateDescription="Include your academic background to strengthen your profile."
           onEdit={() => router.push("/profile-details/edit-education")}
@@ -235,7 +454,11 @@ export default function CandidateProfile({
         <ProfileSection
           title="Skills & Domains"
           icon="material-symbols:emoji-objects-outline-rounded"
-          data={null}
+          data={
+            skillsData?.primary_skill_category?.name
+              ? skillsAndDomainsData
+              : null
+          }
           nullStateTitle="Skills not added yet"
           nullStateDescription="Add your core skills and domains to highlight your expertise."
           onEdit={() => router.push("/profile-details/edit-skills")}

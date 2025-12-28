@@ -30,11 +30,11 @@ export const signUp = async ({
   role,
   account_type,
   date_of_birth,
-  country,
-  city,
+  country_id,
+  city_id,
   company_name,
-  primary_job_category,
-  platform_primary_role,
+  job_category,
+  platform_role,
 }: {
   first_name: string;
   last_name: string;
@@ -45,16 +45,11 @@ export const signUp = async ({
   role: "CANDIDATE" | "RECRUITER";
   account_type?: "Fresher" | "Working Professional" | "Student" | "Other";
   date_of_birth?: string;
-  country:
-    | "India"
-    | "United States"
-    | "United Kingdom"
-    | "Canada"
-    | "Australia";
-  city?: string;
+  country_id?: number | null;
+  city_id?: number;
   company_name?: string;
-  primary_job_category?: string;
-  platform_primary_role?: string;
+  job_category?: string;
+  platform_role?: string;
 }) => {
   const response = await axios.post("/auth/sign-up", {
     first_name,
@@ -64,16 +59,17 @@ export const signUp = async ({
     mobile_number,
     gender,
     role,
-    country,
     ...(role === "RECRUITER" && {
+      country_id,
+      city_id,
       company_name,
-      primary_job_category,
-      platform_primary_role,
-      city,
+      job_category,
+      platform_role,
     }),
     ...(role === "CANDIDATE" && {
       account_type,
       date_of_birth,
+      country_id,
     }),
   });
   return response.data;

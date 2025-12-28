@@ -37,10 +37,6 @@ import { setCookie } from "cookies-next/client";
 
 const noticePeriodOptions = [
   { label: "Immediate", value: "Immediate" },
-  { label: "0-15 days", value: "0-15 days" },
-  { label: "15-30 days", value: "15-30 days" },
-  { label: "30-45 days", value: "30-45 days" },
-  { label: "45-90 days", value: "45-90 days" },
   { label: "1 month", value: "1 month" },
   { label: "2 months", value: "2 months" },
   { label: "3 months", value: "3 months" },
@@ -144,7 +140,12 @@ export default function EmployedForm({
         notice_period_type: data.notice_period_type,
         is_serving_notice: data.is_serving_notice,
         ...(data.last_working_day && {
-          last_working_day: format(data.last_working_day, "yyyy-MM-dd"),
+          last_working_day: (() => {
+            const date = new Date(data.last_working_day);
+            const timestamp =
+              date.getTime() - date.getTimezoneOffset() * 60 * 1000;
+            return timestamp.toString();
+          })(),
         }),
       };
       const response = await updateEmployedStatus(payload);
@@ -443,9 +444,16 @@ export default function EmployedForm({
                         >
                           <CalendarIcon className="mr-2 h-4 w-4" />
                           {field.value ? (
-                            format(field.value, "dd-MM-yyyy")
+                            (() => {
+                              const date = new Date(field.value);
+                              const timestamp =
+                                date.getTime() -
+                                date.getTimezoneOffset() * 60 * 1000;
+
+                              return format(timestamp, "MM-dd-yyyy");
+                            })()
                           ) : (
-                            <span>Pick a date</span>
+                            <span>MM-dd-yyyy</span>
                           )}
                         </Button>
                       </FormControl>
@@ -460,7 +468,6 @@ export default function EmployedForm({
                           today.setHours(0, 0, 0, 0);
                           return date < today;
                         }}
-                        initialFocus
                       />
                     </PopoverContent>
                   </Popover>
@@ -486,7 +493,7 @@ export default function EmployedForm({
             className="h-8 px-4"
             disabled={form.formState.isSubmitting}
           >
-            {form.formState.isSubmitting ? "Updating..." : "Update"}
+            Update
           </Button>
         </div>
       </form>

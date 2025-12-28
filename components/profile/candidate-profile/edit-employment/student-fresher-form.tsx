@@ -211,7 +211,7 @@ export default function StudentFresherForm({
             className="h-8 px-4"
             disabled={form.formState.isSubmitting}
           >
-            {form.formState.isSubmitting ? "Updating..." : "Update"}
+            Update
           </Button>
         </div>
       </form>

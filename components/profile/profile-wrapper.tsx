@@ -50,11 +50,81 @@ interface EmploymentDetailsData {
   last_working_day: string | null;
 }
 
+interface EducationData {
+  degree_type: string;
+  specialization: string;
+  university_name: string;
+  graduation_year: number | null;
+  academic_status: "Completed" | "Final Year" | "Pursuing" | null;
+}
+
+interface SkillsData {
+  primary_skill_category: {
+    id: number;
+    name: string;
+  };
+  primary_skills: {
+    id: number;
+    name: string;
+    category_name: string;
+  }[];
+  secondary_skills: {
+    id: number;
+    name: string;
+    category_name: string;
+  }[];
+  preferred_roles: {
+    id: number;
+    name: string;
+  }[];
+  certifications: string;
+}
+
+interface LocationAndWorkPreferencesData {
+  current_city: {
+    id: number;
+    name: string;
+  };
+  current_country: string | null;
+  state: string | null;
+  preferred_cities: {
+    id: number;
+    name: string;
+  }[];
+  preferred_work_modes: {
+    id: number;
+    name: string;
+  }[];
+  is_citizen_of_work_country: boolean;
+  citizenship_country: string;
+  visa_type: string;
+  willing_to_relocate: boolean;
+  open_to_remote_only: boolean;
+  open_to_contract_to_hire: boolean;
+}
+
+interface RecruiterProfileData {
+  city: string;
+  company_name: string;
+  country: string;
+  country_code: string;
+  email: string;
+  first_name: string;
+  gender: string;
+  is_verified: boolean;
+  job_category: string;
+  last_name: string;
+  mobile_number: string;
+  platform_role: string;
+  preferred_technologies: string[];
+  role: "RECRUITER" | "CANDIDATE";
+}
 export default function ProfilePage() {
   const [candidateProfileData, setCandidateProfileData] = useState<{
     data: ProfileData;
   } | null>(null);
-  const [recruiterProfileData, setRecruiterProfileData] = useState(null);
+  const [recruiterProfileData, setRecruiterProfileData] =
+    useState<RecruiterProfileData | null>(null);
   const [candidateSocialData, setCandidateSocialData] = useState<{
     data: PersonalSocialData | null;
   } | null>(null);
@@ -64,7 +134,9 @@ export default function ProfilePage() {
     } | null>(null);
   const [locationAndWorkPreferencesData, setLocationAndWorkPreferencesData] =
     useState(null);
-  const [educationData, setEducationData] = useState(null);
+  const [educationData, setEducationData] = useState<{
+    data: EducationData;
+  } | null>(null);
   const [skillsData, setSkillsData] = useState(null);
   const role = getCookie("user_role") as "CANDIDATE" | "RECRUITER" | undefined;
 
@@ -75,10 +147,7 @@ export default function ProfilePage() {
           .then((response) => {
             if (response.success) {
               setRecruiterProfileData(response.data);
-              setCookie(
-                "recruiter_profile_data",
-                JSON.stringify(response.data)
-              );
+              setCookie("profile_data", JSON.stringify(response.data));
             }
           })
           .catch((error) => {
@@ -93,10 +162,7 @@ export default function ProfilePage() {
           .then((response) => {
             if (response.success) {
               setCandidateProfileData(response);
-              setCookie(
-                "candidate_profile_data",
-                JSON.stringify(response.data)
-              );
+              setCookie("profile_data", JSON.stringify(response.data));
             }
           })
           .catch((error) => {
@@ -203,10 +269,19 @@ export default function ProfilePage() {
         currentEmployment={
           currentEmploymentDetailsData as EmploymentDetailsData | null
         }
+        educationData={educationData as EducationData | null}
+        locationAndWorkPreferencesData={
+          locationAndWorkPreferencesData as LocationAndWorkPreferencesData | null
+        }
+        skillsData={skillsData as SkillsData | null}
       />
     );
   } else if (role === "RECRUITER") {
-    return <RecruiterProfile />;
+    return (
+      <RecruiterProfile
+        recruiterProfileData={recruiterProfileData as RecruiterProfileData}
+      />
+    );
   } else {
     return <div>Profile not found</div>;
   }

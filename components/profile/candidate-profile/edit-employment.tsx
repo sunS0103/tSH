@@ -129,10 +129,10 @@ export default function EditEmployment() {
                 ? {
                     total_years_of_experience:
                       employmentData?.total_years_of_experience,
-                    notice_period_type: employmentData?.notice_period_type,
+                    duration_months: employmentData?.duration_months,
                     last_drawn_ctc_amount:
                       employmentData?.last_drawn_ctc_amount,
-                    reason: employmentData?.reason,
+                    duration_description: employmentData?.duration_description,
                     upskilling_activities:
                       employmentData?.upskilling_activities,
                   }
