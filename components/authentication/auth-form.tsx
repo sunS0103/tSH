@@ -10,7 +10,7 @@ export default function AuthForm() {
   const [role, setRole] = useState<"CANDIDATE" | "RECRUITER">("CANDIDATE");
 
   return (
-    <div className="flex flex-col justify-center items-center w-full max-w-md mx-auto">
+    <div className="flex flex-col justify-center items-center w-full max-w-md mx-auto h-[calc(100vh-40px)] overflow-hidden">
       <Logo />
 
       <Tabs

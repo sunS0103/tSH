@@ -1,20 +1,19 @@
 import Breadcrumbs from "@/components/common/breadcrumbs";
-import EditPersonalSocial from "@/components/profile/candidate-profile/edit-personal-social";
+import Settings from "@/components/settings";
 
 export const dynamic = "force-dynamic";
 
 export default function Page() {
-  const routes = [{ label: "Profile Details", href: "/profile" }];
-
+  const routes = [{ label: "Dashboard", href: "/dashboard" }];
   return (
     <div>
       <Breadcrumbs
         routes={routes}
         currentRoute={{
-          label: "Edit Personal & Social",
+          label: "Settings",
         }}
       />
-      <EditPersonalSocial />
+      <Settings />
     </div>
   );
 }

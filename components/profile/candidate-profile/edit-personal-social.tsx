@@ -19,16 +19,17 @@ import { useForm } from "react-hook-form";
 import { toast } from "sonner";
 import z from "zod";
 import { Icon } from "@iconify/react";
+import { cn } from "@/lib/utils";
 
 const editPersonalSocialSchema = z.object({
   headline: z
     .string()
-    .min(1, "Short headline is required")
-    .max(500, "Short headline must be less than 500 characters"),
+    .min(80, "Short headline must be at least 80 characters")
+    .max(120, "Short headline must not exceed 120 characters"),
   bio: z
     .string()
-    .min(1, "Description is required")
-    .max(1000, "Description must be less than 1000 characters"),
+    .min(250, "Description must be at least 250 characters")
+    .max(500, "Description must not exceed 500 characters"),
   linkedin_url: z
     .string()
     .refine(
@@ -114,43 +115,71 @@ export default function EditPersonalSocial() {
               <FormField
                 control={form.control}
                 name="headline"
-                render={({ field }) => (
-                  <FormItem className="w-full md:w-1/2">
-                    <Label className="text-sm font-medium text-black">
-                      Short Headline
-                    </Label>
-                    <FormControl>
-                      <Textarea
-                        placeholder="Enter your short headline"
-                        className="border-gray-900 resize-none max-h-25 min-h-25"
-                        rows={5}
-                        {...field}
-                      />
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
+                render={({ field }) => {
+                  const charCount = field.value?.length || 0;
+                  const isWithinRange = charCount >= 80 && charCount <= 120;
+                  return (
+                    <FormItem className="w-full md:w-1/2">
+                      <Label className="text-sm font-medium text-black">
+                        Short Headline
+                      </Label>
+                      <FormControl>
+                        <div className="relative">
+                          <Textarea
+                            placeholder="Enter your short headline"
+                            className="border-gray-900 resize-none max-h-25 min-h-25 pr-16"
+                            rows={5}
+                            {...field}
+                          />
+                          <span
+                            className={cn(
+                              "absolute bottom-2 right-2 text-xs",
+                              isWithinRange ? "text-gray-600" : "text-red-500"
+                            )}
+                          >
+                            {charCount}/120
+                          </span>
+                        </div>
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  );
+                }}
               />
 
               <FormField
                 control={form.control}
                 name="bio"
-                render={({ field }) => (
-                  <FormItem className="w-full md:w-1/2">
-                    <Label className="text-sm font-medium text-black">
-                      Describe Yourself in Few Words
-                    </Label>
-                    <FormControl>
-                      <Textarea
-                        placeholder="Describe yourself"
-                        className="border-gray-900 resize-none max-h-25 min-h-25"
-                        rows={5}
-                        {...field}
-                      />
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
+                render={({ field }) => {
+                  const charCount = field.value?.length || 0;
+                  const isWithinRange = charCount >= 250 && charCount <= 500;
+                  return (
+                    <FormItem className="w-full md:w-1/2">
+                      <Label className="text-sm font-medium text-black">
+                        Describe Yourself in Few Words
+                      </Label>
+                      <FormControl>
+                        <div className="relative">
+                          <Textarea
+                            placeholder="Describe yourself"
+                            className="border-gray-900 resize-none max-h-25 min-h-25 pr-16"
+                            rows={5}
+                            {...field}
+                          />
+                          <span
+                            className={cn(
+                              "absolute bottom-2 right-2 text-xs",
+                              isWithinRange ? "text-gray-600" : "text-red-500"
+                            )}
+                          >
+                            {charCount}/500
+                          </span>
+                        </div>
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  );
+                }}
               />
             </div>
 
@@ -226,7 +255,7 @@ export default function EditPersonalSocial() {
                 className="h-8 px-4"
                 disabled={form.formState.isSubmitting}
               >
-                {form.formState.isSubmitting ? "Updating..." : "Update"}
+                Update
               </Button>
             </div>
           </form>

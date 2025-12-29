@@ -28,7 +28,7 @@ export function proxy(request: NextRequest) {
     if (userRole === "CANDIDATE") {
       return NextResponse.redirect(new URL("/assessments", request.url));
     } else if (userRole === "RECRUITER") {
-      return NextResponse.redirect(new URL("/jobs", request.url));
+      return NextResponse.redirect(new URL("/profile", request.url));
     }
     return NextResponse.redirect(new URL("/assessments", request.url));
   }
