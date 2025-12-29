@@ -6,6 +6,9 @@ const publicRoutes = [
   "/favicon.ico",
   "/auth.png",
   "/Logo.svg",
+  "/anticipation",
+  "/for-candidates",
+  "/for-recruiters",
 ];
 
 export function proxy(request: NextRequest) {
@@ -24,13 +27,16 @@ export function proxy(request: NextRequest) {
 
   // Root redirect
   if (pathname === "/") {
-    const roles = request.cookies.get("user_roles")?.value;
-    if (roles === "candidate") {
+    if (token) {
+      const roles = request.cookies.get("user_roles")?.value;
+      if (roles === "candidate") {
+        return NextResponse.redirect(new URL("/assessments", request.url));
+      } else if (roles === "recruiter") {
+        return NextResponse.redirect(new URL("/jobs", request.url));
+      }
       return NextResponse.redirect(new URL("/assessments", request.url));
-    } else if (roles === "recruiter") {
-      return NextResponse.redirect(new URL("/jobs", request.url));
     }
-    return NextResponse.redirect(new URL("/assessments", request.url));
+    return NextResponse.next();
   }
 
   // Allow public routes without token

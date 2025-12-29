@@ -216,4 +216,7 @@
   .scrollbar-hide::-webkit-scrollbar {
     display: none;
   }
+  .gradient-text {
+    @apply text-transparent bg-clip-text bg-linear-to-r from-primary to-secondary;
+  }
 }
