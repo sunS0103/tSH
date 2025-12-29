@@ -1,40 +1,58 @@
 "use client";
 
 import { useState } from "react";
-import { motion } from "framer-motion";
+import { useForm } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
+import * as z from "zod";
+import { motion, AnimatePresence } from "framer-motion";
 import { Loader2, CheckCircle2, User, Briefcase } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { toast } from "sonner";
+import { joinWaitlistAction } from "@/actions/waitlist";
+import { waitlistSchema, WaitlistValues } from "@/validation/waitlist";
 
 const WaitlistForm = () => {
-  const [role, setRole] = useState<"candidate" | "recruiter" | null>(null);
-  const [name, setName] = useState("");
-  const [email, setEmail] = useState("");
-  const [company, setCompany] = useState("");
-  const [isSubmitting, setIsSubmitting] = useState(false);
   const [isSubmitted, setIsSubmitted] = useState(false);
 
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
+  const {
+    register,
+    handleSubmit,
+    setValue,
+    watch,
+    formState: { errors, isSubmitting },
+  } = useForm<WaitlistValues>({
+    resolver: zodResolver(waitlistSchema),
+    defaultValues: {
+      name: "",
+      email: "",
+      company: "",
+    },
+  });
 
-    if (!role || !name || !email) {
-      toast.error("Please fill all required fields");
-      return;
+  const currentRole = watch("role");
+
+  const onSubmit = async (values: WaitlistValues) => {
+    try {
+      const result = await joinWaitlistAction(values);
+
+      if (result.success) {
+        toast.success("You're on the list! 🎉", {
+          description:
+            result.message || "We'll notify you as soon as we launch.",
+        });
+        setIsSubmitted(true);
+      } else {
+        toast.error("Subscription Failed", {
+          description: result.error || "Something went wrong.",
+        });
+      }
+    } catch (error) {
+      toast.error("Network Error", {
+        description: "Please check your internet connection.",
+      });
     }
-
-    setIsSubmitting(true);
-
-    // Simulate API call
-    await new Promise((resolve) => setTimeout(resolve, 1500));
-
-    setIsSubmitting(false);
-    setIsSubmitted(true);
-
-    toast.success("You're on the list! 🎉", {
-      description: "We'll notify you when we launch.",
-    });
   };
 
   if (isSubmitted) {
@@ -43,22 +61,21 @@ const WaitlistForm = () => {
         id="waitlist"
         className="py-24 md:py-32 relative overflow-hidden"
       >
-        <div className="absolute inset-0 bg-linear-to-b from-background via-muted/20 to-background" />
-
-        <div className="container mx-auto relative z-10 px-4 md:px-6">
+        <div className="container mx-auto relative z-10 px-4">
           <motion.div
             initial={{ opacity: 0, scale: 0.9 }}
             animate={{ opacity: 1, scale: 1 }}
-            transition={{ duration: 0.5 }}
             className="max-w-lg mx-auto text-center"
           >
             <div className="w-20 h-20 rounded-full bg-primary/10 flex items-center justify-center mx-auto mb-6">
               <CheckCircle2 className="w-10 h-10 text-primary" />
             </div>
-            <h2 className="text-3xl font-bold mb-4">You're on the list!</h2>
+            <h2 className="text-3xl font-bold mb-4">
+              You&apos;re on the list!
+            </h2>
             <p className="text-muted-foreground text-lg">
-              Thank you for joining. We'll notify you with early access as soon
-              as we launch.
+              Thank you for joining. We&apos;ll notify you with early access
+              soon.
             </p>
           </motion.div>
         </div>
@@ -68,60 +85,49 @@ const WaitlistForm = () => {
 
   return (
     <section id="waitlist" className="py-24 md:py-32 relative overflow-hidden">
-      {/* Background */}
       <div className="absolute inset-0 bg-linear-to-b from-background via-muted/20 to-background" />
-      <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[600px] bg-primary/5 rounded-full blur-3xl" />
-
       <div className="container mx-auto relative z-10 px-4 md:px-6">
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true }}
-          transition={{ duration: 0.6 }}
-          className="text-center mb-12"
-        >
+        <div className="text-center mb-12">
           <h2 className="text-3xl md:text-4xl lg:text-5xl font-bold mb-4">
-            Get <span className="gradient-text">Early Access</span>
+            Get <span className="text-primary">Early Access</span>
           </h2>
           <p className="text-lg text-muted-foreground max-w-xl mx-auto">
             Be among the first to experience skill-based hiring.
           </p>
-        </motion.div>
+        </div>
 
-        <motion.div
-          initial={{ opacity: 0, y: 30 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true }}
-          transition={{ duration: 0.6, delay: 0.2 }}
-          className="max-w-lg mx-auto"
-        >
+        <div className="max-w-lg mx-auto">
           <form
-            onSubmit={handleSubmit}
-            className="p-8 rounded-3xl bg-card border border-border/50 shadow-card space-y-6"
+            onSubmit={handleSubmit(onSubmit)}
+            className="p-8 rounded-3xl bg-card border border-border/50 shadow-xl space-y-6"
           >
-            {/* Role Selection */}
+            {/* ROLE SELECTION */}
             <div className="space-y-3">
               <Label className="text-base font-medium">I am a... *</Label>
               <div className="grid grid-cols-2 gap-4">
                 <button
                   type="button"
-                  onClick={() => setRole("candidate")}
+                  onClick={() =>
+                    setValue("role", "candidate", { shouldValidate: true })
+                  }
                   className={`p-4 rounded-xl border-2 transition-all duration-300 flex flex-col items-center gap-2 ${
-                    role === "candidate"
-                      ? "border-primary bg-primary/5 shadow-glow"
+                    currentRole === "candidate"
+                      ? "border-primary bg-primary/5"
                       : "border-border hover:border-primary/50"
                   }`}
                 >
                   <User
                     className={`w-6 h-6 ${
-                      role === "candidate"
+                      currentRole === "candidate"
                         ? "text-primary"
                         : "text-muted-foreground"
                     }`}
                   />
                   <span
                     className={`font-medium ${
-                      role === "candidate" ? "text-primary" : "text-foreground"
+                      currentRole === "candidate"
+                        ? "text-primary"
+                        : "text-foreground"
                     }`}
                   >
                     Candidate
@@ -129,92 +135,115 @@ const WaitlistForm = () => {
                 </button>
                 <button
                   type="button"
-                  onClick={() => setRole("recruiter")}
+                  onClick={() =>
+                    setValue("role", "recruiter", { shouldValidate: true })
+                  }
                   className={`p-4 rounded-xl border-2 transition-all duration-300 flex flex-col items-center gap-2 ${
-                    role === "recruiter"
-                      ? "border-primary bg-primary/5 shadow-glow"
+                    currentRole === "recruiter"
+                      ? "border-primary bg-primary/5"
                       : "border-border hover:border-primary/50"
                   }`}
                 >
                   <Briefcase
                     className={`w-6 h-6 ${
-                      role === "recruiter"
+                      currentRole === "recruiter"
                         ? "text-primary"
                         : "text-muted-foreground"
                     }`}
                   />
                   <span
                     className={`font-medium ${
-                      role === "recruiter" ? "text-primary" : "text-foreground"
+                      currentRole === "recruiter"
+                        ? "text-primary"
+                        : "text-foreground"
                     }`}
                   >
                     Recruiter
                   </span>
                 </button>
               </div>
+              {errors.role && (
+                <p className="text-xs text-destructive mt-1">
+                  {errors.role.message}
+                </p>
+              )}
             </div>
 
-            {/* Name */}
+            {/* NAME FIELD */}
             <div className="space-y-2">
-              <Label htmlFor="name" className="text-base font-medium">
-                Name *
-              </Label>
+              <Label htmlFor="name">Name *</Label>
               <Input
+                {...register("name")}
                 id="name"
-                type="text"
                 placeholder="Your full name"
-                value={name}
-                onChange={(e) => setName(e.target.value)}
-                className="h-12 rounded-xl"
-                required
+                className={`h-12 rounded-xl ${
+                  errors.name
+                    ? "border-destructive focus-visible:ring-destructive"
+                    : ""
+                }`}
               />
+              {errors.name && (
+                <p className="text-xs text-destructive">
+                  {errors.name.message}
+                </p>
+              )}
             </div>
 
-            {/* Email */}
+            {/* EMAIL FIELD */}
             <div className="space-y-2">
-              <Label htmlFor="email" className="text-base font-medium">
-                Email *
-              </Label>
+              <Label htmlFor="email">Email *</Label>
               <Input
+                {...register("email")}
                 id="email"
                 type="email"
                 placeholder="your@email.com"
-                value={email}
-                onChange={(e) => setEmail(e.target.value)}
-                className="h-12 rounded-xl"
-                required
+                className={`h-12 rounded-xl ${
+                  errors.email
+                    ? "border-destructive focus-visible:ring-destructive"
+                    : ""
+                }`}
               />
+              {errors.email && (
+                <p className="text-xs text-destructive">
+                  {errors.email.message}
+                </p>
+              )}
             </div>
 
-            {/* Company (only for recruiters) */}
-            {role === "recruiter" && (
-              <motion.div
-                initial={{ opacity: 0, height: 0 }}
-                animate={{ opacity: 1, height: "auto" }}
-                exit={{ opacity: 0, height: 0 }}
-                transition={{ duration: 0.3 }}
-                className="space-y-2"
-              >
-                <Label htmlFor="company" className="text-base font-medium">
-                  Company Name
-                </Label>
-                <Input
-                  id="company"
-                  type="text"
-                  placeholder="Your company"
-                  value={company}
-                  onChange={(e) => setCompany(e.target.value)}
-                  className="h-12 rounded-xl"
-                />
-              </motion.div>
-            )}
+            {/* CONDITIONAL COMPANY FIELD */}
+            <AnimatePresence mode="wait">
+              {currentRole === "recruiter" && (
+                <motion.div
+                  initial={{ opacity: 0, height: 0 }}
+                  animate={{ opacity: 1, height: "auto" }}
+                  exit={{ opacity: 0, height: 0 }}
+                  className="space-y-2 overflow-hidden"
+                >
+                  <Label htmlFor="company">Company Name *</Label>
+                  <Input
+                    {...register("company")}
+                    id="company"
+                    placeholder="Your company"
+                    className={`h-12 rounded-xl ${
+                      errors.company
+                        ? "border-destructive focus-visible:ring-destructive"
+                        : ""
+                    }`}
+                  />
+                  {errors.company && (
+                    <p className="text-xs text-destructive">
+                      {errors.company.message}
+                    </p>
+                  )}
+                </motion.div>
+              )}
+            </AnimatePresence>
 
-            {/* Submit Button */}
             <Button
               type="submit"
               size="lg"
-              className="w-full h-14 text-lg rounded-xl shadow-glow hover:shadow-glow-lg transition-all duration-300"
-              disabled={isSubmitting || !role}
+              className="w-full h-14 text-lg rounded-xl transition-all"
+              disabled={isSubmitting}
             >
               {isSubmitting ? (
                 <>
@@ -225,12 +254,8 @@ const WaitlistForm = () => {
                 "Join the Waitlist"
               )}
             </Button>
-
-            <p className="text-center text-sm text-muted-foreground">
-              Early users will get priority access and feature previews.
-            </p>
           </form>
-        </motion.div>
+        </div>
       </div>
     </section>
   );
