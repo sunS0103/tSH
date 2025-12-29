@@ -213,15 +213,19 @@ export function CountryCodeDropdown({
           )}
         >
           {selectedCountry ? (
-            <Image
-              width={16}
-              height={16}
-              src={selectedCountry.flag}
-              alt={selectedCountry.name}
-              className="rounded-full w-4 h-4"
-            />
+            <>
+              <Image
+                width={16}
+                height={16}
+                src={selectedCountry.flag}
+                alt={selectedCountry.name}
+                className="rounded-full w-4 h-4"
+              />
+            </>
           ) : (
-            <span className="text-muted-foreground text-xs">{value}</span>
+            <span className="text-muted-foreground text-xs">
+              {value || "select"}
+            </span>
           )}
           <Icon
             icon="material-symbols:keyboard-arrow-down-rounded"

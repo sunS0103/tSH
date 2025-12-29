@@ -50,10 +50,11 @@ interface EmploymentDetailsData {
   looking_for_part_time?: boolean;
   looking_for_remote?: boolean;
   duration_months?: string | null;
+  duration_description?: string | null;
 }
 
 interface EducationData {
-  degree_type: string;
+  degree_name: string;
   specialization: string;
   university_name: string;
   graduation_year: number | null;
@@ -87,7 +88,10 @@ interface LocationAndWorkPreferencesData {
     id: number;
     name: string;
   };
-  current_country: string | null;
+  current_country: {
+    id: number;
+    name: string;
+  } | null;
   state: string | null;
   preferred_cities: {
     id: number;
@@ -245,7 +249,7 @@ export default function CandidateProfile({
     },
     {
       label: "Reason for Career Break",
-      value: currentEmployment?.reason,
+      value: currentEmployment?.duration_description,
     },
     {
       label: "Upskilling During This Period",
@@ -268,7 +272,7 @@ export default function CandidateProfile({
       : null;
 
   const educationDetails = [
-    { label: "Highest Degree", value: educationData?.degree_type },
+    { label: "Highest Degree", value: educationData?.degree_name },
     { label: "Specialization", value: educationData?.specialization },
     { label: "University Name", value: educationData?.university_name },
     { label: "Year of Graduation", value: educationData?.graduation_year },
@@ -282,7 +286,7 @@ export default function CandidateProfile({
     },
     {
       label: "Current Country",
-      value: locationAndWorkPreferencesData?.current_country,
+      value: locationAndWorkPreferencesData?.current_country?.name,
     },
     {
       label: "Preferred Work Locations",
@@ -395,7 +399,7 @@ export default function CandidateProfile({
             <ProfileItem label="Email ID" value={profileData?.email} />
             <ProfileItem
               label="Mobile Number"
-              value={`${profileData?.country_code} ${profileData?.mobile_number}`}
+              value={`${profileData?.country_code}  ${profileData?.mobile_number}`}
             />
             <ProfileItem
               label="Date of Birth"
@@ -431,7 +435,7 @@ export default function CandidateProfile({
           title="Location & Work Preferences"
           icon="material-symbols:location-on-outline-rounded"
           data={
-            locationAndWorkPreferencesData?.current_city
+            locationAndWorkPreferencesData?.current_city?.name
               ? locationAndWorkPreferences
               : null
           }

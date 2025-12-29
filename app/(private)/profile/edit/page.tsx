@@ -40,6 +40,13 @@ import {
 import Link from "next/link";
 import { getCookie, setCookie } from "cookies-next/client";
 import { updateRecruiterProfile } from "@/api/profile";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 
 const editProfileSchema = z.object({
   company_name: z.string().min(1, "Company name is required"),
@@ -55,12 +62,8 @@ const editProfileSchema = z.object({
   country_code: z.string().min(1, "Country code is required"),
   country_id: z.number().min(1, "Country is required"),
   city_id: z.number().min(1, "City is required"),
-  job_category: z
-    .array(z.string())
-    .min(1, "At least one job category is required"),
-  platform_role: z
-    .array(z.string())
-    .min(1, "At least one platform role is required"),
+  job_category: z.string().min(1, "At least one job category is required"),
+  platform_role: z.string().min(1, "At least one platform role is required"),
 });
 
 type EditProfileFormData = z.infer<typeof editProfileSchema>;
@@ -76,28 +79,34 @@ export default function EditProfilePage() {
   const cookieValue = getCookie("profile_data");
   const profileData = cookieValue ? JSON.parse(cookieValue as string) : null;
 
+  const platformRoleOptions = [
+    "Hiring Manager",
+    "Recruiter",
+    "HR Admin",
+    "Team Lead",
+  ];
+  const jobCategoryOptions = [
+    "IT & Software",
+    "Finance & Accounting",
+    "Marketing & Sales",
+    "Human Resources",
+    "Operations",
+  ];
+
   const form = useForm<EditProfileFormData>({
     resolver: zodResolver(editProfileSchema),
     defaultValues: {
       company_name: profileData?.company_name || "",
       first_name: profileData?.first_name || "",
       last_name: profileData?.last_name || "",
-      gender: profileData?.gender || "",
+      gender: profileData?.gender === "MALE" ? "Male" : "Female",
       email: profileData?.email || "",
       mobile_number: profileData?.mobile_number || "",
       country_code: profileData?.country_code || "",
       country_id: profileData?.country_id || 0,
       city_id: profileData?.city_id || 0,
-      job_category: Array.isArray(profileData?.job_category)
-        ? profileData.job_category
-        : profileData?.job_category
-        ? [profileData.job_category]
-        : [],
-      platform_role: Array.isArray(profileData?.platform_role)
-        ? profileData.platform_role
-        : profileData?.platform_role
-        ? [profileData.platform_role]
-        : [],
+      job_category: profileData?.job_category || "",
+      platform_role: profileData?.platform_role || "",
     },
   });
 
@@ -413,94 +422,28 @@ export default function EditProfilePage() {
                 control={form.control}
                 name="job_category"
                 render={({ field }) => {
-                  const jobCategoryOptions = ["Tech", "Engineering", "Design"];
-
-                  const getSelectedLabel = () => {
-                    const selected = jobCategoryOptions.filter((option) =>
-                      (field.value || []).includes(option)
-                    );
-                    if (selected.length === 0) return "Select category";
-                    return selected.join(", ");
-                  };
-
                   return (
                     <FormItem className="flex-1">
                       <Label className="text-sm font-medium text-black">
                         Primary Job Posting Category
                       </Label>
-                      <Popover>
-                        <PopoverTrigger asChild>
-                          <Button
-                            type="button"
-                            variant="outline"
-                            role="combobox"
-                            className={cn(
-                              "min-h-8 h-auto w-full justify-between border-gray-900 bg-white text-left font-normal py-2",
-                              "hover:bg-white"
-                            )}
-                          >
-                            <span className="flex-1 text-wrap wrap-break-word pr-2">
-                              {getSelectedLabel()}
-                            </span>
-                            <Icon
-                              icon="material-symbols:keyboard-arrow-down-rounded"
-                              className="h-4 w-4 shrink-0 opacity-50"
-                            />
-                          </Button>
-                        </PopoverTrigger>
-                        <PopoverContent
-                          className="w-[254px] p-0 bg-white border border-gray-200 rounded-2xl shadow-[0px_0px_25px_0px_rgba(0,0,0,0.15)]"
-                          align="start"
+                      <FormControl>
+                        <Select
+                          onValueChange={field.onChange}
+                          value={field.value}
                         >
-                          <div className="flex flex-col">
-                            {jobCategoryOptions.map((option, index) => (
-                              <div
-                                key={option}
-                                className={cn(
-                                  "flex items-center gap-4 px-6 py-4 border-b border-gray-200 last:border-b-0 cursor-pointer hover:bg-gray-50",
-                                  index === 0 && "rounded-t-2xl",
-                                  index === jobCategoryOptions.length - 1 &&
-                                    "rounded-b-2xl"
-                                )}
-                                onClick={() => {
-                                  const currentValue = field.value || [];
-                                  const isSelected =
-                                    currentValue.includes(option);
-                                  if (isSelected) {
-                                    field.onChange(
-                                      currentValue.filter(
-                                        (val) => val !== option
-                                      )
-                                    );
-                                  } else {
-                                    field.onChange([...currentValue, option]);
-                                  }
-                                }}
-                              >
-                                <Checkbox
-                                  checked={(field.value || []).includes(option)}
-                                  onCheckedChange={(checked) => {
-                                    const currentValue = field.value || [];
-                                    if (checked) {
-                                      field.onChange([...currentValue, option]);
-                                    } else {
-                                      field.onChange(
-                                        currentValue.filter(
-                                          (val) => val !== option
-                                        )
-                                      );
-                                    }
-                                  }}
-                                  className="size-5"
-                                />
-                                <Label className="text-base font-normal text-black cursor-pointer flex-1">
-                                  {option}
-                                </Label>
-                              </div>
+                          <SelectTrigger className="w-full">
+                            <SelectValue placeholder="Select category" />
+                          </SelectTrigger>
+                          <SelectContent>
+                            {jobCategoryOptions.map((option) => (
+                              <SelectItem key={option} value={option}>
+                                {option}
+                              </SelectItem>
                             ))}
-                          </div>
-                        </PopoverContent>
-                      </Popover>
+                          </SelectContent>
+                        </Select>
+                      </FormControl>
                       <FormMessage />
                     </FormItem>
                   );
@@ -510,98 +453,28 @@ export default function EditProfilePage() {
                 control={form.control}
                 name="platform_role"
                 render={({ field }) => {
-                  const platformRoleOptions = [
-                    "Hiring Manager for a project",
-                    "HR Manager",
-                    "Recruiter",
-                  ];
-
-                  const getSelectedLabel = () => {
-                    const selected = platformRoleOptions.filter((option) =>
-                      (field.value || []).includes(option)
-                    );
-                    if (selected.length === 0) return "Select role";
-                    return selected.join(", ");
-                  };
-
                   return (
                     <FormItem className="flex-1">
                       <Label className="text-sm font-medium text-black">
                         Role using this platform primarily
                       </Label>
-                      <Popover>
-                        <PopoverTrigger asChild>
-                          <Button
-                            type="button"
-                            variant="outline"
-                            role="combobox"
-                            className={cn(
-                              "min-h-8 h-auto w-full justify-between border-gray-900 bg-white text-left font-normal py-2",
-                              "hover:bg-white"
-                            )}
-                          >
-                            <span className="flex-1 text-wrap wrap-break-word pr-2">
-                              {getSelectedLabel()}
-                            </span>
-                            <Icon
-                              icon="material-symbols:keyboard-arrow-down-rounded"
-                              className="h-4 w-4 shrink-0 opacity-50"
-                            />
-                          </Button>
-                        </PopoverTrigger>
-                        <PopoverContent
-                          className="w-[254px] p-0 bg-white border border-gray-200 rounded-2xl shadow-[0px_0px_25px_0px_rgba(0,0,0,0.15)]"
-                          align="start"
+                      <FormControl>
+                        <Select
+                          onValueChange={field.onChange}
+                          value={field.value}
                         >
-                          <div className="flex flex-col">
-                            {platformRoleOptions.map((option, index) => (
-                              <div
-                                key={option}
-                                className={cn(
-                                  "flex items-center gap-4 px-6 py-4 border-b border-gray-200 last:border-b-0 cursor-pointer hover:bg-gray-50",
-                                  index === 0 && "rounded-t-2xl",
-                                  index === platformRoleOptions.length - 1 &&
-                                    "rounded-b-2xl"
-                                )}
-                                onClick={() => {
-                                  const currentValue = field.value || [];
-                                  const isSelected =
-                                    currentValue.includes(option);
-                                  if (isSelected) {
-                                    field.onChange(
-                                      currentValue.filter(
-                                        (val) => val !== option
-                                      )
-                                    );
-                                  } else {
-                                    field.onChange([...currentValue, option]);
-                                  }
-                                }}
-                              >
-                                <Checkbox
-                                  checked={(field.value || []).includes(option)}
-                                  onCheckedChange={(checked) => {
-                                    const currentValue = field.value || [];
-                                    if (checked) {
-                                      field.onChange([...currentValue, option]);
-                                    } else {
-                                      field.onChange(
-                                        currentValue.filter(
-                                          (val) => val !== option
-                                        )
-                                      );
-                                    }
-                                  }}
-                                  className="size-5"
-                                />
-                                <Label className="text-base font-normal text-black cursor-pointer flex-1">
-                                  {option}
-                                </Label>
-                              </div>
+                          <SelectTrigger className="w-full">
+                            <SelectValue placeholder="Select role" />
+                          </SelectTrigger>
+                          <SelectContent>
+                            {platformRoleOptions.map((option) => (
+                              <SelectItem key={option} value={option}>
+                                {option}
+                              </SelectItem>
                             ))}
-                          </div>
-                        </PopoverContent>
-                      </Popover>
+                          </SelectContent>
+                        </Select>
+                      </FormControl>
                       <FormMessage />
                     </FormItem>
                   );

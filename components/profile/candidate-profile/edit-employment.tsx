@@ -91,6 +91,9 @@ export default function EditEmployment() {
                     expected_ctc_period: employmentData?.expected_ctc_period,
                     notice_period_type: employmentData?.notice_period_type,
                     is_serving_notice: employmentData?.is_serving_notice,
+                    ...(employmentData?.is_serving_notice && {
+                      last_working_day: employmentData?.last_working_day,
+                    }),
                   }
                 : undefined
             }
@@ -98,26 +101,34 @@ export default function EditEmployment() {
           />
         )}
 
-        {(employmentStatus === "Student" || employmentStatus === "Fresher") && (
+        {employmentStatus === "Student" && (
           <StudentFresherForm
-            defaultValues={
-              employmentData?.employment_status === "Student" ||
-              employmentData?.employment_status === "Fresher"
-                ? {
-                    employment_status: employmentData?.employment_status,
-                    looking_for_internship:
-                      employmentData?.looking_for_internship || false,
-                    looking_for_full_time:
-                      employmentData?.looking_for_full_time || false,
-                    looking_for_part_time:
-                      employmentData?.looking_for_part_time || false,
-                    looking_for_remote:
-                      employmentData?.looking_for_remote || false,
-                  }
-                : {
-                    employment_status: employmentStatus,
-                  }
-            }
+            defaultValues={{
+              employment_status: "Student",
+              looking_for_internship:
+                employmentData?.looking_for_internship || false,
+              looking_for_full_time:
+                employmentData?.looking_for_full_time || false,
+              looking_for_part_time:
+                employmentData?.looking_for_part_time || false,
+              looking_for_remote: employmentData?.looking_for_remote || false,
+            }}
+            onCancel={handleCancel}
+          />
+        )}
+
+        {employmentStatus === "Fresher" && (
+          <StudentFresherForm
+            defaultValues={{
+              employment_status: "Fresher",
+              looking_for_internship:
+                employmentData?.looking_for_internship || false,
+              looking_for_full_time:
+                employmentData?.looking_for_full_time || false,
+              looking_for_part_time:
+                employmentData?.looking_for_part_time || false,
+              looking_for_remote: employmentData?.looking_for_remote || false,
+            }}
             onCancel={handleCancel}
           />
         )}

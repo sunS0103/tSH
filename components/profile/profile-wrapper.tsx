@@ -51,7 +51,7 @@ interface EmploymentDetailsData {
 }
 
 interface EducationData {
-  degree_type: string;
+  degree_name: string;
   specialization: string;
   university_name: string;
   graduation_year: number | null;
@@ -85,7 +85,10 @@ interface LocationAndWorkPreferencesData {
     id: number;
     name: string;
   };
-  current_country: string | null;
+  current_country: {
+    id: number;
+    name: string;
+  };
   state: string | null;
   preferred_cities: {
     id: number;

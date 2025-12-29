@@ -26,7 +26,7 @@ import { toast } from "sonner";
 import z from "zod";
 
 interface EditEducationFormData {
-  degree_type: string;
+  degree_name: string;
   specialization: string;
   university_name: string;
   graduation_year: number | null;
@@ -37,7 +37,7 @@ export default function EditEducation() {
   const router = useRouter();
 
   const educationSchema = z.object({
-    degree_type: z.string().min(1, "Degree type is required"),
+    degree_name: z.string().min(1, "Degree name is required"),
     specialization: z.string().min(1, "Specialization is required"),
     university_name: z.string().min(1, "University name is required"),
     graduation_year: z
@@ -53,7 +53,7 @@ export default function EditEducation() {
   const form = useForm<EditEducationFormData>({
     resolver: zodResolver(educationSchema),
     defaultValues: {
-      degree_type: educationData?.degree_type || "",
+      degree_name: educationData?.degree_name || "",
       specialization: educationData?.specialization || "",
       university_name: educationData?.university_name || "",
       graduation_year: educationData?.graduation_year || null,
@@ -105,7 +105,7 @@ export default function EditEducation() {
             <div className="flex flex-col md:flex-row gap-4">
               <FormField
                 control={form.control}
-                name="degree_type"
+                name="degree_name"
                 render={({ field }) => (
                   <FormItem className="w-full md:w-1/2">
                     <FormLabel>Highest Degree</FormLabel>

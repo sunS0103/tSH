@@ -35,9 +35,12 @@ import { useState } from "react";
 import { useForm } from "react-hook-form";
 import { toast } from "sonner";
 import z from "zod";
+import { useRouter } from "next/navigation";
 
 export default function EditIdentityAndAccount() {
   const cookieValue = getCookie("profile_data");
+
+  const router = useRouter();
 
   const profileData = cookieValue ? JSON.parse(cookieValue as string) : null;
   const [selectedCountryCode, setSelectedCountryCode] = useState<string>(
@@ -76,7 +79,7 @@ export default function EditIdentityAndAccount() {
       gender: profileData?.gender === "MALE" ? "Male" : "Female",
       email: profileData?.email,
       mobile_number: profileData?.mobile_number,
-      date_of_birth: profileData?.date_of_birth,
+      date_of_birth: format(new Date(profileData?.date_of_birth), "MM-dd-yyyy"),
       account_type: profileData?.account_type,
       // countryCode: profileData?.country_code,
       // country: profileData?.country,
@@ -91,7 +94,7 @@ export default function EditIdentityAndAccount() {
       gender: data.gender,
       email: data.email,
       mobile_number: data.mobile_number,
-      date_of_birth: format(new Date(data.date_of_birth), "MM-dd-yyyy"),
+      date_of_birth: new Date(data.date_of_birth).getTime(),
       account_type: data.account_type,
       country_code: selectedCountryCode,
       country: selectedCountryName,
@@ -100,7 +103,22 @@ export default function EditIdentityAndAccount() {
       .then((response) => {
         if (response.success) {
           toast.success(response.message);
-          setCookie("profile_data", JSON.stringify(response.data));
+          setCookie(
+            "profile_data",
+            JSON.stringify({
+              first_name: data.first_name,
+              last_name: data.last_name,
+              gender: data.gender,
+              email: data.email,
+              mobile_number: data.mobile_number,
+              date_of_birth: new Date(data.date_of_birth).getTime(),
+              account_type: data.account_type,
+              country_code: selectedCountryCode,
+              country: selectedCountryName,
+              role: role === "CANDIDATE" ? "CANDIDATE" : "RECRUITER",
+            })
+          );
+          router.push("/profile");
         }
       })
       .catch((error) => {
@@ -369,7 +387,7 @@ export default function EditIdentityAndAccount() {
                 type="button"
                 variant="secondary"
                 className="w-fit"
-                // onClick={handleBack}
+                onClick={() => router.push("/profile")}
               >
                 Cancel
               </Button>

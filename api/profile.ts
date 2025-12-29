@@ -15,8 +15,8 @@ export const updateRecruiterProfile = async (data: {
   country_id: number;
   city_id: number;
   company_name: string;
-  job_category: string[];
-  platform_role: string[];
+  job_category: string;
+  platform_role: string;
 }) => {
   const response = await axios.put("/recruiter/profile", data);
   return response.data;
@@ -33,7 +33,7 @@ export const updateCandidateProfile = async (data: {
   gender: string;
   email: string;
   mobile_number: string;
-  date_of_birth: string;
+  date_of_birth: number;
   account_type: string;
   country_code: string;
   country: string;
@@ -104,7 +104,7 @@ export const updateEmployedStatus = async (data: {
   expected_ctc_period: string;
   notice_period_type: string;
   is_serving_notice: boolean;
-  last_working_day?: string | null;
+  last_working_day?: number | null;
 }) => {
   const response = await axios.put("/candidate/profile/employment", {
     employment_status: "Employed",
@@ -148,7 +148,7 @@ export const getLocationAndWorkPreferences = async () => {
 
 export const updateLocationAndWorkPreferences = async (data: {
   city_id?: number | null;
-  current_country?: number | null;
+  country_id?: number | null;
   preferred_cities?: number[] | null;
   preferred_work_modes?: number[] | null;
   is_citizen_of_work_country?: boolean | null;
@@ -167,7 +167,7 @@ export const getEducation = async () => {
 };
 
 export const updateEducation = async (data: {
-  degree_type: string;
+  degree_name: string;
   specialization: string;
   university_name: string;
   graduation_year: number | null;

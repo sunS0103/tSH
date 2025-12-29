@@ -384,96 +384,105 @@ export default function EditSkills() {
             <FormField
               control={form.control}
               name="secondary_skills"
-              render={({ field }) => (
-                <FormItem className="w-full md:w-1/2">
-                  <Label className="text-sm font-medium text-black">
-                    Secondary Skills
-                  </Label>
-                  <Popover>
-                    <PopoverTrigger asChild>
-                      <Button
-                        type="button"
-                        variant="outline"
-                        role="combobox"
-                        className={cn(
-                          "min-h-8 h-auto w-full justify-between border-gray-900 bg-white text-left font-normal py-2",
-                          "hover:bg-white"
-                        )}
-                      >
-                        <span className="flex-1 text-wrap wrap-break-word pr-2">
-                          {getSelectedSkillsLabel(
-                            field.value || [],
-                            skillCategoryOptions
+              render={({ field }) => {
+                // Remove already selected primary skills
+                const selectedPrimarySkills =
+                  form.getValues("primary_skills") || [];
+                const availableSecondarySkills = filteredPrimarySkills.filter(
+                  (skill) => !selectedPrimarySkills.includes(skill.id)
+                );
+
+                return (
+                  <FormItem className="w-full md:w-1/2">
+                    <Label className="text-sm font-medium text-black">
+                      Secondary Skills
+                    </Label>
+                    <Popover>
+                      <PopoverTrigger asChild>
+                        <Button
+                          type="button"
+                          variant="outline"
+                          role="combobox"
+                          className={cn(
+                            "min-h-8 h-auto w-full justify-between border-gray-900 bg-white text-left font-normal py-2",
+                            "hover:bg-white"
                           )}
-                        </span>
-                        <Icon
-                          icon="material-symbols:keyboard-arrow-down-rounded"
-                          className="h-4 w-4 shrink-0 opacity-50"
-                        />
-                      </Button>
-                    </PopoverTrigger>
-                    <PopoverContent
-                      className="w-[254px] p-0 bg-white border border-gray-200 rounded-2xl shadow-[0px_0px_25px_0px_rgba(0,0,0,0.15)]"
-                      align="start"
-                    >
-                      <div className="flex flex-col">
-                        {skillCategoryOptions.map((option, index) => (
-                          <div
-                            key={option.value}
-                            className={cn(
-                              "flex items-center gap-4 px-6 py-4 border-b border-gray-200 last:border-b-0 cursor-pointer hover:bg-gray-50",
-                              index === 0 && "rounded-t-2xl",
-                              index === skillCategoryOptions.length - 1 &&
-                                "rounded-b-2xl"
+                        >
+                          <span className="flex-1 text-wrap wrap-break-word pr-2">
+                            {getSelectedSkillsLabel(
+                              field.value || [],
+                              availableSecondarySkills
                             )}
-                            onClick={() => {
-                              const currentValue = field.value || [];
-                              const isSelected = currentValue.includes(
-                                option.value
-                              );
-                              if (isSelected) {
-                                field.onChange(
-                                  currentValue.filter(
-                                    (id) => id !== option.value
-                                  )
-                                );
-                              } else {
-                                field.onChange([...currentValue, option.value]);
-                              }
-                            }}
-                          >
-                            <Checkbox
-                              checked={(field.value || []).includes(
-                                option.value
+                          </span>
+                          <Icon
+                            icon="material-symbols:keyboard-arrow-down-rounded"
+                            className="h-4 w-4 shrink-0 opacity-50"
+                          />
+                        </Button>
+                      </PopoverTrigger>
+                      <PopoverContent
+                        className="w-[254px] p-0 bg-white border border-gray-200 rounded-2xl shadow-[0px_0px_25px_0px_rgba(0,0,0,0.15)]"
+                        align="start"
+                      >
+                        <div className="flex flex-col">
+                          {availableSecondarySkills.map((option, index) => (
+                            <div
+                              key={option.id}
+                              className={cn(
+                                "flex items-center gap-4 px-6 py-4 border-b border-gray-200 last:border-b-0 cursor-pointer hover:bg-gray-50",
+                                index === 0 && "rounded-t-2xl",
+                                index === availableSecondarySkills.length - 1 &&
+                                  "rounded-b-2xl"
                               )}
-                              onCheckedChange={(checked) => {
+                              onClick={() => {
                                 const currentValue = field.value || [];
-                                if (checked) {
-                                  field.onChange([
-                                    ...currentValue,
-                                    option.value,
-                                  ]);
-                                } else {
+                                const isSelected = currentValue.includes(
+                                  option.id
+                                );
+                                if (isSelected) {
                                   field.onChange(
                                     currentValue.filter(
-                                      (id) => id !== option.value
+                                      (id) => id !== option.id
                                     )
                                   );
+                                } else {
+                                  field.onChange([...currentValue, option.id]);
                                 }
                               }}
-                              className="size-5"
-                            />
-                            <Label className="text-base font-normal text-black cursor-pointer flex-1">
-                              {option.label}
-                            </Label>
-                          </div>
-                        ))}
-                      </div>
-                    </PopoverContent>
-                  </Popover>
-                  <FormMessage />
-                </FormItem>
-              )}
+                            >
+                              <Checkbox
+                                checked={(field.value || []).includes(
+                                  option.id
+                                )}
+                                onCheckedChange={(checked) => {
+                                  const currentValue = field.value || [];
+                                  if (checked) {
+                                    field.onChange([
+                                      ...currentValue,
+                                      option.id,
+                                    ]);
+                                  } else {
+                                    field.onChange(
+                                      currentValue.filter(
+                                        (id) => id !== option.id
+                                      )
+                                    );
+                                  }
+                                }}
+                                className="size-5"
+                              />
+                              <Label className="text-base font-normal text-black cursor-pointer flex-1">
+                                {option.name}
+                              </Label>
+                            </div>
+                          ))}
+                        </div>
+                      </PopoverContent>
+                    </Popover>
+                    <FormMessage />
+                  </FormItem>
+                );
+              }}
             />
 
             <FormField

@@ -96,18 +96,8 @@ export default function StudentFresherForm({
         toast.error(error.issues[0]?.message || "Validation error");
       } else {
         const errorMessage =
-          error &&
-          typeof error === "object" &&
-          "response" in error &&
-          error.response &&
-          typeof error.response === "object" &&
-          "data" in error.response &&
-          error.response.data &&
-          typeof error.response.data === "object" &&
-          "message" in error.response.data &&
-          typeof error.response.data.message === "string"
-            ? error.response.data.message
-            : "Failed to update employment details";
+          (error as { response?: { data?: { message?: string } } })?.response
+            ?.data?.message || "Failed to update employment details";
         toast.error(errorMessage);
       }
     }

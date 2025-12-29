@@ -28,8 +28,8 @@ import { getWorkModes } from "@/api/seeder";
 const locationAndWorkPreferenceSchema = z
   .object({
     city_id: z.number().min(1, "Current city is required"),
-    current_country: z.number().min(1, "Current country is required"),
-    preferred_work_locations: z
+    country_id: z.number().min(1, "Current country is required"),
+    preferred_cities: z
       .array(z.number())
       .min(1, "At least one preferred work location is required"),
     preferred_work_modes: z
@@ -109,14 +109,17 @@ export default function EditLocationAndWorkPreference() {
     resolver: zodResolver(locationAndWorkPreferenceSchema),
     defaultValues: {
       city_id: locationData?.city_id || locationData?.current_city || 0,
-      current_country:
-        locationData?.current_country?.id || locationData?.current_country || 0,
-      preferred_work_locations:
+      country_id:
+        locationData?.country_id ||
+        locationData?.current_country?.id ||
+        locationData?.current_country ||
+        0,
+      preferred_cities:
         locationData?.preferred_cities?.map((c: { id: number }) => c.id) ||
-        (Array.isArray(locationData?.preferred_work_locations)
-          ? locationData.preferred_work_locations
-          : locationData?.preferred_work_locations
-          ? [locationData.preferred_work_locations]
+        (Array.isArray(locationData?.preferred_cities)
+          ? locationData.preferred_cities
+          : locationData?.preferred_cities
+          ? [locationData.preferred_cities]
           : []),
       preferred_work_modes:
         locationData?.preferred_work_modes?.map(
@@ -138,8 +141,8 @@ export default function EditLocationAndWorkPreference() {
     try {
       const payload = {
         city_id: data.city_id,
-        current_country: data.current_country,
-        preferred_work_locations: data.preferred_work_locations,
+        country_id: data.country_id,
+        preferred_cities: data.preferred_cities,
         preferred_work_modes: data.preferred_work_modes,
         is_citizen_of_work_country: data.is_citizen_of_work_country,
         ...(data.is_citizen_of_work_country
@@ -213,7 +216,7 @@ export default function EditLocationAndWorkPreference() {
 
             <FormField
               control={form.control}
-              name="current_country"
+              name="country_id"
               render={({ field }) => (
                 <FormItem className="w-full md:w-1/2">
                   <Label className="text-sm font-medium text-black">
@@ -235,7 +238,7 @@ export default function EditLocationAndWorkPreference() {
           <div className="flex flex-col md:flex-row gap-4">
             <FormField
               control={form.control}
-              name="preferred_work_locations"
+              name="preferred_cities"
               render={({ field }) => (
                 <FormItem className="w-full md:w-1/2">
                   <Label className="text-sm font-medium text-black">
