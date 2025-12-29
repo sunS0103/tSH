@@ -21,6 +21,7 @@ const WaitlistForm = () => {
     handleSubmit,
     setValue,
     watch,
+    reset,
     formState: { errors, isSubmitting },
   } = useForm<WaitlistValues>({
     resolver: zodResolver(waitlistSchema),
@@ -39,50 +40,20 @@ const WaitlistForm = () => {
       const result = await joinWaitlistAction(values);
 
       if (result.success) {
-        toast.success("You're on the list! 🎉", {
-          description:
-            result.message || "We'll notify you as soon as we launch.",
-        });
+        if (result.isExisting) {
+          toast.info("You're already subscribed!");
+        } else {
+          toast.success("You're on the list!");
+        }
+        reset();
         setIsSubmitted(true);
       } else {
-        toast.error("Subscription Failed", {
-          description: result.error || "Something went wrong.",
-        });
+        toast.error(result.error || "Subscription Failed");
       }
     } catch (error) {
-      toast.error("Network Error", {
-        description: "Please check your internet connection.",
-      });
+      toast.error("Network Error");
     }
   };
-
-  if (isSubmitted) {
-    return (
-      <section
-        id="waitlist"
-        className="py-24 md:py-32 relative overflow-hidden"
-      >
-        <div className="container mx-auto relative z-10 px-4">
-          <motion.div
-            initial={{ opacity: 0, scale: 0.9 }}
-            animate={{ opacity: 1, scale: 1 }}
-            className="max-w-lg mx-auto text-center"
-          >
-            <div className="w-20 h-20 rounded-full bg-primary/10 flex items-center justify-center mx-auto mb-6">
-              <CheckCircle2 className="w-10 h-10 text-primary" />
-            </div>
-            <h2 className="text-3xl font-bold mb-4">
-              You&apos;re on the list!
-            </h2>
-            <p className="text-muted-foreground text-lg">
-              Thank you for joining. We&apos;ll notify you with early access
-              soon.
-            </p>
-          </motion.div>
-        </div>
-      </section>
-    );
-  }
 
   return (
     <section id="waitlist" className="py-24 md:py-32 relative overflow-hidden">
