@@ -37,10 +37,6 @@ import { setCookie } from "cookies-next/client";
 
 const noticePeriodOptions = [
   { label: "Immediate", value: "Immediate" },
-  { label: "0-15 days", value: "0-15 days" },
-  { label: "15-30 days", value: "15-30 days" },
-  { label: "30-45 days", value: "30-45 days" },
-  { label: "45-90 days", value: "45-90 days" },
   { label: "1 month", value: "1 month" },
   { label: "2 months", value: "2 months" },
   { label: "3 months", value: "3 months" },
@@ -78,12 +74,12 @@ const employedSchema = z
     expected_ctc_period: z.string().min(1, "Period type is required"),
     notice_period_type: z.string().min(1, "Notice period is required"),
     is_serving_notice: z.boolean(),
-    last_working_day: z.date().optional(),
+    last_working_day: z.number().nullable().optional(),
   })
   .refine(
     (data) => {
       if (data.is_serving_notice) {
-        return data.last_working_day !== undefined;
+        return data.last_working_day !== null;
       }
       return true;
     },
@@ -119,11 +115,7 @@ export default function EmployedForm({
       expected_ctc_period: defaultValues?.expected_ctc_period || "LPA",
       notice_period_type: defaultValues?.notice_period_type || "",
       is_serving_notice: defaultValues?.is_serving_notice || false,
-      last_working_day: defaultValues?.last_working_day
-        ? typeof defaultValues.last_working_day === "string"
-          ? new Date(defaultValues.last_working_day)
-          : defaultValues.last_working_day
-        : undefined,
+      last_working_day: defaultValues?.last_working_day,
     },
   });
 
@@ -143,8 +135,8 @@ export default function EmployedForm({
         expected_ctc_period: data.expected_ctc_period,
         notice_period_type: data.notice_period_type,
         is_serving_notice: data.is_serving_notice,
-        ...(data.last_working_day && {
-          last_working_day: format(data.last_working_day, "yyyy-MM-dd"),
+        ...(data.is_serving_notice && {
+          last_working_day: data.last_working_day,
         }),
       };
       const response = await updateEmployedStatus(payload);
@@ -443,9 +435,9 @@ export default function EmployedForm({
                         >
                           <CalendarIcon className="mr-2 h-4 w-4" />
                           {field.value ? (
-                            format(field.value, "dd-MM-yyyy")
+                            format(new Date(field.value), "MM-dd-yyyy")
                           ) : (
-                            <span>Pick a date</span>
+                            <span>MM-dd-yyyy</span>
                           )}
                         </Button>
                       </FormControl>
@@ -453,14 +445,17 @@ export default function EmployedForm({
                     <PopoverContent className="w-auto p-0" align="start">
                       <Calendar
                         mode="single"
-                        selected={field.value}
-                        onSelect={field.onChange}
+                        selected={
+                          field.value ? new Date(field.value) : undefined
+                        }
+                        onSelect={(date) =>
+                          field.onChange(date ? date.getTime() : null)
+                        }
                         disabled={(date) => {
                           const today = new Date();
                           today.setHours(0, 0, 0, 0);
                           return date < today;
                         }}
-                        initialFocus
                       />
                     </PopoverContent>
                   </Popover>
@@ -486,7 +481,7 @@ export default function EmployedForm({
             className="h-8 px-4"
             disabled={form.formState.isSubmitting}
           >
-            {form.formState.isSubmitting ? "Updating..." : "Update"}
+            Update
           </Button>
         </div>
       </form>

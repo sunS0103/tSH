@@ -32,14 +32,17 @@ const betweenJobsSchema = z.object({
     .refine((val) => !isNaN(parseFloat(val)) && parseFloat(val) >= 0, {
       message: "Please enter a valid number",
     }),
-  notice_period_type: z.string().min(1, "Duration of career break is required"),
+  duration_months: z
+    .number()
+    .min(1, "Duration of career break is required")
+    .nullable(),
   last_drawn_ctc_amount: z
     .string()
     .min(1, "Last drawn CTC is required")
     .refine((val) => !isNaN(parseFloat(val)) && parseFloat(val) >= 0, {
       message: "Please enter a valid number",
     }),
-  reason: z.string().min(1, "Reason is required"),
+  duration_description: z.string().min(1, "Reason is required"),
   upskilling_activities: z.string().min(1, "Upskilling activities is required"),
   current_ctc_period_type: z
     .string()
@@ -69,10 +72,10 @@ export default function BetweenJobsForm({
     defaultValues: {
       total_years_of_experience:
         defaultValues?.total_years_of_experience?.toString() || "",
-      notice_period_type: defaultValues?.notice_period_type || "",
+      duration_months: defaultValues?.duration_months || null,
       last_drawn_ctc_amount:
         defaultValues?.last_drawn_ctc_amount?.toString() || "",
-      reason: defaultValues?.reason || "",
+      duration_description: defaultValues?.duration_description || "",
       upskilling_activities: defaultValues?.upskilling_activities || "",
       current_ctc_period_type: defaultValues?.current_ctc_period_type || "LPA",
     },
@@ -82,10 +85,10 @@ export default function BetweenJobsForm({
     try {
       const response = await updateBetweenJobsStatus({
         total_years_of_experience: parseFloat(data.total_years_of_experience),
-        notice_period_type: data.notice_period_type,
+        duration_months: data.duration_months,
         last_drawn_ctc_amount: parseFloat(data.last_drawn_ctc_amount),
         current_ctc_period_type: data.current_ctc_period_type,
-        reason: data.reason,
+        duration_description: data.duration_description,
         upskilling_activities: data.upskilling_activities,
       });
 
@@ -100,18 +103,8 @@ export default function BetweenJobsForm({
         toast.error(error.issues[0]?.message || "Validation error");
       } else {
         const errorMessage =
-          error &&
-          typeof error === "object" &&
-          "response" in error &&
-          error.response &&
-          typeof error.response === "object" &&
-          "data" in error.response &&
-          error.response.data &&
-          typeof error.response.data === "object" &&
-          "message" in error.response.data &&
-          typeof error.response.data.message === "string"
-            ? error.response.data.message
-            : "Failed to update employment details";
+          (error as { response?: { data?: { message?: string } } })?.response
+            ?.data?.message || "Failed to update employment details";
         toast.error(errorMessage);
       }
     }
@@ -148,7 +141,7 @@ export default function BetweenJobsForm({
 
           <FormField
             control={form.control}
-            name="notice_period_type"
+            name="duration_months"
             render={({ field }) => (
               <FormItem className="w-full">
                 <Label className="text-sm font-medium ">
@@ -156,9 +149,15 @@ export default function BetweenJobsForm({
                 </Label>
                 <FormControl>
                   <Input
+                    type="number"
                     placeholder="Enter duration of career break"
                     className="h-8 border-gray-900 w-full"
-                    {...field}
+                    value={field.value || ""}
+                    onChange={(e) =>
+                      field.onChange(
+                        e.target.value ? parseFloat(e.target.value) : null
+                      )
+                    }
                   />
                 </FormControl>
                 <FormMessage />
@@ -166,36 +165,6 @@ export default function BetweenJobsForm({
             )}
           />
         </div>
-        {/* <FormField
-          control={form.control}
-          name="last_drawn_ctc_amount"
-          render={({ field }) => (
-            <FormItem>
-              <Label className="text-sm font-medium ">Last Drawn CTC</Label>
-              <FormControl>
-                <Input
-                  placeholder="Enter last drawn CTC"
-                  type="number"
-                  className="h-8 border-gray-900 w-full md:w-1/2"
-                  {...field}
-                />
-                <Select onValueChange={field.onChange} value={field.value}>
-                  <SelectTrigger className="h-8 border-0 w-fit min-w-[100px]">
-                    <SelectValue />
-                  </SelectTrigger>
-                  <SelectContent>
-                    {ctcPeriodOptions.map((option) => (
-                      <SelectItem key={option.value} value={option.value}>
-                        {option.label}
-                      </SelectItem>
-                    ))}
-                  </SelectContent>
-                </Select>
-              </FormControl>
-              <FormMessage />
-            </FormItem>
-          )}
-        /> */}
 
         <div className="w-full md:w-1/2">
           <Label className="text-sm font-medium text-black mb-2">
@@ -254,7 +223,7 @@ export default function BetweenJobsForm({
         <div className="flex flex-col md:flex-row gap-4 w-full">
           <FormField
             control={form.control}
-            name="reason"
+            name="duration_description"
             render={({ field }) => (
               <FormItem className="w-full">
                 <Label className="text-sm font-medium ">
@@ -309,7 +278,7 @@ export default function BetweenJobsForm({
             className="h-8 px-4"
             disabled={form.formState.isSubmitting}
           >
-            {form.formState.isSubmitting ? "Updating..." : "Update"}
+            Update
           </Button>
         </div>
       </form>

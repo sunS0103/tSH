@@ -81,12 +81,6 @@ export default function ProfileSection({
           // Data State
           <div className="grid grid-cols-1 md:grid-cols-2 gap-3 items-start w-full">
             {data.map((field, index) => {
-              // Group fields in pairs for 2-column layout
-              // const isEven = index % 2 === 0;
-              // const nextField = data[index + 1];
-
-              // if (!isEven) return null; // Skip odd indices, they're rendered with the previous field
-
               return (
                 <div
                   key={`${field.label}-${index}`}
@@ -97,22 +91,10 @@ export default function ProfileSection({
                     <Label className="text-xs text-gray-900 font-normal">
                       {field.label}
                     </Label>
-                    <p className="text-base font-medium text-black wrap-break-word">
+                    <p className="text-base font-medium text-black break-all">
                       {field.value || "-"}
                     </p>
                   </div>
-
-                  {/* Second field in pair (if exists) */}
-                  {/* {nextField && (
-                    <div className="flex-1 flex flex-col gap-1 items-start min-w-0">
-                      <Label className="text-xs text-gray-900 font-normal">
-                        {nextField.label}
-                      </Label>
-                      <p className="text-base font-medium text-black wrap-break-word">
-                        {nextField.value || "-"}
-                      </p>
-                    </div>
-                  )} */}
                 </div>
               );
             })}

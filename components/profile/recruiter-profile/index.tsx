@@ -2,7 +2,6 @@
 
 import { Button } from "@/components/ui/button";
 import { Icon } from "@iconify/react";
-import { getCookie } from "cookies-next/client";
 import { useRouter } from "next/navigation";
 
 interface ProfileDetailProps {
@@ -19,22 +18,29 @@ function ProfileDetail({ label, value }: ProfileDetailProps) {
   );
 }
 
-export default function RecruiterProfile() {
+export default function RecruiterProfile({
+  recruiterProfileData,
+}: {
+  recruiterProfileData: {
+    city: string;
+    company_name: string;
+    country: string;
+    country_code: string;
+    email: string;
+    first_name: string;
+    gender: string;
+    is_verified: boolean;
+    job_category: string;
+    last_name: string;
+    mobile_number: string;
+    platform_role: string;
+    preferred_technologies: string[];
+    role: "RECRUITER" | "CANDIDATE";
+  };
+}) {
   const router = useRouter();
 
-  // TODO: Replace with actual data from API
-  const profileData = {
-    firstName: "Darshan",
-    lastName: "Joshi",
-    gender: "Male",
-    companyName: "Techplazza",
-    country: "India",
-    city: "Surat",
-    email: getCookie("user_email") as string,
-    phone: "+91 99999 99999",
-    primaryJobCategory: "Tech",
-    platformRole: "Hiring Manager for a project",
-  };
+  const profileData = recruiterProfileData;
 
   return (
     <div className="bg-white border border-gray-200 rounded-2xl flex flex-col gap-5 w-full max-w-3xl mx-auto mt-4">
@@ -68,33 +74,39 @@ export default function RecruiterProfile() {
       <div className="flex flex-col gap-3 px-3 md:px-4 pb-4">
         {/* Row 1: First Name, Last Name */}
         <div className="flex flex-col md:flex-row gap-2">
-          <ProfileDetail label="First Name" value={profileData.firstName} />
-          <ProfileDetail label="Last Name" value={profileData.lastName} />
+          <ProfileDetail label="First Name" value={profileData?.first_name} />
+          <ProfileDetail label="Last Name" value={profileData?.last_name} />
         </div>
 
         {/* Row 2: Gender, Company name */}
         <div className="flex flex-col md:flex-row gap-2">
-          <ProfileDetail label="Gender" value={profileData.gender} />
-          <ProfileDetail label="Company name" value={profileData.companyName} />
+          <ProfileDetail label="Gender" value={profileData?.gender} />
+          <ProfileDetail
+            label="Company name"
+            value={profileData?.company_name}
+          />
         </div>
 
         {/* Row 3: Country, City */}
         <div className="flex flex-col md:flex-row gap-2">
-          <ProfileDetail label="Country" value={profileData.country} />
-          <ProfileDetail label="City" value={profileData.city} />
+          <ProfileDetail label="Country" value={profileData?.country} />
+          <ProfileDetail label="City" value={profileData?.city} />
         </div>
 
         {/* Row 4: Email ID, Phone Number */}
         <div className="flex flex-col md:flex-row gap-2">
-          <ProfileDetail label="Email ID" value={profileData.email} />
-          <ProfileDetail label="Phone Number" value={profileData.phone} />
+          <ProfileDetail label="Email ID" value={profileData?.email} />
+          <ProfileDetail
+            label="Phone Number"
+            value={`${profileData?.country_code} ${profileData?.mobile_number}`}
+          />
         </div>
 
         {/* Row 5: Primary Job Posting Category */}
         <div className="flex flex-col md:flex-row gap-2">
           <ProfileDetail
             label="Primary Job Posting Category"
-            value={profileData.primaryJobCategory}
+            value={profileData?.job_category}
           />
         </div>
 
@@ -102,7 +114,7 @@ export default function RecruiterProfile() {
         <div className="flex flex-col md:flex-row gap-2">
           <ProfileDetail
             label="Role using this platform primarily"
-            value={profileData.platformRole}
+            value={profileData?.platform_role}
           />
         </div>
       </div>
