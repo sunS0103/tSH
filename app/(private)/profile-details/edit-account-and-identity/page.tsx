@@ -1,6 +1,8 @@
 import Breadcrumbs from "@/components/common/breadcrumbs";
 import EditIdentityAndAccount from "@/components/profile/candidate-profile/edit-identity-and-account";
 
+export const dynamic = "force-dynamic";
+
 export default function Page() {
   const routes = [{ label: "Profile Details", href: "/profile" }];
   return (
