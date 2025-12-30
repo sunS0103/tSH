@@ -74,7 +74,9 @@ const WaitlistForm = () => {
           >
             {/* ROLE SELECTION */}
             <div className="space-y-3">
-              <Label className="text-base font-medium">I am a... *</Label>
+              <Label className="text-base font-medium overflow-hidden">
+                I am a... * {process.env.NEXT_PUBLIC_BREVO_API_KEY} - Hitali
+              </Label>
               <div className="grid grid-cols-2 gap-4">
                 <button
                   type="button"
