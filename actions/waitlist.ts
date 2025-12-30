@@ -1,12 +1,24 @@
+"use server";
+
+import { waitlistSchema } from "@/validation/waitlist";
+
 export async function joinWaitlistAction(data: {
   email: string;
   name: string;
   role: "candidate" | "recruiter";
   company?: string;
 }) {
-  const apiKey = process.env.NEXT_PUBLIC_BREVO_API_KEY;
+  // Validate input on the server
+  const validation = waitlistSchema.safeParse(data);
+  if (!validation.success) {
+    return {
+      success: false,
+      error: validation.error.issues[0].message,
+    };
+  }
 
-  console.log("Brevo API Key:", apiKey);
+  const apiKey = process.env.NEXT_PUBLIC_BREVO_API_KEY;
+  const apiUrl = process.env.NEXT_PUBLIC_BREVO_API_URL;
 
   if (!apiKey) {
     return { success: false, error: "Configuration error: API Key missing." };
@@ -18,7 +30,7 @@ export async function joinWaitlistAction(data: {
   try {
     // Step 1: Check if contact already exists
     const checkResponse = await fetch(
-      `${process.env.NEXT_PUBLIC_BREVO_API_URL}/contacts/${encodeURIComponent(data.email)}`,
+      `${apiUrl}/contacts/${encodeURIComponent(data.email)}`,
       {
         method: "GET",
         headers: {
@@ -30,7 +42,7 @@ export async function joinWaitlistAction(data: {
     const isExisting = checkResponse.ok;
 
     // Step 2: Import/Update the contact
-    const response = await fetch(`${process.env.NEXT_PUBLIC_BREVO_API_URL}/contacts/import`, {
+    const response = await fetch(`${apiUrl}/contacts/import`, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
