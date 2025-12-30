@@ -74,7 +74,7 @@ const JobSearchPreview = () => {
           <h2 className="text-3xl md:text-4xl font-bold mb-4">
             Explore Open Positions
           </h2>
-          <p className="text-text text-lg max-w-2xl mx-auto">
+          <p className="text-subtle text-lg max-w-2xl mx-auto">
             Browse real job opportunities. Sign up to apply and unlock company
             details.
           </p>
@@ -99,7 +99,7 @@ const JobSearchPreview = () => {
                     <h3 className="font-semibold text-lg text-foreground group-hover:text-primary transition-colors">
                       {job.role}
                     </h3>
-                    <p className="text-sm text-text/70 flex items-center gap-1.5 mt-1">
+                    <p className="text-sm text-subtle/70 flex items-center gap-1.5 mt-1">
                       <Lock className="w-3 h-3" />
                       <span className="inline-block w-20 h-3.5 bg-muted-foreground/20 rounded" />
                       <span>{job.company}</span>
@@ -127,7 +127,7 @@ const JobSearchPreview = () => {
                 </div>
 
                 {/* Details */}
-                <div className="grid grid-cols-2 gap-3 mb-5 text-sm text-text">
+                <div className="grid grid-cols-2 gap-3 mb-5 text-sm text-subtle">
                   <div className="flex items-center gap-2">
                     <Briefcase className="w-4 h-4 text-primary/60" />
                     <span>{job.experience}</span>

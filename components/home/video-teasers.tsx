@@ -211,7 +211,7 @@ export default function VideoTeasers() {
           <h2 className="text-3xl md:text-4xl font-bold text-foreground mb-4">
             See the Platform in Action
           </h2>
-          <p className="text-text max-w-xl">
+          <p className="text-subtle max-w-xl">
             Watch how we bridge the gap between talented individuals and the
             world&apos;s leading tech companies.
           </p>
@@ -228,7 +228,7 @@ export default function VideoTeasers() {
               transition={{ delay: index * 0.1 }}
             >
               <VideoCard {...video} />
-              <p className="text-sm text-text text-center font-medium italic mt-4">
+              <p className="text-sm text-subtle text-center font-medium italic mt-4">
                 {video.caption}
               </p>
             </motion.div>

@@ -89,7 +89,7 @@ const TalentPoolPreview = () => {
           <h2 className="text-3xl md:text-4xl font-bold mb-4">
             Browse Pre-Verified Talent
           </h2>
-          <p className="text-text text-lg max-w-2xl mx-auto">
+          <p className="text-subtle text-lg max-w-2xl mx-auto">
             Every candidate is skill-tested. Unlock contact details when you
             find the right match.
           </p>
@@ -118,14 +118,14 @@ const TalentPoolPreview = () => {
                   <div className="flex-1">
                     <div className="flex items-center gap-2">
                       <h3 className="font-semibold text-foreground flex items-center gap-1.5">
-                        <Lock className="w-3 h-3 text-text" />
+                        <Lock className="w-3 h-3 text-subtle" />
                         <span className="inline-block w-20 h-4 bg-muted-foreground/20 rounded" />
                         <span>{candidate.name}</span>
                       </h3>
                     </div>
                     <div className="flex items-center gap-2 mt-1">
-                      <MapPin className="w-3 h-3 text-text" />
-                      <span className="text-sm text-text">
+                      <MapPin className="w-3 h-3 text-subtle" />
+                      <span className="text-sm text-subtle">
                         {candidate.location}
                       </span>
                     </div>
@@ -135,7 +135,7 @@ const TalentPoolPreview = () => {
                       <Star className="w-4 h-4 fill-current" />
                       {candidate.score}
                     </div>
-                    <span className="text-xs text-text">Score</span>
+                    <span className="text-xs text-subtle">Score</span>
                   </div>
                 </div>
 
@@ -161,7 +161,7 @@ const TalentPoolPreview = () => {
                 </div>
 
                 {/* Details */}
-                <div className="flex items-center justify-between text-sm text-text mb-5">
+                <div className="flex items-center justify-between text-sm text-subtle mb-5">
                   <div className="flex items-center gap-2">
                     <Briefcase className="w-4 h-4 text-primary/60" />
                     <span>{candidate.experience}</span>
@@ -174,8 +174,8 @@ const TalentPoolPreview = () => {
 
                 {/* Contact locked badge */}
                 <div className="flex items-center justify-center gap-2 py-2 px-3 rounded-lg bg-muted/50 border border-border/50 mb-4">
-                  <Lock className="w-4 h-4 text-text" />
-                  <span className="text-sm text-text">Contact Locked</span>
+                  <Lock className="w-4 h-4 text-subtle" />
+                  <span className="text-sm text-subtle">Contact Locked</span>
                 </div>
 
                 {/* Unlock button */}

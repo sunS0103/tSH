@@ -71,7 +71,7 @@ export default function TrustStrip() {
                 <feature.icon className="w-6 h-6" />
               </div>
               <h3 className="font-bold text-foreground">{feature.title}</h3>
-              <p className="text-xs text-text">
+              <p className="text-xs text-subtle">
                 {feature.description}
               </p>
             </motion.div>

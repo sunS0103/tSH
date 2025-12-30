@@ -46,7 +46,7 @@ const HeroSection = () => {
             Hire Faster with{" "}
             <span className="gradient-text">Skill-Verified</span>
             <br />
-            <span className="text-text">Candidates</span>
+            <span className="text-subtle">Candidates</span>
           </motion.h1>
 
           {/* Subtext */}
@@ -54,7 +54,7 @@ const HeroSection = () => {
             initial={{ opacity: 0, y: 30 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.6, delay: 0.2 }}
-            className="text-lg md:text-xl text-text max-w-2xl mx-auto mb-10 leading-relaxed"
+            className="text-lg md:text-xl text-subtle max-w-2xl mx-auto mb-10 leading-relaxed"
           >
             Stop screening resumes blindly.
             <br />
@@ -84,7 +84,7 @@ const HeroSection = () => {
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             transition={{ duration: 0.8, delay: 0.5 }}
-            className="mt-16 flex flex-wrap justify-center gap-8 text-sm text-text"
+            className="mt-16 flex flex-wrap justify-center gap-8 text-sm text-subtle"
           >
             <div className="flex items-center gap-2">
               <div className="w-2 h-2 rounded-full bg-primary animate-pulse" />

@@ -11,7 +11,7 @@ export default function HowItWorks() {
           <h2 className="text-3xl md:text-4xl font-bold text-foreground mb-4">
             A Dual-Sided Experience
           </h2>
-          <p className="text-text">
+          <p className="text-subtle">
             Tailored journeys for both sides of the hiring table.
           </p>
         </div>
@@ -140,7 +140,7 @@ function ListItem({
       </div>
       <div>
         <p className="font-semibold text-foreground">{title}</p>
-        <p className="text-sm text-text">{description}</p>
+        <p className="text-sm text-subtle">{description}</p>
       </div>
     </li>
   );

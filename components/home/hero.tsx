@@ -44,7 +44,7 @@ export default function Hero() {
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.5, delay: 0.2 }}
-          className="text-lg md:text-xl text-text mb-12 max-w-2xl mx-auto leading-relaxed"
+          className="text-lg md:text-xl text-subtle mb-12 max-w-2xl mx-auto leading-relaxed"
         >
           Stop guessing with resumes. TechSmartHire connects candidates and
           recruiters using verified skill assessments and AI-driven matching.
@@ -74,7 +74,7 @@ export default function Hero() {
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           transition={{ duration: 0.5, delay: 0.4 }}
-          className="mt-8 text-sm text-text"
+          className="mt-8 text-sm text-subtle"
         >
           Not sure yet? Explore the experiences below. No pressure.
         </motion.p>

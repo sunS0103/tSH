@@ -37,7 +37,7 @@ const Footer = () => {
                 Tech<span className="text-primary">Smart</span>Hire
               </span>
             </Link>
-            <p className="text-text mb-6 max-w-sm">
+            <p className="text-subtle mb-6 max-w-sm">
               The skills-based hiring platform connecting talented candidates
               with top tech companies.
             </p>
@@ -71,7 +71,7 @@ const Footer = () => {
                 <li key={link.label}>
                   <Link
                     href={link.href}
-                    className="text-text hover:text-foreground transition-colors"
+                    className="text-subtle hover:text-foreground transition-colors"
                   >
                     {link.label}
                   </Link>
@@ -87,7 +87,7 @@ const Footer = () => {
                 <li key={link.label}>
                   <a
                     href={link.href}
-                    className="text-text hover:text-foreground transition-colors"
+                    className="text-subtle hover:text-foreground transition-colors"
                   >
                     {link.label}
                   </a>
@@ -103,7 +103,7 @@ const Footer = () => {
                 <li key={link.label}>
                   <a
                     href={link.href}
-                    className="text-text hover:text-foreground transition-colors"
+                    className="text-subtle hover:text-foreground transition-colors"
                   >
                     {link.label}
                   </a>
@@ -115,10 +115,10 @@ const Footer = () => {
 
         {/* Bottom */}
         <div className="mt-16 pt-8 border-t border-border/50 flex flex-col md:flex-row justify-between items-center gap-4">
-          <p className="text-sm text-text">
+          <p className="text-sm text-subtle">
             © 2024 TechSmartHire. All rights reserved.
           </p>
-          <p className="text-sm text-text">
+          <p className="text-sm text-subtle">
             Made with ❤️ for candidates who deserve better
           </p>
         </div>

@@ -63,7 +63,7 @@ const Header = () => {
               className={`text-sm font-medium transition-colors ${
                 pathname === "/"
                   ? "text-primary"
-                  : "text-text hover:text-foreground"
+                  : "text-subtle hover:text-foreground"
               }`}
             >
               Home
@@ -73,7 +73,7 @@ const Header = () => {
               className={`text-sm font-medium transition-colors flex items-center gap-1.5 ${
                 pathname === "/for-candidates"
                   ? "text-primary"
-                  : "text-text hover:text-foreground"
+                  : "text-subtle hover:text-foreground"
               }`}
             >
               <Users className="w-4 h-4" />
@@ -84,7 +84,7 @@ const Header = () => {
               className={`text-sm font-medium transition-colors flex items-center gap-1.5 ${
                 pathname === "/for-recruiters"
                   ? "text-primary"
-                  : "text-text hover:text-foreground"
+                  : "text-subtle hover:text-foreground"
               }`}
             >
               <Briefcase className="w-4 h-4" />
@@ -95,7 +95,7 @@ const Header = () => {
               className={`text-sm font-medium transition-colors flex items-center gap-1.5 ${
                 pathname === "/anticipation"
                   ? "text-primary"
-                  : "text-text hover:text-foreground"
+                  : "text-subtle hover:text-foreground"
               }`}
             >
               <Rocket className="w-4 h-4" />
@@ -135,14 +135,14 @@ const Header = () => {
           <div className="container px-4 py-4 space-y-4">
             <Link
               href="/"
-              className="flex items-center gap-2 text-text hover:text-foreground transition-colors py-2"
+              className="flex items-center gap-2 text-subtle hover:text-foreground transition-colors py-2"
               onClick={() => setIsMobileMenuOpen(false)}
             >
               Home
             </Link>
             <Link
               href="/for-candidates"
-              className="flex items-center gap-2 text-text hover:text-foreground transition-colors py-2"
+              className="flex items-center gap-2 text-subtle hover:text-foreground transition-colors py-2"
               onClick={() => setIsMobileMenuOpen(false)}
             >
               <Users className="w-4 h-4" />
@@ -150,7 +150,7 @@ const Header = () => {
             </Link>
             <Link
               href="/for-recruiters"
-              className="flex items-center gap-2 text-text hover:text-foreground transition-colors py-2"
+              className="flex items-center gap-2 text-subtle hover:text-foreground transition-colors py-2"
               onClick={() => setIsMobileMenuOpen(false)}
             >
               <Briefcase className="w-4 h-4" />

@@ -32,7 +32,7 @@ const WhySection = () => {
             >
               <div className="absolute -left-4 top-0 bottom-0 w-1 bg-linear-to-b from-primary/50 via-accent/50 to-primary/50 rounded-full" />
 
-              <div className="pl-8 space-y-6 text-lg md:text-xl text-text leading-relaxed">
+              <div className="pl-8 space-y-6 text-lg md:text-xl text-subtle leading-relaxed">
                 <p className="text-2xl md:text-3xl font-semibold text-foreground">
                   Hiring today is broken.
                 </p>
@@ -63,7 +63,7 @@ const WhySection = () => {
 
             {/* Skill Scorecard Mockup */}
             <div className="relative">
-              <div className="absolute -top-4 -right-4 text-sm font-medium text-text bg-background/80 px-3 py-1 rounded-full border border-border/50 z-10">
+              <div className="absolute -top-4 -right-4 text-sm font-medium text-subtle bg-background/80 px-3 py-1 rounded-full border border-border/50 z-10">
                 Real Candidate Scorecard
               </div>
               <SkillScorecard />

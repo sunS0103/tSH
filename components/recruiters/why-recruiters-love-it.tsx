@@ -52,7 +52,7 @@ const WhyRecruitersLoveIt = () => {
           <h2 className="text-3xl md:text-4xl font-bold mb-4">
             Recruiting, <span className="gradient-text">Reimagined</span>
           </h2>
-          <p className="text-text text-lg max-w-2xl mx-auto">
+          <p className="text-subtle text-lg max-w-2xl mx-auto">
             Everything you need to find and hire top talent faster than ever
             before.
           </p>
@@ -81,7 +81,7 @@ const WhyRecruitersLoveIt = () => {
                     <h3 className="font-semibold text-lg mb-2 text-foreground group-hover:text-primary transition-colors">
                       {feature.title}
                     </h3>
-                    <p className="text-text leading-relaxed">
+                    <p className="text-subtle leading-relaxed">
                       {feature.description}
                     </p>
                   </div>
@@ -109,7 +109,7 @@ const WhyRecruitersLoveIt = () => {
               <div className="text-3xl md:text-4xl font-bold gradient-text mb-1">
                 {stat.value}
               </div>
-              <div className="text-sm text-text">{stat.label}</div>
+              <div className="text-sm text-subtle">{stat.label}</div>
             </div>
           ))}
         </motion.div>

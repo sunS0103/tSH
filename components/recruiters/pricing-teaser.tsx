@@ -37,7 +37,7 @@ const PricingTeaser = () => {
                 <h2 className="text-3xl md:text-5xl font-bold mb-4">
                   Start <span className="gradient-text">Free.</span>
                 </h2>
-                <p className="text-xl text-text mb-8 max-w-lg mx-auto">
+                <p className="text-xl text-subtle mb-8 max-w-lg mx-auto">
                   Use credits only when you want to contact candidates.
                   <br />
                   No subscription. No hidden fees.
@@ -71,7 +71,7 @@ const PricingTeaser = () => {
                 </Button>
 
                 {/* Trust note */}
-                <p className="text-sm text-text mt-6">
+                <p className="text-sm text-subtle mt-6">
                   Join 500+ companies already hiring smarter
                 </p>
               </div>

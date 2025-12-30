@@ -118,7 +118,7 @@ const CommonVideoSection = ({
           )}
 
           <h2 className="text-3xl md:text-4xl font-bold mb-4">{title}</h2>
-          <p className="text-text text-lg">{subtitle}</p>
+          <p className="text-subtle text-lg">{subtitle}</p>
         </motion.div>
 
         {/* Video container */}
@@ -219,7 +219,7 @@ const CommonVideoSection = ({
             whileInView={{ opacity: 1 }}
             viewport={{ once: true }}
             transition={{ duration: 0.5, delay: 0.4 }}
-            className="text-center text-text mt-6 text-sm"
+            className="text-center text-subtle mt-6 text-sm"
           >
             {caption}
           </motion.p>
