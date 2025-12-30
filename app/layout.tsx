@@ -24,9 +24,9 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body className={`${plusJakartaSans.variable} antialiased`}>
-        <Header />
+        {/* <Header /> */}
         <main>{children}</main>
-        <Footer />
+        {/* <Footer /> */}
         <Toaster richColors position="bottom-right" />
       </body>
     </html>

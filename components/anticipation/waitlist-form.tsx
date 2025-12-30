@@ -3,7 +3,6 @@
 import { useState } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import * as z from "zod";
 import { motion, AnimatePresence } from "framer-motion";
 import { Loader2, CheckCircle2, User, Briefcase } from "lucide-react";
 import { Button } from "@/components/ui/button";
@@ -29,6 +28,7 @@ const WaitlistForm = () => {
       name: "",
       email: "",
       company: "",
+      role: "candidate",
     },
   });
 
