@@ -4,8 +4,6 @@ import { motion } from "framer-motion";
 import { MapPin, Star, Lock, Award, Briefcase, Code2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
-import { useState } from "react";
-import SignupModal from "./signup-modal";
 
 const candidates = [
   {
@@ -77,8 +75,6 @@ const candidates = [
 ];
 
 const TalentPoolPreview = () => {
-  const [showModal, setShowModal] = useState(false);
-
   return (
     <section className="py-24 relative">
       <div className="container mx-auto px-4 md:px-6">
@@ -181,11 +177,7 @@ const TalentPoolPreview = () => {
                 </div>
 
                 {/* Unlock button */}
-                <Button
-                  variant="default"
-                  className="w-full group/btn"
-                  onClick={() => setShowModal(true)}
-                >
+                <Button variant="default" className="w-full group/btn">
                   <Lock className="w-4 h-4 mr-2 group-hover/btn:hidden" />
                   <Code2 className="w-4 h-4 mr-2 hidden group-hover/btn:block" />
                   <span className="group-hover/btn:hidden">
@@ -208,21 +200,11 @@ const TalentPoolPreview = () => {
           transition={{ duration: 0.5, delay: 0.4 }}
           className="text-center mt-10"
         >
-          <Button
-            variant="outline"
-            size="lg"
-            onClick={() => setShowModal(true)}
-          >
+          <Button variant="outline" size="lg">
             Browse 50,000+ Candidates
           </Button>
         </motion.div>
       </div>
-
-      <SignupModal
-        open={showModal}
-        onOpenChange={setShowModal}
-        type="recruiter"
-      />
     </section>
   );
 };

@@ -11,8 +11,6 @@ import {
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
-import { useState } from "react";
-import SignupModal from "./signup-modal";
 
 const jobListings = [
   {
@@ -62,8 +60,6 @@ const jobListings = [
 ];
 
 const JobSearchPreview = () => {
-  const [showModal, setShowModal] = useState(false);
-
   return (
     <section id="job-search" className="py-24 relative">
       <div className="container mx-auto px-4 md:px-6">
@@ -152,11 +148,7 @@ const JobSearchPreview = () => {
                 </div>
 
                 {/* Apply button */}
-                <Button
-                  variant="default"
-                  className="w-full"
-                  onClick={() => setShowModal(true)}
-                >
+                <Button variant="default" className="w-full">
                   <Lock className="w-4 h-4 mr-2" />
                   Apply Now
                 </Button>
@@ -173,17 +165,11 @@ const JobSearchPreview = () => {
           transition={{ duration: 0.5, delay: 0.4 }}
           className="text-center mt-10"
         >
-          <Button
-            variant="outline"
-            size="lg"
-            onClick={() => setShowModal(true)}
-          >
+          <Button variant="outline" size="lg">
             View All Jobs
           </Button>
         </motion.div>
       </div>
-
-      <SignupModal open={showModal} onOpenChange={setShowModal} />
     </section>
   );
 };

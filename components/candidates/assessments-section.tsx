@@ -4,8 +4,6 @@ import { motion } from "framer-motion";
 import { Clock, BarChart3, Users, ChevronRight, Zap } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
-import { useState } from "react";
-import SignupModal from "./signup-modal";
 
 const assessments = [
   {
@@ -83,8 +81,6 @@ const difficultyColors: Record<string, string> = {
 };
 
 const AssessmentsSection = () => {
-  const [showModal, setShowModal] = useState(false);
-
   return (
     <section id="assessments" className="py-24  relative overflow-hidden">
       {/* Background decoration */}
@@ -180,11 +176,7 @@ const AssessmentsSection = () => {
                   </div>
 
                   {/* CTA */}
-                  <Button
-                    variant="outline"
-                    className="w-full group/btn"
-                    onClick={() => setShowModal(true)}
-                  >
+                  <Button variant="outline" className="w-full group/btn">
                     Take Assessment
                     <ChevronRight className="w-4 h-4 transition-transform group-hover/btn:translate-x-1" />
                   </Button>
@@ -194,8 +186,6 @@ const AssessmentsSection = () => {
           ))}
         </div>
       </div>
-
-      <SignupModal open={showModal} onOpenChange={setShowModal} />
     </section>
   );
 };

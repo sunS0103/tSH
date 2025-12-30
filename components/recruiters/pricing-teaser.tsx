@@ -3,12 +3,8 @@
 import { motion } from "framer-motion";
 import { Sparkles, Check, ArrowRight, Zap } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { useState } from "react";
-import SignupModal from "./signup-modal";
 
 const PricingTeaser = () => {
-  const [showModal, setShowModal] = useState(false);
-
   return (
     <section className="py-24 relative overflow-hidden">
       {/* Background decorations */}
@@ -68,11 +64,7 @@ const PricingTeaser = () => {
                 </div>
 
                 {/* CTA */}
-                <Button
-                  size="lg"
-                  onClick={() => setShowModal(true)}
-                  className="group"
-                >
+                <Button size="lg" className="group">
                   <Sparkles className="w-5 h-5" />
                   Create Recruiter Account
                   <ArrowRight className="w-5 h-5 transition-transform group-hover:translate-x-1" />
@@ -87,12 +79,6 @@ const PricingTeaser = () => {
           </div>
         </motion.div>
       </div>
-
-      <SignupModal
-        open={showModal}
-        onOpenChange={setShowModal}
-        type="recruiter"
-      />
     </section>
   );
 };
