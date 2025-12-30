@@ -76,7 +76,7 @@ const candidates = [
 
 const TalentPoolPreview = () => {
   return (
-    <section className="py-24 relative">
+    <section id="talent-pool" className="py-24 relative">
       <div className="container mx-auto px-4 md:px-6">
         {/* Section header */}
         <motion.div

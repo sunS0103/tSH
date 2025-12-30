@@ -6,6 +6,7 @@ import CommonVideoSection from "@/components/common/video-section";
 const VideoSection = () => {
   return (
     <CommonVideoSection
+      id="video-section"
       badge={{
         text: "Product Demo",
         icon: Play,
