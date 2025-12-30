@@ -40,11 +40,13 @@ const WaitlistForm = () => {
 
       if (result.success) {
         if (result.isExisting) {
-          toast.info("You're already subscribed!");
+          toast.info("You’re already subscribed with this email address!");
         } else {
-          toast.success("You're on the list!");
+          toast.success(
+            "Thanks for reaching out! We’ll get back to you shortly!"
+          );
         }
-        reset();
+        reset({ name: "", email: "", company: "", role: currentRole });
         setIsSubmitted(true);
       } else {
         toast.error(result.error || "Subscription Failed");
@@ -75,7 +77,7 @@ const WaitlistForm = () => {
             {/* ROLE SELECTION */}
             <div className="space-y-3">
               <Label className="text-base font-medium overflow-hidden">
-                I am a... * {process.env.NEXT_PUBLIC_BREVO_API_KEY} - Hitali
+                I am a... *
               </Label>
               <div className="grid grid-cols-2 gap-4">
                 <button
