@@ -12,14 +12,12 @@ export const metadata = {
 
 export default function RecruitersPage() {
   return (
-    <div className="min-h-screen bg-primary/10">
-      <main>
-        <HeroSection />
-        <TalentPoolPreview />
-        <VideoSection />
-        <WhyRecruitersLoveIt />
-        <PricingTeaser />
-      </main>
-    </div>
+    <main className="min-h-screen bg-primary/10 w-full">
+      <HeroSection />
+      <TalentPoolPreview />
+      <VideoSection />
+      <WhyRecruitersLoveIt />
+      <PricingTeaser />
+    </main>
   );
 }
