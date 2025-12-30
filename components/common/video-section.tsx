@@ -5,6 +5,7 @@ import { Play, Volume2, VolumeX, LucideIcon } from "lucide-react";
 import { useState, useRef, useEffect, ReactNode } from "react";
 
 interface VideoSectionProps {
+  id?: string;
   title: ReactNode;
   subtitle: string;
   badge?: {
@@ -17,6 +18,7 @@ interface VideoSectionProps {
 }
 
 const CommonVideoSection = ({
+  id,
   title,
   subtitle,
   badge,
@@ -100,7 +102,7 @@ const CommonVideoSection = ({
   };
 
   return (
-    <section className="py-24 relative overflow-hidden bg-white">
+    <section id={id} className="py-24 relative overflow-hidden bg-white">
       <div className="container mx-auto px-4 md:px-6">
         {/* Section header */}
         <motion.div

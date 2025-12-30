@@ -68,12 +68,30 @@ const HeroSection = () => {
             transition={{ duration: 0.6, delay: 0.3 }}
             className="flex flex-col sm:flex-row gap-4 justify-center items-center"
           >
-            <Button size="lg" className="group">
+            <Button
+              size="lg"
+              className="group"
+              onClick={() => {
+                document.getElementById("talent-pool")?.scrollIntoView({
+                  behavior: "smooth",
+                  block: "start",
+                });
+              }}
+            >
               <Users className="w-5 h-5 transition-transform group-hover:scale-110" />
               Search Talent Pool
               <span className="text-xs opacity-70 ml-1">(No signup)</span>
             </Button>
-            <Button variant="outline" size="lg">
+            <Button
+              variant="outline"
+              size="lg"
+              onClick={() => {
+                document.getElementById("video-section")?.scrollIntoView({
+                  behavior: "smooth",
+                  block: "start",
+                });
+              }}
+            >
               <Play className="w-5 h-5" />
               Watch Demo
             </Button>
