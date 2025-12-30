@@ -36,7 +36,7 @@ const FinalCTASection = () => {
           {/* Badge */}
           <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-primary-foreground/10 border border-primary-foreground/20 text-primary-foreground mb-8">
             <Sparkles className="w-4 h-4" />
-            <span className="text-sm font-medium">Join 10,000+ Candidates</span>
+            <span className="text-sm font-medium">Join Candidates</span>
           </div>
 
           {/* Headline */}

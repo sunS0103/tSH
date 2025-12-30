@@ -8,6 +8,8 @@ export async function joinWaitlistAction(data: {
 }) {
   const apiKey = process.env.BREVO_API_KEY;
 
+  console.log("Brevo API Key:", apiKey);
+
   if (!apiKey) {
     return { success: false, error: "Configuration error: API Key missing." };
   }
