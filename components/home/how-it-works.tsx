@@ -1,13 +1,7 @@
 "use client";
 
 import { motion } from "framer-motion";
-import {
-  Activity,
-  Search,
-  Target,
-  CheckCircle2,
-  ArrowRight,
-} from "lucide-react";
+import { Check, ArrowRight } from "lucide-react";
 
 export default function HowItWorks() {
   return (
@@ -17,7 +11,7 @@ export default function HowItWorks() {
           <h2 className="text-3xl md:text-4xl font-bold text-foreground mb-4">
             A Dual-Sided Experience
           </h2>
-          <p className="text-muted-foreground">
+          <p className="text-text">
             Tailored journeys for both sides of the hiring table.
           </p>
         </div>
@@ -40,21 +34,21 @@ export default function HowItWorks() {
               </h3>
               <ul className="space-y-6 mb-10">
                 <ListItem
-                  icon={Activity}
+                  icon={Check}
                   title="Take skill assessments"
                   description="Standardized tests that verify your actual coding and problem-solving abilities."
                   color="text-primary"
                   bgColor="bg-primary/10"
                 />
                 <ListItem
-                  icon={Search}
+                  icon={Check}
                   title="Get discovered"
                   description="Recruiters search for top scorers, not just buzzwords on a PDF."
                   color="text-primary"
                   bgColor="bg-primary/10"
                 />
                 <ListItem
-                  icon={Target}
+                  icon={Check}
                   title="Apply to relevant jobs"
                   description="AI matches you with roles where your skills are the primary requirement."
                   color="text-primary"
@@ -88,21 +82,21 @@ export default function HowItWorks() {
               </h3>
               <ul className="space-y-6 mb-10">
                 <ListItem
-                  icon={Search}
+                  icon={Check}
                   title="Search skill-verified talent"
                   description="Instantly filter for candidates with proven competency in specific technologies."
                   color="text-secondary"
                   bgColor="bg-secondary/10"
                 />
                 <ListItem
-                  icon={Activity}
+                  icon={Check}
                   title="Review score breakdowns"
                   description="See exactly how candidates performed in logic, architecture, and coding efficiency."
                   color="text-secondary"
                   bgColor="bg-secondary/10"
                 />
                 <ListItem
-                  icon={CheckCircle2}
+                  icon={Check}
                   title="Unlock talent profiles"
                   description="Request access to detailed profiles and contact info only when you're ready to hire."
                   color="text-secondary"
@@ -146,7 +140,7 @@ function ListItem({
       </div>
       <div>
         <p className="font-semibold text-foreground">{title}</p>
-        <p className="text-sm text-muted-foreground">{description}</p>
+        <p className="text-sm text-text">{description}</p>
       </div>
     </li>
   );

@@ -88,7 +88,7 @@ const WhoIsItForSection = () => {
                       className="flex items-start gap-3"
                     >
                       <CheckCircle2 className="w-5 h-5 text-primary flex-shrink-0 mt-0.5" />
-                      <span className="text-muted-foreground leading-relaxed">
+                      <span className="text-text leading-relaxed">
                         {benefit}
                       </span>
                     </motion.li>

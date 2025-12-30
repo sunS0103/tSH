@@ -8,7 +8,7 @@ import { Badge } from "@/components/ui/badge";
 const candidates = [
   {
     id: 1,
-    name: "████████ S.",
+    name: "S.",
     avatar: "JS",
     skills: ["React", "TypeScript", "Node.js", "GraphQL"],
     experience: "6 years",
@@ -19,7 +19,7 @@ const candidates = [
   },
   {
     id: 2,
-    name: "████████ K.",
+    name: "K.",
     avatar: "PK",
     skills: ["Python", "Django", "AWS", "PostgreSQL"],
     experience: "5 years",
@@ -30,7 +30,7 @@ const candidates = [
   },
   {
     id: 3,
-    name: "████████ R.",
+    name: "R.",
     avatar: "AR",
     skills: ["Java", "Spring Boot", "Kubernetes", "MongoDB"],
     experience: "8 years",
@@ -41,7 +41,7 @@ const candidates = [
   },
   {
     id: 4,
-    name: "████████ L.",
+    name: "L.",
     avatar: "EL",
     skills: ["Go", "Docker", "CI/CD", "Terraform"],
     experience: "4 years",
@@ -52,7 +52,7 @@ const candidates = [
   },
   {
     id: 5,
-    name: "████████ M.",
+    name: "M.",
     avatar: "SM",
     skills: ["Vue.js", "Nuxt", "Firebase", "TailwindCSS"],
     experience: "3 years",
@@ -63,7 +63,7 @@ const candidates = [
   },
   {
     id: 6,
-    name: "████████ T.",
+    name: "T.",
     avatar: "DT",
     skills: ["Ruby", "Rails", "Redis", "Elasticsearch"],
     experience: "7 years",
@@ -89,7 +89,7 @@ const TalentPoolPreview = () => {
           <h2 className="text-3xl md:text-4xl font-bold mb-4">
             Browse Pre-Verified Talent
           </h2>
-          <p className="text-muted-foreground text-lg max-w-2xl mx-auto">
+          <p className="text-text text-lg max-w-2xl mx-auto">
             Every candidate is skill-tested. Unlock contact details when you
             find the right match.
           </p>
@@ -117,24 +117,25 @@ const TalentPoolPreview = () => {
                   </div>
                   <div className="flex-1">
                     <div className="flex items-center gap-2">
-                      <h3 className="font-semibold text-foreground flex items-center gap-1">
-                        <Lock className="w-3 h-3 text-muted-foreground" />
-                        {candidate.name}
+                      <h3 className="font-semibold text-foreground flex items-center gap-1.5">
+                        <Lock className="w-3 h-3 text-text" />
+                        <span className="inline-block w-20 h-4 bg-muted-foreground/20 rounded" />
+                        <span>{candidate.name}</span>
                       </h3>
                     </div>
                     <div className="flex items-center gap-2 mt-1">
-                      <MapPin className="w-3 h-3 text-muted-foreground" />
-                      <span className="text-sm text-muted-foreground">
+                      <MapPin className="w-3 h-3 text-text" />
+                      <span className="text-sm text-text">
                         {candidate.location}
                       </span>
                     </div>
                   </div>
                   <div className="flex flex-col items-end">
-                    <div className="flex items-center gap-1 text-accent font-bold">
+                    <div className="flex items-center gap-1 text-secondary font-bold">
                       <Star className="w-4 h-4 fill-current" />
                       {candidate.score}
                     </div>
-                    <span className="text-xs text-muted-foreground">Score</span>
+                    <span className="text-xs text-text">Score</span>
                   </div>
                 </div>
 
@@ -144,36 +145,37 @@ const TalentPoolPreview = () => {
                     <Badge
                       key={skill}
                       variant="outline"
-                      className="bg-secondary/50 border-primary/20 text-foreground/80 text-xs"
+                      className="bg-secondary/10 border-primary/20 text-foreground/80 text-xs"
                     >
                       {skill}
                     </Badge>
                   ))}
                   {candidate.skills.length > 3 && (
-                    <Badge variant="secondary" className="text-xs">
+                    <Badge
+                      variant="outline"
+                      className="bg-secondary/10 border-primary/20 text-xs text-primary"
+                    >
                       +{candidate.skills.length - 3}
                     </Badge>
                   )}
                 </div>
 
                 {/* Details */}
-                <div className="flex items-center justify-between text-sm text-muted-foreground mb-5">
+                <div className="flex items-center justify-between text-sm text-text mb-5">
                   <div className="flex items-center gap-2">
                     <Briefcase className="w-4 h-4 text-primary/60" />
                     <span>{candidate.experience}</span>
                   </div>
                   <div className="flex items-center gap-2">
-                    <Award className="w-4 h-4 text-accent/80" />
+                    <Award className="w-4 h-4 text-secondary" />
                     <span>{candidate.availability}</span>
                   </div>
                 </div>
 
                 {/* Contact locked badge */}
                 <div className="flex items-center justify-center gap-2 py-2 px-3 rounded-lg bg-muted/50 border border-border/50 mb-4">
-                  <Lock className="w-4 h-4 text-muted-foreground" />
-                  <span className="text-sm text-muted-foreground">
-                    Contact Locked
-                  </span>
+                  <Lock className="w-4 h-4 text-text" />
+                  <span className="text-sm text-text">Contact Locked</span>
                 </div>
 
                 {/* Unlock button */}
@@ -201,7 +203,7 @@ const TalentPoolPreview = () => {
           className="text-center mt-10"
         >
           <Button variant="outline" size="lg">
-            Browse 50,000+ Candidates
+            Browse Candidates
           </Button>
         </motion.div>
       </div>

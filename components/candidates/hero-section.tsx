@@ -61,7 +61,7 @@ const HeroSection = () => {
               Skills
             </span>
             <br />
-            <span className="text-muted-foreground">— Not Your Resume</span>
+            <span className="text-text">— Not Your Resume</span>
           </motion.h1>
 
           {/* Subtext */}
@@ -69,7 +69,7 @@ const HeroSection = () => {
             initial={{ opacity: 0, y: 30 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.6, delay: 0.2 }}
-            className="text-lg md:text-xl text-muted-foreground max-w-2xl mx-auto mb-10 leading-relaxed"
+            className="text-lg md:text-xl text-text max-w-2xl mx-auto mb-10 leading-relaxed"
           >
             Show what you actually know.
             <br />
@@ -99,7 +99,7 @@ const HeroSection = () => {
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             transition={{ duration: 0.8, delay: 0.5 }}
-            className="mt-16 flex flex-wrap justify-center gap-8 text-sm text-muted-foreground"
+            className="mt-16 flex flex-wrap justify-center gap-8 text-sm text-text"
           >
             {[
               "10,000+ Candidates Hired",

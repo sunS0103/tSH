@@ -35,7 +35,7 @@ const steps = [
     description:
       "Get discovered by top companies actively searching for your skill set.",
     features: ["Auto-matching", "Direct messages", "Interview invites"],
-    color: "from-accent to-green-500",
+    color: "from-green-500 to-green-500",
   },
 ];
 
@@ -59,7 +59,7 @@ const HowItWorksSection = () => {
           <h2 className="text-3xl md:text-4xl font-bold mb-4">
             What Happens After Signup?
           </h2>
-          <p className="text-muted-foreground text-lg max-w-2xl mx-auto">
+          <p className="text-text text-lg max-w-2xl mx-auto">
             Three simple steps to transform your job search experience
           </p>
         </motion.div>
@@ -83,7 +83,7 @@ const HowItWorksSection = () => {
                 {index < steps.length - 1 && (
                   <div className="hidden md:flex absolute -right-4 top-24 z-10">
                     <div className="w-8 h-8 rounded-full bg-card border border-border flex items-center justify-center shadow-sm">
-                      <ArrowRight className="w-4 h-4 text-muted-foreground" />
+                      <ArrowRight className="w-4 h-4 text-text" />
                     </div>
                   </div>
                 )}
@@ -115,7 +115,7 @@ const HowItWorksSection = () => {
 
                     {/* Content */}
                     <h3 className="text-xl font-bold mb-3">{step.title}</h3>
-                    <p className="text-muted-foreground mb-6 leading-relaxed">
+                    <p className="text-text mb-6 leading-relaxed">
                       {step.description}
                     </p>
 
@@ -124,9 +124,9 @@ const HowItWorksSection = () => {
                       {step.features.map((feature, i) => (
                         <li
                           key={i}
-                          className="flex items-center justify-center gap-2 text-sm text-muted-foreground"
+                          className="flex items-center justify-center gap-2 text-sm text-text"
                         >
-                          <CheckCircle2 className="w-4 h-4 text-accent" />
+                          <CheckCircle2 className="w-4 h-4 text-secondary" />
                           <span>{feature}</span>
                         </li>
                       ))}
@@ -137,7 +137,7 @@ const HowItWorksSection = () => {
                 {/* Mobile arrow */}
                 {index < steps.length - 1 && (
                   <div className="flex md:hidden justify-center my-4">
-                    <ArrowRight className="w-6 h-6 text-muted-foreground rotate-90" />
+                    <ArrowRight className="w-6 h-6 text-text rotate-90" />
                   </div>
                 )}
               </motion.div>

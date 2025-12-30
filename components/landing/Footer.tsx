@@ -27,13 +27,13 @@ const Footer = () => {
           {/* Status */}
           <div className="flex items-center gap-2">
             <div className="w-2 h-2 rounded-full bg-accent animate-pulse" />
-            <span className="text-sm text-muted-foreground">
+            <span className="text-sm text-text">
               Launching Soon
             </span>
           </div>
 
           {/* Copyright */}
-          <p className="text-sm text-muted-foreground">
+          <p className="text-sm text-text">
             © {new Date().getFullYear()} TechSmartHire. All rights reserved.
           </p>
         </motion.div>
