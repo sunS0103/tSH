@@ -3,19 +3,39 @@
 import { Icon } from "@iconify/react";
 import Filters from "./filters";
 
+// Common item structure
+interface OptionItem {
+  id: string;
+  value: string;
+}
+
+// Technology wrapper
+interface TechnologyBlock {
+  technology: OptionItem[];
+}
+
+// Skills wrapper
+interface SkillsBlock {
+  skills: OptionItem[];
+}
+
+// Final API response type
+type TechnologySkillsResponse = Array<TechnologyBlock | SkillsBlock>;
 interface FilterSidebarProps {
   selectedFilters: string[];
   onFilterChange: (filters: string[]) => void;
   onRefresh: () => void;
+  filterItem: TechnologySkillsResponse;
 }
 
 export default function FilterSidebar({
   selectedFilters,
   onFilterChange,
   onRefresh,
+  filterItem,
 }: FilterSidebarProps) {
   return (
-    <div className="hidden lg:flex bg-white rounded-3xl shadow-sm sticky max-h-[calc(100vh-100px)] top-20 w-60 flex-col overflow-hidden">
+    <div className="hidden lg:flex bg-white rounded-3xl shadow-sm sticky max-h-[calc(100vh-100px)] top-20 min-w-60 max-w-64 flex-col overflow-hidden">
       <div className="flex items-center justify-between px-4 py-3 border-b border-gray-100 shrink-0">
         <div className="flex items-center gap-2">
           <Icon
@@ -35,10 +55,11 @@ export default function FilterSidebar({
           />
         </button>
       </div>
-      <div className="flex-1 overflow-y-auto">
+      <div className="flex-1 overflow-y-auto overflow-x-hidden">
         <Filters
           selectedFilters={selectedFilters}
           onFilterChange={onFilterChange}
+          filterItem={filterItem}
         />
       </div>
     </div>

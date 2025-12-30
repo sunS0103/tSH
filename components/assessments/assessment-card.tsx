@@ -2,54 +2,49 @@ import Link from "next/link";
 import { Icon } from "@iconify/react";
 
 import { Badge } from "@/components/ui/badge";
-import { cn } from "@/lib/utils";
+import { cn, formatDuration } from "@/lib/utils";
+import { Tooltip, TooltipContent, TooltipTrigger } from "../ui/tooltip";
+
+interface Topics {
+  id: string;
+  value: string;
+}
 
 export interface AssessmentCardProps {
-  icon?: string;
+  slug: string;
   category: string;
   title: string;
-  topics: string[];
-  duration: string;
+  topics: Topics[];
+  duration: number;
   questionCount: number;
   className?: string;
-  link: string;
 }
 
 export default function AssessmentCard({
-  icon,
+  slug,
   category,
   title,
   topics,
   duration,
   questionCount,
   className,
-  link,
 }: AssessmentCardProps) {
   const displayedTopics = topics.slice(0, 2);
   const remainingCount = topics.length - 2;
 
+  const undisplayedTopics = topics.slice(2, topics.length);
+
   return (
     <Link
-      href={link}
+      href={`/assessments/${slug}`}
       aria-label="Start assessment"
       className={cn(
-        "bg-white border border-gray-200 flex flex-col items-start justify-between rounded-2xl w-full group hover:shadow-lg duration-500",
+        "bg-white border border-gray-200 flex flex-col items-start justify-between rounded-2xl w-full group hover:shadow-lg duration-500 min-h-57",
         className
       )}
     >
       <div className="p-3 w-full">
-        <div className="flex items-center justify-between w-full">
-          <div className="bg-gray-100 group-hover:bg-primary-500 transition-colors flex items-center justify-center rounded-lg size-8">
-            {icon ? (
-              <Icon
-                icon={icon}
-                className="size-5 text-black group-hover:text-white transition-colors"
-              />
-            ) : (
-              <></>
-            )}
-          </div>
-
+        <div className="flex items-center justify-end w-full">
           <Badge
             variant="outline"
             className="bg-gray-100 border-none text-black text-xs font-normal px-2 py-1 rounded-full"
@@ -63,30 +58,52 @@ export default function AssessmentCard({
           {title}
         </h3>
 
-        <div className="flex flex-col gap-2 items-start w-full mt-3">
-          <span className="text-black text-xs uppercase font-normal tracking-normal">
-            Topics
-          </span>
-          <div className="flex gap-1 items-center flex-wrap">
-            {displayedTopics.map((topic, index) => (
-              <Badge
-                key={index}
-                variant="outline"
-                className="border-gray-300 text-black text-xs font-normal px-2 py-1 rounded-full"
-              >
-                {topic}
-              </Badge>
-            ))}
-            {remainingCount > 0 && (
-              <Badge
-                variant="outline"
-                className="border-gray-300 text-black text-xs font-normal px-2 py-1 rounded-full"
-              >
-                +{remainingCount}
-              </Badge>
-            )}
+        {topics.length > 0 && (
+          <div className="flex flex-col gap-2 items-start w-full mt-3">
+            <span className="text-black text-xs uppercase font-normal tracking-normal">
+              Topics
+            </span>
+            <div className="flex gap-1 items-center flex-wrap">
+              {displayedTopics.map((topic, index) => (
+                <Badge
+                  key={index}
+                  variant="outline"
+                  className="border-gray-300 text-black text-xs font-normal px-2 py-1 rounded-full"
+                >
+                  {topic.value}
+                </Badge>
+              ))}
+              {remainingCount > 0 && (
+                <Tooltip>
+                  <TooltipTrigger>
+                    <Badge
+                      variant="outline"
+                      className="border-gray-300 text-black text-xs font-normal px-2 py-1 rounded-full"
+                    >
+                      +{remainingCount}
+                    </Badge>
+                  </TooltipTrigger>
+                  <TooltipContent className="max-w-80 bg-white" side="bottom">
+                    {undisplayedTopics.length > 0 && (
+                      <ul>
+                        {undisplayedTopics.map((item) => {
+                          return (
+                            <li
+                              className="text-gray-800 text-xs font-normal whitespace-nowrap list-disc list-inside"
+                              key={item.id}
+                            >
+                              {item.value}
+                            </li>
+                          );
+                        })}
+                      </ul>
+                    )}
+                  </TooltipContent>
+                </Tooltip>
+              )}
+            </div>
           </div>
-        </div>
+        )}
       </div>
 
       <div className="flex flex-col items-start p-3 w-full">
@@ -98,7 +115,7 @@ export default function AssessmentCard({
                 className="size-4 text-primary-700 shrink-0"
               />
               <span className="text-primary-700 text-xs font-normal whitespace-nowrap">
-                {duration}
+                {formatDuration(duration)}
               </span>
             </div>
 

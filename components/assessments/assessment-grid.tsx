@@ -1,13 +1,21 @@
 import AssessmentCard from "./assessment-card";
 
+interface Topics {
+  id: string;
+  value: string;
+}
 interface Assessment {
-  icon: string;
-  category: string;
+  id: string;
   title: string;
-  topics: string[];
-  duration: string;
-  questionCount: number;
-  link?: string;
+  slug: string;
+  category: string;
+  difficultyLevel: "Beginner" | "Intermediate" | "Advanced" | "Not Applicable";
+  duration: number; // seconds
+  totalQuestions: number;
+  status: "PUBLISHED" | "SUBSCRIBED";
+  job_role_id: string;
+  job_role_name: string;
+  topics: Topics[];
 }
 
 interface AssessmentGridProps {
@@ -28,13 +36,12 @@ export default function AssessmentGrid({ assessments }: AssessmentGridProps) {
       {assessments.map((assessment, index) => (
         <AssessmentCard
           key={`${assessment.title}-${index}`}
-          icon={assessment.icon}
           category={assessment.category}
           title={assessment.title}
           topics={assessment.topics}
           duration={assessment.duration}
-          questionCount={assessment.questionCount}
-          link={assessment.link || "/assessment"}
+          questionCount={assessment.totalQuestions}
+          slug={assessment.slug}
         />
       ))}
     </>

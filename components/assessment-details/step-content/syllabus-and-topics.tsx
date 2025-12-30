@@ -6,20 +6,14 @@ import { Icon } from "@iconify/react";
 interface SyllabusAndTopicsProps {
   isConfirmed: boolean;
   onConfirmChange: (isConfirmed: boolean) => void;
+  topics: { id: string; value: string }[];
 }
 
 export default function SyllabusAndTopics({
   isConfirmed,
   onConfirmChange,
+  topics,
 }: SyllabusAndTopicsProps) {
-  const syllabus = [
-    "Core Selenium APIs",
-    "Locator Strategies",
-    "State Management",
-    "Framework Design",
-    "Reporting",
-    "Data Fetching",
-  ];
   return (
     <div className="flex flex-col justify-between h-full">
       <div>
@@ -33,12 +27,12 @@ export default function SyllabusAndTopics({
           </h1>
         </div>
         <div className="grid grid-cols-2 md:grid-cols-3 gap-2">
-          {syllabus.map((item) => (
+          {topics?.map((item) => (
             <div
-              key={item}
+              key={item.id}
               className="text-center bg-primary-50 text-primary-500 text-xs px-4 py-3 rounded-lg"
             >
-              <span>{item}</span>
+              <span>{item.value}</span>
             </div>
           ))}
         </div>
