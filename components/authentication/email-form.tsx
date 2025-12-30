@@ -23,35 +23,15 @@ import { sendOtp, verifyOtp } from "@/api/auth";
 import { toast } from "sonner";
 
 interface EmailFormProps {
-  role: "candidate" | "recruiter";
+  role: "CANDIDATE" | "RECRUITER";
 }
 
-// Regex to block common free email providers for recruiter
-const FREE_EMAIL_DOMAINS =
-  /^[a-zA-Z0-9._%+-]+@(gmail|yahoo|hotmail|outlook|live|msn|aol|icloud|me|mac|protonmail|pm|zoho|yandex|gmx|mail)\.[a-zA-Z]{2,}(\.[a-zA-Z]{2,})?$/i;
-
-// Company email validation - must NOT be a free email provider
-const isCompanyEmail = (email: string) => {
-  return !FREE_EMAIL_DOMAINS.test(email);
-};
-
-const createEmailSchema = (role: "candidate" | "recruiter") => {
+const createEmailSchema = () => {
   return z.object({
     email: z
       .string()
       .min(1, "Email is required")
-      .email("Please enter a valid email address")
-      .refine(
-        (email) => {
-          if (role === "recruiter") {
-            return isCompanyEmail(email);
-          }
-          return true;
-        },
-        {
-          message: "Please use your official company email.",
-        }
-      ),
+      .email("Please enter a valid email address"),
   });
 };
 
@@ -64,7 +44,7 @@ export default function EmailForm({ role }: EmailFormProps) {
   const [timer, setTimer] = useState(59);
   const [canResend, setCanResend] = useState(false);
 
-  const emailSchema = createEmailSchema(role);
+  const emailSchema = createEmailSchema();
 
   const form = useForm<z.infer<typeof emailSchema>>({
     resolver: zodResolver(emailSchema),
@@ -146,12 +126,12 @@ export default function EmailForm({ role }: EmailFormProps) {
 
     const email = form.getValues("email");
 
-    await verifyOtp(email, otp)
+    await verifyOtp(email, otp, role)
       .then((response) => {
         if (response.success) {
           toast.success(response.message || "OTP verified successfully");
-          setCookie("register_email", email);
-          setCookie("register_role", role);
+          setCookie("user_email", email);
+          setCookie("user_role", role);
 
           if (response.is_registered) {
             router.push("/");

@@ -27,14 +27,11 @@ export function proxy(request: NextRequest) {
 
   // Root redirect
   if (pathname === "/") {
-    if (token) {
-      const roles = request.cookies.get("user_roles")?.value;
-      if (roles === "candidate") {
-        return NextResponse.redirect(new URL("/assessments", request.url));
-      } else if (roles === "recruiter") {
-        return NextResponse.redirect(new URL("/jobs", request.url));
-      }
+    const userRole = request.cookies.get("user_role")?.value;
+    if (userRole === "CANDIDATE") {
       return NextResponse.redirect(new URL("/assessments", request.url));
+    } else if (userRole === "RECRUITER") {
+      return NextResponse.redirect(new URL("/profile", request.url));
     }
     return NextResponse.next();
   }
@@ -46,7 +43,7 @@ export function proxy(request: NextRequest) {
 
   // Prevent logged-in user accessing auth
   if (token && pathname.startsWith("/authentication")) {
-    return NextResponse.redirect(new URL("/assessments", request.url));
+    return NextResponse.redirect(new URL("/", request.url));
   }
 
   // Protect private routes

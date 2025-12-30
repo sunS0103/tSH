@@ -12,8 +12,16 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from "./ui/dropdown-menu";
-import { deleteCookie } from "cookies-next/client";
+import {
+  deleteCookie,
+  getCookie,
+  getCookies,
+  setCookie,
+} from "cookies-next/client";
 import { toast } from "sonner";
+import { getCandidateProfile, getRecruiterProfile } from "@/api/profile";
+import { useEffect, useState } from "react";
+import { Dialog, DialogContent, DialogTrigger } from "./ui/dialog";
 
 interface NavItem {
   label: string;
@@ -55,6 +63,27 @@ function shouldShowBottomNav(pathname: string | null): boolean {
 export default function Header() {
   const pathname = usePathname();
   const router = useRouter();
+  const role = getCookie("user_role");
+  const [userDetails, setUserDetails] = useState();
+
+  useEffect(() => {
+    // Only call getUserDetails if role is present
+    const fetchUserDetails = async () => {
+      if (role === "CANDIDATE") {
+        await getCandidateProfile().then((res) => {
+          setUserDetails(res.data);
+          setCookie("profile_data", JSON.stringify(res.data));
+        });
+      }
+      if (role === "RECRUITER") {
+        await getRecruiterProfile().then((res) => {
+          setUserDetails(res.data);
+          setCookie("profile_data", JSON.stringify(res.data));
+        });
+      }
+    };
+    fetchUserDetails();
+  }, [role]);
 
   if (shouldHideHeader(pathname)) {
     return null;
@@ -135,35 +164,7 @@ export default function Header() {
               />
             </Button>
 
-            <DropdownMenu>
-              <DropdownMenuTrigger asChild>
-                <button
-                  type="button"
-                  aria-label="User account menu"
-                  className="focus:outline-none focus:ring-2 focus:ring-primary-500 focus:ring-offset-2 rounded-full"
-                >
-                  <Avatar className="border border-primary size-8">
-                    <AvatarFallback className="bg-primary-50 text-primary text-sm font-semibold">
-                      TA
-                    </AvatarFallback>
-                  </Avatar>
-                </button>
-              </DropdownMenuTrigger>
-              <DropdownMenuContent>
-                <DropdownMenuItem
-                  className="cursor-pointer"
-                  onClick={() => {
-                    deleteCookie("token");
-                    deleteCookie("user_email");
-                    deleteCookie("user_roles");
-                    toast.success("Logged out successfully");
-                    router.refresh();
-                  }}
-                >
-                  Logout
-                </DropdownMenuItem>
-              </DropdownMenuContent>
-            </DropdownMenu>
+            <Logout data={userDetails} />
           </div>
         </div>
       </header>
@@ -213,5 +214,179 @@ export default function Header() {
         </nav>
       )}
     </>
+  );
+}
+
+function Logout({
+  data,
+}: {
+  data?: {
+    account_type: string;
+    country_code: string;
+    date_of_birth: number;
+    email: string;
+    first_name: string;
+    gender: string;
+    last_name: string;
+    mobile_number: string;
+  };
+}) {
+  const router = useRouter();
+
+  const [open, setOpen] = useState<boolean>(false);
+
+  return (
+    <>
+      <DropdownMenu>
+        <DropdownMenuTrigger asChild>
+          <button
+            type="button"
+            aria-label="User account menu"
+            className="focus:outline-none focus:ring-2 focus:ring-primary-500 focus:ring-offset-2 rounded-full"
+          >
+            <Avatar className="border border-primary size-8">
+              <AvatarFallback className="bg-primary-50 text-primary text-sm font-semibold">
+                {data && data.first_name && data.last_name ? (
+                  `${data.first_name.charAt(0).toUpperCase()}${data.last_name
+                    .charAt(0)
+                    .toUpperCase()}`
+                ) : (
+                  <Icon
+                    icon="material-symbols:person-outline-rounded"
+                    className="size-4 text-inherit!"
+                  />
+                )}
+              </AvatarFallback>
+            </Avatar>
+          </button>
+        </DropdownMenuTrigger>
+        <DropdownMenuContent className="p-0 divide-y divide-gray-200">
+          <DropdownMenuItem
+            className="cursor-pointer rounded-b-none"
+            onClick={() => {
+              router.push("/profile");
+            }}
+          >
+            <Icon
+              icon="material-symbols:person-outline-rounded"
+              className="size-4 text-inherit!"
+            />
+            My Profile
+          </DropdownMenuItem>
+          <DropdownMenuItem
+            className="cursor-pointer rounded-b-none"
+            onClick={() => {
+              router.push("/settings");
+            }}
+          >
+            <Icon
+              icon="material-symbols:settings-outline-rounded"
+              className="size-4 text-inherit!"
+            />
+            Settings
+          </DropdownMenuItem>
+          <DropdownMenuItem
+            className="cursor-pointer text-red-500 hover:text-red-500!"
+            onSelect={(e) => {
+              e.preventDefault();
+              setOpen(true);
+            }}
+          >
+            <div className="flex gap-2 items-center cursor-pointer text-red-500 hover:text-red-500!">
+              <Icon
+                icon="material-symbols:logout-rounded"
+                className="size-4 text-inherit!"
+              />
+              Logout
+            </div>
+          </DropdownMenuItem>
+        </DropdownMenuContent>
+      </DropdownMenu>
+
+      <Dialog open={open} onOpenChange={setOpen}>
+        <DialogContent className="p-6 max-w-100!">
+          <>
+            <div className="flex flex-col items-center gap-2">
+              <h6 className="text-base md:text-lg font-semibold">
+                Are you sure?
+              </h6>
+              <p className="text-gray-700 text-xs text-center">
+                You’re about to log out of your account. Any unsaved changes
+                <br />
+                may be lost. Do you still want to continue?
+              </p>
+            </div>
+
+            <div className="flex justify-end w-full items-center gap-3">
+              <Button
+                variant="secondary"
+                onClick={() => {
+                  setOpen(false);
+                }}
+              >
+                Go Back
+              </Button>
+
+              <Button
+                onClick={() => {
+                  const cookies = getCookies?.();
+                  if (
+                    cookies &&
+                    typeof cookies === "object" &&
+                    cookies !== null
+                  ) {
+                    Object.keys(cookies).forEach((key: string) => {
+                      deleteCookie(key);
+                    });
+                  }
+                  toast.success("Logged out successfully");
+                  router.refresh();
+                }}
+              >
+                Logout
+              </Button>
+            </div>
+          </>
+        </DialogContent>
+      </Dialog>
+    </>
+  );
+}
+
+function logoutDialog() {
+  return (
+    <Dialog>
+      <DialogTrigger asChild>
+        <div
+          className="flex gap-2 items-center cursor-pointer text-red-500 hover:text-red-500!"
+          onClick={() => {
+            //   const cookies = getCookies?.();
+            //   if (cookies && typeof cookies === "object" && cookies !== null) {
+            //     Object.keys(cookies).forEach((key: string) => {
+            //       deleteCookie(key);
+            //     });
+            //   }
+            //   toast.success("Logged out successfully");
+            //   router.refresh();
+          }}
+        >
+          <Icon
+            icon="material-symbols:logout-rounded"
+            className="size-4 text-inherit!"
+          />
+          Logout
+        </div>
+      </DialogTrigger>
+      <DialogContent className="px-0 py-6 ">
+        <div className="flex flex-col items-center gap-2">
+          <h6 className="text-base md:text-lg font-semibold">Are you sure?</h6>
+          <p className="text-gray-700 text-xs text-center">
+            You’re about to log out of your account. Any unsaved changes
+            <br />
+            may be lost. Do you still want to continue?
+          </p>
+        </div>
+      </DialogContent>
+    </Dialog>
   );
 }

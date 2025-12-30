@@ -10,8 +10,8 @@ const plusJakartaSans = Plus_Jakarta_Sans({
 });
 
 export const metadata: Metadata = {
-  title: "TechSmartHire",
-  description: "",
+  title: "Tech Smart Hire",
+  description: "Tech Smart Hire",
 };
 
 export default function RootLayout({
