@@ -1,12 +1,10 @@
-"use server";
-
 export async function joinWaitlistAction(data: {
   email: string;
   name: string;
   role: "candidate" | "recruiter";
   company?: string;
 }) {
-  const apiKey = process.env.BREVO_API_KEY;
+  const apiKey = process.env.NEXT_PUBLIC_BREVO_API_KEY;
 
   console.log("Brevo API Key:", apiKey);
 
@@ -20,7 +18,7 @@ export async function joinWaitlistAction(data: {
   try {
     // Step 1: Check if contact already exists
     const checkResponse = await fetch(
-      `https://api.brevo.com/v3/contacts/${encodeURIComponent(data.email)}`,
+      `${process.env.NEXT_PUBLIC_BREVO_API_URL}/contacts/${encodeURIComponent(data.email)}`,
       {
         method: "GET",
         headers: {
@@ -32,7 +30,7 @@ export async function joinWaitlistAction(data: {
     const isExisting = checkResponse.ok;
 
     // Step 2: Import/Update the contact
-    const response = await fetch("https://api.brevo.com/v3/contacts/import", {
+    const response = await fetch(`${process.env.NEXT_PUBLIC_BREVO_API_URL}/contacts/import`, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
