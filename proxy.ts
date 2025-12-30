@@ -6,6 +6,9 @@ const publicRoutes = [
   "/favicon.ico",
   "/auth.png",
   "/Logo.svg",
+  "/anticipation",
+  "/for-candidates",
+  "/for-recruiters",
 ];
 
 export function proxy(request: NextRequest) {
@@ -30,7 +33,7 @@ export function proxy(request: NextRequest) {
     } else if (userRole === "RECRUITER") {
       return NextResponse.redirect(new URL("/profile", request.url));
     }
-    return NextResponse.redirect(new URL("/assessments", request.url));
+    return NextResponse.next();
   }
 
   // Allow public routes without token
