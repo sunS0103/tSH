@@ -55,7 +55,7 @@ const HeroSection = () => {
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.4, duration: 0.6 }}
-            className="text-lg md:text-xl text-subtle max-w-3xl mx-auto mb-4 leading-relaxed"
+            className="text-lg md:text-xl text-subtle font-medium max-w-3xl mx-auto mb-4 leading-relaxed"
           >
             <p className="mb-4">
               TechSmartHire is a new hiring platform that connects candidates
