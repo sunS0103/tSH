@@ -3,7 +3,7 @@ import { z } from "zod";
 export const waitlistSchema = z
   .object({
     role: z.enum(["candidate", "recruiter"], {
-      required_error: "Please select your role",
+      message: "Please select your role",
     }),
     name: z.string().min(2, "Name must be at least 2 characters"),
     email: z.string().email("Please enter a valid email address"),
