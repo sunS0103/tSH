@@ -11,8 +11,6 @@ import {
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
-import { useState } from "react";
-import SignupModal from "./signup-modal";
 
 const jobListings = [
   {
@@ -22,7 +20,7 @@ const jobListings = [
     experience: "5+ years",
     location: "Remote",
     salary: "$120k - $160k",
-    company: "████████ Inc.",
+    company: "Inc.",
     posted: "2 days ago",
     applicants: 45,
   },
@@ -33,7 +31,7 @@ const jobListings = [
     experience: "3-5 years",
     location: "San Francisco, CA",
     salary: "$140k - $180k",
-    company: "████████ Labs",
+    company: "Labs",
     posted: "1 day ago",
     applicants: 32,
   },
@@ -44,7 +42,7 @@ const jobListings = [
     experience: "4+ years",
     location: "New York, NY",
     salary: "$130k - $170k",
-    company: "████████ Tech",
+    company: "Tech",
     posted: "3 days ago",
     applicants: 58,
   },
@@ -55,15 +53,13 @@ const jobListings = [
     experience: "3+ years",
     location: "Remote",
     salary: "$125k - $155k",
-    company: "████████ Cloud",
+    company: "Cloud",
     posted: "5 hours ago",
     applicants: 21,
   },
 ];
 
 const JobSearchPreview = () => {
-  const [showModal, setShowModal] = useState(false);
-
   return (
     <section id="job-search" className="py-24 relative">
       <div className="container mx-auto px-4 md:px-6">
@@ -78,7 +74,7 @@ const JobSearchPreview = () => {
           <h2 className="text-3xl md:text-4xl font-bold mb-4">
             Explore Open Positions
           </h2>
-          <p className="text-muted-foreground text-lg max-w-2xl mx-auto">
+          <p className="text-subtle text-lg max-w-2xl mx-auto">
             Browse real job opportunities. Sign up to apply and unlock company
             details.
           </p>
@@ -103,9 +99,10 @@ const JobSearchPreview = () => {
                     <h3 className="font-semibold text-lg text-foreground group-hover:text-primary transition-colors">
                       {job.role}
                     </h3>
-                    <p className="text-sm text-muted-foreground/70 flex items-center gap-1 mt-1">
+                    <p className="text-sm text-subtle/70 flex items-center gap-1.5 mt-1">
                       <Lock className="w-3 h-3" />
-                      {job.company}
+                      <span className="inline-block w-20 h-3.5 bg-muted-foreground/20 rounded" />
+                      <span>{job.company}</span>
                     </p>
                   </div>
                   <Badge
@@ -130,7 +127,7 @@ const JobSearchPreview = () => {
                 </div>
 
                 {/* Details */}
-                <div className="grid grid-cols-2 gap-3 mb-5 text-sm text-muted-foreground">
+                <div className="grid grid-cols-2 gap-3 mb-5 text-sm text-subtle">
                   <div className="flex items-center gap-2">
                     <Briefcase className="w-4 h-4 text-primary/60" />
                     <span>{job.experience}</span>
@@ -140,8 +137,8 @@ const JobSearchPreview = () => {
                     <span>{job.location}</span>
                   </div>
                   <div className="flex items-center gap-2">
-                    <DollarSign className="w-4 h-4 text-accent/80" />
-                    <span className="text-accent font-medium">
+                    <DollarSign className="w-4 h-4 text-secondary/80" />
+                    <span className="text-secondary font-medium">
                       {job.salary}
                     </span>
                   </div>
@@ -152,11 +149,7 @@ const JobSearchPreview = () => {
                 </div>
 
                 {/* Apply button */}
-                <Button
-                  variant="default"
-                  className="w-full"
-                  onClick={() => setShowModal(true)}
-                >
+                <Button variant="default" className="w-full">
                   <Lock className="w-4 h-4 mr-2" />
                   Apply Now
                 </Button>
@@ -173,17 +166,11 @@ const JobSearchPreview = () => {
           transition={{ duration: 0.5, delay: 0.4 }}
           className="text-center mt-10"
         >
-          <Button
-            variant="outline"
-            size="lg"
-            onClick={() => setShowModal(true)}
-          >
+          <Button variant="outline" size="lg">
             View All Jobs
           </Button>
         </motion.div>
       </div>
-
-      <SignupModal open={showModal} onOpenChange={setShowModal} />
     </section>
   );
 };

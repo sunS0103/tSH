@@ -55,7 +55,7 @@ const HeroSection = () => {
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.4, duration: 0.6 }}
-            className="text-lg md:text-xl text-muted-foreground max-w-3xl mx-auto mb-4 leading-relaxed"
+            className="text-lg md:text-xl text-subtle max-w-3xl mx-auto mb-4 leading-relaxed"
           >
             <p className="mb-4">
               TechSmartHire is a new hiring platform that connects candidates
@@ -84,7 +84,7 @@ const HeroSection = () => {
               Join the Early Access List
               <ArrowDown className="ml-2 w-5 h-5 group-hover:translate-y-1 transition-transform" />
             </Button>
-            <p className="text-sm text-muted-foreground">
+            <p className="text-sm text-subtle">
               No spam. Early users get priority access.
             </p>
           </motion.div>

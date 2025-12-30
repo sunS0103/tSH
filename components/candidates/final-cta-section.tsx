@@ -3,12 +3,8 @@
 import { motion } from "framer-motion";
 import { ArrowRight, Sparkles, Shield, Zap } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { useState } from "react";
-import SignupModal from "./signup-modal";
 
 const FinalCTASection = () => {
-  const [showModal, setShowModal] = useState(false);
-
   return (
     <section className="py-24 relative overflow-hidden">
       {/* Background */}
@@ -62,7 +58,6 @@ const FinalCTASection = () => {
               variant="default"
               size="lg"
               className="group text-lg bg-accent text-accent-foreground hover:bg-accent/90"
-              onClick={() => setShowModal(true)}
             >
               Create Free Candidate Account
               <ArrowRight className="w-5 h-5 transition-transform group-hover:translate-x-1" />
@@ -86,8 +81,6 @@ const FinalCTASection = () => {
           </div>
         </motion.div>
       </div>
-
-      <SignupModal open={showModal} onOpenChange={setShowModal} />
     </section>
   );
 };

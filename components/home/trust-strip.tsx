@@ -1,7 +1,24 @@
 "use client";
 
 import { motion } from "framer-motion";
-import { CheckCircle2, Cpu, ShieldCheck, Users } from "lucide-react";
+import { CheckCircle2, Zap, Users } from "lucide-react";
+
+// Custom icon for No Spam
+const NoSpamIcon = ({ className }: { className?: string }) => (
+  <svg
+    className={className}
+    fill="none"
+    stroke="currentColor"
+    viewBox="0 0 24 24"
+  >
+    <path
+      strokeLinecap="round"
+      strokeLinejoin="round"
+      strokeWidth="2"
+      d="M18.364 18.364A9 9 0 005.636 5.636m12.728 12.728L5.636 5.636"
+    />
+  </svg>
+);
 
 export default function TrustStrip() {
   const features = [
@@ -13,14 +30,14 @@ export default function TrustStrip() {
       bgColor: "bg-primary/10",
     },
     {
-      icon: Cpu,
+      icon: Zap,
       title: "AI-Based Matching",
       description: "Perfect role fit",
       color: "text-secondary",
       bgColor: "bg-secondary/10",
     },
     {
-      icon: ShieldCheck,
+      icon: NoSpamIcon,
       title: "No Spam",
       description: "Curated applications",
       color: "text-orange-500",
@@ -54,7 +71,7 @@ export default function TrustStrip() {
                 <feature.icon className="w-6 h-6" />
               </div>
               <h3 className="font-bold text-foreground">{feature.title}</h3>
-              <p className="text-xs text-muted-foreground">
+              <p className="text-xs text-subtle">
                 {feature.description}
               </p>
             </motion.div>

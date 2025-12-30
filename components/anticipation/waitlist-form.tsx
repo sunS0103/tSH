@@ -62,7 +62,7 @@ const WaitlistForm = () => {
           <h2 className="text-3xl md:text-4xl lg:text-5xl font-bold mb-4">
             Get <span className="text-primary">Early Access</span>
           </h2>
-          <p className="text-lg text-muted-foreground max-w-xl mx-auto">
+          <p className="text-lg text-subtle max-w-xl mx-auto">
             Be among the first to experience skill-based hiring.
           </p>
         </div>
@@ -91,7 +91,7 @@ const WaitlistForm = () => {
                     className={`w-6 h-6 ${
                       currentRole === "candidate"
                         ? "text-primary"
-                        : "text-muted-foreground"
+                        : "text-subtle"
                     }`}
                   />
                   <span
@@ -119,7 +119,7 @@ const WaitlistForm = () => {
                     className={`w-6 h-6 ${
                       currentRole === "recruiter"
                         ? "text-primary"
-                        : "text-muted-foreground"
+                        : "text-subtle"
                     }`}
                   />
                   <span
