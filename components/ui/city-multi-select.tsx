@@ -1,6 +1,6 @@
 "use client";
 
-import { getCities } from "@/api/seeder";
+import { getCities, getCityById } from "@/api/seeder";
 import {
   Popover,
   PopoverContent,
@@ -44,8 +44,15 @@ export function CityMultiSelect({
   const scrollContainerRef = useRef<HTMLDivElement>(null);
   const debounceTimerRef = useRef<NodeJS.Timeout | null>(null);
   const loadedPagesRef = useRef<Set<number>>(new Set());
+  const selectedCitiesCacheRef = useRef<City[]>([]);
 
-  const selectedCities = cities.filter((c) => value.includes(c.id));
+  // Get selected cities from both loaded cities and cache
+  const selectedCities = [
+    ...cities.filter((c) => value.includes(c.id)),
+    ...selectedCitiesCacheRef.current.filter(
+      (c) => value.includes(c.id) && !cities.some((city) => city.id === c.id)
+    ),
+  ];
 
   const loadCities = async (pageNum: number, query?: string) => {
     if (pageNum === 1 && query !== searchQuery) {
@@ -64,12 +71,41 @@ export function CityMultiSelect({
         : response?.data || response?.cities || [];
 
       if (pageNum === 1) {
-        setCities(citiesData);
+        // Merge with selected cities from cache, avoiding duplicates
+        setCities((prev) => {
+          const existingIds = new Set(prev.map((c) => c.id));
+          const newCities = citiesData.filter(
+            (c: City) => !existingIds.has(c.id)
+          );
+          // Sort: selected cities first, then others
+          const allCities = [...prev, ...newCities];
+          return allCities.sort((a, b) => {
+            const aSelected = value.includes(a.id);
+            const bSelected = value.includes(b.id);
+            if (aSelected && !bSelected) return -1;
+            if (!aSelected && bSelected) return 1;
+            return 0;
+          });
+        });
         setSearchQuery(query || "");
         loadedPagesRef.current.clear();
         loadedPagesRef.current.add(1);
       } else {
-        setCities((prev) => [...prev, ...citiesData]);
+        setCities((prev) => {
+          const existingIds = new Set(prev.map((c) => c.id));
+          const newCities = citiesData.filter(
+            (c: City) => !existingIds.has(c.id)
+          );
+          // Sort: selected cities first
+          const allCities = [...prev, ...newCities];
+          return allCities.sort((a, b) => {
+            const aSelected = value.includes(a.id);
+            const bSelected = value.includes(b.id);
+            if (aSelected && !bSelected) return -1;
+            if (!aSelected && bSelected) return 1;
+            return 0;
+          });
+        });
         loadedPagesRef.current.add(pageNum);
       }
 
@@ -90,16 +126,20 @@ export function CityMultiSelect({
     }
   };
 
-  const handleSearch = (value: string) => {
-    setSearchQuery(value);
+  const handleSearch = (searchValue: string) => {
+    setSearchQuery(searchValue);
     if (debounceTimerRef.current) {
       clearTimeout(debounceTimerRef.current);
     }
     debounceTimerRef.current = setTimeout(() => {
       loadedPagesRef.current.clear();
       setPage(1);
-      setCities([]);
-      const query = value.trim() || undefined;
+      // Preserve selected cities when searching
+      const selectedCitiesToPreserve = selectedCitiesCacheRef.current.filter(
+        (c) => value.includes(c.id)
+      );
+      setCities(selectedCitiesToPreserve);
+      const query = searchValue.trim() || undefined;
       loadCities(1, query);
     }, 500);
   };
@@ -125,6 +165,11 @@ export function CityMultiSelect({
     if (isSelected) {
       onValueChange(currentValue.filter((id) => id !== cityId));
     } else {
+      // Add to cache if not already there
+      const city = cities.find((c) => c.id === cityId);
+      if (city && !selectedCitiesCacheRef.current.some((c) => c.id === cityId)) {
+        selectedCitiesCacheRef.current.push(city);
+      }
       onValueChange([...currentValue, cityId]);
     }
   };
@@ -134,12 +179,67 @@ export function CityMultiSelect({
     return selectedCities.map((city) => city.name).join(", ");
   };
 
-  // Initialize cities when dropdown opens
+  // Load selected cities on mount and when value changes to display in label
   useEffect(() => {
-    if (open && cities.length === 0 && !loading) {
+    if (value && value.length > 0) {
+      // Find which cities are missing from cache
+      const missingCityIds = value.filter(
+        (cityId) => !selectedCitiesCacheRef.current.some((c) => c.id === cityId)
+      );
+
+      if (missingCityIds.length > 0) {
+        // Load missing cities by ID
+        const loadSelectedCities = async () => {
+          const cityPromises = missingCityIds.map((cityId) =>
+            getCityById(cityId.toString())
+              .then((response) => {
+                const cityData = response?.data || response?.city || response;
+                if (cityData) {
+                  return {
+                    id: cityData.id || cityData.city_id || cityId,
+                    name: cityData.name || cityData.city_name || cityData.city || "Unknown City",
+                  };
+                }
+                return null;
+              })
+              .catch(() => null)
+          );
+
+          const loadedCities = (await Promise.all(cityPromises)).filter(
+            (city): city is City => city !== null
+          );
+          // Add to cache
+          selectedCitiesCacheRef.current = [
+            ...selectedCitiesCacheRef.current,
+            ...loadedCities,
+          ];
+        };
+        loadSelectedCities();
+      }
+
+      // Remove cities from cache that are no longer selected
+      selectedCitiesCacheRef.current = selectedCitiesCacheRef.current.filter(
+        (c) => value.includes(c.id)
+      );
+    } else {
+      // No value, clear cache
+      selectedCitiesCacheRef.current = [];
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [value]);
+
+  // Always refresh cities when dropdown opens
+  useEffect(() => {
+    if (open && !loading) {
       loadedPagesRef.current.clear();
       setPage(1);
       setSearchQuery("");
+      // Preserve selected cities from cache
+      const selectedCitiesToPreserve = selectedCitiesCacheRef.current.filter(
+        (c) => value.includes(c.id)
+      );
+      setCities(selectedCitiesToPreserve);
+      // Always load fresh data
       loadCities(1);
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps

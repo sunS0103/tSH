@@ -11,16 +11,36 @@ import {
 import { Button } from "../ui/button";
 import Filters from "./filters";
 
+interface OptionItem {
+  id: string;
+  value: string;
+}
+
+// Technology wrapper
+interface TechnologyBlock {
+  technology: OptionItem[];
+}
+
+// Skills wrapper
+interface SkillsBlock {
+  skills: OptionItem[];
+}
+
+// Final API response type
+type TechnologySkillsResponse = Array<TechnologyBlock | SkillsBlock>;
+
 interface FilterSheetProps {
   selectedFilters: string[];
   onFilterChange: (filters: string[]) => void;
   onRefresh: () => void;
+  filterItem: TechnologySkillsResponse;
 }
 
 export default function FilterSheet({
   selectedFilters,
   onFilterChange,
   onRefresh,
+  filterItem,
 }: FilterSheetProps) {
   return (
     <Sheet>
@@ -60,10 +80,13 @@ export default function FilterSheet({
             </Button>
           </SheetTitle>
         </SheetHeader>
-        <Filters
-          selectedFilters={selectedFilters}
-          onFilterChange={onFilterChange}
-        />
+        <div className="h-[calc(100dvh-80px)] overflow-auto">
+          <Filters
+            selectedFilters={selectedFilters}
+            onFilterChange={onFilterChange}
+            filterItem={filterItem}
+          />
+        </div>
       </SheetContent>
     </Sheet>
   );

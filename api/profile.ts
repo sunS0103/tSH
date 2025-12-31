@@ -35,7 +35,7 @@ export const updateCandidateProfile = async (data: {
   mobile_number: string;
   date_of_birth: number;
   account_type: string;
-  country_code: string;
+  dial_code: string;
   country: string;
   role: string;
 }) => {

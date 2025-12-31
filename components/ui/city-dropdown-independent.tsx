@@ -1,6 +1,6 @@
 "use client";
 
-import { getCities } from "@/api/seeder";
+import { getCities, getCityById } from "@/api/seeder";
 import {
   Popover,
   PopoverContent,
@@ -42,6 +42,7 @@ export function CityDropdownIndependent({
   const scrollContainerRef = useRef<HTMLDivElement>(null);
   const debounceTimerRef = useRef<NodeJS.Timeout | null>(null);
   const loadedPagesRef = useRef<Set<number>>(new Set());
+  const defaultCityLoadedRef = useRef<boolean>(false);
 
   const selectedCity = cities.find((c) => c.id === value);
 
@@ -61,7 +62,14 @@ export function CityDropdownIndependent({
         : response?.data || response?.cities || [];
 
       if (pageNum === 1) {
-        setCities(citiesData);
+        // Merge with preserved selected city if it exists
+        setCities((prev) => {
+          const existingIds = new Set(prev.map((c) => c.id));
+          const newCities = citiesData.filter(
+            (c: City) => !existingIds.has(c.id)
+          );
+          return [...prev, ...newCities];
+        });
         setSearchQuery(query || "");
         loadedPagesRef.current.clear();
         loadedPagesRef.current.add(1);
@@ -122,13 +130,123 @@ export function CityDropdownIndependent({
     setSearchQuery("");
   };
 
-  // Initialize cities when dropdown opens
+  // Load default city if value is provided on mount or when value changes
   useEffect(() => {
-    if (open && cities.length === 0 && !loading) {
-      loadedPagesRef.current.clear();
-      setPage(1);
-      setSearchQuery("");
-      loadCities(1);
+    // Reset ref if value changes to 0 or undefined
+    if (!value || value === 0) {
+      defaultCityLoadedRef.current = false;
+      return;
+    }
+
+    if (value > 0) {
+      // Check if the city is already in the list
+      const cityExists = cities.some((c) => c.id === value);
+      
+      // Only load if city doesn't exist and we haven't already loaded it for this value
+      const shouldLoad = !cityExists && 
+                        !loading && 
+                        (defaultCityLoadedRef.current !== value);
+      
+      if (shouldLoad) {
+        defaultCityLoadedRef.current = value;
+        // Fetch the specific city by ID to display it
+        getCityById(value.toString())
+          .then((response) => {
+            // Handle different response formats - try multiple possible structures
+            const cityData = response?.data || response?.city || response;
+            if (cityData) {
+              // Ensure we have both id and name
+              const cityId = cityData.id || cityData.city_id || value;
+              const cityName = cityData.name || cityData.city_name || cityData.city;
+              
+              if (cityId && cityName) {
+                const city: City = {
+                  id: cityId,
+                  name: cityName,
+                };
+                setCities((prev) => {
+                  // Avoid duplicates
+                  if (prev.some((c) => c.id === city.id)) {
+                    return prev;
+                  }
+                  return [city, ...prev];
+                });
+              } else {
+                // Invalid city data, reset ref
+                defaultCityLoadedRef.current = false;
+              }
+            } else {
+              // No city data, reset ref
+              defaultCityLoadedRef.current = false;
+            }
+          })
+          .catch((error) => {
+            console.error("Error loading default city:", error);
+            console.error("Failed to load city with ID:", value);
+            defaultCityLoadedRef.current = false; // Reset on error so we can retry
+          });
+      } else if (cityExists) {
+        // City already exists, mark as loaded
+        defaultCityLoadedRef.current = value;
+      }
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [value]);
+
+  // Always refresh cities when dropdown opens
+  useEffect(() => {
+    if (open && !loading) {
+      const refreshCities = () => {
+        loadedPagesRef.current.clear();
+        setPage(1);
+        setSearchQuery("");
+        
+        // Preserve selected city if it exists in the list
+        const selectedCity = value && value > 0 ? cities.find((c) => c.id === value) : null;
+        setCities(selectedCity ? [selectedCity] : []);
+        // Load fresh data (will merge with preserved city)
+        loadCities(1);
+      };
+
+      // If we have a value but city not in list, fetch it first
+      if (value && value > 0) {
+        const selectedCity = cities.find((c) => c.id === value);
+        if (!selectedCity) {
+          // City not loaded yet, fetch it first then refresh
+          setLoading(true);
+          getCityById(value.toString())
+            .then((response) => {
+              const cityData = response?.data || response?.city || response;
+              if (cityData) {
+                const cityId = cityData.id || cityData.city_id || value;
+                const cityName = cityData.name || cityData.city_name || cityData.city;
+                if (cityId && cityName) {
+                  const city: City = { id: cityId, name: cityName };
+                  setCities([city]);
+                  // Then refresh with fresh data
+                  loadedPagesRef.current.clear();
+                  setPage(1);
+                  setSearchQuery("");
+                  loadCities(1);
+                } else {
+                  refreshCities();
+                }
+              } else {
+                refreshCities();
+              }
+            })
+            .catch(() => {
+              refreshCities();
+            })
+            .finally(() => {
+              setLoading(false);
+            });
+          return; // Don't proceed, wait for city fetch
+        }
+      }
+      
+      // City exists or no value, proceed with normal refresh
+      refreshCities();
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [open]);
