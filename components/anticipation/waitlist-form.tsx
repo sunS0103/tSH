@@ -3,7 +3,6 @@
 import { useState } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import * as z from "zod";
 import { motion, AnimatePresence } from "framer-motion";
 import { Loader2, CheckCircle2, User, Briefcase } from "lucide-react";
 import { Button } from "@/components/ui/button";
@@ -41,11 +40,13 @@ const WaitlistForm = () => {
 
       if (result.success) {
         if (result.isExisting) {
-          toast.info("You're already subscribed!");
+          toast.info("You’re already subscribed with this email address!");
         } else {
-          toast.success("You're on the list!");
+          toast.success(
+            "Thanks for reaching out! We’ll get back to you shortly!"
+          );
         }
-        reset();
+        reset({ name: "", email: "", company: "", role: currentRole });
         setIsSubmitted(true);
       } else {
         toast.error(result.error || "Subscription Failed");
@@ -63,7 +64,7 @@ const WaitlistForm = () => {
           <h2 className="text-3xl md:text-4xl lg:text-5xl font-bold mb-4">
             Get <span className="text-primary">Early Access</span>
           </h2>
-          <p className="text-lg text-muted-foreground max-w-xl mx-auto">
+          <p className="text-lg text-subtle max-w-xl mx-auto">
             Be among the first to experience skill-based hiring.
           </p>
         </div>
@@ -75,7 +76,9 @@ const WaitlistForm = () => {
           >
             {/* ROLE SELECTION */}
             <div className="space-y-3">
-              <Label className="text-base font-medium">I am a... *</Label>
+              <Label className="text-base font-medium overflow-hidden">
+                I am a... *
+              </Label>
               <div className="grid grid-cols-2 gap-4">
                 <button
                   type="button"
@@ -92,7 +95,7 @@ const WaitlistForm = () => {
                     className={`w-6 h-6 ${
                       currentRole === "candidate"
                         ? "text-primary"
-                        : "text-muted-foreground"
+                        : "text-subtle"
                     }`}
                   />
                   <span
@@ -120,7 +123,7 @@ const WaitlistForm = () => {
                     className={`w-6 h-6 ${
                       currentRole === "recruiter"
                         ? "text-primary"
-                        : "text-muted-foreground"
+                        : "text-subtle"
                     }`}
                   />
                   <span
