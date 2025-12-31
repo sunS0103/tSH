@@ -1,6 +1,6 @@
 "use client";
 
-import { getCountries } from "@/api/seeder";
+import { getCountries, getCountryById } from "@/api/seeder";
 import {
   Popover,
   PopoverContent,
@@ -60,7 +60,14 @@ export function CountryDropdown({
         : response?.data || response?.countries || [];
 
       if (pageNum === 1) {
-        setCountries(countriesData);
+        // Merge with preserved selected country if it exists
+        setCountries((prev) => {
+          const existingIds = new Set(prev.map((c) => c.id));
+          const newCountries = countriesData.filter(
+            (c: Country) => !existingIds.has(c.id)
+          );
+          return [...prev, ...newCountries];
+        });
         setSearchQuery(query || "");
         loadedPagesRef.current.clear();
         loadedPagesRef.current.add(1);
@@ -121,12 +128,47 @@ export function CountryDropdown({
     setSearchQuery("");
   };
 
-  // Initialize countries when dropdown opens
+  // Load default country if value is provided on mount or when value changes
   useEffect(() => {
-    if (open && countries.length === 0 && !loading) {
+    if (value && value > 0 && !loading) {
+      // Check if the country is already in the list
+      const countryExists = countries.some((c) => c.id === value);
+
+      if (!countryExists) {
+        // Fetch the specific country by ID to display it
+        getCountryById(value.toString())
+          .then((response) => {
+            const countryData = response?.data || response;
+            if (countryData && countryData.id) {
+              setCountries((prev) => {
+                // Avoid duplicates
+                if (prev.some((c) => c.id === countryData.id)) {
+                  return prev;
+                }
+                return [countryData, ...prev];
+              });
+            }
+          })
+          .catch((error) => {
+            console.error("Error loading default country:", error);
+          });
+      }
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [value]);
+
+  // Always refresh countries when dropdown opens
+  useEffect(() => {
+    if (open && !loading) {
       loadedPagesRef.current.clear();
       setPage(1);
       setSearchQuery("");
+      // Preserve the selected country if it exists
+      setCountries((prev) => {
+        const selectedCountry = value && prev.find((c) => c.id === value);
+        return selectedCountry ? [selectedCountry] : [];
+      });
+      // Load fresh data (will merge with preserved country)
       loadCountries(1);
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps

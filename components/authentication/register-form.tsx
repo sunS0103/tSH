@@ -21,6 +21,7 @@ import {
   FormControl,
   FormField,
   FormItem,
+  FormLabel,
   FormMessage,
 } from "../ui/form";
 import { Popover, PopoverContent, PopoverTrigger } from "../ui/popover";
@@ -45,12 +46,13 @@ const candidateSchema = z.object({
   firstName: z.string().min(1, "First name is required"),
   lastName: z.string().min(1, "Last name is required"),
   gender: z.enum(["male", "female"], { message: "Please select gender" }),
+  country_code: z.string().min(1, "Country code is required"),
   phone: z
     .string()
     .min(1, "Phone number is required")
     .regex(/^\d+$/, "Phone number must contain only numbers")
     .length(10, "Phone number must be exactly 10 digits"),
-  date_of_birth: z.string().min(1, "Date of birth is required"),
+  date_of_birth: z.string().optional(),
   accountType: z.enum(["Student", "Working Professional", "Fresher", "Other"], {
     message: "Please select account type",
   }),
@@ -61,6 +63,7 @@ const recruiterSchema = z.object({
   firstName: z.string().min(1, "First name is required"),
   lastName: z.string().min(1, "Last name is required"),
   gender: z.enum(["male", "female"], { message: "Please select gender" }),
+  country_code: z.string().min(1, "Country code is required"),
   phone: z
     .string()
     .min(1, "Phone number is required")
@@ -105,7 +108,7 @@ export default function RegisterForm({ role, email }: RegisterFormProps) {
   const router = useRouter();
   const isRecruiter = role === "RECRUITER";
   const schema = isRecruiter ? recruiterSchema : candidateSchema;
-  const [selectedCountryCode, setSelectedCountryCode] = useState<string>("");
+  const [selectedCountryCode, setSelectedCountryCode] = useState<string>("+91");
 
   // Countries state
   const [countries, setCountries] = useState<Country[]>([]);
@@ -135,6 +138,7 @@ export default function RegisterForm({ role, email }: RegisterFormProps) {
       firstName: "",
       lastName: "",
       gender: undefined,
+      country_code: "+91",
       phone: "",
       ...(!isRecruiter && {
         date_of_birth: "",
@@ -419,14 +423,15 @@ export default function RegisterForm({ role, email }: RegisterFormProps) {
         email,
         country_code: selectedCountryCode,
         mobile_number: data.phone,
-        country_id: selectedCountryData ? selectedCountryData.id : undefined,
         account_type: ("accountType" in data ? data.accountType : "") as
           | "Fresher"
           | "Working Professional"
           | "Student"
           | "Other",
         date_of_birth: (() => {
-          const date = new Date((data as CandidateFormData).date_of_birth);
+          const dob = (data as CandidateFormData).date_of_birth;
+          if (!dob) return undefined;
+          const date = new Date(dob);
           const timestamp =
             date.getTime() - date.getTimezoneOffset() * 60 * 1000;
           return timestamp.toString();
@@ -480,7 +485,7 @@ export default function RegisterForm({ role, email }: RegisterFormProps) {
                 <FormItem>
                   <Label>Company name</Label>
                   <FormControl>
-                    <Input placeholder="Enter company name" {...field} />
+                    <Input placeholder="Enter Company Name" {...field} />
                   </FormControl>
                   <FormMessage />
                 </FormItem>
@@ -496,7 +501,7 @@ export default function RegisterForm({ role, email }: RegisterFormProps) {
               <FormItem>
                 <Label>First name</Label>
                 <FormControl>
-                  <Input placeholder="Enter first name" {...field} />
+                  <Input placeholder="Enter First Name" {...field} />
                 </FormControl>
                 <FormMessage />
               </FormItem>
@@ -511,7 +516,7 @@ export default function RegisterForm({ role, email }: RegisterFormProps) {
               <FormItem>
                 <Label>Last name</Label>
                 <FormControl>
-                  <Input placeholder="Enter last name" {...field} />
+                  <Input placeholder="Enter Last Name" {...field} />
                 </FormControl>
                 <FormMessage />
               </FormItem>
@@ -631,7 +636,12 @@ export default function RegisterForm({ role, email }: RegisterFormProps) {
               name="date_of_birth"
               render={({ field }) => (
                 <FormItem>
-                  <Label>Date of Birth</Label>
+                  <FormLabel className="gap-1">
+                    Date of Birth
+                    <span className="text-[10px] text-gray-500">
+                      - optional
+                    </span>
+                  </FormLabel>
                   <Popover>
                     <PopoverTrigger asChild>
                       <FormControl>
@@ -644,9 +654,9 @@ export default function RegisterForm({ role, email }: RegisterFormProps) {
                         >
                           <CalendarIcon className="mr-2 h-4 w-4" />
                           {field.value ? (
-                            format(new Date(field.value), "MM-dd-yyyy")
+                            format(new Date(field.value), "mm-dd-yyyy")
                           ) : (
-                            <span>MM-dd-yyyy</span>
+                            <span>mm-dd-yyyy</span>
                           )}
                         </Button>
                       </FormControl>
@@ -727,9 +737,7 @@ export default function RegisterForm({ role, email }: RegisterFormProps) {
                               selectedCountryData.name
                             ) : (
                               <span className="text-muted-foreground">
-                                {loadingCountries
-                                  ? "Loading countries..."
-                                  : "Select Country"}
+                                Select Country
                               </span>
                             )}
                             <Icon
@@ -784,14 +792,15 @@ export default function RegisterForm({ role, email }: RegisterFormProps) {
                               </span>
                             </button>
                           ))}
-                          {loadingCountries && (
-                            <div className="px-4 py-2 text-sm text-gray-500 text-center">
-                              Loading...
-                            </div>
-                          )}
+
                           {!hasMoreCountries && countries.length > 0 && (
                             <div className="px-4 py-2 text-xs text-gray-400 text-center">
                               No more countries
+                            </div>
+                          )}
+                          {countries.length === 0 && (
+                            <div className="px-4 py-2 text-xs text-gray-400 text-center">
+                              No countries found
                             </div>
                           )}
                         </div>
@@ -827,10 +836,8 @@ export default function RegisterForm({ role, email }: RegisterFormProps) {
                                 selectedCityData.name
                               ) : (
                                 <span className="text-muted-foreground">
-                                  {loadingCities
-                                    ? "Loading cities..."
-                                    : !selectedCountryData
-                                    ? "Select country first"
+                                  {!selectedCountryData
+                                    ? "Select Country First"
                                     : "Select City"}
                                 </span>
                               )}
@@ -887,14 +894,15 @@ export default function RegisterForm({ role, email }: RegisterFormProps) {
                                 </span>
                               </button>
                             ))}
-                            {loadingCities && (
-                              <div className="px-4 py-2 text-sm text-gray-500 text-center">
-                                Loading...
-                              </div>
-                            )}
+
                             {!hasMoreCities && cities.length > 0 && (
                               <div className="px-4 py-2 text-xs text-gray-400 text-center">
                                 No more cities
+                              </div>
+                            )}
+                            {cities.length === 0 && (
+                              <div className="px-4 py-2 text-xs text-gray-400 text-center">
+                                No cities found
                               </div>
                             )}
                           </div>

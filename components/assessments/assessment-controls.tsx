@@ -9,6 +9,24 @@ import {
 } from "@/components/ui/input-group";
 import FilterSheet from "./filter-sheet";
 
+interface OptionItem {
+  id: string;
+  value: string;
+}
+
+// Technology wrapper
+interface TechnologyBlock {
+  technology: OptionItem[];
+}
+
+// Skills wrapper
+interface SkillsBlock {
+  skills: OptionItem[];
+}
+
+// Final API response type
+type TechnologySkillsResponse = Array<TechnologyBlock | SkillsBlock>;
+
 interface AssessmentControlsProps {
   selectedTab: string;
   searchQuery: string;
@@ -17,6 +35,7 @@ interface AssessmentControlsProps {
   onSearchChange: (value: string) => void;
   onFilterChange: (filters: string[]) => void;
   onRefreshFilters: () => void;
+  filterItem: TechnologySkillsResponse;
 }
 
 export default function AssessmentControls({
@@ -27,6 +46,7 @@ export default function AssessmentControls({
   onSearchChange,
   onFilterChange,
   onRefreshFilters,
+  filterItem,
 }: AssessmentControlsProps) {
   return (
     <div className="md:flex md:justify-between md:items-center">
@@ -70,6 +90,7 @@ export default function AssessmentControls({
           selectedFilters={selectedFilters}
           onFilterChange={onFilterChange}
           onRefresh={onRefreshFilters}
+          filterItem={filterItem}
         />
       </div>
     </div>

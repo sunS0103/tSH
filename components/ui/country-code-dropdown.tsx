@@ -223,9 +223,13 @@ export function CountryCodeDropdown({
               />
             </>
           ) : (
-            <span className="text-muted-foreground text-xs">
-              {value || "select"}
-            </span>
+            <Image
+              width={16}
+              height={16}
+              src="https://flagcdn.com/in.svg"
+              alt="india flag"
+              className="rounded-full w-4 h-4"
+            />
           )}
           <Icon
             icon="material-symbols:keyboard-arrow-down-rounded"

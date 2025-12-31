@@ -108,12 +108,36 @@ export default function EditLocationAndWorkPreference() {
   const form = useForm<LocationAndWorkPreferenceFormData>({
     resolver: zodResolver(locationAndWorkPreferenceSchema),
     defaultValues: {
-      city_id: locationData?.city_id || locationData?.current_city || 0,
-      country_id:
-        locationData?.country_id ||
-        locationData?.current_country?.id ||
-        locationData?.current_country ||
-        0,
+      city_id: (() => {
+        // Handle city_id - could be number or object
+        if (locationData?.city_id) {
+          return typeof locationData.city_id === "object"
+            ? locationData.city_id?.id || 0
+            : locationData.city_id;
+        }
+        // Handle current_city - could be number or object
+        if (locationData?.current_city) {
+          return typeof locationData.current_city === "object"
+            ? locationData.current_city?.id || 0
+            : locationData.current_city;
+        }
+        return 0;
+      })(),
+      country_id: (() => {
+        // Handle country_id - could be number or object
+        if (locationData?.country_id) {
+          return typeof locationData.country_id === "object"
+            ? locationData.country_id?.id || 0
+            : locationData.country_id;
+        }
+        // Handle current_country - could be number or object
+        if (locationData?.current_country) {
+          return typeof locationData.current_country === "object"
+            ? locationData.current_country?.id || 0
+            : locationData.current_country;
+        }
+        return 0;
+      })(),
       preferred_cities:
         locationData?.preferred_cities?.map((c: { id: number }) => c.id) ||
         (Array.isArray(locationData?.preferred_cities)
@@ -205,8 +229,11 @@ export default function EditLocationAndWorkPreference() {
                   </Label>
                   <FormControl>
                     <CityDropdownIndependent
-                      value={field.value}
-                      onValueChange={field.onChange}
+                      value={typeof field.value === "number" ? field.value : 0}
+                      onValueChange={(cityId) => {
+                        // Ensure we always pass a number
+                        field.onChange(typeof cityId === "number" ? cityId : 0);
+                      }}
                     />
                   </FormControl>
                   <FormMessage />
@@ -224,8 +251,13 @@ export default function EditLocationAndWorkPreference() {
                   </Label>
                   <FormControl>
                     <CountryDropdown
-                      value={field.value}
-                      onValueChange={field.onChange}
+                      value={typeof field.value === "number" ? field.value : 0}
+                      onValueChange={(countryId) => {
+                        // Ensure we always pass a number
+                        field.onChange(
+                          typeof countryId === "number" ? countryId : 0
+                        );
+                      }}
                     />
                   </FormControl>
                   <FormMessage />

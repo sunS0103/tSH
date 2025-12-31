@@ -13,7 +13,11 @@ interface ProfileData {
   last_name: string;
   gender: string;
   email: string;
-  mobile_number: string;
+  mobile_details: {
+    mobile_number: string;
+    flag: string;
+    dial_code: string;
+  };
   country_code: string;
   country: string;
   date_of_birth: string;
@@ -399,11 +403,15 @@ export default function CandidateProfile({
             <ProfileItem label="Email ID" value={profileData?.email} />
             <ProfileItem
               label="Mobile Number"
-              value={`${profileData?.country_code}  ${profileData?.mobile_number}`}
+              value={`${profileData?.mobile_details?.dial_code}  ${profileData?.mobile_details?.mobile_number}`}
             />
             <ProfileItem
               label="Date of Birth"
-              value={format(profileData?.date_of_birth, "MM-dd-yyyy")}
+              value={
+                profileData?.date_of_birth
+                  ? format(profileData?.date_of_birth, "MM-dd-yyyy")
+                  : "-"
+              }
             />
             <ProfileItem
               label="Account Type"

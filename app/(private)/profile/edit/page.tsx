@@ -95,6 +95,8 @@ export default function EditProfilePage() {
 
   const form = useForm<EditProfileFormData>({
     resolver: zodResolver(editProfileSchema),
+    mode: "onBlur", // Only validate on blur, not on mount
+    reValidateMode: "onChange", // Re-validate on change after first validation
     defaultValues: {
       company_name: profileData?.company_name || "",
       first_name: profileData?.first_name || "",
@@ -103,8 +105,58 @@ export default function EditProfilePage() {
       email: profileData?.email || "",
       mobile_number: profileData?.mobile_number || "",
       country_code: profileData?.country_code || "",
-      country_id: profileData?.country_id || 0,
-      city_id: profileData?.city_id || 0,
+      country_id: (() => {
+        // Handle country_id - could be number, string, or object
+        let countryId: number | string | object | undefined;
+        if (profileData?.country_id) {
+          countryId = profileData.country_id;
+        } else if (profileData?.country) {
+          countryId = profileData.country;
+        }
+
+        if (!countryId) return 0;
+
+        // If it's an object, extract the id
+        if (typeof countryId === "object") {
+          const id = (countryId as { id?: number | string })?.id;
+          return id ? Number(id) : 0;
+        }
+
+        // If it's a string, convert to number
+        if (typeof countryId === "string") {
+          const num = Number(countryId);
+          return isNaN(num) ? 0 : num;
+        }
+
+        // If it's already a number, return it
+        return typeof countryId === "number" ? countryId : 0;
+      })(),
+      city_id: (() => {
+        // Handle city_id - could be number, string, or object
+        let cityId: number | string | object | undefined;
+        if (profileData?.city_id) {
+          cityId = profileData.city_id;
+        } else if (profileData?.city) {
+          cityId = profileData.city;
+        }
+
+        if (!cityId) return 0;
+
+        // If it's an object, extract the id
+        if (typeof cityId === "object") {
+          const id = (cityId as { id?: number | string })?.id;
+          return id ? Number(id) : 0;
+        }
+
+        // If it's a string, convert to number
+        if (typeof cityId === "string") {
+          const num = Number(cityId);
+          return isNaN(num) ? 0 : num;
+        }
+
+        // If it's already a number, return it
+        return typeof cityId === "number" ? cityId : 0;
+      })(),
       job_category: profileData?.job_category || "",
       platform_role: profileData?.platform_role || "",
     },
@@ -142,6 +194,12 @@ export default function EditProfilePage() {
   }, []);
 
   const onSubmit = async (data: EditProfileFormData) => {
+    // Validate before submitting
+    const isValid = await form.trigger();
+    if (!isValid) {
+      return;
+    }
+
     setIsSubmitting(true);
     try {
       const response = await updateRecruiterProfile({
@@ -387,9 +445,20 @@ export default function EditProfilePage() {
                     <Label className="text-sm font-medium">Country</Label>
                     <FormControl>
                       <CountryDropdown
-                        value={field.value}
-                        onValueChange={field.onChange}
-                        placeholder={profileData?.country}
+                        value={
+                          typeof field.value === "number" ? field.value : 0
+                        }
+                        onValueChange={(countryId) => {
+                          // Ensure we always pass a number
+                          field.onChange(
+                            typeof countryId === "number" ? countryId : 0
+                          );
+                        }}
+                        placeholder={
+                          typeof profileData?.country === "string"
+                            ? profileData.country
+                            : undefined
+                        }
                       />
                     </FormControl>
                     <FormMessage />
@@ -404,10 +473,21 @@ export default function EditProfilePage() {
                     <Label className="text-sm font-medium">City</Label>
                     <FormControl>
                       <CityDropdown
-                        value={field.value}
-                        onValueChange={field.onChange}
+                        value={
+                          typeof field.value === "number" ? field.value : 0
+                        }
+                        onValueChange={(cityId) => {
+                          // Ensure we always pass a number
+                          field.onChange(
+                            typeof cityId === "number" ? cityId : 0
+                          );
+                        }}
                         countryName={selectedCountryData?.name}
-                        placeholder={profileData?.city}
+                        placeholder={
+                          typeof profileData?.city === "string"
+                            ? profileData.city
+                            : undefined
+                        }
                       />
                     </FormControl>
                     <FormMessage />
