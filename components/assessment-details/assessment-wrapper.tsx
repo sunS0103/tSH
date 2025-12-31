@@ -5,7 +5,7 @@ import { useParams, usePathname } from "next/navigation";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 import AssessmentStepper from "./assessment-stepper";
-import StepContent from "./step-content-wrapper";
+import StepContent, { type Assessment } from "./step-content-wrapper";
 import AssessmentHelpVideo from "./assessment-help-video";
 import FluidLayout from "../layouts/fluid";
 import { Icon } from "@iconify/react";
@@ -46,7 +46,13 @@ const STEPS = [
   },
 ];
 
-export default function AssessmentWrapper() {
+interface AssessmentWrapperProps {
+  assessment: Assessment;
+}
+
+export default function AssessmentWrapper({
+  assessment,
+}: AssessmentWrapperProps) {
   const params = useParams();
   const pathname = usePathname();
   const assessmentId = params?.id as string;
@@ -250,6 +256,7 @@ export default function AssessmentWrapper() {
             currentStep={currentStep}
             isCurrentStepConfirmed={isCurrentStepConfirmed}
             onCurrentStepConfirmChange={handleCurrentStepConfirmChange}
+            assessment={assessment}
           />
         </div>
 
@@ -265,11 +272,16 @@ export default function AssessmentWrapper() {
             disabled={currentStep === 1}
             className="flex items-center gap-1"
           >
-            <Icon
-              icon="material-symbols:arrow-back-ios-new-rounded"
-              className="block md:hidden size-4"
-            />
-            <span className="hidden md:block">Back</span>
+            {currentStep === 6 && (
+              <>
+                <Icon
+                  icon="material-symbols:arrow-back-ios-new-rounded"
+                  className="size-4 md:hidden"
+                />
+                <span className="md:block hidden">Back</span>
+              </>
+            )}
+            {currentStep !== 6 && <span className="block">Back</span>}
           </Button>
 
           {currentStep === totalSteps && (

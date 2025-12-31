@@ -32,7 +32,11 @@ export default function RecruiterProfile({
     is_verified: boolean;
     job_category: string;
     last_name: string;
-    mobile_number: string;
+    mobile_details: {
+      mobile_number: string;
+      flag_code: string;
+      dial_code: string;
+    };
     platform_role: string;
     preferred_technologies: string[];
     role: "RECRUITER" | "CANDIDATE";
@@ -98,7 +102,7 @@ export default function RecruiterProfile({
           <ProfileDetail label="Email ID" value={profileData?.email} />
           <ProfileDetail
             label="Phone Number"
-            value={`${profileData?.country_code} ${profileData?.mobile_number}`}
+            value={`${profileData?.mobile_details?.dial_code} ${profileData?.mobile_details?.mobile_number}`}
           />
         </div>
 

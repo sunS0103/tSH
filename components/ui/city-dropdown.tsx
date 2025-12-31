@@ -1,6 +1,6 @@
 "use client";
 
-import { getCities } from "@/api/seeder";
+import { getCities, getCityById } from "@/api/seeder";
 import {
   Popover,
   PopoverContent,
@@ -31,7 +31,7 @@ export function CityDropdown({
   value,
   onValueChange,
   countryName,
-  disabled = false,
+  // disabled = false,
   className,
   placeholder = "Select City",
 }: CityDropdownProps) {
@@ -46,7 +46,7 @@ export function CityDropdown({
   const loadedPagesRef = useRef<Set<number>>(new Set());
 
   const selectedCity = cities.find((c) => c.id === value);
-  const isDisabled = disabled || !countryName || loading;
+  // const isDisabled = disabled || !countryName || loading;
 
   const loadCities = async (pageNum: number, query?: string) => {
     if (!countryName) return;
@@ -65,7 +65,14 @@ export function CityDropdown({
         : response?.data || response?.cities || [];
 
       if (pageNum === 1) {
-        setCities(citiesData);
+        // Merge with preserved selected city if it exists
+        setCities((prev) => {
+          const existingIds = new Set(prev.map((c) => c.id));
+          const newCities = citiesData.filter(
+            (c: City) => !existingIds.has(c.id)
+          );
+          return [...prev, ...newCities];
+        });
         setSearchQuery(query || "");
         loadedPagesRef.current.clear();
         loadedPagesRef.current.add(1);
@@ -126,12 +133,44 @@ export function CityDropdown({
     setSearchQuery("");
   };
 
+  // Load default city if value is provided on mount or when value changes
+  useEffect(() => {
+    if (value && value > 0 && countryName && !loading) {
+      // Check if the city is already in the list
+      const cityExists = cities.some((c) => c.id === value);
+
+      if (!cityExists) {
+        // Fetch the specific city by ID to display it
+        getCityById(value.toString())
+          .then((response) => {
+            const cityData = response?.data || response;
+            if (cityData && cityData.id) {
+              setCities((prev) => {
+                // Avoid duplicates
+                if (prev.some((c) => c.id === cityData.id)) {
+                  return prev;
+                }
+                return [cityData, ...prev];
+              });
+            }
+          })
+          .catch((error) => {
+            console.error("Error loading default city:", error);
+          });
+      }
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [value, countryName]);
+
   // Load cities when country changes
   useEffect(() => {
     if (countryName) {
       loadedPagesRef.current.clear();
       setPage(1);
-      setCities([]);
+      // Don't clear cities if we have a default value loaded
+      if (!value || cities.length === 0) {
+        setCities([]);
+      }
       setSearchQuery("");
       setHasMore(true);
       loadCities(1);
@@ -141,12 +180,18 @@ export function CityDropdown({
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [countryName]);
 
-  // Initialize cities when dropdown opens
+  // Always refresh cities when dropdown opens
   useEffect(() => {
-    if (open && cities.length === 0 && countryName && !loading) {
+    if (open && countryName && !loading) {
       loadedPagesRef.current.clear();
       setPage(1);
       setSearchQuery("");
+      // Preserve the selected city if it exists
+      setCities((prev) => {
+        const selectedCity = value && prev.find((c) => c.id === value);
+        return selectedCity ? [selectedCity] : [];
+      });
+      // Load fresh data (will merge with preserved city)
       loadCities(1);
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -168,7 +213,7 @@ export function CityDropdown({
           type="button"
           variant="outline"
           className={cn("w-full justify-between h-8", className)}
-          disabled={isDisabled}
+          // disabled={isDisabled}
         >
           {selectedCity ? (
             selectedCity.name
@@ -197,7 +242,7 @@ export function CityDropdown({
               onChange={(e) => handleSearch(e.target.value)}
               className="pl-8 h-9"
               onClick={(e) => e.stopPropagation()}
-              disabled={!countryName}
+              // disabled={!countryName}
             />
           </div>
         </div>

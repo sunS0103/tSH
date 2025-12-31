@@ -1,24 +1,24 @@
 "use client";
 
-import { cn } from "@/lib/utils";
+import { cn, formatDurationWithSeconds } from "@/lib/utils";
 import { Icon } from "@iconify/react";
+import { Assessment } from "../step-content-wrapper";
 
 interface AssessmentIntroductionProps {
   className?: string;
-  duration?: string;
-  topics?: number;
-  questions?: number;
-  difficultyLevel?: string;
+
+  assessment: Assessment;
 }
 
 export default function AssessmentIntroduction({
   className,
+  assessment,
 }: AssessmentIntroductionProps) {
   const cards = [
     {
       icon: "lineicons:stopwatch",
       label: "Duration",
-      value: "60 mins",
+      value: formatDurationWithSeconds(assessment.duration || 0),
       bgColor: "bg-info-50",
       borderColor: "border-info-100",
       iconColor: "text-info-500",
@@ -27,7 +27,7 @@ export default function AssessmentIntroduction({
     {
       icon: "material-symbols-light:menu-book-outline",
       label: "Topics",
-      value: "17",
+      value: assessment.topics.length,
       bgColor: "bg-secondary-50",
       borderColor: "border-secondary-100",
       iconColor: "text-secondary-500",
@@ -36,16 +36,16 @@ export default function AssessmentIntroduction({
     {
       icon: "material-symbols:help-outline",
       label: "Questions",
-      value: "52",
+      value: assessment.totalQuestions,
       bgColor: "bg-success-50",
       borderColor: "border-success-100",
       iconColor: "text-success-500",
       iconBgColor: "bg-success-200",
     },
     {
-      icon: "ep:more",
+      icon: "material-symbols:steppers",
       label: "Difficulty Level",
-      value: "Hard",
+      value: assessment.difficultyLevel,
       bgColor: "bg-warning-50",
       borderColor: "border-warning-100",
       iconColor: "text-warning-500",
@@ -67,7 +67,7 @@ export default function AssessmentIntroduction({
       </div>
 
       {/* Information Cards Grid */}
-      <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-2 xl:grid-cols-4 gap-4">
+      <div className="grid grid-cols-2 gap-4">
         {/* Duration Card */}
         {cards.map((card) => (
           <div

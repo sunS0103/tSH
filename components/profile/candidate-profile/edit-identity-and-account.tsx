@@ -44,7 +44,7 @@ export default function EditIdentityAndAccount() {
 
   const profileData = cookieValue ? JSON.parse(cookieValue as string) : null;
   const [selectedCountryCode, setSelectedCountryCode] = useState<string>(
-    profileData?.country_code || ""
+    profileData?.mobile_details?.dial_code || "+91"
   );
   const [selectedCountryName, setSelectedCountryName] = useState<string>(
     profileData?.country || ""
@@ -55,13 +55,12 @@ export default function EditIdentityAndAccount() {
     last_name: z.string().min(1, "Last name is required"),
     gender: z.enum(["Male", "Female"], { message: "Please select gender" }),
     email: z.string().email("Invalid email address"),
+    dial_code: z.string().min(1, "Dial code is required"),
     mobile_number: z
       .string()
       .min(1, "Phone number is required")
       .regex(/^\d+$/, "Phone number must contain only numbers")
       .length(10, "Phone number must be exactly 10 digits"),
-    // countryCode: z.string().min(1, "Country code is required"),
-    // country: z.string().min(1, "Country is required"),
     date_of_birth: z.string().min(1, "Date of birth is required"),
     account_type: z.enum(
       ["Student", "Working Professional", "Fresher", "Other"],
@@ -78,25 +77,66 @@ export default function EditIdentityAndAccount() {
       last_name: profileData?.last_name,
       gender: profileData?.gender === "MALE" ? "Male" : "Female",
       email: profileData?.email,
-      mobile_number: profileData?.mobile_number,
-      date_of_birth: format(new Date(profileData?.date_of_birth), "MM-dd-yyyy"),
+      dial_code: profileData?.mobile_details?.dial_code || "+91",
+      mobile_number: profileData?.mobile_details?.mobile_number || "",
+      date_of_birth: profileData?.date_of_birth
+        ? (() => {
+            try {
+              // Handle both timestamp (number) and date string
+              const dateValue = profileData.date_of_birth;
+              const date =
+                typeof dateValue === "number"
+                  ? new Date(dateValue)
+                  : new Date(dateValue);
+              if (!isNaN(date.getTime())) {
+                return format(date, "MM-dd-yyyy");
+              }
+            } catch {
+              // Invalid date, return empty string
+            }
+            return "";
+          })()
+        : "",
       account_type: profileData?.account_type,
-      // countryCode: profileData?.country_code,
+      // countryCode: profileData?.dial_code,
       // country: profileData?.country,
     },
   });
 
   const handleSubmit = async (data: z.infer<typeof editAccountSchema>) => {
     const role = getCookie("user_role");
+
+    // Parse date_of_birth - handle both MM-dd-yyyy format and ISO string
+    let dateOfBirthTimestamp: number;
+    try {
+      const dateStr = data.date_of_birth;
+      // Check if it's in MM-dd-yyyy format
+      if (dateStr.includes("-") && dateStr.split("-").length === 3) {
+        const [month, day, year] = dateStr.split("-");
+        const date = new Date(
+          parseInt(year),
+          parseInt(month) - 1,
+          parseInt(day)
+        );
+        dateOfBirthTimestamp = date.getTime();
+      } else {
+        // Assume it's an ISO string or other format
+        dateOfBirthTimestamp = new Date(dateStr).getTime();
+      }
+    } catch {
+      toast.error("Invalid date format");
+      return;
+    }
+
     await updateCandidateProfile({
       first_name: data.first_name,
       last_name: data.last_name,
       gender: data.gender,
       email: data.email,
       mobile_number: data.mobile_number,
-      date_of_birth: new Date(data.date_of_birth).getTime(),
+      date_of_birth: dateOfBirthTimestamp,
       account_type: data.account_type,
-      country_code: selectedCountryCode,
+      dial_code: selectedCountryCode,
       country: selectedCountryName,
       role: role === "CANDIDATE" ? "CANDIDATE" : "RECRUITER",
     })
@@ -111,9 +151,9 @@ export default function EditIdentityAndAccount() {
               gender: data.gender,
               email: data.email,
               mobile_number: data.mobile_number,
-              date_of_birth: new Date(data.date_of_birth).getTime(),
+              date_of_birth: dateOfBirthTimestamp,
               account_type: data.account_type,
-              country_code: selectedCountryCode,
+              dial_code: selectedCountryCode,
               country: selectedCountryName,
               role: role === "CANDIDATE" ? "CANDIDATE" : "RECRUITER",
             })
@@ -255,6 +295,7 @@ export default function EditIdentityAndAccount() {
                           placeholder="99999 99999"
                           className="border-0 rounded-none"
                           {...field}
+                          value={field.value || ""}
                           onChange={(e) => {
                             // Remove any non-numeric characters
                             const numericValue = e.target.value.replace(
@@ -309,6 +350,7 @@ export default function EditIdentityAndAccount() {
                       <PopoverTrigger asChild>
                         <FormControl className="border border-black">
                           <Button
+                            type="button"
                             variant="outline"
                             className={cn(
                               "w-full justify-start text-left font-normal",
@@ -318,15 +360,18 @@ export default function EditIdentityAndAccount() {
                             <CalendarIcon className="mr-2 h-4 w-4" />
                             {field.value ? (
                               (() => {
-                                const date = new Date(field.value);
-                                const timestamp =
-                                  date.getTime() -
-                                  date.getTimezoneOffset() * 60 * 1000;
-
-                                return format(timestamp, "MM-dd-yyyy");
+                                try {
+                                  const date = new Date(field.value);
+                                  if (!isNaN(date.getTime())) {
+                                    return format(date, "MM-dd-yyyy");
+                                  }
+                                } catch {
+                                  // Invalid date, show placeholder
+                                }
+                                return <span>mm-dd-yyyy</span>;
                               })()
                             ) : (
-                              <span>MM-dd-yyyy</span>
+                              <span>mm-dd-yyyy</span>
                             )}
                           </Button>
                         </FormControl>
@@ -337,9 +382,14 @@ export default function EditIdentityAndAccount() {
                           selected={
                             field.value ? new Date(field.value) : undefined
                           }
-                          onSelect={(date) =>
-                            field.onChange(date ? date.toISOString() : "")
-                          }
+                          onSelect={(date) => {
+                            if (date) {
+                              // Format as MM-dd-yyyy string for consistency
+                              field.onChange(format(date, "MM-dd-yyyy"));
+                            } else {
+                              field.onChange("");
+                            }
+                          }}
                           disabled={(date) =>
                             date > new Date() || date < new Date("1900-01-01")
                           }
@@ -391,11 +441,7 @@ export default function EditIdentityAndAccount() {
               >
                 Cancel
               </Button>
-              <Button
-                type="submit"
-                disabled={!form.formState.isValid}
-                className="w-fit"
-              >
+              <Button type="submit" className="w-fit">
                 Update
               </Button>
             </div>
