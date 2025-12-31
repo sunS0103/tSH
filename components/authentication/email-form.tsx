@@ -180,7 +180,7 @@ export default function EmailForm({ role }: EmailFormProps) {
                 <FormControl>
                   <div className="relative">
                     <Input
-                      placeholder="Enter your email"
+                      placeholder="Enter Your Email ID"
                       className="mt-2"
                       id="email"
                       type="email"
