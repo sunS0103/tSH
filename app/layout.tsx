@@ -13,11 +13,31 @@ const plusJakartaSans = Plus_Jakarta_Sans({
 });
 
 export const metadata: Metadata = {
-  title:
-    "TechSmartHire – Skill-Based QA Hiring Platform | Early Access & Beta Program",
+  title: {
+    default: "TechSmartHire – Skill-Based QA Hiring Platform",
+    template: "%s | TechSmartHire",
+  },
   description:
     "TechSmartHire is a skill-first hiring platform for QA roles. Get early access to role-based assessments, pre-vetted candidates, and faster hiring through our beta program",
   metadataBase: new URL("https://techsmarthire.com"),
+  keywords: [
+    "QA Hiring",
+    "Quality Assurance Jobs",
+    "Skill-based Hiring",
+    "Tech Recruitment",
+    "QA Assessment",
+    "Beta Access",
+  ],
+  authors: [{ name: "TechSmartHire Team" }],
+  creator: "TechSmartHire",
+  publisher: "TechSmartHire",
+  robots: {
+    index: true,
+    follow: true,
+  },
+  alternates: {
+    canonical: "/",
+  },
 };
 
 export default function RootLayout({
