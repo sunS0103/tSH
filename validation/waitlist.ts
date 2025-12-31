@@ -10,7 +10,7 @@ export const waitlistSchema = z
     company: z.string().optional(),
   })
   .superRefine((data, ctx) => {
-    // Conditional validation: If role is recruiter, company name becomes mandatory
+    // 1. If role is recruiter, company name becomes mandatory
     if (
       data.role === "recruiter" &&
       (!data.company || data.company.trim().length < 2)
@@ -18,8 +18,33 @@ export const waitlistSchema = z
       ctx.addIssue({
         code: z.ZodIssueCode.custom,
         message: "Company name is required for recruiters",
-        path: ["company"], // Points the error specifically to the company input
+        path: ["company"],
       });
+    }
+    if (data.role === "recruiter" && data.email) {
+      const publicDomains = [
+        "gmail.com",
+        "yahoo.com",
+        "hotmail.com",
+        "outlook.com",
+        "icloud.com",
+        "aol.com",
+        "protonmail.com",
+        "mail.com",
+        "zoho.com",
+        "yandex.com",
+        "live.com",
+      ];
+      const emailDomain = data.email.split("@")[1]?.toLowerCase();
+
+      if (emailDomain && publicDomains.includes(emailDomain)) {
+        ctx.addIssue({
+          code: z.ZodIssueCode.custom,
+          message:
+            "Please use your work email address (e.g. name@company.com)",
+          path: ["email"],
+        });
+      }
     }
   });
 
