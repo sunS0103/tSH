@@ -34,7 +34,6 @@ const WaitlistForm = () => {
 
   const onSubmit = async (values: WaitlistValues) => {
     try {
-      // 1. Check if contact exists
       try {
         const response = await getContact(values.email);
         toast.info(
@@ -45,12 +44,11 @@ const WaitlistForm = () => {
         return;
         // eslint-disable-next-line @typescript-eslint/no-explicit-any
       } catch (error: any) {
-        if (error.response?.status !== 404) {
+        if (error.response?.status !== 404 && error.response?.status !== 400) {
           throw error;
         }
       }
 
-      // 2. Prepare data for import
       const listId = values.role === "candidate" ? 23 : 24;
       const importBody = {
         jsonBody: [
@@ -58,7 +56,7 @@ const WaitlistForm = () => {
             email: values.email,
             attributes: {
               FIRSTNAME: values.name,
-              COMPANY_NAME: values.company || "",
+              COMPANY_NAME: listId === 23 ? "" : values.company,
             },
           },
         ],
@@ -68,7 +66,12 @@ const WaitlistForm = () => {
       // 3. Import contact
       await getImports({ data: importBody });
       toast.success("Thanks for reaching out! We’ll get back to you shortly!");
-      reset({ name: "", email: "", company: "", role: currentRole });
+      reset({
+        name: "",
+        email: "",
+        company: "",
+        role: currentRole,
+      });
 
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
     } catch (error: any) {
@@ -208,7 +211,6 @@ const WaitlistForm = () => {
               )}
             </div>
 
-            {/* CONDITIONAL COMPANY FIELD */}
             <AnimatePresence mode="wait">
               {currentRole === "recruiter" && (
                 <motion.div
