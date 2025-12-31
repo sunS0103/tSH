@@ -9,12 +9,10 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { toast } from "sonner";
-import { joinWaitlistAction } from "@/actions/waitlist";
+import { getContact, getImports } from "@/api/waitlist";
 import { waitlistSchema, WaitlistValues } from "@/validation/waitlist";
 
 const WaitlistForm = () => {
-  const [isSubmitted, setIsSubmitted] = useState(false);
-
   const {
     register,
     handleSubmit,
@@ -36,23 +34,48 @@ const WaitlistForm = () => {
 
   const onSubmit = async (values: WaitlistValues) => {
     try {
-      const result = await joinWaitlistAction(values);
-
-      if (result.success) {
-        if (result.isExisting) {
-          toast.info("You’re already subscribed with this email address!");
-        } else {
-          toast.success(
-            "Thanks for reaching out! We’ll get back to you shortly!"
-          );
-        }
+      // 1. Check if contact exists
+      try {
+        const response = await getContact(values.email);
+        toast.info(
+          response.message ||
+            "You’re already subscribed with this email address!"
+        );
         reset({ name: "", email: "", company: "", role: currentRole });
-        setIsSubmitted(true);
-      } else {
-        toast.error(result.error || "Subscription Failed");
+        return;
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      } catch (error: any) {
+        if (error.response?.status !== 404) {
+          throw error;
+        }
       }
-    } catch (error) {
-      toast.error("Network Error");
+
+      // 2. Prepare data for import
+      const listId = values.role === "candidate" ? 23 : 24;
+      const importBody = {
+        jsonBody: [
+          {
+            email: values.email,
+            attributes: {
+              FIRSTNAME: values.name,
+              COMPANY_NAME: values.company || "",
+            },
+          },
+        ],
+        listIds: [listId],
+      };
+
+      // 3. Import contact
+      await getImports({ data: importBody });
+      toast.success("Thanks for reaching out! We’ll get back to you shortly!");
+      reset({ name: "", email: "", company: "", role: currentRole });
+
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    } catch (error: any) {
+      console.error("Waitlist Error:", error);
+      toast.error(
+        error.response?.data?.message || "Failed to join the waitlist."
+      );
     }
   };
 
