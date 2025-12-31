@@ -57,7 +57,7 @@ const Header = () => {
           </Link>
 
           {/* Desktop Navigation */}
-          <div className="hidden md:flex items-center gap-8">
+          {/* <div className="hidden md:flex items-center gap-8">
             <Link
               href="/"
               className={`text-sm font-medium transition-colors ${
@@ -101,7 +101,7 @@ const Header = () => {
               <Rocket className="w-4 h-4" />
               Anticipation
             </Link>
-          </div>
+          </div> */}
 
           {/* Desktop CTA */}
           <div className="hidden md:flex items-center gap-4">

@@ -7,9 +7,36 @@ import CredibilityStrip from "@/components/anticipation/credibility-strip";
 import WaitlistForm from "@/components/anticipation/waitlist-form";
 
 export const metadata: Metadata = {
-  title: "TechSmartHire - Hire by Real Skills, Not Resumes",
+  title:
+    "TechSmartHire – Skill-Based QA Hiring Platform | Early Access & Beta Program",
   description:
-    "Join the early access list for TechSmartHire - a new hiring platform that connects candidates and recruiters based on real skills, not keyword-stuffed resumes.",
+    "TechSmartHire is a skill-first hiring platform for QA roles. Get early access to role-based assessments, pre-vetted candidates, and faster hiring through our beta program",
+  openGraph: {
+    title:
+      "TechSmartHire – Skill-Based QA Hiring Platform | Early Access & Beta Program",
+    description:
+      "TechSmartHire is a skill-first hiring platform for QA roles. Get early access to role-based assessments, pre-vetted candidates, and faster hiring through our beta program",
+    url: "https://techsmarthire.com",
+    siteName: "TechSmartHire",
+    locale: "en_US",
+    type: "website",
+    images: [
+      {
+        url: "/og-image.png",
+        width: 1200,
+        height: 630,
+        alt: "TechSmartHire Preview",
+      },
+    ],
+  },
+  twitter: {
+    card: "summary_large_image",
+    title:
+      "TechSmartHire – Skill-Based QA Hiring Platform | Early Access & Beta Program",
+    description:
+      "TechSmartHire is a skill-first hiring platform for QA roles. Get early access to role-based assessments, pre-vetted candidates, and faster hiring through our beta program",
+    images: ["/og-image.png"],
+  },
 };
 
 export default function AnticipationPage() {
