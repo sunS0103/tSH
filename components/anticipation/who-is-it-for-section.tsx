@@ -11,9 +11,9 @@ const WhoIsItForSection = () => {
       emoji: "🧑‍💻",
       color: "from-primary to-primary/70",
       benefits: [
-        "Prove your skills with structured assessments",
-        "Get discovered by recruiters looking for your skills",
-        "Stop getting ghosted by resume filters.",
+        "Show what you know with skill-based assessments",
+        "Let recruiters find you - no chasing required",
+        "Move beyond resume-based rejections",
       ],
     },
     {
@@ -24,7 +24,7 @@ const WhoIsItForSection = () => {
       benefits: [
         "Discover candidates based on verified skills",
         "Avoid resume spam and blind screening",
-        "Zero-noise shortlisting. Interview only the top 5%.",
+        "Shortlist with confidence using role-based skill benchmarks",
       ],
       badge: "100% Proctored & AI-Proof Assessments",
     },
