@@ -21,7 +21,7 @@ const SkillScorecard = () => {
         <div className="flex items-center justify-between mb-4">
           <div>
             <h4 className="font-bold text-lg text-foreground">
-              Full Stack Development
+              QA Automation Engineer
             </h4>
             <p className="text-xs text-subtle">ID: C-4821</p>
           </div>
@@ -42,11 +42,9 @@ const SkillScorecard = () => {
             <p className="text-2xl font-bold text-primary">92%</p>
           </div>
           <div className="flex-1">
-            <p className="text-xs text-subtle mb-2">
-              Skills Assessed
-            </p>
+            <p className="text-xs text-subtle mb-2">Skills Assessed</p>
             <div className="flex flex-wrap gap-1.5">
-              {["React", "TypeScript", "Node.js", "PostgreSQL", "AWS"].map(
+              {["Playwright", "Selenium", "API Testing", "AI Agents"].map(
                 (skill) => (
                   <Badge
                     key={skill}

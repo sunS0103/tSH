@@ -27,7 +27,8 @@ const CredibilityStrip = () => {
           </div>
 
           <h3 className="text-xl md:text-2xl font-semibold mb-3 text-foreground">
-            Built by the team behind learning platforms trusted by{" "}
+            Built by an expert team led by Rahul Shetty — a global instructor
+            empowering{" "}
             <span className="gradient-text font-bold">
               1M+ tech professionals
             </span>{" "}
