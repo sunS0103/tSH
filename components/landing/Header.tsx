@@ -23,13 +23,7 @@ const Header = () => {
   }, []);
 
   const scrollToForm = () => {
-    if (pathname === "/anticipation") {
-      document
-        .getElementById("waitlist")
-        ?.scrollIntoView({ behavior: "smooth" });
-    } else {
-      router.push("/anticipation#waitlist");
-    }
+    document.getElementById("waitlist")?.scrollIntoView({ behavior: "smooth" });
     setIsMobileMenuOpen(false);
   };
 
