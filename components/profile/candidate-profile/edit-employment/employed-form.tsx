@@ -227,6 +227,12 @@ export default function EmployedForm({
                     placeholder="0.0"
                     className="h-8 border-gray-900"
                     {...field}
+                    onChange={(e) => {
+                      if (e.target.value.length > 3) {
+                        e.target.value = e.target.value.slice(0, 3);
+                      }
+                      field.onChange(e);
+                    }}
                   />
                 </FormControl>
                 <FormMessage />
