@@ -98,14 +98,14 @@ const Header = () => {
           </div> */}
 
           {/* Desktop CTA */}
-          <div className="hidden md:flex items-center gap-4">
+          <div className="flex items-center gap-4">
             <Button variant="default" size="sm" onClick={scrollToForm}>
               Join Waitlist
             </Button>
           </div>
 
           {/* Mobile Menu Button */}
-          <button
+          {/* <button
             className="md:hidden p-2"
             onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
           >
@@ -114,62 +114,25 @@ const Header = () => {
             ) : (
               <Menu className="w-6 h-6" />
             )}
-          </button>
+          </button> */}
         </div>
       </div>
 
       {/* Mobile Menu */}
-      {isMobileMenuOpen && (
+      {/* {isMobileMenuOpen && (
         <motion.div
           initial={{ opacity: 0, y: -10 }}
           animate={{ opacity: 1, y: 0 }}
           exit={{ opacity: 0, y: -10 }}
           className="md:hidden bg-card border-b border-border"
         >
-          <div className="container px-4 py-4 space-y-4">
-            <Link
-              href="/"
-              className="flex items-center gap-2 text-muted-foreground hover:text-foreground transition-colors py-2"
-              onClick={() => setIsMobileMenuOpen(false)}
-            >
-              Home
-            </Link>
-            <Link
-              href="/for-candidates"
-              className="flex items-center gap-2 text-muted-foreground hover:text-foreground transition-colors py-2"
-              onClick={() => setIsMobileMenuOpen(false)}
-            >
-              <Users className="w-4 h-4" />
-              For Candidates
-            </Link>
-            <Link
-              href="/for-recruiters"
-              className="flex items-center gap-2 text-muted-foreground hover:text-foreground transition-colors py-2"
-              onClick={() => setIsMobileMenuOpen(false)}
-            >
-              <Briefcase className="w-4 h-4" />
-              For Recruiters
-            </Link>
-            <Link
-              href="/anticipation"
-              className="flex items-center gap-2 text-primary transition-colors py-2"
-              onClick={() => setIsMobileMenuOpen(false)}
-            >
-              <Rocket className="w-4 h-4" />
-              Anticipation
-            </Link>
-            <div className="pt-4 border-t border-border">
-              <Button
-                variant="default"
-                className="w-full"
-                onClick={scrollToForm}
-              >
-                Join Waitlist
-              </Button>
-            </div>
+          <div className="pt-4 border-t border-border">
+            <Button variant="default" className="w-full" onClick={scrollToForm}>
+              Join Waitlist
+            </Button>
           </div>
         </motion.div>
-      )}
+      )} */}
     </motion.nav>
   );
 };
