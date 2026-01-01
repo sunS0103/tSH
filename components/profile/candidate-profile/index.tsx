@@ -261,7 +261,8 @@ export default function CandidateProfile({
     },
     {
       label: "Last Drawn CTC",
-      value: currentEmployment?.last_drawn_ctc_amount,
+      value: `${currentEmployment?.last_drawn_ctc_amount}`,
+      // (${currentEmployment?.current_ctc_period_type})
     },
   ];
 

@@ -9,7 +9,11 @@ import AssessmentHeader from "./assessment-header";
 import AssessmentControls from "./assessment-controls";
 import AssessmentGrid from "./assessment-grid";
 import AssessmentPagination from "./assessment-pagination";
-import { getAssessmentList, getAssessmentsFilter } from "@/api/assessments";
+import {
+  getAssessmentList,
+  getAssessmentsFilter,
+  getTakenAssessmentsList,
+} from "@/api/assessments";
 
 // Common item structure
 interface OptionItem {
@@ -40,9 +44,9 @@ export interface Assessment {
   title: string;
   slug: string;
   category: string;
-  difficultyLevel: "Beginner" | "Intermediate" | "Advanced" | "Not Applicable";
+  difficulty_level: "Beginner" | "Intermediate" | "Advanced" | "Not Applicable";
   duration: number; // seconds
-  totalQuestions: number;
+  total_questions: number;
   status: "PUBLISHED" | "SUBSCRIBED";
   job_role_id: string;
   job_role_name: string;
@@ -129,22 +133,43 @@ export default function AssessmentCandidate() {
         // Skills can be multiple values
         const skills = skillsFilters.length > 0 ? skillsFilters : undefined;
 
-        const res = await getAssessmentList({
-          page: currentPage,
-          pageSize: ITEMS_PER_PAGE,
-          sortBy: "created_at",
-          sortDirection: "desc",
-          query: debouncedSearchQuery.trim() || undefined,
-          technology,
-          skills,
-        });
+        console.log(selectedTab, "selectedTab");
+        if (selectedTab === "all") {
+          const res = await getAssessmentList({
+            page: currentPage,
+            pageSize: ITEMS_PER_PAGE,
+            sortBy: "created_at",
+            sortDirection: "desc",
+            query: debouncedSearchQuery.trim() || undefined,
+            technology,
+            skills,
+          });
 
-        const list = res?.data?.assessments;
-        setAssessments(Array.isArray(list) ? list : []);
+          const list = res?.data?.assessments;
+          setAssessments(Array.isArray(list) ? list : []);
 
-        // Get total pages from API response
-        const total = res?.meta?.pagination?.totalPages;
-        setTotalPages(total);
+          // Get total pages from API response
+          const total = res?.meta?.pagination?.totalPages;
+          setTotalPages(total);
+        }
+        if (selectedTab === "taken") {
+          const res = await getTakenAssessmentsList({
+            page: currentPage,
+            pageSize: ITEMS_PER_PAGE,
+            sortBy: "created_at",
+            sortDirection: "desc",
+            query: debouncedSearchQuery.trim() || undefined,
+            technology,
+            skills,
+          });
+
+          const list = res?.data?.assessments;
+          setAssessments(Array.isArray(list) ? list : []);
+
+          // Get total pages from API response
+          const total = res?.meta?.pagination?.totalPages;
+          setTotalPages(total);
+        }
       } catch (error) {
         console.error("Error fetching assessments:", error);
         setAssessments([]);
@@ -155,7 +180,13 @@ export default function AssessmentCandidate() {
     };
 
     getAssessments();
-  }, [currentPage, debouncedSearchQuery, selectedFilters, getFilterType]);
+  }, [
+    currentPage,
+    debouncedSearchQuery,
+    selectedFilters,
+    getFilterType,
+    selectedTab,
+  ]);
 
   // Client-side filtering and pagination removed - now handled by API
 

@@ -9,9 +9,9 @@ interface Assessment {
   title: string;
   slug: string;
   category: string;
-  difficultyLevel: "Beginner" | "Intermediate" | "Advanced" | "Not Applicable";
+  difficulty_level: "Beginner" | "Intermediate" | "Advanced" | "Not Applicable";
   duration: number; // seconds
-  totalQuestions: number;
+  total_questions: number;
   status: "PUBLISHED" | "SUBSCRIBED";
   job_role_id: string;
   job_role_name: string;
@@ -40,7 +40,7 @@ export default function AssessmentGrid({ assessments }: AssessmentGridProps) {
           title={assessment.title}
           topics={assessment.topics}
           duration={assessment.duration}
-          questionCount={assessment.totalQuestions}
+          questionCount={assessment.total_questions}
           slug={assessment.slug}
         />
       ))}
