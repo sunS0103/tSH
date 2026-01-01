@@ -189,7 +189,7 @@ export function CountryDropdown({
         <Button
           type="button"
           variant="outline"
-          className={cn("w-full justify-between h-8", className)}
+          className={cn("w-full justify-between h-9.5 border-black", className)}
           disabled={disabled || loading}
         >
           {selectedCountry ? (
@@ -240,6 +240,11 @@ export function CountryDropdown({
               <span className="flex-1 text-sm font-medium">{country.name}</span>
             </button>
           ))}
+          {countries.length === 0 && (
+            <div className="px-4 py-2 text-xs text-gray-400 text-center">
+              No countries found
+            </div>
+          )}
           {!hasMore && countries.length > 0 && (
             <div className="px-4 py-2 text-xs text-gray-400 text-center">
               No more countries

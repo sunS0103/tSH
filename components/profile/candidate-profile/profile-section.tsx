@@ -91,8 +91,21 @@ export default function ProfileSection({
                     <Label className="text-xs text-gray-900 font-normal">
                       {field.label}
                     </Label>
-                    <p className="text-base font-medium text-black break-all">
-                      {field.value || "-"}
+                    <p className="text-base font-medium text-black">
+                      {typeof field.value === "string" &&
+                      (field.value.startsWith("http://") ||
+                        field.value.startsWith("https://")) ? (
+                        <a
+                          href={field.value}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className="text-primary-500 hover:underline break-all"
+                        >
+                          {field.value}
+                        </a>
+                      ) : (
+                        field.value || "-"
+                      )}
                     </p>
                   </div>
                 </div>

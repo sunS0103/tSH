@@ -1,14 +1,130 @@
+"use client";
+
+import { initiatePurchase, verifyPayment } from "@/api/payment";
 import { Button } from "@/components/ui/button";
 import {
   Dialog,
+  DialogClose,
   DialogContent,
   DialogHeader,
   DialogTitle,
   DialogTrigger,
 } from "@/components/ui/dialog";
+import { cn } from "@/lib/utils";
+// import { initiatePurchase, openRazorpayCheckout } from "@/lib/razorpay";
 import { Icon } from "@iconify/react";
+import { getCookie } from "cookies-next/client";
+import { useState, useEffect } from "react";
+import { toast } from "sonner";
 
-export default function PaymentCards() {
+export interface Payment {
+  initial_paid: boolean;
+  initial_payment_status: "PAID";
+  package_type: "BASIC" | "PREMIUM" | "PLATINUM";
+  purchase_status: "ACTIVE" | "INACTIVE";
+  purchased_at: number;
+}
+
+export default function PaymentCards({
+  assessment_id,
+  payment,
+  onUserAssessmentIdChange,
+}: {
+  assessment_id: string;
+  payment: Payment | null;
+  onUserAssessmentIdChange?: ({
+    id,
+    payment,
+    message,
+  }: {
+    id: string;
+    payment: Payment;
+    message: string;
+  }) => void;
+}) {
+  const [paymentSuccessData, setPaymentSuccessData] = useState<Payment | null>(
+    payment || null
+  );
+
+  // Reset paymentSuccessData when payment prop becomes null (after proceed success)
+  // This syncs the local state with parent state reset
+  // This is necessary to reflect state changes from parent component
+  useEffect(() => {
+    if (payment === null) {
+      // eslint-disable-next-line react-hooks/set-state-in-effect
+      setPaymentSuccessData(null);
+    }
+  }, [payment]);
+
+  // Use paymentSuccessData if set, otherwise use payment prop
+  // This allows local updates while still reflecting parent state changes
+  const currentPayment = paymentSuccessData || payment;
+
+  const openRazorpayCheckout = ({
+    orderData,
+    user,
+    assessment_id,
+    onSuccess,
+  }: {
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    orderData: any;
+    user: { email: string; phone?: string };
+    assessment_id: string;
+    token: string;
+    onSuccess: () => void;
+  }) => {
+    const options = {
+      key: orderData.data.razorpay_key_id,
+      amount: orderData.data.amount,
+      currency: orderData.data.currency,
+      order_id: orderData.data.razorpay_order_id,
+      name: "TechSmartHire",
+      description: `${orderData.data.package_type} Package - ${orderData.data.assessment_title}`,
+      prefill: {
+        email: user.email,
+        contact: user.phone || "",
+      },
+      theme: {
+        color: "#7C3AED",
+      },
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      handler: async (response: any) => {
+        await verifyPayment(assessment_id, {
+          razorpay_order_id: response.razorpay_order_id,
+          razorpay_payment_id: response.razorpay_payment_id,
+          razorpay_signature: response.razorpay_signature,
+        }).then((res) => {
+          if (res.success) {
+            onUserAssessmentIdChange?.({
+              id: res.data.user_assessment_id,
+              payment: res.data.payment,
+              message: res.message,
+            });
+            setPaymentSuccessData({
+              initial_paid: res.data.payment.initial_paid,
+              initial_payment_status: res.data.payment.initial_payment_status,
+              package_type: res.data.payment.package_type,
+              purchase_status: res.data.payment.purchase_status,
+              purchased_at: res.data.payment.purchased_at,
+            });
+          }
+        });
+
+        onSuccess();
+      },
+      modal: {
+        ondismiss: () => {
+          toast.error("Payment cancelled");
+        },
+      },
+    };
+
+    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+    // @ts-ignore
+    const rzp = new window.Razorpay(options);
+    rzp.open();
+  };
+
   const basicPackageIncludedItems = [
     "Unlock assessment",
     "Masked profile + score visibility to 100+ verified recruiters",
@@ -31,6 +147,7 @@ export default function PaymentCards() {
 
   const cards = [
     {
+      packageType: "BASIC",
       title: "Basic Package",
       description:
         "<div>Get started at a minimal cost, pay the remaining when hiring interest is confirmed. <a href='#' class='text-black underline'>Learn More</a></div>",
@@ -43,6 +160,7 @@ export default function PaymentCards() {
       icon: "material-symbols:star-shine-outline-rounded",
     },
     {
+      packageType: "PREMIUM",
       title: "Premium Package",
       description:
         "<div>Best value for professionals who want certification + improvement feedback</div>",
@@ -52,6 +170,7 @@ export default function PaymentCards() {
       icon: "material-symbols:diamond-outline-rounded",
     },
     {
+      packageType: "PLATINUM",
       title: "Platinum Package",
       description:
         "<div>Complete coaching + exam strategy to level up fast</div>",
@@ -67,12 +186,50 @@ export default function PaymentCards() {
     },
   ];
 
+  const profileData = JSON.parse(getCookie("profile_data") as string);
+  const token = getCookie("token") as string;
+  const user = {
+    email: profileData.email,
+    phone: profileData.mobile_details.mobile_number,
+  };
+
+  const handlePurchase = async (
+    packageType: "BASIC" | "PREMIUM" | "PLATINUM"
+  ) => {
+    try {
+      // 1️⃣ Create Order
+      const orderData = await initiatePurchase({
+        assessment_id: assessment_id,
+        packageType,
+      });
+
+      // 2️⃣ Open Razorpay
+      openRazorpayCheckout({
+        orderData,
+        user,
+        assessment_id: assessment_id,
+        token,
+        onSuccess: () => {
+          toast.success("Assessment purchased successfully 🎉");
+        },
+      });
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    } catch (err: any) {
+      toast.error(err.message || "Payment failed");
+    }
+  };
+
   return (
     <div className="flex gap-3 overflow-auto">
       {cards.map((card) => (
         <div
           key={card.title}
-          className="border border-gray-200 rounded-lg p-2 md:p-3 flex flex-col gap-10 justify-between min-w-64"
+          className={cn(
+            "border border-gray-200 rounded-lg p-2 md:p-3 flex flex-col gap-10 justify-between min-w-64",
+            currentPayment?.initial_payment_status === "PAID" &&
+              currentPayment?.package_type === card.packageType &&
+              "border-primary-500"
+          )}
         >
           <div>
             <div className="flex items-center justify-between w-full mb-1">
@@ -119,8 +276,23 @@ export default function PaymentCards() {
             {card.title === "Platinum Package" ? (
               <Dialog>
                 <DialogTrigger asChild>
-                  <Button variant="secondary" className="w-full mt-1">
-                    {card.buttonText}
+                  <Button
+                    variant="secondary"
+                    className="w-full mt-1"
+                    onClick={() =>
+                      handlePurchase(
+                        card.packageType as "BASIC" | "PREMIUM" | "PLATINUM"
+                      )
+                    }
+                    disabled={
+                      currentPayment?.initial_payment_status === "PAID" &&
+                      currentPayment?.package_type === card.packageType
+                    }
+                  >
+                    {currentPayment?.initial_payment_status === "PAID" &&
+                    currentPayment?.package_type === card.packageType
+                      ? "Activated"
+                      : card.buttonText}
                   </Button>
                 </DialogTrigger>
                 <DialogContent className="py-4 px-0 md:max-w-100!">
@@ -147,16 +319,42 @@ export default function PaymentCards() {
                     </ul>
                   </div>
                   <div className="flex gap-2 justify-end px-6">
-                    <Button variant="secondary" className="">
-                      Cancel
+                    <DialogClose asChild>
+                      <Button variant="secondary" className="">
+                        Cancel
+                      </Button>
+                    </DialogClose>
+                    <Button
+                      className=""
+                      onClick={() =>
+                        handlePurchase(
+                          card.packageType as "BASIC" | "PREMIUM" | "PLATINUM"
+                        )
+                      }
+                    >
+                      Proceed
                     </Button>
-                    <Button className="">Proceed</Button>
                   </div>
                 </DialogContent>
               </Dialog>
             ) : (
-              <Button variant="secondary" className="w-full mt-1">
-                {card.buttonText}
+              <Button
+                variant="secondary"
+                className="w-full mt-1"
+                onClick={() =>
+                  handlePurchase(
+                    card.packageType as "BASIC" | "PREMIUM" | "PLATINUM"
+                  )
+                }
+                disabled={
+                  currentPayment?.initial_payment_status === "PAID" &&
+                  currentPayment?.package_type === card.packageType
+                }
+              >
+                {currentPayment?.initial_payment_status === "PAID" &&
+                currentPayment?.package_type === card.packageType
+                  ? "Activated"
+                  : card.buttonText}
               </Button>
             )}
           </div>

@@ -32,7 +32,7 @@ import z from "zod";
 import { Icon } from "@iconify/react";
 import { cn } from "@/lib/utils";
 import { getCookie } from "cookies-next/client";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 
 const skillCategoryOptions = [
   { label: "Software Development", value: 1 },
@@ -114,7 +114,7 @@ export default function EditSkills() {
   const getValidPrimarySkillCategory = (): number => {
     const categoryId = skillsData?.primary_skill_category?.id;
     const validCategoryIds = skillCategoryOptions.map((opt) => opt.value);
-    return validCategoryIds.includes(categoryId) ? categoryId : 1;
+    return validCategoryIds.includes(categoryId) ? categoryId : 0;
   };
 
   const getValidPrimarySkills = (categoryId: number): number[] => {
@@ -162,6 +162,8 @@ export default function EditSkills() {
   });
 
   const selectedCategory = form.watch("primary_skill_category");
+  const primarySkills = form.watch("primary_skills");
+  const [secondaryPopoverOpen, setSecondaryPopoverOpen] = useState(false);
 
   // Filter primary skills based on selected category
   const filteredPrimarySkills = primarySkillsData.filter(
@@ -185,6 +187,23 @@ export default function EditSkills() {
       form.setValue("primary_skills", filteredSkills);
     }
   }, [selectedCategory, form]);
+
+  // Remove secondary skills that are in primary skills when popover opens or primary skills change
+  useEffect(() => {
+    if (secondaryPopoverOpen) {
+      const currentPrimarySkills = primarySkills || [];
+      const currentSecondarySkills = form.getValues("secondary_skills") || [];
+
+      // Filter out any secondary skills that are now in primary skills
+      const filteredSecondarySkills = currentSecondarySkills.filter(
+        (id) => !currentPrimarySkills.includes(id)
+      );
+
+      if (filteredSecondarySkills.length !== currentSecondarySkills.length) {
+        form.setValue("secondary_skills", filteredSecondarySkills);
+      }
+    }
+  }, [secondaryPopoverOpen, primarySkills, form]);
 
   const handleSubmit = async (data: EditSkillsFormData) => {
     try {
@@ -322,116 +341,22 @@ export default function EditSkills() {
                       </Button>
                     </PopoverTrigger>
                     <PopoverContent
-                      className="w-[254px] p-0 bg-white border border-gray-200 rounded-2xl shadow-[0px_0px_25px_0px_rgba(0,0,0,0.15)]"
+                      className="p-0 bg-white border border-gray-200 rounded-2xl shadow-[0px_0px_25px_0px_rgba(0,0,0,0.15)]"
                       align="start"
                     >
                       <div className="flex flex-col">
-                        {filteredPrimarySkills.map((option, index) => (
-                          <div
-                            key={option.id}
-                            className={cn(
-                              "flex items-center gap-4 px-6 py-4 border-b border-gray-200 last:border-b-0 cursor-pointer hover:bg-gray-50",
-                              index === 0 && "rounded-t-2xl",
-                              index === filteredPrimarySkills.length - 1 &&
-                                "rounded-b-2xl"
-                            )}
-                            onClick={() => {
-                              const currentValue = field.value || [];
-                              const isSelected = currentValue.includes(
-                                option.id
-                              );
-                              if (isSelected) {
-                                field.onChange(
-                                  currentValue.filter((id) => id !== option.id)
-                                );
-                              } else {
-                                field.onChange([...currentValue, option.id]);
-                              }
-                            }}
-                          >
-                            <Checkbox
-                              checked={(field.value || []).includes(option.id)}
-                              onCheckedChange={(checked) => {
-                                const currentValue = field.value || [];
-                                if (checked) {
-                                  field.onChange([...currentValue, option.id]);
-                                } else {
-                                  field.onChange(
-                                    currentValue.filter(
-                                      (id) => id !== option.id
-                                    )
-                                  );
-                                }
-                              }}
-                              className="size-5"
-                            />
-                            <Label className="text-base font-normal text-black cursor-pointer flex-1">
-                              {option.name}
-                            </Label>
+                        {filteredPrimarySkills.length === 0 ? (
+                          <div className="px-6 py-4 text-sm text-gray-500 text-center rounded-2xl w-full">
+                            No skill available for this category
                           </div>
-                        ))}
-                      </div>
-                    </PopoverContent>
-                  </Popover>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-          </div>
-
-          {/* Secondary Skills and Preferred Roles */}
-          <div className="flex flex-col md:flex-row gap-4">
-            <FormField
-              control={form.control}
-              name="secondary_skills"
-              render={({ field }) => {
-                // Remove already selected primary skills
-                const selectedPrimarySkills =
-                  form.getValues("primary_skills") || [];
-                const availableSecondarySkills = filteredPrimarySkills.filter(
-                  (skill) => !selectedPrimarySkills.includes(skill.id)
-                );
-
-                return (
-                  <FormItem className="w-full md:w-1/2">
-                    <Label className="text-sm font-medium text-black">
-                      Secondary Skills
-                    </Label>
-                    <Popover>
-                      <PopoverTrigger asChild>
-                        <Button
-                          type="button"
-                          variant="outline"
-                          role="combobox"
-                          className={cn(
-                            "min-h-8 h-auto w-full justify-between border-gray-900 bg-white text-left font-normal py-2",
-                            "hover:bg-white"
-                          )}
-                        >
-                          <span className="flex-1 text-wrap wrap-break-word pr-2">
-                            {getSelectedSkillsLabel(
-                              field.value || [],
-                              availableSecondarySkills
-                            )}
-                          </span>
-                          <Icon
-                            icon="material-symbols:keyboard-arrow-down-rounded"
-                            className="h-4 w-4 shrink-0 opacity-50"
-                          />
-                        </Button>
-                      </PopoverTrigger>
-                      <PopoverContent
-                        className="w-[254px] p-0 bg-white border border-gray-200 rounded-2xl shadow-[0px_0px_25px_0px_rgba(0,0,0,0.15)]"
-                        align="start"
-                      >
-                        <div className="flex flex-col">
-                          {availableSecondarySkills.map((option, index) => (
+                        ) : (
+                          filteredPrimarySkills.map((option, index) => (
                             <div
                               key={option.id}
                               className={cn(
                                 "flex items-center gap-4 px-6 py-4 border-b border-gray-200 last:border-b-0 cursor-pointer hover:bg-gray-50",
                                 index === 0 && "rounded-t-2xl",
-                                index === availableSecondarySkills.length - 1 &&
+                                index === filteredPrimarySkills.length - 1 &&
                                   "rounded-b-2xl"
                               )}
                               onClick={() => {
@@ -475,7 +400,133 @@ export default function EditSkills() {
                                 {option.name}
                               </Label>
                             </div>
-                          ))}
+                          ))
+                        )}
+                      </div>
+                    </PopoverContent>
+                  </Popover>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+          </div>
+
+          {/* Secondary Skills and Preferred Roles */}
+          <div className="flex flex-col md:flex-row gap-4">
+            <FormField
+              control={form.control}
+              name="secondary_skills"
+              render={({ field }) => {
+                // Remove already selected primary skills
+                const selectedPrimarySkills =
+                  form.getValues("primary_skills") || [];
+                const availableSecondarySkills = filteredPrimarySkills.filter(
+                  (skill) => !selectedPrimarySkills.includes(skill.id)
+                );
+
+                return (
+                  <FormItem className="w-full md:w-1/2">
+                    <Label className="text-sm font-medium text-black">
+                      Secondary Skills
+                    </Label>
+                    <Popover
+                      open={secondaryPopoverOpen}
+                      onOpenChange={setSecondaryPopoverOpen}
+                    >
+                      <PopoverTrigger asChild>
+                        <Button
+                          type="button"
+                          variant="outline"
+                          role="combobox"
+                          className={cn(
+                            "min-h-8 h-auto w-full justify-between border-gray-900 bg-white text-left font-normal py-2",
+                            "hover:bg-white"
+                          )}
+                        >
+                          <span
+                            className={cn(
+                              "flex-1 text-wrap wrap-break-word pr-2",
+                              (!field.value || field.value.length === 0) &&
+                                "text-gray-500"
+                            )}
+                          >
+                            {getSelectedSkillsLabel(
+                              field.value || [],
+                              availableSecondarySkills
+                            )}
+                          </span>
+                          <Icon
+                            icon="material-symbols:keyboard-arrow-down-rounded"
+                            className="h-4 w-4 shrink-0 opacity-50"
+                          />
+                        </Button>
+                      </PopoverTrigger>
+                      <PopoverContent
+                        className="p-0 bg-white border border-gray-200 rounded-2xl shadow-[0px_0px_25px_0px_rgba(0,0,0,0.15)]"
+                        align="start"
+                      >
+                        <div className="flex flex-col">
+                          {availableSecondarySkills.length === 0 ? (
+                            <div className="px-6 py-4 text-sm text-gray-500 text-center rounded-2xl">
+                              No skill available for this category
+                            </div>
+                          ) : (
+                            availableSecondarySkills.map((option, index) => (
+                              <div
+                                key={option.id}
+                                className={cn(
+                                  "flex items-center gap-4 px-6 py-4 border-b border-gray-200 last:border-b-0 cursor-pointer hover:bg-gray-50",
+                                  index === 0 && "rounded-t-2xl",
+                                  index ===
+                                    availableSecondarySkills.length - 1 &&
+                                    "rounded-b-2xl"
+                                )}
+                                onClick={() => {
+                                  const currentValue = field.value || [];
+                                  const isSelected = currentValue.includes(
+                                    option.id
+                                  );
+                                  if (isSelected) {
+                                    field.onChange(
+                                      currentValue.filter(
+                                        (id) => id !== option.id
+                                      )
+                                    );
+                                  } else {
+                                    field.onChange([
+                                      ...currentValue,
+                                      option.id,
+                                    ]);
+                                  }
+                                }}
+                              >
+                                <Checkbox
+                                  checked={(field.value || []).includes(
+                                    option.id
+                                  )}
+                                  onCheckedChange={(checked) => {
+                                    const currentValue = field.value || [];
+                                    if (checked) {
+                                      field.onChange([
+                                        ...currentValue,
+                                        option.id,
+                                      ]);
+                                    } else {
+                                      field.onChange(
+                                        currentValue.filter(
+                                          (id) => id !== option.id
+                                        )
+                                      );
+                                    }
+                                  }}
+                                  className="size-5"
+                                />
+                                <Label className="text-base font-normal text-black cursor-pointer flex-1">
+                                  {option.name}
+                                </Label>
+                              </div>
+                            ))
+                          )}
                         </div>
                       </PopoverContent>
                     </Popover>

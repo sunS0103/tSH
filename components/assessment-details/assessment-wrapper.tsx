@@ -11,11 +11,15 @@ import FluidLayout from "../layouts/fluid";
 import { Icon } from "@iconify/react";
 import {
   Dialog,
+  DialogClose,
   DialogContent,
   DialogHeader,
   DialogTitle,
   DialogTrigger,
 } from "../ui/dialog";
+import { changeAssessmentStatus } from "@/api/assessments";
+import { toast } from "sonner";
+import { Payment } from "./step-content/payment-cards";
 
 const STEPS = [
   { number: 1, label: "Introduction", status: "active" as const },
@@ -77,6 +81,13 @@ export default function AssessmentWrapper({
   });
   const [isHydrated, setIsHydrated] = useState(false);
   const previousPathnameRef = useRef<string | null>(null);
+  const [userAssessmentId, setUserAssessmentId] = useState<string | null>(
+    assessment?.user_assessment_id || null
+  );
+
+  const [assessmentPayment, setAssessmentPayment] = useState<Payment | null>(
+    assessment?.payment || null
+  );
 
   const totalSteps = STEPS.length;
 
@@ -229,6 +240,61 @@ export default function AssessmentWrapper({
     currentStep === totalSteps || currentStep === totalSteps - 1;
   const firstTwoSteps = currentStep === 1 || currentStep === 2;
 
+  const handleStartAssessmentNow = () => {
+    if (!assessmentPayment?.initial_paid) {
+      toast.error("Please purchase the assessment to start.");
+      return;
+    }
+    if (!userAssessmentId) {
+      toast.error("User assessment ID is missing.");
+      return;
+    }
+    changeAssessmentStatus(userAssessmentId, "ON_GOING")
+      .then((res) => {
+        if (res.success) {
+          window.open(res.data.invite_link, "_blank");
+          setUserAssessmentId(null);
+          setAssessmentPayment(null);
+        }
+      })
+      .catch((err) => {
+        toast.error(err?.response?.data?.message);
+      });
+  };
+
+  const handleStartAssessmentLater = () => {
+    if (!assessmentPayment?.initial_paid) {
+      toast.error("Please purchase the assessment to start.");
+      return;
+    }
+    if (!userAssessmentId) {
+      toast.error("User assessment ID is missing.");
+      return;
+    }
+    changeAssessmentStatus(userAssessmentId, "LATER")
+      .then((res) => {
+        if (res.success) {
+          toast.success(res.message || "Exam link will send via email");
+          setUserAssessmentId(null);
+          setAssessmentPayment(null);
+        }
+      })
+      .catch((err) => {
+        toast.error(err?.response?.data?.message);
+      });
+  };
+
+  const handleUserAssessmentIdChange = ({
+    id,
+    payment,
+  }: {
+    id: string;
+    payment: Payment;
+  }) => {
+    setUserAssessmentId(id);
+    setAssessmentPayment(payment);
+  };
+
   return (
     <div className="flex flex-col h-[calc(100vh-240px)] sm:h-[calc(100vh-180px)] md:h-[calc(100vh-180px)] lg:h-[calc(100vh-190px)] mt-4 lg:mt-6">
       <div className="flex flex-col lg:flex-row gap-6 flex-1">
@@ -257,6 +323,8 @@ export default function AssessmentWrapper({
             isCurrentStepConfirmed={isCurrentStepConfirmed}
             onCurrentStepConfirmChange={handleCurrentStepConfirmChange}
             assessment={assessment}
+            onUserAssessmentIdChange={handleUserAssessmentIdChange}
+            assessmentPayment={assessmentPayment}
           />
         </div>
 
@@ -319,11 +387,15 @@ export default function AssessmentWrapper({
                     </ul>
                   </div>
                   <div className="flex gap-2 justify-end px-6">
-                    <Button variant="secondary" className="">
-                      Cancel
-                    </Button>
+                    <DialogClose asChild>
+                      <Button variant="secondary" className="">
+                        Cancel
+                      </Button>
+                    </DialogClose>
 
-                    <Button className="">Proceed</Button>
+                    <Button className="" onClick={handleStartAssessmentLater}>
+                      Proceed
+                    </Button>
                   </div>
                 </DialogContent>
               </Dialog>
@@ -357,11 +429,15 @@ export default function AssessmentWrapper({
                     </ul>
                   </div>
                   <div className="flex gap-2 justify-end px-6">
-                    <Button variant="secondary" className="">
-                      Cancel
-                    </Button>
+                    <DialogClose asChild>
+                      <Button variant="secondary" className="">
+                        Cancel
+                      </Button>
+                    </DialogClose>
 
-                    <Button className="">Proceed</Button>
+                    <Button className="" onClick={handleStartAssessmentNow}>
+                      Proceed
+                    </Button>
                   </div>
                 </DialogContent>
               </Dialog>
