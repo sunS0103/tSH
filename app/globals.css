@@ -125,6 +125,11 @@
   --color-natural-800: #ffffff;
 }
 
+.max-container {
+  max-width: 1440px;
+  margin: 0 auto;
+}
+
 :root {
   --radius: 0.625rem;
   --background: oklch(1 0 0);
@@ -158,6 +163,8 @@
   --sidebar-accent-foreground: oklch(0.205 0 0);
   --sidebar-border: oklch(0.922 0 0);
   --sidebar-ring: oklch(0.708 0 0);
+  --elevated: oklch(44.953% 0.00005 271.152);
+
 }
 
 .dark {
@@ -200,5 +207,22 @@
   }
   body {
     @apply bg-background text-foreground font-sans;
+  }
+}
+
+@layer utilities {
+  .scrollbar-hide {
+    -ms-overflow-style: none;
+    scrollbar-width: none;
+  }
+  .scrollbar-hide::-webkit-scrollbar {
+    display: none;
+  }
+  .gradient-text {
+    @apply text-transparent bg-clip-text bg-linear-to-r from-primary to-secondary;
+  }
+  .text-subtle {
+    color: var(--elevated);
+    font-weight: 500;
   }
 }

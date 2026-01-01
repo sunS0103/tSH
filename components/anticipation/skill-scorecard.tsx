@@ -23,7 +23,7 @@ const SkillScorecard = () => {
             <h4 className="font-bold text-lg text-foreground">
               QA Automation Engineer
             </h4>
-            <p className="text-xs text-muted-foreground">ID: C-4821</p>
+            <p className="text-xs text-subtle">ID: C-4821</p>
           </div>
           <div className="flex gap-2">
             <Badge
@@ -38,7 +38,7 @@ const SkillScorecard = () => {
         {/* Score Section */}
         <div className="flex gap-6 mb-4">
           <div>
-            <p className="text-xs text-muted-foreground mb-1">Total Score</p>
+            <p className="text-xs text-subtle mb-1">Total Score</p>
             <p className="text-2xl font-bold text-primary">92%</p>
           </div>
           <div className="flex-1">
@@ -49,7 +49,7 @@ const SkillScorecard = () => {
                   <Badge
                     key={skill}
                     variant="secondary"
-                    className="text-xs px-2 py-0.5 bg-muted/50 text-muted-foreground"
+                    className="text-xs px-2 py-0.5 bg-muted/50 text-subtle"
                   >
                     {skill}
                   </Badge>
@@ -57,7 +57,7 @@ const SkillScorecard = () => {
               )}
               <Badge
                 variant="secondary"
-                className="text-xs px-2 py-0.5 bg-muted/50 text-muted-foreground"
+                className="text-xs px-2 py-0.5 bg-muted/50 text-subtle"
               >
                 +4
               </Badge>
@@ -67,15 +67,15 @@ const SkillScorecard = () => {
 
         {/* Details Grid */}
         <div className="grid grid-cols-2 gap-3 mb-4 text-sm">
-          <div className="flex items-center gap-2 text-muted-foreground">
+          <div className="flex items-center gap-2 text-subtle">
             <Briefcase className="w-4 h-4" />
             <span>5-7 Years</span>
           </div>
-          <div className="flex items-center gap-2 text-muted-foreground">
+          <div className="flex items-center gap-2 text-subtle">
             <MapPin className="w-4 h-4" />
             <span>Bangalore, KA</span>
           </div>
-          <div className="flex items-center gap-2 text-muted-foreground">
+          <div className="flex items-center gap-2 text-subtle">
             <Clock className="w-4 h-4" />
             <span>Immediate</span>
           </div>
@@ -87,7 +87,7 @@ const SkillScorecard = () => {
 
         {/* Assessment Badges */}
         <div>
-          <p className="text-xs text-muted-foreground mb-2">Assessment Taken</p>
+          <p className="text-xs text-subtle mb-2">Assessment Taken</p>
           <div className="flex gap-2">
             <Badge className="bg-primary/10 text-primary border-0 text-xs">
               EXAM-FS-201

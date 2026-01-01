@@ -31,7 +31,7 @@ const Footer = () => {
           </div>
 
           {/* Copyright */}
-          <p className="text-sm text-muted-foreground">
+          <p className="text-sm text-subtle">
             © {new Date().getFullYear()} TechSmartHire. All rights reserved.
           </p>
         </motion.div>
