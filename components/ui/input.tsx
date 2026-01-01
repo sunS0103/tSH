@@ -13,6 +13,25 @@ function Input({ className, type, ...props }: React.ComponentProps<"input">) {
         // "aria-invalid:ring-destructive/20 dark:aria-invalid:ring-destructive/40 aria-invalid:border-destructive",
         className
       )}
+      onWheel={(e) => {
+        if (type === "number") {
+          e.currentTarget.blur();
+        }
+        // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+        // @ts-ignore
+        props.onWheel?.(e);
+      }}
+      onKeyDown={(e) => {
+        if (
+          type === "number" &&
+          (e.key === "ArrowUp" || e.key === "ArrowDown")
+        ) {
+          e.preventDefault();
+        }
+        // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+        // @ts-ignore
+        props.onKeyDown?.(e);
+      }}
       {...props}
     />
   );

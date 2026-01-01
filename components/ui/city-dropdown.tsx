@@ -44,9 +44,12 @@ export function CityDropdown({
   const scrollContainerRef = useRef<HTMLDivElement>(null);
   const debounceTimerRef = useRef<NodeJS.Timeout | null>(null);
   const loadedPagesRef = useRef<Set<number>>(new Set());
+  const searchInputRef = useRef<HTMLInputElement>(null);
 
   const selectedCity = cities.find((c) => c.id === value);
   // const isDisabled = disabled || !countryName || loading;
+
+  const searchInputRef = useRef<HTMLInputElement>(null);
 
   const loadCities = async (pageNum: number, query?: string) => {
     if (!countryName) return;
@@ -182,6 +185,12 @@ export function CityDropdown({
 
   // Always refresh cities when dropdown opens
   useEffect(() => {
+    if (open) {
+      setTimeout(() => {
+        searchInputRef.current?.focus();
+      }, 0);
+    }
+
     if (open && countryName && !loading) {
       loadedPagesRef.current.clear();
       setPage(1);
@@ -206,6 +215,15 @@ export function CityDropdown({
     };
   }, []);
 
+  useEffect(() => {
+    if (open && searchInputRef.current) {
+      // Small delay to ensure the popover is fully rendered
+      setTimeout(() => {
+        searchInputRef.current?.focus();
+      }, 100);
+    }
+  }, [open]);
+
   return (
     <Popover open={open} onOpenChange={setOpen}>
       <PopoverTrigger asChild>
@@ -226,23 +244,30 @@ export function CityDropdown({
           />
         </Button>
       </PopoverTrigger>
-      <PopoverContent
-        className="w-80 p-0"
-        align="start"
-        onOpenAutoFocus={(e) => e.preventDefault()}
-      >
+      <PopoverContent className="w-80 p-0" align="start">
         {/* Search Input */}
         <div className="p-2 border-b">
           <div className="relative">
             <Search className="absolute left-2 top-1/2 transform -translate-y-1/2 h-4 w-4 text-gray-400" />
             <Input
+              ref={searchInputRef}
               type="text"
+              ref={searchInputRef}
               placeholder="Search city..."
               value={searchQuery}
               onChange={(e) => handleSearch(e.target.value)}
               className="pl-8 h-9"
               onClick={(e) => e.stopPropagation()}
               // disabled={!countryName}
+              onKeyDown={(e) => {
+                if (e.key === "ArrowDown") {
+                  e.preventDefault();
+                  const firstButton = scrollContainerRef.current?.querySelector(
+                    "button"
+                  ) as HTMLButtonElement;
+                  if (firstButton) firstButton.focus();
+                }
+              }}
             />
           </div>
         </div>
@@ -257,9 +282,29 @@ export function CityDropdown({
               type="button"
               onClick={() => handleSelect(city.id)}
               className={cn(
-                "w-full flex items-center gap-3 px-4 py-2 text-left hover:bg-gray-100 transition-colors",
+                "w-full flex items-center gap-3 px-4 py-2 text-left hover:bg-gray-100 transition-colors focus:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-inset focus:ring-primary-500",
                 value === city.id && "bg-gray-100"
               )}
+              onKeyDown={(e) => {
+                if (e.key === "Enter") {
+                  e.preventDefault();
+                  handleSelect(city.id);
+                } else if (e.key === "ArrowDown") {
+                  e.preventDefault();
+                  const nextSibling = (e.target as HTMLElement)
+                    .nextElementSibling as HTMLButtonElement;
+                  if (nextSibling) nextSibling.focus();
+                } else if (e.key === "ArrowUp") {
+                  e.preventDefault();
+                  const prevSibling = (e.target as HTMLElement)
+                    .previousElementSibling as HTMLButtonElement;
+                  if (prevSibling) {
+                    prevSibling.focus();
+                  } else {
+                    searchInputRef.current?.focus();
+                  }
+                }
+              }}
             >
               <span className="flex-1 text-sm font-medium">{city.name}</span>
             </button>

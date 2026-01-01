@@ -79,7 +79,7 @@ export default function ProfileSection({
           </div>
         ) : (
           // Data State
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-3 items-start w-full">
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-3 items-start w-full">
             {data.map((field, index) => {
               return (
                 <div

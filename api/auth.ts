@@ -41,7 +41,7 @@ export const signUp = async ({
   email: string;
   country_code: string;
   mobile_number: string;
-  gender: "MALE" | "FEMALE";
+  gender: "Male" | "Female";
   role: "CANDIDATE" | "RECRUITER";
   account_type?: "Fresher" | "Working Professional" | "Student" | "Other";
   date_of_birth?: string;

@@ -45,7 +45,7 @@ interface RegisterFormProps {
 const candidateSchema = z.object({
   firstName: z.string().min(1, "First name is required"),
   lastName: z.string().min(1, "Last name is required"),
-  gender: z.enum(["male", "female"], { message: "Please select gender" }),
+  gender: z.enum(["Male", "Female"], { message: "Please select gender" }),
   country_code: z.string().min(1, "Country code is required"),
   phone: z
     .string()
@@ -62,7 +62,7 @@ const candidateSchema = z.object({
 const recruiterSchema = z.object({
   firstName: z.string().min(1, "First name is required"),
   lastName: z.string().min(1, "Last name is required"),
-  gender: z.enum(["male", "female"], { message: "Please select gender" }),
+  gender: z.enum(["Male", "Female"], { message: "Please select gender" }),
   country_code: z.string().min(1, "Country code is required"),
   phone: z
     .string()
@@ -99,18 +99,18 @@ interface CountryCode {
 }
 
 const jobCategories = [
-  { value: "it", label: "IT & Software" },
-  { value: "finance", label: "Finance & Accounting" },
-  { value: "marketing", label: "Marketing & Sales" },
-  { value: "hr", label: "Human Resources" },
-  { value: "operations", label: "Operations" },
+  { value: "IT & Software", label: "IT & Software" },
+  { value: "Finance & Accounting", label: "Finance & Accounting" },
+  { value: "Marketing & Sales", label: "Marketing & Sales" },
+  { value: "Human Resources", label: "Human Resources" },
+  { value: "Operations", label: "Operations" },
 ];
 
 const platformRoles = [
-  { value: "hiring_manager", label: "Hiring Manager" },
-  { value: "recruiter", label: "Recruiter" },
-  { value: "hr_admin", label: "HR Admin" },
-  { value: "team_lead", label: "Team Lead" },
+  { value: "Hiring Manager", label: "Hiring Manager" },
+  { value: "Recruiter", label: "Recruiter" },
+  { value: "HR Admin", label: "HR Admin" },
+  { value: "Team Lead", label: "Team Lead" },
 ];
 
 export default function RegisterForm({ role, email }: RegisterFormProps) {
@@ -404,7 +404,7 @@ export default function RegisterForm({ role, email }: RegisterFormProps) {
         email,
         country_code: selectedCountryCode.dial_code,
         mobile_number: data.phone,
-        gender: data.gender === "male" ? "MALE" : "FEMALE",
+        gender: data.gender === "Male" ? "Male" : "Female",
         country_id: selectedCountryData ? selectedCountryData.id : undefined,
         city_id: (data as RecruiterFormData).city_id ?? undefined,
         company_name: (data as RecruiterFormData).companyName,
@@ -435,7 +435,7 @@ export default function RegisterForm({ role, email }: RegisterFormProps) {
         role: "CANDIDATE",
         first_name: data.firstName,
         last_name: data.lastName,
-        gender: data.gender === "male" ? "MALE" : "FEMALE",
+        gender: data.gender === "Male" ? "Male" : "Female",
         email,
         country_code: selectedCountryCode.dial_code,
         country_id: selectedCountryCode?.id,
@@ -554,19 +554,19 @@ export default function RegisterForm({ role, email }: RegisterFormProps) {
                     className="flex flex-col gap-2 mt-2"
                   >
                     <div className="flex items-center gap-3">
-                      <RadioGroupItem value="male" id="male" />
+                      <RadioGroupItem value="Male" id="Male" />
                       <Label
-                        htmlFor="male"
-                        className="font-normal text-gray-500"
+                        htmlFor="Male"
+                        className="font-normal text-gray-800"
                       >
                         Male
                       </Label>
                     </div>
                     <div className="flex items-center gap-3">
-                      <RadioGroupItem value="female" id="female" />
+                      <RadioGroupItem value="Female" id="Female" />
                       <Label
-                        htmlFor="female"
-                        className="font-normal text-gray-500"
+                        htmlFor="Female"
+                        className="font-normal text-gray-800"
                       >
                         Female
                       </Label>
@@ -584,7 +584,7 @@ export default function RegisterForm({ role, email }: RegisterFormProps) {
             <Input
               value={email}
               disabled
-              className="bg-gray-50 text-gray-400"
+              className="bg-gray-200 text-gray-800"
             />
           </div>
 
@@ -673,7 +673,7 @@ export default function RegisterForm({ role, email }: RegisterFormProps) {
                           {field.value ? (
                             format(new Date(field.value), "MM-dd-yyyy")
                           ) : (
-                            <span>mm-dd-yyyy</span>
+                            <span>Pick a date</span>
                           )}
                         </Button>
                       </FormControl>

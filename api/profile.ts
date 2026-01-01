@@ -35,7 +35,7 @@ export const updateCandidateProfile = async (data: {
   mobile_number: string;
   date_of_birth: number;
   account_type: string;
-  dial_code: string;
+  country_code: string;
   country: string;
   role: string;
 }) => {
@@ -104,7 +104,7 @@ export const updateEmployedStatus = async (data: {
   expected_ctc_period: string;
   notice_period_type: string;
   is_serving_notice: boolean;
-  last_working_day?: number | null;
+  last_working_day: number | null;
 }) => {
   const response = await axios.put("/candidate/profile/employment", {
     employment_status: "Employed",
@@ -128,9 +128,11 @@ export const updateStudentFresherStatus = async (data: {
 
 export const updateBetweenJobsStatus = async (data: {
   total_years_of_experience: number;
+  duration_years: number | null;
   duration_months: number | null;
   last_drawn_ctc_amount: number;
-  duration_description: string;
+  // duration_description: string;
+  reason: string;
   upskilling_activities: string;
   current_ctc_period_type: string;
 }) => {

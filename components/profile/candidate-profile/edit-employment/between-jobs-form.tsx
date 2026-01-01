@@ -33,9 +33,15 @@ const betweenJobsSchema = z.object({
     .refine((val) => !isNaN(parseFloat(val)) && parseFloat(val) >= 0, {
       message: "Please enter a valid number",
     }),
+  duration_years: z
+    .number()
+    .min(0, "Duration years must be 0 or greater")
+    .max(100, "Duration years must be less than 100")
+    .nullable(),
   duration_months: z
     .number()
-    .min(1, "Duration of career break is required")
+    .min(0, "Duration months must be between 0 and 11")
+    .max(11, "Duration months must be between 0 and 11")
     .nullable(),
   last_drawn_ctc_amount: z
     .string()
@@ -43,7 +49,8 @@ const betweenJobsSchema = z.object({
     .refine((val) => !isNaN(parseFloat(val)) && parseFloat(val) >= 0, {
       message: "Please enter a valid number",
     }),
-  duration_description: z.string().min(1, "Reason is required"),
+  // duration_description: z.string().min(1, "Reason is required")
+  reason: z.string().min(1, "Reason is required"),
   upskilling_activities: z.string().min(1, "Upskilling activities is required"),
   current_ctc_period_type: z
     .string()
@@ -73,10 +80,12 @@ export default function BetweenJobsForm({
     defaultValues: {
       total_years_of_experience:
         defaultValues?.total_years_of_experience?.toString() || "",
+      duration_years: defaultValues?.duration_years || null,
       duration_months: defaultValues?.duration_months || null,
       last_drawn_ctc_amount:
         defaultValues?.last_drawn_ctc_amount?.toString() || "",
-      duration_description: defaultValues?.duration_description || "",
+      // duration_description: defaultValues?.duration_description || "",
+      reason: defaultValues?.reason || "",
       upskilling_activities: defaultValues?.upskilling_activities || "",
       current_ctc_period_type: "LPA",
     },
@@ -86,10 +95,12 @@ export default function BetweenJobsForm({
     try {
       const response = await updateBetweenJobsStatus({
         total_years_of_experience: parseFloat(data.total_years_of_experience),
+        duration_years: data.duration_years,
         duration_months: data.duration_months,
         last_drawn_ctc_amount: parseFloat(data.last_drawn_ctc_amount),
         current_ctc_period_type: data.current_ctc_period_type,
-        duration_description: data.duration_description,
+        // duration_description: data.duration_description,
+        reason: data.reason,
         upskilling_activities: data.upskilling_activities,
       });
 
@@ -122,14 +133,13 @@ export default function BetweenJobsForm({
             control={form.control}
             name="total_years_of_experience"
             render={({ field }) => (
-              <FormItem className="w-full">
+              <FormItem className="w-full md:w-1/2">
                 <Label className="text-sm font-medium ">
                   Total Work Experience (in years)
                 </Label>
                 <FormControl>
                   <Input
                     type="number"
-                    step="0.1"
                     placeholder="0.0"
                     className="h-8 border-gray-900"
                     {...field}
@@ -139,39 +149,10 @@ export default function BetweenJobsForm({
               </FormItem>
             )}
           />
-
-          <FormField
-            control={form.control}
-            name="duration_months"
-            render={({ field }) => (
-              <FormItem className="w-full">
-                <Label className="text-sm font-medium ">
-                  Duration of Career Break
-                </Label>
-                <FormControl>
-                  <Input
-                    type="number"
-                    placeholder="Enter duration of career break"
-                    className="h-8 border-gray-900 w-full"
-                    value={field.value || ""}
-                    onChange={(e) =>
-                      field.onChange(
-                        e.target.value ? parseFloat(e.target.value) : null
-                      )
-                    }
-                  />
-                </FormControl>
-                <FormMessage />
-              </FormItem>
-            )}
-          />
-        </div>
-
-        <div className="w-full md:w-1/2">
-          <Label className="text-sm font-medium text-black mb-2">
-            Last Drawn CTC
-          </Label>
-          <div className="flex border border-gray-900 rounded-lg overflow-hidden">
+          <div className="w-full md:w-1/2">
+            <Label className="text-sm font-medium text-black mb-2">
+              Last Drawn CTC
+            </Label>
             <FormField
               control={form.control}
               name="last_drawn_ctc_amount"
@@ -182,8 +163,77 @@ export default function BetweenJobsForm({
                       type="number"
                       step="0.1"
                       placeholder="0.0"
-                      className="h-8 border-0 rounded-none"
+                      className="h-8 border-gray-900 "
                       {...field}
+                    />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+          </div>
+        </div>
+        <div className="w-full flex flex-col gap-2">
+          <div className="w-full flex flex-col md:flex-row gap-4">
+            <FormField
+              control={form.control}
+              name="duration_years"
+              render={({ field }) => (
+                <FormItem className="w-full">
+                  <Label className="text-sm font-medium ">
+                    Duration of Career Break (in years)
+                  </Label>
+                  <FormControl>
+                    <Input
+                      type="number"
+                      placeholder="Years"
+                      min={0}
+                      max={100}
+                      className="h-8 border-gray-900 w-full"
+                      value={field.value || ""}
+                      onChange={(e) =>
+                        field.onChange(
+                          e.target.value ? parseFloat(e.target.value) : null
+                        )
+                      }
+                    />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+            <FormField
+              control={form.control}
+              name="duration_months"
+              render={({ field }) => (
+                <FormItem className="w-full">
+                  <Label className="text-sm font-medium ">
+                    Duration of Career Break (in months)
+                  </Label>
+                  <FormControl>
+                    <Input
+                      type="number"
+                      placeholder="Months (0-11)"
+                      min={0}
+                      max={11}
+                      className="h-8 border-gray-900 w-full"
+                      value={field.value ?? ""}
+                      onChange={(e) => {
+                        const value = e.target.value;
+                        if (value === "") {
+                          field.onChange(null);
+                        } else {
+                          const numValue = parseFloat(value);
+                          if (!isNaN(numValue)) {
+                            // Clamp value between 0 and 11
+                            const clampedValue = Math.max(
+                              0,
+                              Math.min(11, numValue)
+                            );
+                            field.onChange(clampedValue);
+                          }
+                        }
+                      }}
                     />
                   </FormControl>
                   <FormMessage />
@@ -196,7 +246,7 @@ export default function BetweenJobsForm({
         <div className="flex flex-col md:flex-row gap-4 w-full">
           <FormField
             control={form.control}
-            name="duration_description"
+            name="reason"
             render={({ field }) => {
               const charCount = field.value?.length || 0;
               return (

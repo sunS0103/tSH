@@ -22,9 +22,15 @@ export default function RecruiterProfile({
   recruiterProfileData,
 }: {
   recruiterProfileData: {
-    city: string;
+    city: {
+      id: number;
+      name: string;
+    };
     company_name: string;
-    country: string;
+    country: {
+      id: number;
+      name: string;
+    };
     country_code: string;
     email: string;
     first_name: string;
@@ -93,8 +99,8 @@ export default function RecruiterProfile({
 
         {/* Row 3: Country, City */}
         <div className="flex flex-col md:flex-row gap-2">
-          <ProfileDetail label="Country" value={profileData?.country} />
-          <ProfileDetail label="City" value={profileData?.city} />
+          <ProfileDetail label="Country" value={profileData?.country?.name} />
+          <ProfileDetail label="City" value={profileData?.city?.name} />
         </div>
 
         {/* Row 4: Email ID, Phone Number */}

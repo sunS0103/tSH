@@ -84,7 +84,7 @@ export default function EditIdentityAndAccount() {
     defaultValues: {
       first_name: profileData?.first_name,
       last_name: profileData?.last_name,
-      gender: profileData?.gender === "MALE" ? "Male" : "Female",
+      gender: profileData?.gender === "Male" ? "Male" : "Female",
       email: profileData?.email,
       dial_code: profileData?.mobile_details?.dial_code || "+91",
       mobile_number: profileData?.mobile_details?.mobile_number || "",
@@ -155,7 +155,7 @@ export default function EditIdentityAndAccount() {
       mobile_number: data.mobile_number,
       date_of_birth: dateOfBirthTimestamp,
       account_type: data.account_type,
-      dial_code: selectedCountryCode,
+      country_code: selectedCountryCode,
       country: selectedCountryName,
       // country_code: selectedCountryCode.dial_code,
       role: role === "CANDIDATE" ? "CANDIDATE" : "RECRUITER",
@@ -252,18 +252,18 @@ export default function EditIdentityAndAccount() {
                       className="flex flex-col gap-2 mt-2"
                     >
                       <div className="flex items-center gap-3">
-                        <RadioGroupItem value="Male" id="male" />
+                        <RadioGroupItem value="Male" id="Male" />
                         <Label
-                          htmlFor="male"
+                          htmlFor="Male"
                           className="font-normal text-gray-500"
                         >
                           Male
                         </Label>
                       </div>
                       <div className="flex items-center gap-3">
-                        <RadioGroupItem value="Female" id="female" />
+                        <RadioGroupItem value="Female" id="Female" />
                         <Label
-                          htmlFor="female"
+                          htmlFor="Female"
                           className="font-normal text-gray-500"
                         >
                           Female
@@ -389,10 +389,10 @@ export default function EditIdentityAndAccount() {
                                 } catch {
                                   // Invalid date, show placeholder
                                 }
-                                return <span>mm-dd-yyyy</span>;
+                                return <span>Pick a date</span>;
                               })()
                             ) : (
-                              <span>mm-dd-yyyy</span>
+                              <span>Pick a date</span>
                             )}
                           </Button>
                         </FormControl>

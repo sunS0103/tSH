@@ -24,6 +24,7 @@ import { WorkModeMultiSelect } from "@/components/ui/work-mode-multi-select";
 import { Input } from "@/components/ui/input";
 import { useEffect, useState } from "react";
 import { getWorkModes, getCountryById } from "@/api/seeder";
+import { fa } from "zod/v4/locales";
 
 const locationAndWorkPreferenceSchema = z
   .object({
@@ -212,13 +213,16 @@ export default function EditLocationAndWorkPreference() {
         preferred_cities: data.preferred_cities,
         preferred_work_modes: data.preferred_work_modes,
         is_citizen_of_work_country: data.is_citizen_of_work_country,
-        ...(data.is_citizen_of_work_country && {
-          // If citizen, send these fields
-          willing_to_relocate: data.willing_to_relocate,
-          open_to_remote_only: data.open_to_remote_only,
-          open_to_contract_to_hire: data.open_to_contract_to_hire,
-          visa_type: data.visa_type,
-        }),
+        willing_to_relocate: data.is_citizen_of_work_country
+          ? data.willing_to_relocate
+          : false,
+        open_to_remote_only: data.is_citizen_of_work_country
+          ? data.open_to_remote_only
+          : false,
+        open_to_contract_to_hire: data.is_citizen_of_work_country
+          ? data.open_to_contract_to_hire
+          : false,
+        visa_type: data.is_citizen_of_work_country ? data.visa_type : "",
       };
 
       const response = await updateLocationAndWorkPreferences(payload);
