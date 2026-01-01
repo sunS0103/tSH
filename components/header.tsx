@@ -22,6 +22,7 @@ import { toast } from "sonner";
 import { getCandidateProfile, getRecruiterProfile } from "@/api/profile";
 import { useEffect, useState } from "react";
 import { Dialog, DialogContent, DialogTrigger } from "./ui/dialog";
+import Image from "next/image";
 
 interface NavItem {
   label: string;
@@ -113,9 +114,15 @@ export default function Header() {
       <header className="bg-white border-b border-gray-200 sticky top-0 z-50">
         <div className="max-container mx-auto flex items-center justify-between px-4 md:px-6 h-16 w-full">
           {/* Logo */}
-          <div className="flex items-center h-8">
-            <img src="/Logo.svg" alt="techSmartHire logo" className="h-full" />
-          </div>
+          <Link href="/" className="flex items-center h-8 cursor-pointer">
+            <Image
+              src="/Logo.svg"
+              alt="techSmartHire logo"
+              className="h-full w-36"
+              width={120}
+              height={40}
+            />
+          </Link>
 
           {/* Desktop Navigation - Hidden on mobile */}
           <nav className="hidden md:flex items-center gap-5 h-16">

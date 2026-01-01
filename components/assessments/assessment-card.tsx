@@ -18,6 +18,8 @@ export interface AssessmentCardProps {
   duration: number;
   questionCount: number;
   className?: string;
+  score: number;
+  selectedTab: string;
 }
 
 export default function AssessmentCard({
@@ -28,21 +30,17 @@ export default function AssessmentCard({
   duration,
   questionCount,
   className,
+  score,
+  selectedTab,
 }: AssessmentCardProps) {
   const displayedTopics = topics.slice(0, 2);
   const remainingCount = topics.length - 2;
 
   const undisplayedTopics = topics.slice(2, topics.length);
+  const isTaken = selectedTab === "taken";
 
-  return (
-    <Link
-      href={`/assessments/${slug}`}
-      aria-label="Start assessment"
-      className={cn(
-        "bg-white border border-gray-200 flex flex-col items-start justify-between rounded-2xl w-full group hover:shadow-lg duration-500 min-h-57",
-        className
-      )}
-    >
+  const cardContent = (
+    <>
       <div className="p-3 w-full">
         <div className="flex items-center justify-end w-full">
           <Badge
@@ -130,14 +128,48 @@ export default function AssessmentCard({
             </div>
           </div>
 
-          <div className="bg-transparent border border-primary-500 size-8 rounded-lg flex items-center justify-center group-hover:bg-primary-500 transition-colors">
-            <Icon
-              icon="mdi:arrow-top-right"
-              className="size-5 text-primary-500 group-hover:text-white transition-colors"
-            />
-          </div>
+          {isTaken ? (
+            <div className="bg-transparent size-8 rounded-lg flex items-center justify-center">
+              <span className="text-gray-900 text-xs font-semibold">
+                # {score}
+              </span>
+            </div>
+          ) : (
+            <div className="bg-transparent border border-primary-500 size-8 rounded-lg flex items-center justify-center group-hover:bg-primary-500 transition-colors">
+              <Icon
+                icon="mdi:arrow-top-right"
+                className="size-5 text-primary-500 group-hover:text-white transition-colors"
+              />
+            </div>
+          )}
         </div>
       </div>
+    </>
+  );
+
+  if (isTaken) {
+    return (
+      <div
+        className={cn(
+          "bg-white border border-gray-200 flex flex-col items-start justify-between rounded-2xl w-full min-h-57",
+          className
+        )}
+      >
+        {cardContent}
+      </div>
+    );
+  }
+
+  return (
+    <Link
+      href={`/assessments/${slug}`}
+      aria-label="Start assessment"
+      className={cn(
+        "bg-white border border-gray-200 flex flex-col items-start justify-between rounded-2xl w-full group hover:shadow-lg duration-500 min-h-57",
+        className
+      )}
+    >
+      {cardContent}
     </Link>
   );
 }

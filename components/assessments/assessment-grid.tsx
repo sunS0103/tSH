@@ -16,13 +16,18 @@ interface Assessment {
   job_role_id: string;
   job_role_name: string;
   topics: Topics[];
+  score: number;
 }
 
 interface AssessmentGridProps {
   assessments: Assessment[];
+  selectedTab: string;
 }
 
-export default function AssessmentGrid({ assessments }: AssessmentGridProps) {
+export default function AssessmentGrid({
+  assessments,
+  selectedTab,
+}: AssessmentGridProps) {
   if (assessments.length === 0) {
     return (
       <div className="col-span-full text-center py-12 text-gray-500">
@@ -42,6 +47,8 @@ export default function AssessmentGrid({ assessments }: AssessmentGridProps) {
           duration={assessment.duration}
           questionCount={assessment.total_questions}
           slug={assessment.slug}
+          score={assessment.score}
+          selectedTab={selectedTab}
         />
       ))}
     </>

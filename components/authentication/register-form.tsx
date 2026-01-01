@@ -92,10 +92,8 @@ interface City {
 interface CountryCode {
   id: number;
   name: string;
-  currency: string;
   dial_code: string;
   flag: string;
-  is_active: boolean;
 }
 
 const jobCategories = [
@@ -122,8 +120,6 @@ export default function RegisterForm({ role, email }: RegisterFormProps) {
     name: "India",
     flag: "https://flagcdn.com/in.svg",
     dial_code: "+91",
-    currency: "INR",
-    is_active: true,
   });
 
   // Countries state
@@ -599,8 +595,14 @@ export default function RegisterForm({ role, email }: RegisterFormProps) {
                   <div className="flex border border-black rounded-lg">
                     <CountryCodeDropdown
                       value={selectedCountryCode.dial_code}
-                      onValueChange={() => {
-                        setSelectedCountryCode(selectedCountryCode);
+                      onValueChange={(dialCode, country) => {
+                        setSelectedCountryCode({
+                          id: country.id,
+                          name: country.name,
+                          dial_code: dialCode,
+                          flag: country.flag,
+                        });
+                        // setSelectedCountryCode(country);
                       }}
                       className="rounded-r-none border-r border-black"
                     />
