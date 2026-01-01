@@ -55,6 +55,7 @@ interface EmploymentDetailsData {
   looking_for_remote?: boolean;
   duration_months?: string | null;
   duration_description?: string | null;
+  duration_years?: number | null;
 }
 
 interface EducationData {
@@ -151,35 +152,7 @@ export default function CandidateProfile({
 
     // Current Employment Details: 20%
     if (currentEmployment?.employment_status) {
-      if (currentEmployment.employment_status === "Employed") {
-        if (
-          currentEmployment.company_name &&
-          currentEmployment.designation &&
-          currentEmployment.total_years_of_experience !== null
-        ) {
-          progress += 20;
-        }
-      } else if (
-        currentEmployment.employment_status === "Student" ||
-        currentEmployment.employment_status === "Fresher"
-      ) {
-        if (
-          currentEmployment.looking_for_internship !== undefined ||
-          currentEmployment.looking_for_full_time !== undefined ||
-          currentEmployment.looking_for_part_time !== undefined ||
-          currentEmployment.looking_for_remote !== undefined
-        ) {
-          progress += 20;
-        }
-      } else if (currentEmployment.employment_status === "Between Jobs") {
-        if (
-          currentEmployment.total_years_of_experience !== null &&
-          currentEmployment.reason &&
-          currentEmployment.upskilling_activities
-        ) {
-          progress += 20;
-        }
-      }
+      progress += 20;
     }
 
     // Location & Work Preferences: 20%
@@ -238,7 +211,10 @@ export default function CandidateProfile({
 
   const studentOrFresherData = [
     { label: "Current Status", value: currentEmployment?.employment_status },
-    { label: "Looking For", value: currentEmployment?.looking_for?.toString() },
+    {
+      label: "Looking For",
+      value: currentEmployment?.looking_for?.map((item) => item).join(", "),
+    },
   ];
 
   const betweenJobData = [
@@ -249,11 +225,11 @@ export default function CandidateProfile({
     },
     {
       label: "Duration of Career Break",
-      value: currentEmployment?.duration_months,
+      value: `${currentEmployment?.duration_years} years ${currentEmployment?.duration_months} months`,
     },
     {
       label: "Reason for Career Break",
-      value: currentEmployment?.duration_description,
+      value: currentEmployment?.reason,
     },
     {
       label: "Upskilling During This Period",
@@ -286,12 +262,12 @@ export default function CandidateProfile({
 
   const locationAndWorkPreferences = [
     {
-      label: "Current City",
-      value: locationAndWorkPreferencesData?.current_city?.name,
-    },
-    {
       label: "Current Country",
       value: locationAndWorkPreferencesData?.current_country?.name,
+    },
+    {
+      label: "Current City",
+      value: locationAndWorkPreferencesData?.current_city?.name,
     },
     {
       label: "Preferred Work Locations",
@@ -399,7 +375,7 @@ export default function CandidateProfile({
             <ProfileItem label="Last Name" value={profileData?.last_name} />
             <ProfileItem
               label="Gender"
-              value={profileData?.gender === "MALE" ? "Male" : "Female"}
+              value={profileData?.gender === "Male" ? "Male" : "Female"}
             />
             <ProfileItem label="Email ID" value={profileData?.email} />
             <ProfileItem

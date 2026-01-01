@@ -14,7 +14,7 @@ export const getAssessmentList = async ({
   sortBy: string;
   sortDirection: "asc" | "desc";
   query?: string;
-  technology?: string;
+  technology?: string[];
   skills?: string[];
 }) => {
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -29,7 +29,8 @@ export const getAssessmentList = async ({
     params.query = query;
   }
 
-  if (technology) {
+  if (technology && technology.length > 0) {
+    // Axios will handle multiple params with the same name
     params.technology = technology;
   }
 
@@ -103,7 +104,7 @@ export const getTakenAssessmentsList = async ({
   sortBy: string;
   sortDirection: "asc" | "desc";
   query?: string;
-  technology?: string;
+  technology?: string[];
   skills?: string[];
 }) => {
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -118,7 +119,8 @@ export const getTakenAssessmentsList = async ({
     params.query = query;
   }
 
-  if (technology) {
+  if (technology && technology.length > 0) {
+    // Axios will handle multiple params with the same name
     params.technology = technology;
   }
 

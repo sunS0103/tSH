@@ -143,7 +143,9 @@ export default function EditEmployment() {
                     duration_months: employmentData?.duration_months,
                     last_drawn_ctc_amount:
                       employmentData?.last_drawn_ctc_amount,
-                    duration_description: employmentData?.duration_description,
+                    // duration_description: employmentData?.duration_description,
+                    reason: employmentData?.reason,
+                    duration_years: employmentData?.duration_years,
                     upskilling_activities:
                       employmentData?.upskilling_activities,
                   }

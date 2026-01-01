@@ -244,7 +244,7 @@ function Logout({
             aria-label="User account menu"
             className="focus:outline-none focus:ring-2 focus:ring-primary-500 focus:ring-offset-2 rounded-full"
           >
-            <Avatar className="border border-primary size-8">
+            <Avatar className="border border-primary size-8 cursor-pointer">
               <AvatarFallback className="bg-primary-50 text-primary text-sm font-semibold">
                 {data && data.first_name && data.last_name ? (
                   `${data.first_name.charAt(0).toUpperCase()}${data.last_name

@@ -43,10 +43,10 @@ const noticePeriodOptions = [
   { label: ">3 months", value: ">3 months" },
 ];
 
-const ctcPeriodOptions = [
-  { label: "Per annum", value: "LPA" },
-  { label: "Per month", value: "LPM" },
-];
+// const ctcPeriodOptions = [
+//   { label: "Per annum", value: "LPA" },
+//   { label: "Per month", value: "LPM" },
+// ];
 
 const employedSchema = z
   .object({
@@ -137,9 +137,9 @@ export default function EmployedForm({
         // data.expected_ctc_period,
         notice_period_type: data.notice_period_type,
         is_serving_notice: data.is_serving_notice,
-        ...(data.is_serving_notice && {
-          last_working_day: data.last_working_day,
-        }),
+        last_working_day: data.is_serving_notice
+          ? data.last_working_day ?? null
+          : null,
       };
       const response = await updateEmployedStatus(payload);
 
@@ -224,7 +224,6 @@ export default function EmployedForm({
                 <FormControl>
                   <Input
                     type="number"
-                    step="0.1"
                     placeholder="0.0"
                     className="h-8 border-gray-900"
                     {...field}
@@ -257,7 +256,6 @@ export default function EmployedForm({
                     <FormControl>
                       <Input
                         type="number"
-                        step="0.1"
                         placeholder="0.0"
                         className="h-8 border-0 rounded-none w-full"
                         {...field}
@@ -283,7 +281,6 @@ export default function EmployedForm({
                     <FormControl>
                       <Input
                         type="number"
-                        step="0.1"
                         placeholder="0.0"
                         className="h-8 border-0 rounded-none w-full"
                         {...field}
@@ -373,7 +370,7 @@ export default function EmployedForm({
                           {field.value ? (
                             format(new Date(field.value), "MM-dd-yyyy")
                           ) : (
-                            <span>mm-dd-yyyy</span>
+                            <span>Pick a date</span>
                           )}
                         </Button>
                       </FormControl>

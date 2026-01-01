@@ -127,9 +127,9 @@ export default function AssessmentCandidate() {
           (filterId) => getFilterType(filterId) === "skills"
         );
 
-        // Technology should be a single value (take the first one if multiple)
+        // Technology can be multiple values (same as skills)
         const technology =
-          technologyFilters.length > 0 ? technologyFilters[0] : undefined;
+          technologyFilters.length > 0 ? technologyFilters : undefined;
         // Skills can be multiple values
         const skills = skillsFilters.length > 0 ? skillsFilters : undefined;
 

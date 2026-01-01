@@ -234,4 +234,13 @@
     color: var(--elevated);
     font-weight: 500;
   }
+  .number-input::-webkit-inner-spin-button,
+  .number-input::-webkit-outer-spin-button {
+    -webkit-appearance: none;
+    margin: 0;
+  }
+
+  .number-input {
+    -moz-appearance: textfield;
+  }
 }

@@ -45,6 +45,7 @@ export default function PaymentCards({
   const [paymentSuccessData, setPaymentSuccessData] = useState<Payment | null>(
     payment || null
   );
+  const [isPlatinumDialogOpen, setIsPlatinumDialogOpen] = useState(false);
 
   // Reset paymentSuccessData when payment prop becomes null (after proceed success)
   // This syncs the local state with parent state reset
@@ -274,16 +275,14 @@ export default function PaymentCards({
             )}
 
             {card.title === "Platinum Package" ? (
-              <Dialog>
+              <Dialog
+                open={isPlatinumDialogOpen}
+                onOpenChange={setIsPlatinumDialogOpen}
+              >
                 <DialogTrigger asChild>
                   <Button
                     variant="secondary"
                     className="w-full mt-1"
-                    onClick={() =>
-                      handlePurchase(
-                        card.packageType as "BASIC" | "PREMIUM" | "PLATINUM"
-                      )
-                    }
                     disabled={
                       currentPayment?.initial_payment_status === "PAID" &&
                       currentPayment?.package_type === card.packageType
@@ -326,11 +325,15 @@ export default function PaymentCards({
                     </DialogClose>
                     <Button
                       className=""
-                      onClick={() =>
-                        handlePurchase(
-                          card.packageType as "BASIC" | "PREMIUM" | "PLATINUM"
-                        )
-                      }
+                      onClick={() => {
+                        setIsPlatinumDialogOpen(false);
+                        // Use setTimeout to ensure dialog closes before opening Razorpay
+                        setTimeout(() => {
+                          handlePurchase(
+                            card.packageType as "BASIC" | "PREMIUM" | "PLATINUM"
+                          );
+                        }, 100);
+                      }}
                     >
                       Proceed
                     </Button>

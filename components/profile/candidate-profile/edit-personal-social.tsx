@@ -129,6 +129,7 @@ export default function EditPersonalSocial() {
                             placeholder="Enter your short headline"
                             className="border-gray-900 resize-none max-h-25 min-h-25 pr-16"
                             rows={5}
+                            maxLength={120}
                             {...field}
                           />
                           <span
@@ -164,6 +165,7 @@ export default function EditPersonalSocial() {
                             placeholder="Describe yourself"
                             className="border-gray-900 resize-none max-h-25 min-h-25 pr-16"
                             rows={5}
+                            maxLength={500}
                             {...field}
                           />
                           <span

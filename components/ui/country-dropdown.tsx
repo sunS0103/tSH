@@ -190,6 +190,15 @@ export function CountryDropdown({
     };
   }, []);
 
+  useEffect(() => {
+    if (open && searchInputRef.current) {
+      // Small delay to ensure the popover is fully rendered
+      setTimeout(() => {
+        searchInputRef.current?.focus();
+      }, 100);
+    }
+  }, [open]);
+
   return (
     <Popover open={open} onOpenChange={setOpen}>
       <PopoverTrigger asChild>
@@ -218,6 +227,7 @@ export function CountryDropdown({
             <Input
               ref={searchInputRef}
               type="text"
+              ref={searchInputRef}
               placeholder="Search country..."
               value={searchQuery}
               onChange={(e) => handleSearch(e.target.value)}
