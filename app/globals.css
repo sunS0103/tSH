@@ -164,7 +164,6 @@
   --sidebar-border: oklch(0.922 0 0);
   --sidebar-ring: oklch(0.708 0 0);
   --elevated: oklch(44.953% 0.00005 271.152);
-
 }
 
 .dark {
@@ -205,6 +204,16 @@
   * {
     @apply border-border outline-ring/50;
   }
+  /* Hide number input spin buttons */
+  input[type="number"]::-webkit-outer-spin-button,
+  input[type="number"]::-webkit-inner-spin-button {
+    -webkit-appearance: none;
+    margin: 0;
+  }
+  input[type="number"] {
+    -moz-appearance: textfield;
+  }
+
   body {
     @apply bg-background text-foreground font-sans;
   }

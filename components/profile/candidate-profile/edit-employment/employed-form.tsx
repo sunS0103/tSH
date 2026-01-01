@@ -228,6 +228,12 @@ export default function EmployedForm({
                     placeholder="0.0"
                     className="h-8 border-gray-900"
                     {...field}
+                    onChange={(e) => {
+                      if (e.target.value.length > 3) {
+                        e.target.value = e.target.value.slice(0, 3);
+                      }
+                      field.onChange(e);
+                    }}
                   />
                 </FormControl>
                 <FormMessage />
@@ -257,36 +263,6 @@ export default function EmployedForm({
                         {...field}
                       />
                     </FormControl>
-                    {/* <div className="flex items-center border-l border-gray-200 px-2 bg-white h-full">
-                      <FormField
-                        control={form.control}
-                        name="current_ctc_period_type"
-                        render={({ field: periodField }) => (
-                          <FormItem className="space-y-0">
-                            <FormControl>
-                              <Select
-                                onValueChange={periodField.onChange}
-                                value={periodField.value}
-                              >
-                                <SelectTrigger className="h-8 border-0 w-fit min-w-[100px] focus:ring-0">
-                                  <SelectValue />
-                                </SelectTrigger>
-                                <SelectContent>
-                                  {ctcPeriodOptions.map((option) => (
-                                    <SelectItem
-                                      key={option.value}
-                                      value={option.value}
-                                    >
-                                      {option.label}
-                                    </SelectItem>
-                                  ))}
-                                </SelectContent>
-                              </Select>
-                            </FormControl>
-                          </FormItem>
-                        )}
-                      />
-                    </div> */}
                   </div>
                   <FormMessage />
                 </FormItem>
@@ -313,36 +289,6 @@ export default function EmployedForm({
                         {...field}
                       />
                     </FormControl>
-                    {/* <div className="flex items-center border-l border-gray-200 px-2 bg-white h-full">
-                      <FormField
-                        control={form.control}
-                        name="expected_ctc_period"
-                        render={({ field: periodField }) => (
-                          <FormItem className="space-y-0">
-                            <FormControl>
-                              <Select
-                                onValueChange={periodField.onChange}
-                                value={periodField.value}
-                              >
-                                <SelectTrigger className="h-8 border-0 w-fit min-w-[100px] focus:ring-0">
-                                  <SelectValue />
-                                </SelectTrigger>
-                                <SelectContent>
-                                  {ctcPeriodOptions.map((option) => (
-                                    <SelectItem
-                                      key={option.value}
-                                      value={option.value}
-                                    >
-                                      {option.label}
-                                    </SelectItem>
-                                  ))}
-                                </SelectContent>
-                              </Select>
-                            </FormControl>
-                          </FormItem>
-                        )}
-                      />
-                    </div> */}
                   </div>
                   <FormMessage />
                 </FormItem>
