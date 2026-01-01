@@ -111,9 +111,15 @@ interface LocationAndWorkPreferencesData {
 }
 
 interface RecruiterProfileData {
-  city: string;
+  city: {
+    id: number;
+    name: string;
+  };
   company_name: string;
-  country: string;
+  country: {
+    id: number;
+    name: string;
+  };
   country_code: string;
   email: string;
   first_name: string;
@@ -288,6 +294,7 @@ export default function ProfilePage() {
       />
     );
   } else if (role === "RECRUITER") {
+    console.log(recruiterProfileData);
     return (
       <RecruiterProfile
         recruiterProfileData={recruiterProfileData as RecruiterProfileData}

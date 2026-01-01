@@ -42,6 +42,7 @@ export function CountryDropdown({
   const scrollContainerRef = useRef<HTMLDivElement>(null);
   const debounceTimerRef = useRef<NodeJS.Timeout | null>(null);
   const loadedPagesRef = useRef<Set<number>>(new Set());
+  const searchInputRef = useRef<HTMLInputElement>(null);
 
   const selectedCountry = countries.find((c) => c.id === value);
 
@@ -183,6 +184,15 @@ export function CountryDropdown({
     };
   }, []);
 
+  useEffect(() => {
+    if (open && searchInputRef.current) {
+      // Small delay to ensure the popover is fully rendered
+      setTimeout(() => {
+        searchInputRef.current?.focus();
+      }, 100);
+    }
+  }, [open]);
+
   return (
     <Popover open={open} onOpenChange={setOpen}>
       <PopoverTrigger asChild>
@@ -214,6 +224,7 @@ export function CountryDropdown({
             <Search className="absolute left-2 top-1/2 transform -translate-y-1/2 h-4 w-4 text-gray-400" />
             <Input
               type="text"
+              ref={searchInputRef}
               placeholder="Search country..."
               value={searchQuery}
               onChange={(e) => handleSearch(e.target.value)}

@@ -71,13 +71,14 @@ type EditProfileFormData = z.infer<typeof editProfileSchema>;
 export default function EditProfilePage() {
   const router = useRouter();
   const [isSubmitting, setIsSubmitting] = useState(false);
-  const [selectedCountryCode, setSelectedCountryCode] = useState<string>("");
+  const cookieValue = getCookie("profile_data");
+  const profileData = cookieValue ? JSON.parse(cookieValue as string) : null;
+  const [selectedCountryCode, setSelectedCountryCode] = useState<string>(
+    profileData?.mobile_details?.dial_code || ""
+  );
   const [countries, setCountries] = useState<{ id: number; name: string }[]>(
     []
   );
-
-  const cookieValue = getCookie("profile_data");
-  const profileData = cookieValue ? JSON.parse(cookieValue as string) : null;
 
   const platformRoleOptions = [
     "Hiring Manager",
@@ -101,10 +102,10 @@ export default function EditProfilePage() {
       company_name: profileData?.company_name || "",
       first_name: profileData?.first_name || "",
       last_name: profileData?.last_name || "",
-      gender: profileData?.gender === "MALE" ? "Male" : "Female",
+      gender: profileData?.gender === "Male" ? "Male" : "Female",
       email: profileData?.email || "",
-      mobile_number: profileData?.mobile_number || "",
-      country_code: profileData?.country_code || "",
+      mobile_number: profileData?.mobile_details?.mobile_number || "",
+      country_code: profileData?.mobile_details?.dial_code || "",
       country_id: (() => {
         // Handle country_id - could be number, string, or object
         let countryId: number | string | object | undefined;
@@ -185,10 +186,12 @@ export default function EditProfilePage() {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [selectedCountryId]);
 
-  // Initialize country code from profile data (only once on mount)
+  // Sync form's country_code with selectedCountryCode on mount
   useEffect(() => {
-    if (profileData?.country_code && !selectedCountryCode) {
-      setSelectedCountryCode(profileData.country_code);
+    const dialCode =
+      profileData?.mobile_details?.dial_code || form.getValues("country_code");
+    if (dialCode && dialCode !== selectedCountryCode) {
+      setSelectedCountryCode(dialCode);
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
@@ -333,18 +336,18 @@ export default function EditProfilePage() {
                       className="flex flex-col gap-2"
                     >
                       <div className="flex items-center gap-3">
-                        <RadioGroupItem value="Male" id="male" />
+                        <RadioGroupItem value="Male" id="Male" />
                         <Label
-                          htmlFor="male"
+                          htmlFor="Male"
                           className="text-sm font-normal cursor-pointer"
                         >
                           Male
                         </Label>
                       </div>
                       <div className="flex items-center gap-3">
-                        <RadioGroupItem value="Female" id="female" />
+                        <RadioGroupItem value="Female" id="Female" />
                         <Label
-                          htmlFor="female"
+                          htmlFor="Female"
                           className="text-sm font-normal cursor-pointer"
                         >
                           Female
@@ -386,7 +389,10 @@ export default function EditProfilePage() {
                     <FormControl>
                       <div className="flex border border-gray-200 rounded-md h-8 overflow-hidden">
                         <CountryCodeDropdown
-                          value={selectedCountryCode}
+                          value={
+                            selectedCountryCode ||
+                            form.getValues("country_code")
+                          }
                           onValueChange={(dialCode) => {
                             setSelectedCountryCode(dialCode);
                             form.setValue("country_code", dialCode);

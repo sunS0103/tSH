@@ -45,6 +45,7 @@ export function CityMultiSelect({
   const debounceTimerRef = useRef<NodeJS.Timeout | null>(null);
   const loadedPagesRef = useRef<Set<number>>(new Set());
   const selectedCitiesCacheRef = useRef<City[]>([]);
+  const searchInputRef = useRef<HTMLInputElement>(null);
 
   // Get selected cities from both loaded cities and cache
   const selectedCities = [
@@ -167,7 +168,10 @@ export function CityMultiSelect({
     } else {
       // Add to cache if not already there
       const city = cities.find((c) => c.id === cityId);
-      if (city && !selectedCitiesCacheRef.current.some((c) => c.id === cityId)) {
+      if (
+        city &&
+        !selectedCitiesCacheRef.current.some((c) => c.id === cityId)
+      ) {
         selectedCitiesCacheRef.current.push(city);
       }
       onValueChange([...currentValue, cityId]);
@@ -197,7 +201,11 @@ export function CityMultiSelect({
                 if (cityData) {
                   return {
                     id: cityData.id || cityData.city_id || cityId,
-                    name: cityData.name || cityData.city_name || cityData.city || "Unknown City",
+                    name:
+                      cityData.name ||
+                      cityData.city_name ||
+                      cityData.city ||
+                      "Unknown City",
                   };
                 }
                 return null;
@@ -254,6 +262,15 @@ export function CityMultiSelect({
     };
   }, []);
 
+  useEffect(() => {
+    if (open && searchInputRef.current) {
+      // Small delay to ensure the popover is fully rendered
+      setTimeout(() => {
+        searchInputRef.current?.focus();
+      }, 100);
+    }
+  }, [open]);
+
   return (
     <Popover open={open} onOpenChange={setOpen}>
       <PopoverTrigger asChild>
@@ -287,6 +304,7 @@ export function CityMultiSelect({
             <Search className="absolute left-2 top-1/2 transform -translate-y-1/2 h-4 w-4 text-gray-400" />
             <Input
               type="text"
+              ref={searchInputRef}
               placeholder="Search city..."
               value={searchQuery}
               onChange={(e) => handleSearch(e.target.value)}
@@ -341,4 +359,3 @@ export function CityMultiSelect({
     </Popover>
   );
 }
-

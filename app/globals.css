@@ -164,7 +164,6 @@
   --sidebar-border: oklch(0.922 0 0);
   --sidebar-ring: oklch(0.708 0 0);
   --elevated: oklch(44.953% 0.00005 271.152);
-
 }
 
 .dark {
@@ -224,5 +223,14 @@
   .text-subtle {
     color: var(--elevated);
     font-weight: 500;
+  }
+  .number-input::-webkit-inner-spin-button,
+  .number-input::-webkit-outer-spin-button {
+    -webkit-appearance: none;
+    margin: 0;
+  }
+
+  .number-input {
+    -moz-appearance: textfield;
   }
 }

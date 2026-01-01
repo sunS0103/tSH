@@ -48,6 +48,8 @@ export function CityDropdown({
   const selectedCity = cities.find((c) => c.id === value);
   // const isDisabled = disabled || !countryName || loading;
 
+  const searchInputRef = useRef<HTMLInputElement>(null);
+
   const loadCities = async (pageNum: number, query?: string) => {
     if (!countryName) return;
 
@@ -206,6 +208,15 @@ export function CityDropdown({
     };
   }, []);
 
+  useEffect(() => {
+    if (open && searchInputRef.current) {
+      // Small delay to ensure the popover is fully rendered
+      setTimeout(() => {
+        searchInputRef.current?.focus();
+      }, 100);
+    }
+  }, [open]);
+
   return (
     <Popover open={open} onOpenChange={setOpen}>
       <PopoverTrigger asChild>
@@ -237,6 +248,7 @@ export function CityDropdown({
             <Search className="absolute left-2 top-1/2 transform -translate-y-1/2 h-4 w-4 text-gray-400" />
             <Input
               type="text"
+              ref={searchInputRef}
               placeholder="Search city..."
               value={searchQuery}
               onChange={(e) => handleSearch(e.target.value)}

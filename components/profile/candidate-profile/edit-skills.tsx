@@ -52,13 +52,11 @@ const editSkillsSchema = z.object({
   primary_skills: z
     .array(z.number())
     .min(1, "At least one primary skill is required"),
-  secondary_skills: z
-    .array(z.number())
-    .min(1, "At least one secondary skill is required"),
+  secondary_skills: z.array(z.number()).optional(),
   preferred_roles: z
     .array(z.number())
     .min(1, "At least one preferred role is required"),
-  certifications: z.string().min(1, "Certifications is required"),
+  certifications: z.string().optional(),
 });
 
 type EditSkillsFormData = z.infer<typeof editSkillsSchema>;
@@ -128,11 +126,14 @@ export default function EditSkills() {
     );
   };
 
-  const getValidSecondarySkills = (): number[] => {
-    const validCategoryIds = skillCategoryOptions.map((opt) => opt.value);
+  const getValidSecondarySkills = (categoryId: number): number[] => {
+    const categoryName = getCategoryName(categoryId);
+    const validSkillIds = primarySkillsData
+      .filter((skill) => skill.category_name === categoryName)
+      .map((skill) => skill.id);
     return validateIds(
       skillsData?.secondary_skills?.map((skill: { id: number }) => skill.id),
-      validCategoryIds
+      validSkillIds
     );
   };
 
@@ -155,7 +156,7 @@ export default function EditSkills() {
     defaultValues: {
       primary_skill_category: initialPrimarySkillCategory,
       primary_skills: initialPrimarySkills,
-      secondary_skills: getValidSecondarySkills(),
+      secondary_skills: getValidSecondarySkills(initialPrimarySkillCategory),
       preferred_roles: getValidPreferredRoles(),
       certifications: skillsData?.certifications || "",
     },
@@ -186,22 +187,35 @@ export default function EditSkills() {
     if (filteredSkills.length !== currentPrimarySkills.length) {
       form.setValue("primary_skills", filteredSkills);
     }
+
+    // Filter secondary skills to only include those from the current category
+    const currentSecondarySkills = form.getValues("secondary_skills") || [];
+    const filteredSecondarySkills = currentSecondarySkills.filter((id) =>
+      validSkillIds.includes(id)
+    );
+
+    // Also remove any secondary skills that are now in primary skills
+    const finalSecondarySkills = filteredSecondarySkills.filter(
+      (id) => !filteredSkills.includes(id)
+    );
+
+    if (finalSecondarySkills.length !== currentSecondarySkills.length) {
+      form.setValue("secondary_skills", finalSecondarySkills);
+    }
   }, [selectedCategory, form]);
 
   // Remove secondary skills that are in primary skills when popover opens or primary skills change
   useEffect(() => {
-    if (secondaryPopoverOpen) {
-      const currentPrimarySkills = primarySkills || [];
-      const currentSecondarySkills = form.getValues("secondary_skills") || [];
+    const currentPrimarySkills = primarySkills || [];
+    const currentSecondarySkills = form.getValues("secondary_skills") || [];
 
-      // Filter out any secondary skills that are now in primary skills
-      const filteredSecondarySkills = currentSecondarySkills.filter(
-        (id) => !currentPrimarySkills.includes(id)
-      );
+    // Filter out any secondary skills that are now in primary skills
+    const filteredSecondarySkills = currentSecondarySkills.filter(
+      (id) => !currentPrimarySkills.includes(id)
+    );
 
-      if (filteredSecondarySkills.length !== currentSecondarySkills.length) {
-        form.setValue("secondary_skills", filteredSecondarySkills);
-      }
+    if (filteredSecondarySkills.length !== currentSecondarySkills.length) {
+      form.setValue("secondary_skills", filteredSecondarySkills);
     }
   }, [secondaryPopoverOpen, primarySkills, form]);
 
@@ -212,13 +226,19 @@ export default function EditSkills() {
         primary_skills: number[];
         secondary_skill: number[];
         preferred_role: number[];
-        certifications: string;
+        certifications: string | null;
       } = {
         primary_skill_category: data.primary_skill_category,
         primary_skills: data.primary_skills,
-        secondary_skill: data.secondary_skills,
+        secondary_skill:
+          data.secondary_skills && data.secondary_skills.length > 0
+            ? data.secondary_skills
+            : [],
         preferred_role: data.preferred_roles,
-        certifications: data.certifications,
+        certifications:
+          data.certifications && data.certifications.trim().length > 0
+            ? data.certifications
+            : null,
       };
 
       const response = await updateSkills(payload);
@@ -286,6 +306,8 @@ export default function EditSkills() {
                         field.onChange(parseInt(value));
                         // Clear primary skills when category changes
                         form.setValue("primary_skills", []);
+                        // Clear secondary skills when category changes
+                        form.setValue("secondary_skills", []);
                       }}
                       value={field.value?.toString()}
                     >
@@ -344,7 +366,7 @@ export default function EditSkills() {
                       className="p-0 bg-white border border-gray-200 rounded-2xl shadow-[0px_0px_25px_0px_rgba(0,0,0,0.15)]"
                       align="start"
                     >
-                      <div className="flex flex-col">
+                      <div className="flex flex-col h-1/2 overflow-y-auto">
                         {filteredPrimarySkills.length === 0 ? (
                           <div className="px-6 py-4 text-sm text-gray-500 text-center rounded-2xl w-full">
                             No skill available for this category
@@ -571,7 +593,7 @@ export default function EditSkills() {
                       className="w-[254px] p-0 bg-white border border-gray-200 rounded-2xl shadow-[0px_0px_25px_0px_rgba(0,0,0,0.15)]"
                       align="start"
                     >
-                      <div className="flex flex-col">
+                      <div className="flex flex-col h-[40vh] overflow-y-auto">
                         {skillCategoryOptions.map((option, index) => (
                           <div
                             key={option.value}
