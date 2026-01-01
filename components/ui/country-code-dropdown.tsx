@@ -147,6 +147,17 @@ export function CountryCodeDropdown({
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [open]);
 
+  // Load countries on mount if value is provided (to preselect country)
+  useEffect(() => {
+    if (value && countries.length === 0 && !loading && !open) {
+      loadedPagesRef.current.clear();
+      setPage(1);
+      setSearchQuery("");
+      loadCountries(1);
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [value]);
+
   // Cleanup timer on unmount
   useEffect(() => {
     return () => {
@@ -179,8 +190,15 @@ export function CountryCodeDropdown({
     }
 
     // Only update if value actually changed (not just a re-render)
-    if (value !== lastValueRef.current) {
-      lastValueRef.current = value;
+    const valueChanged = value !== lastValueRef.current;
+    
+    // Also update if countries are loaded and we have a value but no selected country
+    const shouldUpdate = valueChanged || (value && countries.length > 0 && !selectedCountry);
+
+    if (shouldUpdate) {
+      if (valueChanged) {
+        lastValueRef.current = value;
+      }
 
       if (value && countries.length > 0) {
         const country = countries.find((c) => c.dial_code === value);
@@ -192,7 +210,7 @@ export function CountryCodeDropdown({
         setSelectedCountry(null);
       }
     }
-  }, [value, countries]);
+  }, [value, countries, selectedCountry]);
 
   const handleSelect = (country: Country) => {
     isUserSelectionRef.current = true;
