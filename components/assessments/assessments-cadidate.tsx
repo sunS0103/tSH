@@ -51,6 +51,7 @@ export interface Assessment {
   job_role_id: string;
   job_role_name: string;
   topics: Topics[];
+  score: number;
 }
 
 export default function AssessmentCandidate() {
@@ -238,7 +239,10 @@ export default function AssessmentCandidate() {
               Loading...
             </div>
           ) : assessments.length > 0 ? (
-            <AssessmentGrid assessments={assessments} />
+            <AssessmentGrid
+              assessments={assessments}
+              selectedTab={selectedTab}
+            />
           ) : (
             <div className="col-span-full text-center py-8 text-gray-500">
               No assessments found

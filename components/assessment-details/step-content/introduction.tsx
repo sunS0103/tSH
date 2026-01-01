@@ -14,43 +14,61 @@ export default function AssessmentIntroduction({
   className,
   assessment,
 }: AssessmentIntroductionProps) {
+  console.log(assessment);
   const cards = [
-    {
-      icon: "lineicons:stopwatch",
-      label: "Duration",
-      value: formatDurationWithSeconds(assessment.duration || 0),
-      bgColor: "bg-info-50",
-      borderColor: "border-info-100",
-      iconColor: "text-info-500",
-      iconBgColor: "bg-info-200",
-    },
-    {
-      icon: "material-symbols-light:menu-book-outline",
-      label: "Topics",
-      value: assessment.topics.length,
-      bgColor: "bg-secondary-50",
-      borderColor: "border-secondary-100",
-      iconColor: "text-secondary-500",
-      iconBgColor: "bg-secondary-200",
-    },
-    {
-      icon: "material-symbols:help-outline",
-      label: "Questions",
-      value: assessment.total_questions,
-      bgColor: "bg-success-50",
-      borderColor: "border-success-100",
-      iconColor: "text-success-500",
-      iconBgColor: "bg-success-200",
-    },
-    {
-      icon: "material-symbols:steppers",
-      label: "Difficulty Level",
-      value: assessment.difficulty_level,
-      bgColor: "bg-warning-50",
-      borderColor: "border-warning-100",
-      iconColor: "text-warning-500",
-      iconBgColor: "bg-warning-200",
-    },
+    ...(assessment.duration && assessment.duration > 0
+      ? [
+          {
+            icon: "lineicons:stopwatch",
+            label: "Duration",
+            value: formatDurationWithSeconds(assessment.duration || 0),
+            bgColor: "bg-info-50",
+            borderColor: "border-info-100",
+            iconColor: "text-info-500",
+            iconBgColor: "bg-info-200",
+          },
+        ]
+      : []),
+    ...(assessment.topics.length > 0
+      ? [
+          {
+            icon: "material-symbols-light:menu-book-outline",
+            label: "Topics",
+            value: assessment.topics.length,
+            bgColor: "bg-secondary-50",
+            borderColor: "border-secondary-100",
+            iconColor: "text-secondary-500",
+            iconBgColor: "bg-secondary-200",
+          },
+        ]
+      : []),
+
+    ...(assessment.total_questions && assessment.total_questions > 0
+      ? [
+          {
+            icon: "material-symbols:help-outline",
+            label: "Questions",
+            value: assessment.total_questions,
+            bgColor: "bg-success-50",
+            borderColor: "border-success-100",
+            iconColor: "text-success-500",
+            iconBgColor: "bg-success-200",
+          },
+        ]
+      : []),
+    ...(assessment.difficulty_level
+      ? [
+          {
+            icon: "material-symbols:steppers",
+            label: "Difficulty Level",
+            value: assessment.difficulty_level,
+            bgColor: "bg-warning-50",
+            borderColor: "border-warning-100",
+            iconColor: "text-warning-500",
+            iconBgColor: "bg-warning-200",
+          },
+        ]
+      : []),
   ];
 
   return (
