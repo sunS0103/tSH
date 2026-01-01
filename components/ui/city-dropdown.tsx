@@ -212,7 +212,7 @@ export function CityDropdown({
         <Button
           type="button"
           variant="outline"
-          className={cn("w-full justify-between h-8", className)}
+          className={cn("w-full justify-between h-9.5 border-black", className)}
           // disabled={isDisabled}
         >
           {selectedCity ? (
@@ -264,6 +264,13 @@ export function CityDropdown({
               <span className="flex-1 text-sm font-medium">{city.name}</span>
             </button>
           ))}
+
+          {cities.length === 0 && (
+            <div className="px-4 py-2 text-xs text-gray-400 text-center">
+              No cities found
+            </div>
+          )}
+
           {!hasMore && cities.length > 0 && (
             <div className="px-4 py-2 text-xs text-gray-400 text-center">
               No more cities
