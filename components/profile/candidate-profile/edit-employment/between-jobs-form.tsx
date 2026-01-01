@@ -78,7 +78,7 @@ export default function BetweenJobsForm({
         defaultValues?.last_drawn_ctc_amount?.toString() || "",
       duration_description: defaultValues?.duration_description || "",
       upskilling_activities: defaultValues?.upskilling_activities || "",
-      current_ctc_period_type: defaultValues?.current_ctc_period_type || "LPA",
+      current_ctc_period_type: "LPA",
     },
   });
 
@@ -190,34 +190,6 @@ export default function BetweenJobsForm({
                 </FormItem>
               )}
             />
-
-            <div className="flex items-center border-l border-gray-200 px-2 bg-white">
-              <FormField
-                control={form.control}
-                name="current_ctc_period_type"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormControl>
-                      <Select
-                        onValueChange={field.onChange}
-                        value={field.value}
-                      >
-                        <SelectTrigger className="h-8 border-0 w-fit min-w-[100px]">
-                          <SelectValue />
-                        </SelectTrigger>
-                        <SelectContent>
-                          {ctcPeriodOptions.map((option) => (
-                            <SelectItem key={option.value} value={option.value}>
-                              {option.label}
-                            </SelectItem>
-                          ))}
-                        </SelectContent>
-                      </Select>
-                    </FormControl>
-                  </FormItem>
-                )}
-              />
-            </div>
           </div>
         </div>
 

@@ -18,12 +18,12 @@ import { toast } from "sonner";
 import z from "zod";
 import { getCookie } from "cookies-next/client";
 import { CountryDropdown } from "@/components/ui/country-dropdown";
-import { CityDropdownIndependent } from "@/components/ui/city-dropdown-independent";
+import { CityDropdown } from "@/components/ui/city-dropdown";
 import { CityMultiSelect } from "@/components/ui/city-multi-select";
 import { WorkModeMultiSelect } from "@/components/ui/work-mode-multi-select";
 import { Input } from "@/components/ui/input";
 import { useEffect, useState } from "react";
-import { getWorkModes } from "@/api/seeder";
+import { getWorkModes, getCountryById } from "@/api/seeder";
 
 const locationAndWorkPreferenceSchema = z
   .object({
@@ -84,6 +84,7 @@ export default function EditLocationAndWorkPreference() {
   const [workModeOptions, setWorkModeOptions] = useState<
     { id: number; name: string }[]
   >([]);
+  const [countryName, setCountryName] = useState<string>("");
 
   useEffect(() => {
     getWorkModes()
@@ -159,6 +160,48 @@ export default function EditLocationAndWorkPreference() {
     },
   });
 
+  // Watch country_id and fetch country name
+  const countryId = form.watch("country_id");
+  useEffect(() => {
+    if (countryId && countryId > 0) {
+      getCountryById(countryId.toString())
+        .then((response) => {
+          const countryData = response?.data || response;
+          if (countryData?.name) {
+            setCountryName(countryData.name);
+          }
+        })
+        .catch((error) => {
+          console.error("Error loading country:", error);
+          setCountryName("");
+        });
+    } else {
+      setCountryName("");
+      // Reset city when country is cleared
+      if (form.getValues("city_id") > 0) {
+        form.setValue("city_id", 0);
+      }
+    }
+  }, [countryId, form]);
+
+  // Load initial country name if country_id exists in default values
+  useEffect(() => {
+    const initialCountryId = form.getValues("country_id");
+    if (initialCountryId && initialCountryId > 0 && !countryName) {
+      getCountryById(initialCountryId.toString())
+        .then((response) => {
+          const countryData = response?.data || response;
+          if (countryData?.name) {
+            setCountryName(countryData.name);
+          }
+        })
+        .catch((error) => {
+          console.error("Error loading initial country:", error);
+        });
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
   const isCitizen = form.watch("is_citizen_of_work_country");
 
   const handleSubmit = async (data: LocationAndWorkPreferenceFormData) => {
@@ -213,30 +256,8 @@ export default function EditLocationAndWorkPreference() {
           onSubmit={form.handleSubmit(handleSubmit)}
           className="flex flex-col gap-4 p-6"
         >
-          {/* Current City and Current Country */}
+          {/* Current Country and Current City */}
           <div className="flex flex-col md:flex-row gap-4">
-            <FormField
-              control={form.control}
-              name="city_id"
-              render={({ field }) => (
-                <FormItem className="w-full md:w-1/2">
-                  <Label className="text-sm font-medium text-black">
-                    Current City
-                  </Label>
-                  <FormControl>
-                    <CityDropdownIndependent
-                      value={typeof field.value === "number" ? field.value : 0}
-                      onValueChange={(cityId) => {
-                        // Ensure we always pass a number
-                        field.onChange(typeof cityId === "number" ? cityId : 0);
-                      }}
-                    />
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-
             <FormField
               control={form.control}
               name="country_id"
@@ -250,9 +271,36 @@ export default function EditLocationAndWorkPreference() {
                       value={typeof field.value === "number" ? field.value : 0}
                       onValueChange={(countryId) => {
                         // Ensure we always pass a number
-                        field.onChange(
-                          typeof countryId === "number" ? countryId : 0
-                        );
+                        const newCountryId =
+                          typeof countryId === "number" ? countryId : 0;
+                        field.onChange(newCountryId);
+                        // Reset city when country changes
+                        if (newCountryId !== field.value) {
+                          form.setValue("city_id", 0);
+                        }
+                      }}
+                    />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+
+            <FormField
+              control={form.control}
+              name="city_id"
+              render={({ field }) => (
+                <FormItem className="w-full md:w-1/2">
+                  <Label className="text-sm font-medium text-black">
+                    Current City
+                  </Label>
+                  <FormControl>
+                    <CityDropdown
+                      value={typeof field.value === "number" ? field.value : 0}
+                      countryName={countryName}
+                      onValueChange={(cityId) => {
+                        // Ensure we always pass a number
+                        field.onChange(typeof cityId === "number" ? cityId : 0);
                       }}
                     />
                   </FormControl>
