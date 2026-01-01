@@ -129,10 +129,12 @@ export default function EmployedForm({
         total_years_of_experience: parseFloat(data.total_years_of_experience),
         current_ctc_amount: parseFloat(data.current_ctc_amount),
         current_ctc_currency: "INR",
-        current_ctc_period_type: data.current_ctc_period_type,
+        current_ctc_period_type: "LPA",
+        // data.current_ctc_period_type,
         expected_ctc_amount: parseFloat(data.expected_ctc_amount),
         expected_ctc_currency: "INR",
-        expected_ctc_period: data.expected_ctc_period,
+        expected_ctc_period: "LPA",
+        // data.expected_ctc_period,
         notice_period_type: data.notice_period_type,
         is_serving_notice: data.is_serving_notice,
         ...(data.is_serving_notice && {
@@ -255,7 +257,7 @@ export default function EmployedForm({
                         {...field}
                       />
                     </FormControl>
-                    <div className="flex items-center border-l border-gray-200 px-2 bg-white h-full">
+                    {/* <div className="flex items-center border-l border-gray-200 px-2 bg-white h-full">
                       <FormField
                         control={form.control}
                         name="current_ctc_period_type"
@@ -284,7 +286,7 @@ export default function EmployedForm({
                           </FormItem>
                         )}
                       />
-                    </div>
+                    </div> */}
                   </div>
                   <FormMessage />
                 </FormItem>
@@ -311,7 +313,7 @@ export default function EmployedForm({
                         {...field}
                       />
                     </FormControl>
-                    <div className="flex items-center border-l border-gray-200 px-2 bg-white h-full">
+                    {/* <div className="flex items-center border-l border-gray-200 px-2 bg-white h-full">
                       <FormField
                         control={form.control}
                         name="expected_ctc_period"
@@ -340,7 +342,7 @@ export default function EmployedForm({
                           </FormItem>
                         )}
                       />
-                    </div>
+                    </div> */}
                   </div>
                   <FormMessage />
                 </FormItem>
