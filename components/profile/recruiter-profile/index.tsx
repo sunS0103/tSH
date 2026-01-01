@@ -34,7 +34,7 @@ export default function RecruiterProfile({
     last_name: string;
     mobile_details: {
       mobile_number: string;
-      flag_code: string;
+      flag: string;
       dial_code: string;
     };
     platform_role: string;

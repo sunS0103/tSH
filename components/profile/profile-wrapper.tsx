@@ -20,7 +20,11 @@ interface ProfileData {
   last_name: string;
   gender: string;
   email: string;
-  mobile_number: string;
+  mobile_details: {
+    mobile_number: string;
+    flag: string;
+    dial_code: string;
+  };
   date_of_birth: string;
   account_type: string;
   country_code: string;
@@ -117,7 +121,11 @@ interface RecruiterProfileData {
   is_verified: boolean;
   job_category: string;
   last_name: string;
-  mobile_number: string;
+  mobile_details: {
+    mobile_number: string;
+    flag: string;
+    dial_code: string;
+  };
   platform_role: string;
   preferred_technologies: string[];
   role: "RECRUITER" | "CANDIDATE";
