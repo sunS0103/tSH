@@ -91,7 +91,7 @@ export default function ProfileSection({
                     <Label className="text-xs text-gray-900 font-normal">
                       {field.label}
                     </Label>
-                    <p className="text-base font-medium text-black break-all">
+                    <p className="text-base font-medium text-black">
                       {field.value || "-"}
                     </p>
                   </div>
