@@ -189,7 +189,7 @@ export function CountryDropdown({
         <Button
           type="button"
           variant="outline"
-          className={cn("w-full justify-between h-8", className)}
+          className={cn("w-full justify-between h-9.5 border-black", className)}
           disabled={disabled || loading}
         >
           {selectedCountry ? (

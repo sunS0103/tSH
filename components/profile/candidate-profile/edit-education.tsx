@@ -43,6 +43,7 @@ export default function EditEducation() {
     graduation_year: z
       .number()
       .min(1, "Graduation year is required")
+      .max(2100, "Graduation year cannot be greater than 2100")
       .nullable(),
     academic_status: z.enum(["Completed", "Final Year", "Pursuing"]).nullable(),
   });
@@ -176,7 +177,7 @@ export default function EditEducation() {
                     <FormLabel>Graduation Year</FormLabel>
                     <FormControl>
                       <Input
-                        type="tel"
+                        type="number"
                         maxLength={10}
                         placeholder="Enter graduation year"
                         className="border-gray-900 w-full"

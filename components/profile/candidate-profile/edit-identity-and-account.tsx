@@ -31,11 +31,20 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { getCookie, setCookie } from "cookies-next/client";
 import { format } from "date-fns";
 import { CalendarIcon } from "lucide-react";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useForm } from "react-hook-form";
 import { toast } from "sonner";
 import z from "zod";
 import { useRouter } from "next/navigation";
+
+interface CountryCode {
+  id: number;
+  name: string;
+  currency: string;
+  dial_code: string;
+  flag: string;
+  is_active: boolean;
+}
 
 export default function EditIdentityAndAccount() {
   const cookieValue = getCookie("profile_data");
@@ -43,9 +52,9 @@ export default function EditIdentityAndAccount() {
   const router = useRouter();
 
   const profileData = cookieValue ? JSON.parse(cookieValue as string) : null;
-  const [selectedCountryCode, setSelectedCountryCode] = useState<string>(
-    profileData?.mobile_details?.dial_code || "+91"
-  );
+  const initialDialCode = profileData?.mobile_details?.dial_code || "+91";
+  const [selectedCountryCode, setSelectedCountryCode] =
+    useState<string>(initialDialCode);
   const [selectedCountryName, setSelectedCountryName] = useState<string>(
     profileData?.country || ""
   );
@@ -103,6 +112,16 @@ export default function EditIdentityAndAccount() {
     },
   });
 
+  // Watch form's dial_code to sync with CountryCodeDropdown
+  const formDialCode = form.watch("dial_code");
+
+  // Sync form's dial_code with selectedCountryCode on mount
+  useEffect(() => {
+    if (formDialCode && formDialCode !== selectedCountryCode) {
+      setSelectedCountryCode(formDialCode);
+    }
+  }, [formDialCode, selectedCountryCode]);
+
   const handleSubmit = async (data: z.infer<typeof editAccountSchema>) => {
     const role = getCookie("user_role");
 
@@ -138,6 +157,7 @@ export default function EditIdentityAndAccount() {
       account_type: data.account_type,
       dial_code: selectedCountryCode,
       country: selectedCountryName,
+      // country_code: selectedCountryCode.dial_code,
       role: role === "CANDIDATE" ? "CANDIDATE" : "RECRUITER",
     })
       .then((response) => {
@@ -282,10 +302,11 @@ export default function EditIdentityAndAccount() {
                     <FormControl>
                       <div className="flex border border-black rounded-lg">
                         <CountryCodeDropdown
-                          value={selectedCountryCode}
+                          value={formDialCode || selectedCountryCode}
                           onValueChange={(dialCode, country) => {
-                            setSelectedCountryCode(dialCode);
+                            setSelectedCountryCode(selectedCountryCode);
                             setSelectedCountryName(country.name);
+                            form.setValue("dial_code", dialCode);
                           }}
                           className="rounded-r-none border-r border-black"
                         />

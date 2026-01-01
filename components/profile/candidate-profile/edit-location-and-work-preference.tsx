@@ -169,17 +169,13 @@ export default function EditLocationAndWorkPreference() {
         preferred_cities: data.preferred_cities,
         preferred_work_modes: data.preferred_work_modes,
         is_citizen_of_work_country: data.is_citizen_of_work_country,
-        ...(data.is_citizen_of_work_country
-          ? {
-              // If citizen, send these fields
-              willing_to_relocate: data.willing_to_relocate,
-              open_to_remote_only: data.open_to_remote_only,
-              open_to_contract_to_hire: data.open_to_contract_to_hire,
-            }
-          : {
-              // If not citizen, send visa_type
-              visa_type: data.visa_type,
-            }),
+        ...(data.is_citizen_of_work_country && {
+          // If citizen, send these fields
+          willing_to_relocate: data.willing_to_relocate,
+          open_to_remote_only: data.open_to_remote_only,
+          open_to_contract_to_hire: data.open_to_contract_to_hire,
+          visa_type: data.visa_type,
+        }),
       };
 
       const response = await updateLocationAndWorkPreferences(payload);

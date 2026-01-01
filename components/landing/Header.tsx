@@ -105,6 +105,13 @@ const Header = () => {
 
           {/* Desktop CTA */}
           <div className="hidden md:flex items-center gap-4">
+            <Button
+              variant="outline"
+              onClick={() => router.push("/authentication")}
+            >
+              Login
+            </Button>
+
             <Button variant="default" size="sm" onClick={scrollToForm}>
               Join Waitlist
             </Button>
@@ -165,6 +172,7 @@ const Header = () => {
               Anticipation
             </Link>
             <div className="pt-4 border-t border-border">
+              <Button variant="outline">Login</Button>
               <Button
                 variant="default"
                 className="w-full"

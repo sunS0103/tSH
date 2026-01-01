@@ -147,6 +147,17 @@ export function CountryCodeDropdown({
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [open]);
 
+  // Load countries on mount if value is provided (to preselect country)
+  useEffect(() => {
+    if (value && countries.length === 0 && !loading && !open) {
+      loadedPagesRef.current.clear();
+      setPage(1);
+      setSearchQuery("");
+      loadCountries(1);
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [value]);
+
   // Cleanup timer on unmount
   useEffect(() => {
     return () => {
@@ -179,8 +190,15 @@ export function CountryCodeDropdown({
     }
 
     // Only update if value actually changed (not just a re-render)
-    if (value !== lastValueRef.current) {
-      lastValueRef.current = value;
+    const valueChanged = value !== lastValueRef.current;
+    
+    // Also update if countries are loaded and we have a value but no selected country
+    const shouldUpdate = valueChanged || (value && countries.length > 0 && !selectedCountry);
+
+    if (shouldUpdate) {
+      if (valueChanged) {
+        lastValueRef.current = value;
+      }
 
       if (value && countries.length > 0) {
         const country = countries.find((c) => c.dial_code === value);
@@ -192,7 +210,7 @@ export function CountryCodeDropdown({
         setSelectedCountry(null);
       }
     }
-  }, [value, countries]);
+  }, [value, countries, selectedCountry]);
 
   const handleSelect = (country: Country) => {
     isUserSelectionRef.current = true;
@@ -208,7 +226,7 @@ export function CountryCodeDropdown({
         <button
           type="button"
           className={cn(
-            "flex gap-2 justify-center flex-row items-center text-left font-normal border-gray-900 bg-white hover:bg-white cursor-pointer w-fit px-3 overflow-hidden rounded-full",
+            "flex gap-2 justify-center flex-row items-center text-left font-normal border-gray-900 bg-white hover:bg-white cursor-pointer w-fit px-3 overflow-hidden rounded-md focus:outline-none",
             className
           )}
         >
@@ -253,6 +271,16 @@ export function CountryCodeDropdown({
               onChange={(e) => handleSearchChange(e.target.value)}
               className="pl-8 h-9"
               onClick={(e) => e.stopPropagation()}
+              autoFocus
+              onKeyDown={(e) => {
+                if (e.key === "ArrowDown") {
+                  e.preventDefault();
+                  const firstButton = scrollContainerRef.current?.querySelector(
+                    "button"
+                  ) as HTMLButtonElement;
+                  if (firstButton) firstButton.focus();
+                }
+              }}
             />
           </div>
         </div>
@@ -267,9 +295,33 @@ export function CountryCodeDropdown({
               type="button"
               onClick={() => handleSelect(country)}
               className={cn(
-                "w-full flex items-center gap-3 px-4 py-2 text-left hover:bg-gray-100 transition-colors",
+                "w-full flex items-center gap-3 px-4 py-2 text-left hover:bg-gray-100 transition-colors focus:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-inset focus:ring-primary-500",
                 selectedCountry?.id === country.id && "bg-gray-100"
               )}
+              onKeyDown={(e) => {
+                if (e.key === "Enter") {
+                  e.preventDefault();
+                  handleSelect(country);
+                } else if (e.key === "ArrowDown") {
+                  e.preventDefault();
+                  const nextSibling = (e.target as HTMLElement)
+                    .nextElementSibling as HTMLButtonElement;
+                  if (nextSibling) nextSibling.focus();
+                } else if (e.key === "ArrowUp") {
+                  e.preventDefault();
+                  const prevSibling = (e.target as HTMLElement)
+                    .previousElementSibling as HTMLButtonElement;
+                  if (prevSibling) {
+                    prevSibling.focus();
+                  } else {
+                    // Focus back to input if at the top
+                    const input = document.querySelector(
+                      'input[placeholder="Search country..."]'
+                    ) as HTMLInputElement;
+                    if (input) input.focus();
+                  }
+                }
+              }}
             >
               <Image
                 width={16}

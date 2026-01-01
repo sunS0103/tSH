@@ -89,6 +89,15 @@ interface City {
   name: string;
 }
 
+interface CountryCode {
+  id: number;
+  name: string;
+  currency: string;
+  dial_code: string;
+  flag: string;
+  is_active: boolean;
+}
+
 const jobCategories = [
   { value: "it", label: "IT & Software" },
   { value: "finance", label: "Finance & Accounting" },
@@ -108,7 +117,14 @@ export default function RegisterForm({ role, email }: RegisterFormProps) {
   const router = useRouter();
   const isRecruiter = role === "RECRUITER";
   const schema = isRecruiter ? recruiterSchema : candidateSchema;
-  const [selectedCountryCode, setSelectedCountryCode] = useState<string>("+91");
+  const [selectedCountryCode, setSelectedCountryCode] = useState<CountryCode>({
+    id: 65,
+    name: "India",
+    flag: "https://flagcdn.com/in.svg",
+    dial_code: "+91",
+    currency: "INR",
+    is_active: true,
+  });
 
   // Countries state
   const [countries, setCountries] = useState<Country[]>([]);
@@ -386,7 +402,7 @@ export default function RegisterForm({ role, email }: RegisterFormProps) {
         first_name: data.firstName,
         last_name: data.lastName,
         email,
-        country_code: selectedCountryCode,
+        country_code: selectedCountryCode.dial_code,
         mobile_number: data.phone,
         gender: data.gender === "male" ? "MALE" : "FEMALE",
         country_id: selectedCountryData ? selectedCountryData.id : undefined,
@@ -421,7 +437,8 @@ export default function RegisterForm({ role, email }: RegisterFormProps) {
         last_name: data.lastName,
         gender: data.gender === "male" ? "MALE" : "FEMALE",
         email,
-        country_code: selectedCountryCode,
+        country_code: selectedCountryCode.dial_code,
+        country_id: selectedCountryCode?.id,
         mobile_number: data.phone,
         account_type: ("accountType" in data ? data.accountType : "") as
           | "Fresher"
@@ -581,9 +598,9 @@ export default function RegisterForm({ role, email }: RegisterFormProps) {
                 <FormControl>
                   <div className="flex border border-black rounded-lg">
                     <CountryCodeDropdown
-                      value={selectedCountryCode}
-                      onValueChange={(dialCode) => {
-                        setSelectedCountryCode(dialCode);
+                      value={selectedCountryCode.dial_code}
+                      onValueChange={() => {
+                        setSelectedCountryCode(selectedCountryCode);
                       }}
                       className="rounded-r-none border-r border-black"
                     />
@@ -654,7 +671,7 @@ export default function RegisterForm({ role, email }: RegisterFormProps) {
                         >
                           <CalendarIcon className="mr-2 h-4 w-4" />
                           {field.value ? (
-                            format(new Date(field.value), "mm-dd-yyyy")
+                            format(new Date(field.value), "MM-dd-yyyy")
                           ) : (
                             <span>mm-dd-yyyy</span>
                           )}
