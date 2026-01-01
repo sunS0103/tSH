@@ -5,6 +5,7 @@ import Header from "@/components/landing/Header";
 import Footer from "@/components/landing/Footer";
 import { Toaster } from "sonner";
 import Script from "next/script";
+import { RouteLoader } from "@/components/route-loader";
 
 const plusJakartaSans = Plus_Jakarta_Sans({
   variable: "--font-plus-jakarta-sans",
@@ -26,6 +27,7 @@ export default function RootLayout({
     <html lang="en">
       <body className={`${plusJakartaSans.variable} antialiased`}>
         {/* <Header /> */}
+        <RouteLoader />
         <main>{children}</main>
         {/* <Footer /> */}
         <Toaster richColors position="bottom-right" />
