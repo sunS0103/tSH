@@ -8,9 +8,12 @@ export default function Layout({
   return (
     <div className="flex min-h-screen flex-col bg-gray-50">
       <Header />
-      <main className="max-container mx-auto w-full flex-1 px-4 pt-4">
-        {children}
-      </main>
+
+      <div className="bg-gray-50">
+        <div className="max-container mx-auto bg-gray-50 px-4 pt-4">
+          {children}
+        </div>
+      </div>
     </div>
   );
 }

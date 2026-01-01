@@ -36,7 +36,7 @@ export default function AssessmentIntroduction({
     {
       icon: "material-symbols:help-outline",
       label: "Questions",
-      value: assessment.totalQuestions,
+      value: assessment.total_questions,
       bgColor: "bg-success-50",
       borderColor: "border-success-100",
       iconColor: "text-success-500",
@@ -45,7 +45,7 @@ export default function AssessmentIntroduction({
     {
       icon: "material-symbols:steppers",
       label: "Difficulty Level",
-      value: assessment.difficultyLevel,
+      value: assessment.difficulty_level,
       bgColor: "bg-warning-50",
       borderColor: "border-warning-100",
       iconColor: "text-warning-500",

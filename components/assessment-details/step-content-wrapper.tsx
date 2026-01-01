@@ -7,6 +7,7 @@ import ExamProcess from "./step-content/exam-process";
 import ScoreVisibilityAndPrivacy from "./step-content/score-visibility-and-privacy";
 import IntegrityAndCodeConduct from "./step-content/integrity-and-code-conduct";
 import FinalStartSection from "./step-content/final-section";
+import { Payment } from "./step-content/payment-cards";
 
 interface Topic {
   id: string;
@@ -15,17 +16,29 @@ interface Topic {
 
 export interface Assessment {
   id: string;
-  assessmentId: string;
+  assessment_id: string;
   title: string;
   slug: string;
   category: string;
   topics: Topic[];
-  difficultyLevel?: "Beginner" | "Intermediate" | "Advanced" | "Not Applicable";
+  difficulty_level?:
+    | "Beginner"
+    | "Intermediate"
+    | "Advanced"
+    | "Not Applicable";
   duration?: number; // seconds
-  totalQuestions?: number;
+  total_questions?: number;
   status?: "PUBLISHED" | "SUBSCRIBED";
   job_role_id?: string;
   job_role_name?: string;
+  user_assessment_id?: string;
+  payment: {
+    initial_paid: boolean;
+    initial_payment_status: "PAID";
+    package_type: "BASIC" | "PREMIUM" | "PLATINUM";
+    purchase_status: "ACTIVE" | "INACTIVE";
+    purchased_at: number;
+  };
 }
 
 interface StepContentProps {
@@ -34,6 +47,14 @@ interface StepContentProps {
   isCurrentStepConfirmed: boolean;
   onCurrentStepConfirmChange: (isConfirmed: boolean) => void;
   assessment: Assessment;
+  onUserAssessmentIdChange?: ({
+    id,
+    payment,
+  }: {
+    id: string;
+    payment: Payment;
+  }) => void;
+  assessmentPayment?: Payment | null;
 }
 
 export default function StepContent({
@@ -42,6 +63,8 @@ export default function StepContent({
   isCurrentStepConfirmed,
   onCurrentStepConfirmChange,
   assessment,
+  onUserAssessmentIdChange,
+  assessmentPayment,
 }: StepContentProps) {
   return (
     <div className={cn("flex flex-col gap-6", className)}>
@@ -80,7 +103,13 @@ export default function StepContent({
           />
         )}
 
-        {currentStep === 6 && <FinalStartSection />}
+        {currentStep === 6 && (
+          <FinalStartSection
+            assessment_id={assessment.assessment_id}
+            payment={assessmentPayment || assessment.payment}
+            onUserAssessmentIdChange={onUserAssessmentIdChange}
+          />
+        )}
       </div>
     </div>
   );

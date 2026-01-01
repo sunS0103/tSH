@@ -19,6 +19,7 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { Textarea } from "@/components/ui/textarea";
+import { cn } from "@/lib/utils";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useRouter } from "next/navigation";
 import { useForm } from "react-hook-form";
@@ -168,7 +169,7 @@ export default function BetweenJobsForm({
 
         <div className="w-full md:w-1/2">
           <Label className="text-sm font-medium text-black mb-2">
-            Current CTC
+            Last Drawn CTC
           </Label>
           <div className="flex border border-gray-900 rounded-lg overflow-hidden">
             <FormField
@@ -224,43 +225,61 @@ export default function BetweenJobsForm({
           <FormField
             control={form.control}
             name="duration_description"
-            render={({ field }) => (
-              <FormItem className="w-full">
-                <Label className="text-sm font-medium ">
-                  Reason for Career Break
-                </Label>
-                <FormControl>
-                  <Textarea
-                    placeholder="Enter reason for career break"
-                    className="border-gray-900 resize-none max-h-25 min-h-25"
-                    rows={5}
-                    {...field}
-                  />
-                </FormControl>
-                <FormMessage />
-              </FormItem>
-            )}
+            render={({ field }) => {
+              const charCount = field.value?.length || 0;
+              return (
+                <FormItem className="w-full">
+                  <Label className="text-sm font-medium ">
+                    Reason for Career Break
+                  </Label>
+                  <FormControl>
+                    <div className="relative">
+                      <Textarea
+                        placeholder="Enter reason for career break"
+                        className="border-gray-900 resize-none max-h-25 min-h-25"
+                        rows={5}
+                        maxLength={500}
+                        {...field}
+                      />
+                      <span className="absolute bottom-2 right-2 text-xs">
+                        {charCount} / 500
+                      </span>
+                    </div>
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              );
+            }}
           />
 
           <FormField
             control={form.control}
             name="upskilling_activities"
-            render={({ field }) => (
-              <FormItem className="w-full">
-                <Label className="text-sm font-medium ">
-                  Upskilling During This Period
-                </Label>
-                <FormControl>
-                  <Textarea
-                    placeholder="Describe upskilling activities"
-                    className="border-gray-900 resize-none max-h-25 min-h-25"
-                    rows={5}
-                    {...field}
-                  />
-                </FormControl>
-                <FormMessage />
-              </FormItem>
-            )}
+            render={({ field }) => {
+              const charCount = field.value?.length || 0;
+              return (
+                <FormItem className="w-full">
+                  <Label className="text-sm font-medium ">
+                    Upskilling During This Period
+                  </Label>
+                  <FormControl>
+                    <div className="relative">
+                      <Textarea
+                        placeholder="Describe upskilling activities"
+                        className="border-gray-900 resize-none max-h-25 min-h-25"
+                        rows={5}
+                        maxLength={500}
+                        {...field}
+                      />
+                      <span className={cn("absolute bottom-2 right-2 text-xs")}>
+                        {charCount}/500
+                      </span>
+                    </div>
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              );
+            }}
           />
         </div>
         {/* Buttons */}
