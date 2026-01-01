@@ -37,13 +37,22 @@ import { toast } from "sonner";
 import z from "zod";
 import { useRouter } from "next/navigation";
 
+interface CountryCode {
+  id: number;
+  name: string;
+  currency: string;
+  dial_code: string;
+  flag: string;
+  is_active: boolean;
+}
+
 export default function EditIdentityAndAccount() {
   const cookieValue = getCookie("profile_data");
 
   const router = useRouter();
 
   const profileData = cookieValue ? JSON.parse(cookieValue as string) : null;
-  const [selectedCountryCode, setSelectedCountryCode] = useState<string>(
+  const [selectedCountryCode, setSelectedCountryCode] = useState<CountryCode>(
     profileData?.mobile_details?.dial_code || "+91"
   );
   const [selectedCountryName, setSelectedCountryName] = useState<string>(
@@ -136,8 +145,9 @@ export default function EditIdentityAndAccount() {
       mobile_number: data.mobile_number,
       date_of_birth: dateOfBirthTimestamp,
       account_type: data.account_type,
-      dial_code: selectedCountryCode,
+      dial_code: selectedCountryCode.dial_code,
       country: selectedCountryName,
+      // country_code: selectedCountryCode.dial_code,
       role: role === "CANDIDATE" ? "CANDIDATE" : "RECRUITER",
     })
       .then((response) => {
@@ -282,9 +292,9 @@ export default function EditIdentityAndAccount() {
                     <FormControl>
                       <div className="flex border border-black rounded-lg">
                         <CountryCodeDropdown
-                          value={selectedCountryCode}
+                          value={selectedCountryCode.dial_code}
                           onValueChange={(dialCode, country) => {
-                            setSelectedCountryCode(dialCode);
+                            setSelectedCountryCode(selectedCountryCode);
                             setSelectedCountryName(country.name);
                           }}
                           className="rounded-r-none border-r border-black"

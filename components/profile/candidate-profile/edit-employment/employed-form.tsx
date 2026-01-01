@@ -129,10 +129,12 @@ export default function EmployedForm({
         total_years_of_experience: parseFloat(data.total_years_of_experience),
         current_ctc_amount: parseFloat(data.current_ctc_amount),
         current_ctc_currency: "INR",
-        current_ctc_period_type: data.current_ctc_period_type,
+        current_ctc_period_type: "LPA",
+        // data.current_ctc_period_type,
         expected_ctc_amount: parseFloat(data.expected_ctc_amount),
         expected_ctc_currency: "INR",
-        expected_ctc_period: data.expected_ctc_period,
+        expected_ctc_period: "LPA",
+        // data.expected_ctc_period,
         notice_period_type: data.notice_period_type,
         is_serving_notice: data.is_serving_notice,
         ...(data.is_serving_notice && {
@@ -237,117 +239,115 @@ export default function EmployedForm({
         {/* Current CTC and Expected CTC */}
         <div className="flex flex-col md:flex-row gap-4">
           <div className="w-full md:w-1/2">
-            <Label className="text-sm font-medium text-black mb-2">
-              Current CTC
-            </Label>
-            <div className="flex border border-gray-900 rounded-lg overflow-hidden">
-              <FormField
-                control={form.control}
-                name="current_ctc_amount"
-                render={({ field }) => (
-                  <FormItem className="flex-1">
+            <FormField
+              control={form.control}
+              name="current_ctc_amount"
+              render={({ field }) => (
+                <FormItem className="space-y-1">
+                  <Label className="text-sm font-medium text-black mb-2">
+                    Current CTC
+                  </Label>
+                  <div className="flex border border-gray-900 rounded-lg overflow-hidden items-center">
                     <FormControl>
                       <Input
                         type="number"
                         step="0.1"
                         placeholder="0.0"
-                        className="h-8 border-0 rounded-none"
+                        className="h-8 border-0 rounded-none w-full"
                         {...field}
                       />
                     </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-
-              <div className="flex items-center border-l border-gray-200 px-2 bg-white">
-                <FormField
-                  control={form.control}
-                  name="current_ctc_period_type"
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormControl>
-                        <Select
-                          onValueChange={field.onChange}
-                          value={field.value}
-                        >
-                          <SelectTrigger className="h-8 border-0 w-fit min-w-[100px]">
-                            <SelectValue />
-                          </SelectTrigger>
-                          <SelectContent>
-                            {ctcPeriodOptions.map((option) => (
-                              <SelectItem
-                                key={option.value}
-                                value={option.value}
+                    {/* <div className="flex items-center border-l border-gray-200 px-2 bg-white h-full">
+                      <FormField
+                        control={form.control}
+                        name="current_ctc_period_type"
+                        render={({ field: periodField }) => (
+                          <FormItem className="space-y-0">
+                            <FormControl>
+                              <Select
+                                onValueChange={periodField.onChange}
+                                value={periodField.value}
                               >
-                                {option.label}
-                              </SelectItem>
-                            ))}
-                          </SelectContent>
-                        </Select>
-                      </FormControl>
-                    </FormItem>
-                  )}
-                />
-              </div>
-            </div>
+                                <SelectTrigger className="h-8 border-0 w-fit min-w-[100px] focus:ring-0">
+                                  <SelectValue />
+                                </SelectTrigger>
+                                <SelectContent>
+                                  {ctcPeriodOptions.map((option) => (
+                                    <SelectItem
+                                      key={option.value}
+                                      value={option.value}
+                                    >
+                                      {option.label}
+                                    </SelectItem>
+                                  ))}
+                                </SelectContent>
+                              </Select>
+                            </FormControl>
+                          </FormItem>
+                        )}
+                      />
+                    </div> */}
+                  </div>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
           </div>
 
           <div className="w-full md:w-1/2">
-            <Label className="text-sm font-medium text-black mb-2">
-              Expected CTC
-            </Label>
-            <div className="flex border border-gray-900 rounded-lg overflow-hidden">
-              <FormField
-                control={form.control}
-                name="expected_ctc_amount"
-                render={({ field }) => (
-                  <FormItem className="flex-1">
+            <FormField
+              control={form.control}
+              name="expected_ctc_amount"
+              render={({ field }) => (
+                <FormItem className="space-y-1">
+                  <Label className="text-sm font-medium text-black mb-2">
+                    Expected CTC
+                  </Label>
+                  <div className="flex border border-gray-900 rounded-lg overflow-hidden items-center">
                     <FormControl>
                       <Input
                         type="number"
                         step="0.1"
                         placeholder="0.0"
-                        className="h-8 border-0 rounded-none"
+                        className="h-8 border-0 rounded-none w-full"
                         {...field}
                       />
                     </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-
-              <div className="flex items-center border-l border-gray-200 px-2 bg-white">
-                <FormField
-                  control={form.control}
-                  name="expected_ctc_period"
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormControl>
-                        <Select
-                          onValueChange={field.onChange}
-                          value={field.value}
-                        >
-                          <SelectTrigger className="h-8 border-0 w-fit min-w-[100px]">
-                            <SelectValue />
-                          </SelectTrigger>
-                          <SelectContent>
-                            {ctcPeriodOptions.map((option) => (
-                              <SelectItem
-                                key={option.value}
-                                value={option.value}
+                    {/* <div className="flex items-center border-l border-gray-200 px-2 bg-white h-full">
+                      <FormField
+                        control={form.control}
+                        name="expected_ctc_period"
+                        render={({ field: periodField }) => (
+                          <FormItem className="space-y-0">
+                            <FormControl>
+                              <Select
+                                onValueChange={periodField.onChange}
+                                value={periodField.value}
                               >
-                                {option.label}
-                              </SelectItem>
-                            ))}
-                          </SelectContent>
-                        </Select>
-                      </FormControl>
-                    </FormItem>
-                  )}
-                />
-              </div>
-            </div>
+                                <SelectTrigger className="h-8 border-0 w-fit min-w-[100px] focus:ring-0">
+                                  <SelectValue />
+                                </SelectTrigger>
+                                <SelectContent>
+                                  {ctcPeriodOptions.map((option) => (
+                                    <SelectItem
+                                      key={option.value}
+                                      value={option.value}
+                                    >
+                                      {option.label}
+                                    </SelectItem>
+                                  ))}
+                                </SelectContent>
+                              </Select>
+                            </FormControl>
+                          </FormItem>
+                        )}
+                      />
+                    </div> */}
+                  </div>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
           </div>
         </div>
 
