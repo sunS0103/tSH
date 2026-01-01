@@ -227,7 +227,6 @@ export function CountryDropdown({
             <Input
               ref={searchInputRef}
               type="text"
-              ref={searchInputRef}
               placeholder="Search country..."
               value={searchQuery}
               onChange={(e) => handleSearch(e.target.value)}
