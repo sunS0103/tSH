@@ -35,7 +35,7 @@ const CredibilityStrip = () => {
             worldwide.
           </h3>
 
-          <p className="text-muted-foreground text-lg">
+          <p className="text-subtle text-lg">
             We understand skills. Now we're fixing hiring.
           </p>
         </motion.div>
