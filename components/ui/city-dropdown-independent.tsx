@@ -42,7 +42,7 @@ export function CityDropdownIndependent({
   const scrollContainerRef = useRef<HTMLDivElement>(null);
   const debounceTimerRef = useRef<NodeJS.Timeout | null>(null);
   const loadedPagesRef = useRef<Set<number>>(new Set());
-  const defaultCityLoadedRef = useRef<boolean>(false);
+  const defaultCityLoadedRef = useRef<number | boolean>(false);
 
   const selectedCity = cities.find((c) => c.id === value);
 
@@ -141,12 +141,11 @@ export function CityDropdownIndependent({
     if (value > 0) {
       // Check if the city is already in the list
       const cityExists = cities.some((c) => c.id === value);
-      
+
       // Only load if city doesn't exist and we haven't already loaded it for this value
-      const shouldLoad = !cityExists && 
-                        !loading && 
-                        (defaultCityLoadedRef.current !== value);
-      
+      const shouldLoad =
+        !cityExists && !loading && defaultCityLoadedRef.current !== value;
+
       if (shouldLoad) {
         defaultCityLoadedRef.current = value;
         // Fetch the specific city by ID to display it
@@ -157,8 +156,9 @@ export function CityDropdownIndependent({
             if (cityData) {
               // Ensure we have both id and name
               const cityId = cityData.id || cityData.city_id || value;
-              const cityName = cityData.name || cityData.city_name || cityData.city;
-              
+              const cityName =
+                cityData.name || cityData.city_name || cityData.city;
+
               if (cityId && cityName) {
                 const city: City = {
                   id: cityId,
@@ -200,9 +200,10 @@ export function CityDropdownIndependent({
         loadedPagesRef.current.clear();
         setPage(1);
         setSearchQuery("");
-        
+
         // Preserve selected city if it exists in the list
-        const selectedCity = value && value > 0 ? cities.find((c) => c.id === value) : null;
+        const selectedCity =
+          value && value > 0 ? cities.find((c) => c.id === value) : null;
         setCities(selectedCity ? [selectedCity] : []);
         // Load fresh data (will merge with preserved city)
         loadCities(1);
@@ -219,7 +220,8 @@ export function CityDropdownIndependent({
               const cityData = response?.data || response?.city || response;
               if (cityData) {
                 const cityId = cityData.id || cityData.city_id || value;
-                const cityName = cityData.name || cityData.city_name || cityData.city;
+                const cityName =
+                  cityData.name || cityData.city_name || cityData.city;
                 if (cityId && cityName) {
                   const city: City = { id: cityId, name: cityName };
                   setCities([city]);
@@ -244,7 +246,7 @@ export function CityDropdownIndependent({
           return; // Don't proceed, wait for city fetch
         }
       }
-      
+
       // City exists or no value, proceed with normal refresh
       refreshCities();
     }
