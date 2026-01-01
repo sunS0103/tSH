@@ -92,7 +92,20 @@ export default function ProfileSection({
                       {field.label}
                     </Label>
                     <p className="text-base font-medium text-black">
-                      {field.value || "-"}
+                      {typeof field.value === "string" &&
+                      (field.value.startsWith("http://") ||
+                        field.value.startsWith("https://")) ? (
+                        <a
+                          href={field.value}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className="text-primary-500 hover:underline break-all"
+                        >
+                          {field.value}
+                        </a>
+                      ) : (
+                        field.value || "-"
+                      )}
                     </p>
                   </div>
                 </div>
