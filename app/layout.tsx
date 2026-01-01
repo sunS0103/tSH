@@ -19,7 +19,7 @@ export const metadata: Metadata = {
   },
   description:
     "TechSmartHire is a skill-first hiring platform for QA roles. Get early access to role-based assessments, pre-vetted candidates, and faster hiring through our beta program",
-  metadataBase: new URL("https://techsmarthire.com"),
+  metadataBase: new URL(process.env.NEXT_PUBLIC_APP_URL as string),
   keywords: [
     "QA Hiring",
     "Quality Assurance Jobs",
@@ -47,7 +47,7 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en">
-      {true && (
+      {process.env.NEXT_PUBLIC_ENV === "production" && (
         <Script id="google-tag-manager" strategy="afterInteractive">
           {`(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
 new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],

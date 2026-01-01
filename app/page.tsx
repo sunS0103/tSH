@@ -16,7 +16,7 @@ export const metadata: Metadata = {
       "TechSmartHire – Skill-Based QA Hiring Platform | Early Access & Beta Program",
     description:
       "TechSmartHire is a skill-first hiring platform for QA roles. Get early access to role-based assessments, pre-vetted candidates, and faster hiring through our beta program",
-    url: "https://techsmarthire.com",
+    url: process.env.NEXT_PUBLIC_APP_URL,
     siteName: "TechSmartHire",
     locale: "en_US",
     type: "website",
