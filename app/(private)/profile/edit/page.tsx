@@ -13,12 +13,7 @@ import {
   FormItem,
   FormMessage,
 } from "@/components/ui/form";
-import { Checkbox } from "@/components/ui/checkbox";
-import {
-  Popover,
-  PopoverContent,
-  PopoverTrigger,
-} from "@/components/ui/popover";
+
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
@@ -26,9 +21,7 @@ import { toast } from "sonner";
 import { CountryCodeDropdown } from "@/components/ui/country-code-dropdown";
 import { CountryDropdown } from "@/components/ui/country-dropdown";
 import { CityDropdown } from "@/components/ui/city-dropdown";
-import { getCountries } from "@/api/seeder";
-import { Icon } from "@iconify/react";
-import { cn } from "@/lib/utils";
+import { getCountries, getCountryById } from "@/api/seeder";
 import {
   Breadcrumb,
   BreadcrumbItem,
@@ -79,6 +72,7 @@ export default function EditProfilePage() {
   const [countries, setCountries] = useState<{ id: number; name: string }[]>(
     []
   );
+  const [countryName, setCountryName] = useState<string>("");
 
   const platformRoleOptions = [
     "Hiring Manager",
@@ -186,6 +180,50 @@ export default function EditProfilePage() {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [selectedCountryId]);
 
+  // Load country name when country_id changes
+  useEffect(() => {
+    if (selectedCountryId && selectedCountryId > 0) {
+      // First try to get from countries list
+      const countryFromList = countries.find((c) => c.id === selectedCountryId);
+      if (countryFromList) {
+        setCountryName(countryFromList.name);
+      } else {
+        // If not in list, fetch by ID
+        getCountryById(selectedCountryId.toString())
+          .then((response) => {
+            const countryData = response?.data || response;
+            if (countryData?.name) {
+              setCountryName(countryData.name);
+            }
+          })
+          .catch((error) => {
+            console.error("Error loading country:", error);
+            setCountryName("");
+          });
+      }
+    } else {
+      setCountryName("");
+    }
+  }, [selectedCountryId, countries]);
+
+  // Load initial country name if country_id exists in default values
+  useEffect(() => {
+    const initialCountryId = form.getValues("country_id");
+    if (initialCountryId && initialCountryId > 0 && !countryName) {
+      getCountryById(initialCountryId.toString())
+        .then((response) => {
+          const countryData = response?.data || response;
+          if (countryData?.name) {
+            setCountryName(countryData.name);
+          }
+        })
+        .catch((error) => {
+          console.error("Error loading initial country:", error);
+        });
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
   // Sync form's country_code with selectedCountryCode on mount
   useEffect(() => {
     const dialCode =
@@ -285,7 +323,7 @@ export default function EditProfilePage() {
                 <FormItem>
                   <Label className="text-sm font-medium">Company name</Label>
                   <FormControl>
-                    <Input {...field} className="h-8" />
+                    <Input {...field} className="border-gray-900" />
                   </FormControl>
                   <FormMessage />
                 </FormItem>
@@ -301,7 +339,7 @@ export default function EditProfilePage() {
                   <FormItem className="flex-1">
                     <Label className="text-sm font-medium">First Name</Label>
                     <FormControl>
-                      <Input {...field} className="h-8" />
+                      <Input {...field} className="border-gray-900" />
                     </FormControl>
                     <FormMessage />
                   </FormItem>
@@ -314,7 +352,7 @@ export default function EditProfilePage() {
                   <FormItem className="flex-1">
                     <Label className="text-sm font-medium">Last Name</Label>
                     <FormControl>
-                      <Input {...field} className="h-8" />
+                      <Input {...field} className="border-gray-900" />
                     </FormControl>
                     <FormMessage />
                   </FormItem>
@@ -372,7 +410,7 @@ export default function EditProfilePage() {
                       <Input
                         {...field}
                         type="email"
-                        className="h-8 bg-gray-50 border-gray-200"
+                        className="h-9 bg-gray-50 border-gray-200"
                         disabled
                       />
                     </FormControl>
@@ -384,10 +422,10 @@ export default function EditProfilePage() {
                 control={form.control}
                 name="mobile_number"
                 render={({ field }) => (
-                  <FormItem className="flex-1">
+                  <FormItem className="flex-1 ">
                     <Label className="text-sm font-medium">Phone Number</Label>
                     <FormControl>
-                      <div className="flex border border-gray-200 rounded-md h-8 overflow-hidden">
+                      <div className="flex border border-gray-900 rounded-md h-9 overflow-hidden">
                         <CountryCodeDropdown
                           value={
                             selectedCountryCode ||
@@ -456,9 +494,13 @@ export default function EditProfilePage() {
                         }
                         onValueChange={(countryId) => {
                           // Ensure we always pass a number
-                          field.onChange(
-                            typeof countryId === "number" ? countryId : 0
-                          );
+                          const newCountryId =
+                            typeof countryId === "number" ? countryId : 0;
+                          field.onChange(newCountryId);
+                          // Reset city when country changes
+                          if (newCountryId !== field.value) {
+                            form.setValue("city_id", 0);
+                          }
                         }}
                         placeholder={
                           typeof profileData?.country === "string"
@@ -488,12 +530,8 @@ export default function EditProfilePage() {
                             typeof cityId === "number" ? cityId : 0
                           );
                         }}
-                        countryName={selectedCountryData?.name}
-                        placeholder={
-                          typeof profileData?.city === "string"
-                            ? profileData.city
-                            : undefined
-                        }
+                        countryName={countryName || selectedCountryData?.name}
+                        placeholder="Select City"
                       />
                     </FormControl>
                     <FormMessage />
@@ -518,7 +556,7 @@ export default function EditProfilePage() {
                           onValueChange={field.onChange}
                           value={field.value}
                         >
-                          <SelectTrigger className="w-full">
+                          <SelectTrigger className="w-full border border-gray-900">
                             <SelectValue placeholder="Select category" />
                           </SelectTrigger>
                           <SelectContent>
@@ -549,7 +587,7 @@ export default function EditProfilePage() {
                           onValueChange={field.onChange}
                           value={field.value}
                         >
-                          <SelectTrigger className="w-full">
+                          <SelectTrigger className="w-full border border-gray-900">
                             <SelectValue placeholder="Select role" />
                           </SelectTrigger>
                           <SelectContent>
