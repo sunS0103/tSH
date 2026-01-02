@@ -70,7 +70,7 @@ export default function EditIdentityAndAccount() {
       .min(1, "Phone number is required")
       .regex(/^\d+$/, "Phone number must contain only numbers")
       .length(10, "Phone number must be exactly 10 digits"),
-    date_of_birth: z.string().min(1, "Date of birth is required"),
+    date_of_birth: z.string().optional(),
     account_type: z.enum(
       ["Student", "Working Professional", "Fresher", "Other"],
       {
@@ -128,9 +128,12 @@ export default function EditIdentityAndAccount() {
     // Parse date_of_birth - handle both MM-dd-yyyy format and ISO string
     let dateOfBirthTimestamp: number;
     try {
-      const dateStr = data.date_of_birth;
-      // Check if it's in MM-dd-yyyy format
-      if (dateStr.includes("-") && dateStr.split("-").length === 3) {
+      const dateStr = data.date_of_birth ?? "";
+      if (
+        typeof dateStr === "string" &&
+        dateStr.includes("-") &&
+        dateStr.split("-").length === 3
+      ) {
         const [month, day, year] = dateStr.split("-");
         const date = new Date(
           parseInt(year),
@@ -366,7 +369,12 @@ export default function EditIdentityAndAccount() {
                 name="date_of_birth"
                 render={({ field }) => (
                   <FormItem className="w-full md:w-1/2">
-                    <Label>Date of Birth</Label>
+                    <Label>
+                      Date of Birth{" "}
+                      <span className="text-[10px] text-gray-500">
+                        - optional
+                      </span>
+                    </Label>
                     <Popover>
                       <PopoverTrigger asChild>
                         <FormControl className="border border-black">

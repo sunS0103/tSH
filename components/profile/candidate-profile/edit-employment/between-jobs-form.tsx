@@ -255,7 +255,7 @@ export default function BetweenJobsForm({
                     Reason for Career Break
                   </Label>
                   <FormControl>
-                    <div className="relative">
+                    <div className="relative mb-2">
                       <Textarea
                         placeholder="Enter reason for career break"
                         className="border-gray-900 resize-none max-h-25 min-h-25"
@@ -263,7 +263,7 @@ export default function BetweenJobsForm({
                         maxLength={500}
                         {...field}
                       />
-                      <span className="absolute bottom-2 right-2 text-xs">
+                      <span className="absolute -bottom-5 right-0 text-xs">
                         {charCount} / 500
                       </span>
                     </div>
@@ -285,7 +285,7 @@ export default function BetweenJobsForm({
                     Upskilling During This Period
                   </Label>
                   <FormControl>
-                    <div className="relative">
+                    <div className="relative mb-2">
                       <Textarea
                         placeholder="Describe upskilling activities"
                         className="border-gray-900 resize-none max-h-25 min-h-25"
@@ -293,8 +293,8 @@ export default function BetweenJobsForm({
                         maxLength={500}
                         {...field}
                       />
-                      <span className={cn("absolute bottom-2 right-2 text-xs")}>
-                        {charCount}/500
+                      <span className="absolute -bottom-5 right-0 text-xs text-gray-600">
+                        {charCount} / 500
                       </span>
                     </div>
                   </FormControl>

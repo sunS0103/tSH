@@ -35,7 +35,7 @@ import { getCookie } from "cookies-next/client";
 import { useEffect, useState } from "react";
 
 const skillCategoryOptions = [
-  { label: "Software Development", value: 1 },
+  // { label: "Software Development", value: 1 },
   { label: "Software Testing", value: 2 },
   { label: "DevOps", value: 3 },
   { label: "GenAI & Agents", value: 4 },
@@ -154,7 +154,7 @@ export default function EditSkills() {
   const form = useForm<EditSkillsFormData>({
     resolver: zodResolver(editSkillsSchema),
     defaultValues: {
-      primary_skill_category: initialPrimarySkillCategory,
+      primary_skill_category: initialPrimarySkillCategory || 0,
       primary_skills: initialPrimarySkills,
       secondary_skills: getValidSecondarySkills(initialPrimarySkillCategory),
       preferred_roles: getValidPreferredRoles(),
@@ -309,7 +309,11 @@ export default function EditSkills() {
                         // Clear secondary skills when category changes
                         form.setValue("secondary_skills", []);
                       }}
-                      value={field.value?.toString()}
+                      value={
+                        field.value && field.value > 0
+                          ? field.value.toString()
+                          : undefined
+                      }
                     >
                       <SelectTrigger className="h-8 border-gray-900 w-full">
                         <SelectValue placeholder="Select category" />
@@ -350,7 +354,13 @@ export default function EditSkills() {
                           "hover:bg-white"
                         )}
                       >
-                        <span className="flex-1 text-wrap wrap-break-word pr-2">
+                        <span
+                          className={cn(
+                            "flex-1 text-wrap wrap-break-word pr-2",
+                            (!field.value || field.value.length === 0) &&
+                              "text-gray-500"
+                          )}
+                        >
                           {getSelectedSkillsLabel(
                             field.value || [],
                             filteredPrimarySkills
@@ -577,7 +587,13 @@ export default function EditSkills() {
                           "hover:bg-white"
                         )}
                       >
-                        <span className="flex-1 text-wrap wrap-break-word pr-2">
+                        <span
+                          className={cn(
+                            "flex-1 text-wrap wrap-break-word pr-2",
+                            (!field.value || field.value.length === 0) &&
+                              "text-gray-500"
+                          )}
+                        >
                           {getSelectedSkillsLabel(
                             field.value || [],
                             skillCategoryOptions
@@ -666,8 +682,8 @@ export default function EditSkills() {
                   </Label>
                   <FormControl>
                     <Input
-                      placeholder="e.g., AWS-3"
-                      className="h-8 border-gray-900"
+                      placeholder="e.g., AWS-3, React"
+                      className="h-8 border-gray-900 placeholder:text-sm"
                       {...field}
                     />
                   </FormControl>

@@ -7,15 +7,6 @@ import {
   AccordionTrigger,
 } from "@/components/ui/accordion";
 
-const FILTER_ITEMS = [
-  "Technology",
-  "Software Testing",
-  "Programming Skills",
-  "Frontend",
-  "Backend",
-  "GenAI & Agents",
-];
-
 // Common item structure
 interface OptionItem {
   id: string;

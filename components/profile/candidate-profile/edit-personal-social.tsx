@@ -117,28 +117,22 @@ export default function EditPersonalSocial() {
                 name="headline"
                 render={({ field }) => {
                   const charCount = field.value?.length || 0;
-                  const isWithinRange = charCount >= 80 && charCount <= 120;
                   return (
                     <FormItem className="w-full md:w-1/2">
                       <Label className="text-sm font-medium text-black">
                         Short Headline
                       </Label>
                       <FormControl>
-                        <div className="relative">
+                        <div className="relative mb-2">
                           <Textarea
                             placeholder="Enter your short headline"
-                            className="border-gray-900 resize-none max-h-25 min-h-25 pr-16"
+                            className="border-gray-900 resize-none max-h-25 min-h-25"
                             rows={5}
                             maxLength={120}
                             {...field}
                           />
-                          <span
-                            className={cn(
-                              "absolute bottom-2 right-2 text-xs",
-                              isWithinRange ? "text-gray-600" : "text-red-500"
-                            )}
-                          >
-                            {charCount}/120
+                          <span className="absolute -bottom-5 right-0 text-xs text-gray-600">
+                            {charCount} / 120
                           </span>
                         </div>
                       </FormControl>
@@ -153,28 +147,22 @@ export default function EditPersonalSocial() {
                 name="bio"
                 render={({ field }) => {
                   const charCount = field.value?.length || 0;
-                  const isWithinRange = charCount >= 250 && charCount <= 500;
                   return (
                     <FormItem className="w-full md:w-1/2">
                       <Label className="text-sm font-medium text-black">
                         Describe Yourself in Few Words
                       </Label>
                       <FormControl>
-                        <div className="relative">
+                        <div className="relative mb-2">
                           <Textarea
                             placeholder="Describe yourself"
-                            className="border-gray-900 resize-none max-h-25 min-h-25 pr-16"
+                            className="border-gray-900 resize-none max-h-25 min-h-25"
                             rows={5}
                             maxLength={500}
                             {...field}
                           />
-                          <span
-                            className={cn(
-                              "absolute bottom-2 right-2 text-xs",
-                              isWithinRange ? "text-gray-600" : "text-red-500"
-                            )}
-                          >
-                            {charCount}/500
+                          <span className="absolute -bottom-5 right-0 text-xs text-gray-600">
+                            {charCount} / 500
                           </span>
                         </div>
                       </FormControl>

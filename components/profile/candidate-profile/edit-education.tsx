@@ -36,17 +36,30 @@ interface EditEducationFormData {
 export default function EditEducation() {
   const router = useRouter();
 
-  const educationSchema = z.object({
-    degree_name: z.string().min(1, "Degree name is required"),
-    specialization: z.string().min(1, "Specialization is required"),
-    university_name: z.string().min(1, "University name is required"),
-    graduation_year: z
-      .number()
-      .min(1, "Graduation year is required")
-      .max(2100, "Graduation year cannot be greater than 2100")
-      .nullable(),
-    academic_status: z.enum(["Completed", "Final Year", "Pursuing"]).nullable(),
-  });
+  const educationSchema = z
+    .object({
+      degree_name: z.string().min(1, "Degree name is required"),
+      specialization: z.string().min(1, "Specialization is required"),
+      university_name: z.string().min(1, "University name is required"),
+      graduation_year: z.union([
+        z
+          .number()
+          .min(1, "Graduation year must be at least 1")
+          .max(2100, "Graduation year cannot be greater than 2100"),
+        z.null(),
+      ]),
+      academic_status: z
+        .enum(["Completed", "Final Year", "Pursuing"])
+        .nullable(),
+    })
+    .refine((data) => data.graduation_year !== null, {
+      message: "Graduation year is required",
+      path: ["graduation_year"],
+    })
+    .refine((data) => data.academic_status !== null, {
+      message: "Academic status is required",
+      path: ["academic_status"],
+    });
 
   const cookieValue = getCookie("education_data");
   const educationData = cookieValue ? JSON.parse(cookieValue as string) : null;
@@ -181,7 +194,7 @@ export default function EditEducation() {
                         maxLength={10}
                         placeholder="Enter graduation year"
                         className="border-gray-900 w-full"
-                        value={field.value || undefined}
+                        value={field.value || ""}
                         onChange={(e) => {
                           // Remove any non-numeric characters
                           const numericValue = e.target.value.replace(
@@ -189,7 +202,10 @@ export default function EditEducation() {
                             ""
                           );
                           e.target.value = numericValue;
-                          field.onChange(Number(numericValue));
+                          // Set to null if empty, otherwise convert to number
+                          field.onChange(
+                            numericValue === "" ? null : Number(numericValue)
+                          );
                         }}
                         onKeyDown={(e) => {
                           // Allow: backspace, delete, tab, escape, enter
@@ -229,8 +245,12 @@ export default function EditEducation() {
                   <FormLabel>Academic Status</FormLabel>
                   <FormControl>
                     <Select
-                      onValueChange={field.onChange}
-                      value={field.value || ""}
+                      onValueChange={(value) => {
+                        field.onChange(
+                          value as "Completed" | "Final Year" | "Pursuing"
+                        );
+                      }}
+                      value={field.value || undefined}
                     >
                       <SelectTrigger className="h-8 border-gray-900 w-full">
                         <SelectValue placeholder="Select academic status" />
