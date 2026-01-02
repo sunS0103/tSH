@@ -397,7 +397,7 @@ export default function CandidateProfile({
           </div>
         </div>
       </div>
-      <div className="flex-1 flex flex-col gap-4">
+      <div className="flex-1 flex flex-col gap-4 mb-4">
         <ProfileSection
           title="Personal & Social"
           icon="material-symbols:id-card-outline-rounded"

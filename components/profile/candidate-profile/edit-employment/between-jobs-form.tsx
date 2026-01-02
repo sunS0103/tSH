@@ -263,7 +263,7 @@ export default function BetweenJobsForm({
                         maxLength={500}
                         {...field}
                       />
-                      <span className="absolute -bottom-5 right-0 text-xs">
+                      <span className="absolute -bottom-5 right-0 text-xs text-gray-600">
                         {charCount} / 500
                       </span>
                     </div>
