@@ -24,13 +24,25 @@ import z from "zod";
 import { Icon } from "@iconify/react";
 import { cn } from "@/lib/utils";
 
-const studentFresherSchema = z.object({
-  employment_status: z.enum(["Student", "Fresher"]),
-  looking_for_internship: z.boolean(),
-  looking_for_full_time: z.boolean(),
-  looking_for_part_time: z.boolean(),
-  looking_for_remote: z.boolean(),
-});
+const studentFresherSchema = z
+  .object({
+    employment_status: z.enum(["Student", "Fresher"]),
+    looking_for_internship: z.boolean(),
+    looking_for_full_time: z.boolean(),
+    looking_for_part_time: z.boolean(),
+    looking_for_remote: z.boolean(),
+  })
+  .refine(
+    (data) =>
+      data.looking_for_internship ||
+      data.looking_for_full_time ||
+      data.looking_for_part_time ||
+      data.looking_for_remote,
+    {
+      message: "Please select at least one option",
+      path: ["looking_for_internship"], // This will show the error message on the form
+    }
+  );
 
 type StudentFresherFormData = z.infer<typeof studentFresherSchema>;
 
@@ -109,82 +121,95 @@ export default function StudentFresherForm({
         onSubmit={form.handleSubmit(handleSubmit)}
         className="flex flex-col gap-4"
       >
-        <FormItem className="w-full">
-          <Label className="text-sm font-medium text-black">Looking For</Label>
-          <Popover>
-            <PopoverTrigger asChild className="w-full md:w-1/2">
-              <Button
-                type="button"
-                variant="outline"
-                role="combobox"
-                className={cn(
-                  "h-8 w-full justify-between border-gray-900 bg-white text-left font-normal",
-                  "hover:bg-white"
-                )}
-              >
-                <span className="truncate">
-                  {(() => {
-                    const [internship, fullTime, partTime, remote] =
-                      watchedValues;
-                    const selected = lookingForOptions.filter(
-                      (option, index) => {
-                        const values = [internship, fullTime, partTime, remote];
-                        return values[index];
-                      }
-                    );
-                    return selected.length > 0
-                      ? selected.map((opt) => opt.label).join(", ")
-                      : "Select options";
-                  })()}
-                </span>
-                <Icon
-                  icon="material-symbols:keyboard-arrow-down-rounded"
-                  className="ml-2 h-4 w-4 shrink-0 opacity-50"
-                />
-              </Button>
-            </PopoverTrigger>
-            <PopoverContent
-              className="w-[254px] p-0 bg-white border border-gray-200 rounded-2xl shadow-[0px_0px_25px_0px_rgba(0,0,0,0.15)]"
-              align="start"
-            >
-              <div className="flex flex-col">
-                {lookingForOptions.map((option, index) => (
-                  <FormField
-                    key={option.key}
-                    control={form.control}
-                    name={option.key}
-                    render={({ field }) => (
-                      <div
-                        className={cn(
-                          "flex items-center gap-4 px-6 py-4 border-b border-gray-200 last:border-b-0 cursor-pointer hover:bg-gray-50",
-                          index === 0 && "rounded-t-2xl",
-                          index === lookingForOptions.length - 1 &&
-                            "rounded-b-2xl"
-                        )}
-                        onClick={() => field.onChange(!field.value)}
-                      >
-                        <FormControl>
-                          <Checkbox
-                            checked={field.value}
-                            onCheckedChange={field.onChange}
-                            className="size-5"
-                          />
-                        </FormControl>
-                        <Label
-                          htmlFor={option.key}
-                          className="text-base font-normal text-black cursor-pointer flex-1"
-                        >
-                          {option.label}
-                        </Label>
-                      </div>
+        <FormField
+          control={form.control}
+          name="looking_for_internship"
+          render={() => (
+            <FormItem className="w-full">
+              <Label className="text-sm font-medium text-black">
+                Looking For
+              </Label>
+              <Popover>
+                <PopoverTrigger asChild className="w-full md:w-1/2">
+                  <Button
+                    type="button"
+                    variant="outline"
+                    role="combobox"
+                    className={cn(
+                      "h-8 w-full justify-between border-gray-900 bg-white text-left font-normal",
+                      "hover:bg-white"
                     )}
-                  />
-                ))}
-              </div>
-            </PopoverContent>
-          </Popover>
-          <FormMessage />
-        </FormItem>
+                  >
+                    <span className="truncate">
+                      {(() => {
+                        const [internship, fullTime, partTime, remote] =
+                          watchedValues;
+                        const selected = lookingForOptions.filter(
+                          (option, index) => {
+                            const values = [
+                              internship,
+                              fullTime,
+                              partTime,
+                              remote,
+                            ];
+                            return values[index];
+                          }
+                        );
+                        return selected.length > 0
+                          ? selected.map((opt) => opt.label).join(", ")
+                          : "Select options";
+                      })()}
+                    </span>
+                    <Icon
+                      icon="material-symbols:keyboard-arrow-down-rounded"
+                      className="ml-2 h-4 w-4 shrink-0 opacity-50"
+                    />
+                  </Button>
+                </PopoverTrigger>
+                <PopoverContent
+                  className="w-[254px] p-0 bg-white border border-gray-200 rounded-2xl shadow-[0px_0px_25px_0px_rgba(0,0,0,0.15)]"
+                  align="start"
+                >
+                  <div className="flex flex-col">
+                    {lookingForOptions.map((option, index) => (
+                      <FormField
+                        key={option.key}
+                        control={form.control}
+                        name={option.key}
+                        render={({ field }) => (
+                          <div
+                            className={cn(
+                              "flex items-center gap-4 px-6 py-4 border-b border-gray-200 last:border-b-0 cursor-pointer hover:bg-gray-50",
+                              index === 0 && "rounded-t-2xl",
+                              index === lookingForOptions.length - 1 &&
+                                "rounded-b-2xl"
+                            )}
+                            onClick={() => field.onChange(!field.value)}
+                          >
+                            <FormControl>
+                              <Checkbox
+                                checked={field.value}
+                                onCheckedChange={field.onChange}
+                                className="size-5"
+                              />
+                            </FormControl>
+                            <Label
+                              htmlFor={option.key}
+                              className="text-base font-normal text-black cursor-pointer flex-1"
+                            >
+                              {option.label}
+                            </Label>
+                          </div>
+                        )}
+                      />
+                    ))}
+                  </div>
+                </PopoverContent>
+              </Popover>
+              <FormMessage />
+            </FormItem>
+          )}
+        />
 
         {/* Buttons */}
         <div className="flex gap-3 justify-end pt-2">
