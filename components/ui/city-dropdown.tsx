@@ -41,6 +41,7 @@ export function CityDropdown({
   const [hasMore, setHasMore] = useState(true);
   const [page, setPage] = useState(1);
   const [searchQuery, setSearchQuery] = useState("");
+  const [initialCityLoading, setInitialCityLoading] = useState(false);
   const scrollContainerRef = useRef<HTMLDivElement>(null);
   const debounceTimerRef = useRef<NodeJS.Timeout | null>(null);
   const loadedPagesRef = useRef<Set<number>>(new Set());
@@ -136,11 +137,12 @@ export function CityDropdown({
 
   // Load default city if value is provided on mount or when value changes
   useEffect(() => {
-    if (value && value > 0 && countryName && !loading) {
+    if (value && value > 0 && countryName && !loading && !initialCityLoading) {
       // Check if the city is already in the list
       const cityExists = cities.some((c) => c.id === value);
 
       if (!cityExists) {
+        setInitialCityLoading(true);
         // Fetch the specific city by ID to display it
         getCityById(value.toString())
           .then((response) => {
@@ -157,6 +159,9 @@ export function CityDropdown({
           })
           .catch((error) => {
             console.error("Error loading default city:", error);
+          })
+          .finally(() => {
+            setInitialCityLoading(false);
           });
       }
     }
@@ -233,6 +238,8 @@ export function CityDropdown({
         >
           {selectedCity ? (
             selectedCity.name
+          ) : value && value > 0 && initialCityLoading ? (
+            <span className="text-muted-foreground">Loading...</span>
           ) : (
             <span className="text-muted-foreground">{placeholder}</span>
           )}
