@@ -191,9 +191,10 @@ export function CountryCodeDropdown({
 
     // Only update if value actually changed (not just a re-render)
     const valueChanged = value !== lastValueRef.current;
-    
+
     // Also update if countries are loaded and we have a value but no selected country
-    const shouldUpdate = valueChanged || (value && countries.length > 0 && !selectedCountry);
+    const shouldUpdate =
+      valueChanged || (value && countries.length > 0 && !selectedCountry);
 
     if (shouldUpdate) {
       if (valueChanged) {

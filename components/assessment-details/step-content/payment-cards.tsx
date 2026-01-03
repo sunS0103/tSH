@@ -154,7 +154,7 @@ export default function PaymentCards({
         "<div>Get started at a minimal cost, pay the remaining when hiring interest is confirmed. <a href='#' class='text-black underline'>Learn More</a></div>",
       price: "₹999",
       includedItems: basicPackageIncludedItems,
-      topNotes: "Pay Only 1% Today",
+      topNotes: "Pay Only 10% Today",
       bottomNotes:
         "₹900 later — only if you and a recruiter mutually connect (handshake)",
       buttonText: "Activate for ₹99",
