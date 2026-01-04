@@ -3,7 +3,13 @@
 import { motion } from "framer-motion";
 import { UserCircle, Briefcase, CheckCircle2 } from "lucide-react";
 
-const WhoIsItForSection = () => {
+interface WhoIsItForSectionProps {
+  onRoleSelect: (role: "candidate" | "recruiter") => void;
+}
+
+const WhoIsItForSection: React.FC<WhoIsItForSectionProps> = ({
+  onRoleSelect,
+}) => {
   const personas = [
     {
       icon: UserCircle,
@@ -15,6 +21,10 @@ const WhoIsItForSection = () => {
         "Let recruiters find you - no chasing required",
         "Move beyond resume-based rejections",
       ],
+      buttonText: "Get Insider Access",
+      subtext:
+        "Beat the rush. Secure your priority spot for our upcoming Pilot Job Fair before the platform goes public.",
+      role: "candidate" as const,
     },
     {
       icon: Briefcase,
@@ -26,6 +36,10 @@ const WhoIsItForSection = () => {
         "Avoid resume spam and blind screening",
         "Shortlist with confidence using role-based skill benchmarks",
       ],
+      buttonText: "Join the Pilot Program",
+      subtext:
+        "Hiring in coming weeks? Email <a href='mailto:info@techsmarthire.com' class='text-primary hover:underline font-medium'>info@techsmarthire.com</a> to get immediate access to our next Pilot Job Fair.",
+      role: "recruiter" as const,
       badge: "100% Proctored & AI-Proof Assessments",
     },
   ];
@@ -57,7 +71,7 @@ const WhoIsItForSection = () => {
               viewport={{ once: true }}
               transition={{ duration: 0.6, delay: index * 0.2 }}
             >
-              <div className="group h-full p-8 rounded-3xl bg-card border border-border/50 hover:border-primary/30 transition-all duration-500 hover:shadow-card-hover">
+              <div className="group h-full p-8 rounded-3xl bg-card border border-border/50 hover:border-primary/30 transition-all duration-500 hover:shadow-card-hover flex flex-col">
                 {/* Header */}
                 <div className="flex items-center gap-4 mb-6">
                   <div
@@ -74,7 +88,7 @@ const WhoIsItForSection = () => {
                 </div>
 
                 {/* Benefits */}
-                <ul className="space-y-4">
+                <ul className="space-y-4 mb-6">
                   {persona.benefits.map((benefit, i) => (
                     <motion.li
                       key={i}
@@ -87,7 +101,7 @@ const WhoIsItForSection = () => {
                       }}
                       className="flex items-start gap-3"
                     >
-                      <CheckCircle2 className="w-5 h-5 text-primary flex-shrink-0 mt-0.5" />
+                      <CheckCircle2 className="w-5 h-5 text-primary shrink-0 mt-0.5" />
                       <span className="text-subtle leading-relaxed">
                         {benefit}
                       </span>
@@ -101,14 +115,38 @@ const WhoIsItForSection = () => {
                     initial={{ opacity: 0, y: 10 }}
                     whileInView={{ opacity: 1, y: 0 }}
                     viewport={{ once: true }}
-                    transition={{ duration: 0.4, delay: 0.5 }}
-                    className="mt-6 inline-flex items-center gap-2 px-4 py-2 rounded-full bg-secondary/10 border border-secondary/30"
+                    transition={{ duration: 0.4, delay: 0.4 }}
+                    className="mt-auto mb-6 flex items-center gap-2 px-4 py-2 rounded-full bg-secondary/10 border border-secondary/30 w-fit"
                   >
                     <span className="text-sm font-medium text-secondary">
                       {persona.badge}
                     </span>
                   </motion.div>
                 )}
+
+                {/* Action Button */}
+                <motion.div
+                  initial={{ opacity: 0, y: 10 }}
+                  whileInView={{ opacity: 1, y: 0 }}
+                  viewport={{ once: true }}
+                  transition={{ duration: 0.4, delay: 0.5 }}
+                  className="mt-auto"
+                >
+                  <button
+                    onClick={() => onRoleSelect(persona.role)}
+                    className={`w-full py-3 px-6 rounded-xl font-semibold transition-all duration-300 ${
+                      persona.role === "candidate"
+                        ? "bg-primary text-primary-foreground hover:bg-primary/90 hover:shadow-glow"
+                        : "bg-secondary text-primary-foreground hover:bg-secondary/90 hover:shadow-glow-secondary"
+                    }`}
+                  >
+                    {persona.buttonText}
+                  </button>
+                  <p
+                    dangerouslySetInnerHTML={{ __html: persona.subtext }}
+                    className="mt-3 text-sm text-subtle text-center leading-relaxed"
+                  ></p>
+                </motion.div>
               </div>
             </motion.div>
           ))}
