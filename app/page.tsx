@@ -1,10 +1,5 @@
 import { Metadata } from "next";
-import HeroSection from "@/components/anticipation/hero-section";
-import WhoIsItForSection from "@/components/anticipation/who-is-it-for-section";
-import LaunchFocus from "@/components/anticipation/launch-focus";
-import WhySection from "@/components/anticipation/why-section";
-import CredibilityStrip from "@/components/anticipation/credibility-strip";
-import WaitlistForm from "@/components/anticipation/waitlist-form";
+import AnticipationPage from "./anticipation-page";
 
 export const metadata: Metadata = {
   title:
@@ -39,15 +34,6 @@ export const metadata: Metadata = {
   },
 };
 
-export default function AnticipationPage() {
-  return (
-    <div className="min-h-screen bg-background">
-      <HeroSection />
-      <WhoIsItForSection />
-      <LaunchFocus />
-      <WhySection />
-      <CredibilityStrip />
-      <WaitlistForm />
-    </div>
-  );
+export default function Page() {
+  return <AnticipationPage />;
 }

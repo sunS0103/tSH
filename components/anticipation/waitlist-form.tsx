@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect, useRef } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { motion, AnimatePresence } from "framer-motion";
@@ -11,8 +11,21 @@ import { Label } from "@/components/ui/label";
 import { toast } from "sonner";
 import { getContact, getImports } from "@/api/waitlist";
 import { waitlistSchema, WaitlistValues } from "@/validation/waitlist";
+import ReCAPTCHA from "react-google-recaptcha";
 
-const WaitlistForm = () => {
+interface WaitlistFormProps {
+  initialRole?: "candidate" | "recruiter" | null;
+}
+
+const WaitlistForm: React.FC<WaitlistFormProps> = ({ initialRole = null }) => {
+  const [submitted, setSubmitted] = useState(false);
+  const [submittedRole, setSubmittedRole] = useState<"candidate" | "recruiter">(
+    "candidate"
+  );
+  const [recaptchaToken, setRecaptchaToken] = useState<string | null>(null);
+  const [recaptchaError, setRecaptchaError] = useState<string | null>(null);
+  const recaptchaRef = useRef<ReCAPTCHA>(null);
+
   const {
     register,
     handleSubmit,
@@ -26,22 +39,45 @@ const WaitlistForm = () => {
       name: "",
       email: "",
       company: "",
-      role: "candidate",
+      role: initialRole || "candidate",
     },
   });
 
   const currentRole = watch("role");
 
+  // Update role when initialRole changes
+  useEffect(() => {
+    if (initialRole) {
+      setValue("role", initialRole, { shouldValidate: true });
+    }
+  }, [initialRole, setValue]);
+
   const onSubmit = async (values: WaitlistValues) => {
+    setSubmittedRole(values.role);
+    setRecaptchaError(null);
+
+    // Check if reCAPTCHA token exists
+    if (!recaptchaToken) {
+      setRecaptchaError("Please complete the reCAPTCHA challenge.");
+      return;
+    }
+
     try {
       try {
         const response = await getContact(values.email);
-        toast.info(
-          response.message ||
-            "You’re already subscribed with this email address!"
-        );
-        reset({ name: "", email: "", company: "", role: currentRole });
-        return;
+        const listIds = response.listIds || [];
+        if (
+          (currentRole === "candidate" && listIds.includes(23)) ||
+          (currentRole === "recruiter" && listIds.includes(24))
+        ) {
+          toast.info(
+            response.message ||
+              "You're already subscribed with this email address!"
+          );
+          reset({ name: "", email: "", company: "", role: currentRole });
+          resetRecaptcha();
+          return;
+        }
         // eslint-disable-next-line @typescript-eslint/no-explicit-any
       } catch (error: any) {
         if (error.response?.status !== 404 && error.response?.status !== 400) {
@@ -61,18 +97,19 @@ const WaitlistForm = () => {
           },
         ],
         listIds: [listId],
+        recaptchaToken: recaptchaToken,
       };
 
       // 3. Import contact
       await getImports({ data: importBody });
-      toast.success("Thanks for reaching out! We’ll get back to you shortly!");
+      toast.success("You're on the list!");
+      setSubmitted(true);
       reset({
         name: "",
         email: "",
         company: "",
         role: currentRole,
       });
-
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
     } catch (error: any) {
       console.error("Waitlist Error:", error);
@@ -82,17 +119,135 @@ const WaitlistForm = () => {
     }
   };
 
+  const resetRecaptcha = () => {
+    recaptchaRef.current?.reset();
+    setRecaptchaToken(null);
+    setRecaptchaError(null);
+  };
+
+  const recruiterHeader =
+    "Join the waitlist for updates or request Pilot Access to start hiring.";
+  const candidateHeader =
+    "Sign up now to get exclusive early-bird access to our upcoming Pilot Job Fair and Beta features of the platform for FREE.";
+
+  const recruiterSuccessTitle = "You're on the list!";
+  const candidateSuccessTitle = "Welcome to the TechSmartHire Insider List!";
+
+  if (submitted) {
+    return (
+      <section
+        id="waitlist"
+        className="py-24 md:py-32 relative overflow-hidden"
+      >
+        <div className="absolute inset-0 bg-linear-to-b from-background via-muted/20 to-background" />
+        <div className="container mx-auto relative z-10 px-4 md:px-6">
+          <div className="max-w-lg mx-auto">
+            <motion.div
+              initial={{ opacity: 0, scale: 0.9 }}
+              animate={{ opacity: 1, scale: 1 }}
+              className="p-8 rounded-3xl bg-card border border-border/50 shadow-xl text-center"
+            >
+              <motion.div
+                initial={{ scale: 0 }}
+                animate={{ scale: 1 }}
+                transition={{ delay: 0.2, type: "spring", stiffness: 200 }}
+                className="w-20 h-20 mx-auto mb-6 rounded-full bg-primary/10 flex items-center justify-center"
+              >
+                <CheckCircle2 className="w-10 h-10 text-primary" />
+              </motion.div>
+
+              <h3 className="text-2xl font-bold mb-4">
+                {submittedRole === "recruiter"
+                  ? recruiterSuccessTitle
+                  : candidateSuccessTitle}
+              </h3>
+
+              {submittedRole === "recruiter" ? (
+                <div className="space-y-4 text-left">
+                  <p className="text-subtle">
+                    We'll keep you posted on our Beta progress. Need to hire QA
+                    talent this month? Send a brief note to{" "}
+                    <a
+                      href="mailto:info@techsmarthire.com?subject=Pilot Program"
+                      className="text-primary hover:underline font-medium"
+                    >
+                      info@techsmarthire.com
+                    </a>{" "}
+                    with the subject line 'Pilot Program' and our team will get
+                    back to you within 24 hours to discuss your hiring needs.
+                  </p>
+                </div>
+              ) : (
+                <div className="space-y-4 text-left">
+                  <p className="text-subtle">
+                    You're now in line for early access. While we prepare the
+                    platform, here is the list of the top 4 skills our
+                    recruiters are looking for in the{" "}
+                    <b>upcoming Pilot Job fair program</b>.
+                  </p>
+                  <div className="bg-muted/50 rounded-xl p-4 space-y-2">
+                    <p className="font-semibold text-sm text-subtle uppercase tracking-wide">
+                      Top Skills in Demand
+                    </p>
+                    <ul className="space-y-1">
+                      {[
+                        "Selenium Java",
+                        "Playwright Javascript",
+                        "Playwright Java",
+                        "API Testing",
+                      ].map((skill, i) => (
+                        <li
+                          key={i}
+                          className="flex items-center gap-2 text-foreground font-medium"
+                        >
+                          <CheckCircle2 className="w-4 h-4 text-primary" />
+                          {skill}
+                        </li>
+                      ))}
+                    </ul>
+                  </div>
+                </div>
+              )}
+
+              <Button
+                onClick={() => {
+                  setSubmitted(false);
+                  resetRecaptcha();
+                }}
+                variant="outline"
+                className="mt-6 w-full"
+              >
+                Register Another Email
+              </Button>
+            </motion.div>
+          </div>
+        </div>
+      </section>
+    );
+  }
+
   return (
     <section id="waitlist" className="py-24 md:py-32 relative overflow-hidden">
       <div className="absolute inset-0 bg-linear-to-b from-background via-muted/20 to-background" />
       <div className="container mx-auto relative z-10 px-4 md:px-6">
         <div className="text-center mb-12">
-          <h2 className="text-3xl md:text-4xl lg:text-5xl font-bold mb-4">
-            Get <span className="text-primary">Early Access</span>
+          <h2 className="text-2xl md:text-3xl font-bold mb-4 mx-auto max-w-3xl">
+            {currentRole === "recruiter" ? (
+              <>
+                {recruiterHeader.split(" ").slice(0, 3).join(" ")}{" "}
+                <span className="text-primary">
+                  {recruiterHeader.split(" ").slice(3).join(" ")}
+                </span>
+              </>
+            ) : (
+              <>
+                {candidateHeader.split(" ").slice(0, 4).join(" ")}{" "}
+                <span className="text-primary">
+                  {candidateHeader.split(" ").slice(4).join(" ")}
+                </span>
+              </>
+            )}
           </h2>
-          <p className="text-lg text-subtle max-w-xl mx-auto">
-            Be among the first to experience skill-based hiring.
-          </p>
         </div>
 
         <div className="max-w-lg mx-auto">
@@ -239,6 +394,35 @@ const WaitlistForm = () => {
               )}
             </AnimatePresence>
 
+            {/* reCAPTCHA */}
+            <div className="flex">
+              <ReCAPTCHA
+                ref={recaptchaRef}
+                sitekey={process.env.NEXT_PUBLIC_RECAPTCHA_SITE_KEY || ""}
+                onChange={(token: string | null) => {
+                  setRecaptchaToken(token);
+                  setRecaptchaError(null);
+                }}
+                onExpired={() => {
+                  setRecaptchaToken(null);
+                  setRecaptchaError(
+                    "reCAPTCHA expired. Please complete the challenge again."
+                  );
+                }}
+                onErrored={() => {
+                  setRecaptchaToken(null);
+                  setRecaptchaError("reCAPTCHA error. Please try again.");
+                }}
+                theme="light"
+                size="normal"
+              />
+            </div>
+            {recaptchaError && (
+              <p className="text-xs text-destructive text-center">
+                {recaptchaError}
+              </p>
+            )}
+
             <Button
               type="submit"
               size="lg"
@@ -251,7 +435,7 @@ const WaitlistForm = () => {
                   Joining...
                 </>
               ) : (
-                "Join the Waitlist"
+                "Join Waitlist"
               )}
             </Button>
           </form>
