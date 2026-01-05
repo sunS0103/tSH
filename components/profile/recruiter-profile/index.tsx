@@ -12,7 +12,7 @@ interface ProfileDetailProps {
 function ProfileDetail({ label, value }: ProfileDetailProps) {
   return (
     <div className="flex flex-col gap-1 flex-1">
-      <p className="text-xs text-gray-700 font-normal">{label}</p>
+      <p className="text-xs text-gray-900 font-normal">{label}</p>
       <p className="text-base text-black font-medium">{value}</p>
     </div>
   );
