@@ -1,8 +1,9 @@
 import axios from "./axios";
 
-export const sendOtp = async (email: string) => {
+export const sendOtp = async ({email, role }: {email: string, role: "CANDIDATE" | "RECRUITER"}) => {
   const response = await axios.post("/auth/send-otp", {
     email,
+    role,
   });
   return response.data;
 };
