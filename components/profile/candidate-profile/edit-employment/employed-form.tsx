@@ -337,7 +337,13 @@ export default function EmployedForm({
                 <FormControl>
                   <Switch
                     checked={field.value}
-                    onCheckedChange={field.onChange}
+                    onCheckedChange={(checked) => {
+                      field.onChange(checked);
+                      // Clear calendar value when switch is turned off
+                      if (!checked) {
+                        form.setValue("last_working_day", null);
+                      }
+                    }}
                   />
                 </FormControl>
               </FormItem>
