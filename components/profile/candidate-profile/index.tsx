@@ -7,6 +7,7 @@ import { Label } from "@/components/ui/label";
 import { Progress } from "@/components/ui/progress";
 import { format } from "date-fns";
 import ProfileSection from "./profile-section";
+import Image from "next/image";
 
 interface ProfileData {
   first_name: string;
@@ -378,10 +379,27 @@ export default function CandidateProfile({
               value={profileData?.gender === "Male" ? "Male" : "Female"}
             />
             <ProfileItem label="Email ID" value={profileData?.email} />
-            <ProfileItem
+            {/* <ProfileItem
               label="Mobile Number"
               value={`${profileData?.mobile_details?.dial_code}  ${profileData?.mobile_details?.mobile_number}`}
-            />
+            /> */}
+            <div>
+              <Label className="text-xs text-gray-900">Mobile Number</Label>
+              <div className="text-base font-medium flex items-center gap-1">
+                <Image
+                  src={
+                    profileData?.mobile_details?.flag ??
+                    "https://flagcdn.com/in.svg"
+                  }
+                  alt="Flag"
+                  width={16}
+                  height={16}
+                  className="rounded-full w-4 h-4"
+                />
+                <span>{profileData?.mobile_details?.dial_code}</span>
+                <span>{profileData?.mobile_details?.mobile_number}</span>
+              </div>
+            </div>
             <ProfileItem
               label="Date of Birth"
               value={
