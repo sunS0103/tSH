@@ -4,7 +4,7 @@ import { useState, useEffect, useCallback } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
-import { useRouter } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
 import { setCookie } from "cookies-next/client";
 import { Icon } from "@iconify/react";
 import { Button } from "../ui/button";
@@ -19,8 +19,11 @@ import {
   FormItem,
   FormMessage,
 } from "../ui/form";
-import { sendOtp, verifyOtp } from "@/api/auth";
+import { googleCallback, sendOtp, verifyOtp } from "@/api/auth";
 import { toast } from "sonner";
+import { signIn, useSession } from "next-auth/react";
+import { setAxiosToken } from "@/api/axios";
+import { signInWithGoogle } from "@/lib/firebase/auth";
 
 interface EmailFormProps {
   role: "CANDIDATE" | "RECRUITER";
@@ -39,10 +42,13 @@ type FormStep = "email" | "otp";
 
 export default function EmailForm({ role }: EmailFormProps) {
   const router = useRouter();
+  const searchParams = useSearchParams();
+  const { data: session, status } = useSession();
   const [step, setStep] = useState<FormStep>("email");
   const [otp, setOtp] = useState("");
   const [timer, setTimer] = useState(59);
   const [canResend, setCanResend] = useState(false);
+  const [isGoogleLoading, setIsGoogleLoading] = useState(false);
 
   const emailSchema = createEmailSchema();
 
@@ -52,6 +58,34 @@ export default function EmailForm({ role }: EmailFormProps) {
       email: "",
     },
   });
+
+  // Check for error in URL params
+  useEffect(() => {
+    const error = searchParams.get("error");
+    if (error) {
+      toast.error(decodeURIComponent(error));
+      // Clean up URL
+      router.replace("/authentication");
+    }
+  }, [searchParams, router]);
+
+  // Handle session redirect after authentication (fallback)
+  useEffect(() => {
+    if (status === "authenticated" && session) {
+      const backendData = session.backendData;
+
+      // Only handle if we haven't already redirected
+      // This is a fallback in case the direct redirect in handleGoogleSignIn didn't work
+      if (backendData?.token && !isGoogleLoading) {
+        // Set token in axios and cookie if not already set
+        if (!document.cookie.includes("token")) {
+          setAxiosToken(backendData.token);
+          setCookie("token", backendData.token);
+          setCookie("user_role", session.role || role);
+        }
+      }
+    }
+  }, [status, session, router, role, isGoogleLoading]);
 
   // Timer countdown
   useEffect(() => {
@@ -134,9 +168,10 @@ export default function EmailForm({ role }: EmailFormProps) {
           setCookie("user_role", role);
 
           if (response.is_registered) {
-            router.push("/");
+            router.replace("/");
           } else {
-            router.push("/authentication/register");
+            // Use replace to avoid preserving query parameters and ensure clean redirect
+            router.replace("/authentication/register");
           }
         } else {
           toast.error(response.message || "Failed to verify OTP");
@@ -147,6 +182,85 @@ export default function EmailForm({ role }: EmailFormProps) {
       });
   };
 
+  const handleGoogleSignIn = async () => {
+    try {
+      setIsGoogleLoading(true);
+
+      // Sign in with Firebase Auth
+      const user = await signInWithGoogle();
+
+      // Get ID token from Firebase
+      const idToken = await user.getIdToken();
+
+      // Send ID token to backend for verification
+      const response = await googleCallback({ id_token: idToken, role: role });
+
+      if (response.data?.error) {
+        toast.error(response.data.error);
+        setIsGoogleLoading(false);
+        return;
+      }
+
+      console.log(response, "response");
+
+      // Store backend token
+      if (response.token) {
+        setAxiosToken(response.token);
+        // setCookie("token", response.data.token);
+        setCookie("user_role", role);
+        setCookie("user_data", JSON.stringify(response.user_data));
+        setCookie("user_email", user.email);
+        setCookie("token", response.token);
+      }
+
+      // Create NextAuth session with Firebase user data
+      await signIn("credentials", {
+        idToken: idToken,
+        email: user.email,
+        name: user.displayName,
+        role: role,
+        backendData: response.data,
+        redirect: false,
+      });
+
+      // Handle redirect based on registration status
+      if (response?.token) {
+        console.log(response);
+        if (role === "CANDIDATE") {
+          router.replace("/assessments");
+        } else if (role === "RECRUITER") {
+          router.replace("/profile");
+        } else {
+          router.replace("/");
+        }
+      }
+      // else {
+      //   // Use replace to avoid preserving query parameters and ensure clean redirect
+      //   router.replace("/authentication/register");
+      // }
+    } catch (error: unknown) {
+      console.error("Google sign-in error:", error);
+      let errorMessage = "Failed to sign in with Google";
+
+      if (error && typeof error === "object") {
+        if (
+          "response" in error &&
+          error.response &&
+          typeof error.response === "object" &&
+          "data" in error.response
+        ) {
+          const responseData = error.response.data as { message?: string };
+          errorMessage = responseData?.message || errorMessage;
+        } else if ("message" in error && typeof error.message === "string") {
+          errorMessage = error.message;
+        }
+      }
+
+      toast.error(errorMessage);
+      setIsGoogleLoading(false);
+    }
+  };
+
   return (
     <div className="flex flex-col items-center max-w-105 mx-auto">
       <h1 className="text-xl text-primary-500 font-bold">Start Your Journey</h1>
@@ -155,9 +269,16 @@ export default function EmailForm({ role }: EmailFormProps) {
         assessments.
       </p>
 
-      <Button variant="outline" className="mt-6 px-5">
+      <Button
+        variant="outline"
+        className="mt-6 px-5"
+        onClick={handleGoogleSignIn}
+        disabled={isGoogleLoading}
+      >
         <Icon icon="flat-color-icons:google" />
-        <span className="text-sm">Continue With Google</span>
+        <span className="text-sm">
+          {isGoogleLoading ? "Signing in..." : "Continue With Google"}
+        </span>
       </Button>
 
       <div className="my-4 w-full flex items-center gap-3">

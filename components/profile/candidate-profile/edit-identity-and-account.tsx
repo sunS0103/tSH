@@ -37,15 +37,6 @@ import { toast } from "sonner";
 import z from "zod";
 import { useRouter } from "next/navigation";
 
-interface CountryCode {
-  id: number;
-  name: string;
-  currency: string;
-  dial_code: string;
-  flag: string;
-  is_active: boolean;
-}
-
 export default function EditIdentityAndAccount() {
   const cookieValue = getCookie("profile_data");
 

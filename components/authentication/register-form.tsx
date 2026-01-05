@@ -4,7 +4,7 @@ import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
 import { useRouter } from "next/navigation";
-import { setCookie } from "cookies-next/client";
+import { getCookie, setCookie } from "cookies-next/client";
 import { Button } from "../ui/button";
 import { Input } from "../ui/input";
 import { Label } from "../ui/label";
@@ -144,11 +144,15 @@ export default function RegisterForm({ role, email }: RegisterFormProps) {
   const cityDebounceRef = useRef<NodeJS.Timeout | null>(null);
   const cityLoadedPagesRef = useRef<Set<number>>(new Set());
 
+  const userData = getCookie("user_data")
+    ? JSON.parse(getCookie("user_data") as string)
+    : null;
+
   const form = useForm<CandidateFormData | RecruiterFormData>({
     resolver: zodResolver(schema),
     defaultValues: {
-      firstName: "",
-      lastName: "",
+      firstName: userData?.first_name || "",
+      lastName: userData?.last_name || "",
       gender: undefined,
       country_code: "+91",
       phone: "",

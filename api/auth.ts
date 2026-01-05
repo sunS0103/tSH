@@ -74,3 +74,17 @@ export const signUp = async ({
   });
   return response.data;
 };
+
+export const googleCallback = async ({
+  id_token,
+  role,
+}: {
+  id_token: string;
+  role: "CANDIDATE" | "RECRUITER";
+}) => {
+  const response = await axios.post("/auth/google/callback", {
+    id_token,
+    role,
+  });
+  return response.data;
+};
