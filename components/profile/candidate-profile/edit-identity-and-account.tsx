@@ -307,7 +307,7 @@ export default function EditIdentityAndAccount() {
                         <CountryCodeDropdown
                           value={formDialCode || selectedCountryCode}
                           onValueChange={(dialCode, country) => {
-                            setSelectedCountryCode(selectedCountryCode);
+                            setSelectedCountryCode(country.dial_code);
                             setSelectedCountryName(country.name);
                             form.setValue("dial_code", dialCode);
                           }}
