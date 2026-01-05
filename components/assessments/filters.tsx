@@ -81,11 +81,11 @@ export default function Filters({
             value={group.title}
             className="border-gray-200"
           >
-            <AccordionTrigger className="px-4 text-sm font-semibold uppercase text-gray-800 hover:no-underline">
+            <AccordionTrigger className="px-4 text-sm font-semibold uppercase text-gray-900 hover:no-underline">
               {group.title}
             </AccordionTrigger>
 
-            <AccordionContent className="px-4 text-sm text-gray-600">
+            <AccordionContent className="px-4 text-sm text-gray-700">
               <div className="flex flex-col gap-2">
                 {group?.items.map((item: { id: string; value: string }) => (
                   <div key={item?.id} className="flex items-center gap-2">

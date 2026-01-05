@@ -434,7 +434,6 @@ export default function RegisterForm({ role, email }: RegisterFormProps) {
         gender: data.gender === "Male" ? "Male" : "Female",
         email,
         country_code: selectedCountryCode.dial_code,
-        country_id: selectedCountryCode?.id,
         mobile_number: data.phone,
         account_type: ("accountType" in data ? data.accountType : "") as
           | "Fresher"

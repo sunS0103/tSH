@@ -44,7 +44,7 @@ export default function AssessmentDetailsHeader({
       <h1 className="font-bold text-gray-900 text-xl mt-4">
         {assessmentTitle}
       </h1>
-      <p className="text-xs text-gray-700 mt-1">{assessmentDescription}</p>
+      <p className="text-xs text-gray-900 mt-1">{assessmentDescription}</p>
     </>
   );
 }
