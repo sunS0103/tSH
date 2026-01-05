@@ -100,6 +100,7 @@ export default function EmailForm({ role }: EmailFormProps) {
       });
   };
 
+  // eslint-disable-next-line react-hooks/preserve-manual-memoization
   const onResendOtp = useCallback(async () => {
     if (!canResend) return;
 
