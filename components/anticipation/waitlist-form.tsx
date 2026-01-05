@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { motion, AnimatePresence } from "framer-motion";
@@ -11,6 +11,7 @@ import { Label } from "@/components/ui/label";
 import { toast } from "sonner";
 import { getContact, getImports } from "@/api/waitlist";
 import { waitlistSchema, WaitlistValues } from "@/validation/waitlist";
+import ReCAPTCHA from "react-google-recaptcha";
 
 interface WaitlistFormProps {
   initialRole?: "candidate" | "recruiter" | null;
@@ -21,6 +22,9 @@ const WaitlistForm: React.FC<WaitlistFormProps> = ({ initialRole = null }) => {
   const [submittedRole, setSubmittedRole] = useState<"candidate" | "recruiter">(
     "candidate"
   );
+  const [recaptchaToken, setRecaptchaToken] = useState<string | null>(null);
+  const [recaptchaError, setRecaptchaError] = useState<string | null>(null);
+  const recaptchaRef = useRef<ReCAPTCHA>(null);
 
   const {
     register,
@@ -50,15 +54,30 @@ const WaitlistForm: React.FC<WaitlistFormProps> = ({ initialRole = null }) => {
 
   const onSubmit = async (values: WaitlistValues) => {
     setSubmittedRole(values.role);
+    setRecaptchaError(null);
+
+    // Check if reCAPTCHA token exists
+    if (!recaptchaToken) {
+      setRecaptchaError("Please complete the reCAPTCHA challenge.");
+      return;
+    }
+
     try {
       try {
         const response = await getContact(values.email);
-        toast.info(
-          response.message ||
-            "You're already subscribed with this email address!"
-        );
-        reset({ name: "", email: "", company: "", role: currentRole });
-        return;
+        const listIds = response.listIds || [];
+        if (
+          (currentRole === "candidate" && listIds.includes(23)) ||
+          (currentRole === "recruiter" && listIds.includes(24))
+        ) {
+          toast.info(
+            response.message ||
+              "You're already subscribed with this email address!"
+          );
+          reset({ name: "", email: "", company: "", role: currentRole });
+          resetRecaptcha();
+          return;
+        }
         // eslint-disable-next-line @typescript-eslint/no-explicit-any
       } catch (error: any) {
         if (error.response?.status !== 404 && error.response?.status !== 400) {
@@ -78,6 +97,7 @@ const WaitlistForm: React.FC<WaitlistFormProps> = ({ initialRole = null }) => {
           },
         ],
         listIds: [listId],
+        recaptchaToken: recaptchaToken,
       };
 
       // 3. Import contact
@@ -97,6 +117,12 @@ const WaitlistForm: React.FC<WaitlistFormProps> = ({ initialRole = null }) => {
         error.response?.data?.message || "Failed to join the waitlist."
       );
     }
+  };
+
+  const resetRecaptcha = () => {
+    recaptchaRef.current?.reset();
+    setRecaptchaToken(null);
+    setRecaptchaError(null);
   };
 
   const recruiterHeader =
@@ -154,7 +180,7 @@ const WaitlistForm: React.FC<WaitlistFormProps> = ({ initialRole = null }) => {
               ) : (
                 <div className="space-y-4 text-left">
                   <p className="text-subtle">
-                    You’re now in line for early access. While we prepare the
+                    You're now in line for early access. While we prepare the
                     platform, here is the list of the top 4 skills our
                     recruiters are looking for in the{" "}
                     <b>upcoming Pilot Job fair program</b>.
@@ -184,7 +210,10 @@ const WaitlistForm: React.FC<WaitlistFormProps> = ({ initialRole = null }) => {
               )}
 
               <Button
-                onClick={() => setSubmitted(false)}
+                onClick={() => {
+                  setSubmitted(false);
+                  resetRecaptcha();
+                }}
                 variant="outline"
                 className="mt-6 w-full"
               >
@@ -364,6 +393,35 @@ const WaitlistForm: React.FC<WaitlistFormProps> = ({ initialRole = null }) => {
                 </motion.div>
               )}
             </AnimatePresence>
+
+            {/* reCAPTCHA */}
+            <div className="flex">
+              <ReCAPTCHA
+                ref={recaptchaRef}
+                sitekey={process.env.NEXT_PUBLIC_RECAPTCHA_SITE_KEY || ""}
+                onChange={(token: string | null) => {
+                  setRecaptchaToken(token);
+                  setRecaptchaError(null);
+                }}
+                onExpired={() => {
+                  setRecaptchaToken(null);
+                  setRecaptchaError(
+                    "reCAPTCHA expired. Please complete the challenge again."
+                  );
+                }}
+                onErrored={() => {
+                  setRecaptchaToken(null);
+                  setRecaptchaError("reCAPTCHA error. Please try again.");
+                }}
+                theme="light"
+                size="normal"
+              />
+            </div>
+            {recaptchaError && (
+              <p className="text-xs text-destructive text-center">
+                {recaptchaError}
+              </p>
+            )}
 
             <Button
               type="submit"
