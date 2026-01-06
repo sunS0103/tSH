@@ -173,7 +173,7 @@ export default function ApplyFormAccordion({
                       placeholder="Enter Title"
                       value={newFieldTitle}
                       onChange={(e) => setNewFieldTitle(e.target.value)}
-                      className="h-8"
+                      className="h-9"
                     />
                   </div>
                   <div className="space-y-2">

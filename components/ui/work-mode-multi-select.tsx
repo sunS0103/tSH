@@ -50,6 +50,8 @@ export function WorkModeMultiSelect({
     return selectedModes.map((mode) => mode.name).join(", ");
   };
 
+  const hasValue = selectedModes.length > 0;
+
   return (
     <Popover>
       <PopoverTrigger asChild>
@@ -58,13 +60,19 @@ export function WorkModeMultiSelect({
           variant="outline"
           role="combobox"
           className={cn(
-            "min-h-8 h-auto w-full justify-between border-gray-900 bg-white text-left font-normal py-2",
-            "hover:bg-white",
+            "h-8 w-full justify-between bg-transparent text-left font-normal",
+            "border-input hover:bg-transparent",
+            "text-sm",
             className
           )}
           disabled={disabled}
         >
-          <span className="flex-1 text-wrap wrap-break-word pr-2">
+          <span
+            className={cn(
+              "flex-1 text-wrap wrap-break-word pr-2 text-sm",
+              hasValue ? "text-foreground" : "text-muted-foreground"
+            )}
+          >
             {getSelectedLabel()}
           </span>
           <Icon

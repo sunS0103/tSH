@@ -499,12 +499,10 @@ export default function JobFormBase({
                       />
                     </FormControl>
                     <FormMessage />
-                    {form.formState.errors.job_description && (
-                      <p className="text-sm text-warning-700">
-                        Warning: "No communication details allowed in job
-                        description."
-                      </p>
-                    )}
+                    <p className="text-sm text-warning-700 mt-1">
+                      Warning: "No communication details allowed in job
+                      description."
+                    </p>
                   </FormItem>
                 )}
               />
