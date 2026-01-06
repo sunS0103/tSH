@@ -181,7 +181,9 @@ export default function RequestAssessmentForm() {
                         render={({ field: countryField }) => (
                           <CountryCodeDropdown
                             value={countryField.value}
-                            onValueChange={countryField.onChange}
+                            onValueChange={(dialCode) => {
+                              countryField.onChange(dialCode);
+                            }}
                             className="rounded-r-none border-r border-gray-200 h-8"
                           />
                         )}

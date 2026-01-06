@@ -137,7 +137,20 @@ export default function CandidateProfile({
     let progress = 0;
 
     // Account & Identity: 10%
-    if (profileData?.email) {
+
+    if (
+      profileData?.email &&
+      profileData?.first_name &&
+      profileData?.last_name
+    ) {
+      progress += 10;
+    }
+
+    if (
+      profileData?.email &&
+      profileData?.gender &&
+      profileData?.account_type
+    ) {
       progress += 10;
     }
 
@@ -163,7 +176,7 @@ export default function CandidateProfile({
 
     // Education: 20%
     if (educationData?.academic_status) {
-      progress += 20;
+      progress += 10;
     }
 
     return progress;
@@ -376,30 +389,36 @@ export default function CandidateProfile({
             <ProfileItem label="Last Name" value={profileData?.last_name} />
             <ProfileItem
               label="Gender"
-              value={profileData?.gender === "Male" ? "Male" : "Female"}
+              value={
+                (profileData?.gender === "Male" && "Male") ||
+                (profileData?.gender === "Female" && "Female") ||
+                "-"
+              }
             />
             <ProfileItem label="Email ID" value={profileData?.email} />
-            {/* <ProfileItem
-              label="Mobile Number"
-              value={`${profileData?.mobile_details?.dial_code}  ${profileData?.mobile_details?.mobile_number}`}
-            /> */}
+
             <div>
               <Label className="text-xs text-gray-900">Mobile Number</Label>
-              <div className="text-base font-medium flex items-center gap-1">
-                <Image
-                  src={
-                    profileData?.mobile_details?.flag ??
-                    "https://flagcdn.com/in.svg"
-                  }
-                  alt="Flag"
-                  width={16}
-                  height={16}
-                  className="rounded-full w-4 h-4"
-                />
-                <span>{profileData?.mobile_details?.dial_code}</span>
-                <span>{profileData?.mobile_details?.mobile_number}</span>
-              </div>
+              {profileData?.mobile_details?.mobile_number ? (
+                <div className="text-base font-medium flex items-center gap-1">
+                  <Image
+                    src={
+                      profileData?.mobile_details?.flag ??
+                      "https://flagcdn.com/in.svg"
+                    }
+                    alt="Flag"
+                    width={16}
+                    height={16}
+                    className="rounded-full w-4 h-4"
+                  />
+                  <span>{profileData?.mobile_details?.dial_code}</span>
+                  <span>{profileData?.mobile_details?.mobile_number}</span>
+                </div>
+              ) : (
+                <div className="text-base font-medium">-</div>
+              )}
             </div>
+
             <ProfileItem
               label="Date of Birth"
               value={
