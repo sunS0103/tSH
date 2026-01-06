@@ -53,7 +53,7 @@ export default function EditIdentityAndAccount() {
   const editAccountSchema = z.object({
     first_name: z.string().min(1, "First name is required"),
     last_name: z.string().min(1, "Last name is required"),
-    gender: z.enum(["Male", "Female"], { message: "Please select gender" }),
+    gender: z.enum(["Male", "Female", ""], { message: "Please select gender" }),
     email: z.string().email("Invalid email address"),
     dial_code: z.string().min(1, "Dial code is required"),
     mobile_number: z
@@ -63,11 +63,12 @@ export default function EditIdentityAndAccount() {
       .length(10, "Phone number must be exactly 10 digits"),
     date_of_birth: z.string().optional(),
     account_type: z.enum(
-      ["Student", "Working Professional", "Fresher", "Other"],
+      ["Student", "Working Professional", "Fresher", "Other", ""],
       {
         message: "Please select account type",
       }
     ),
+    country_code: z.string().optional(),
   });
 
   const form = useForm<z.infer<typeof editAccountSchema>>({
@@ -75,7 +76,10 @@ export default function EditIdentityAndAccount() {
     defaultValues: {
       first_name: profileData?.first_name,
       last_name: profileData?.last_name,
-      gender: profileData?.gender === "Male" ? "Male" : "Female",
+      gender:
+        (profileData?.gender === "Male" && "Male") ||
+        (profileData?.gender === "Female" && "Female") ||
+        "",
       email: profileData?.email,
       dial_code: profileData?.mobile_details?.dial_code || "+91",
       mobile_number: profileData?.mobile_details?.mobile_number || "",
@@ -98,6 +102,7 @@ export default function EditIdentityAndAccount() {
           })()
         : "",
       account_type: profileData?.account_type,
+      country_code: profileData?.mobile_details?.dial_code || "+91",
       // countryCode: profileData?.dial_code,
       // country: profileData?.country,
     },
@@ -296,10 +301,14 @@ export default function EditIdentityAndAccount() {
                     <FormControl>
                       <div className="flex border border-black rounded-lg">
                         <CountryCodeDropdown
-                          value={formDialCode || selectedCountryCode}
+                          value={
+                            formDialCode ||
+                            selectedCountryCode ||
+                            form.getValues("country_code")
+                          }
                           onValueChange={(dialCode, country) => {
-                            setSelectedCountryCode(country.dial_code);
-                            setSelectedCountryName(country.name);
+                            setSelectedCountryCode(country?.dial_code || "");
+                            setSelectedCountryName(country?.name || "");
                             form.setValue("dial_code", dialCode);
                           }}
                           className="rounded-r-none border-r border-black"

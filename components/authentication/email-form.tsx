@@ -115,7 +115,7 @@ export default function EmailForm({ role }: EmailFormProps) {
   };
 
   const onRequestOtp = async (data: z.infer<typeof emailSchema>) => {
-    await sendOtp(data.email)
+    await sendOtp({ email: data.email, role })
       .then((response) => {
         if (response.success) {
           toast.success(
@@ -134,10 +134,11 @@ export default function EmailForm({ role }: EmailFormProps) {
       });
   };
 
+  // eslint-disable-next-line react-hooks/preserve-manual-memoization
   const onResendOtp = useCallback(async () => {
     if (!canResend) return;
 
-    await sendOtp(form.getValues("email"))
+    await sendOtp({ email: form.getValues("email"), role })
       .then((response) => {
         if (response.success) {
           toast.success(
@@ -168,7 +169,7 @@ export default function EmailForm({ role }: EmailFormProps) {
           setCookie("user_role", role);
 
           if (response.is_registered) {
-            router.replace("/");
+            router.push("/profile");
           } else {
             // Use replace to avoid preserving query parameters and ensure clean redirect
             router.replace("/authentication/register");

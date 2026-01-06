@@ -2,6 +2,7 @@
 
 import { Button } from "@/components/ui/button";
 import { Icon } from "@iconify/react";
+import Image from "next/image";
 import { useRouter } from "next/navigation";
 
 interface ProfileDetailProps {
@@ -12,7 +13,7 @@ interface ProfileDetailProps {
 function ProfileDetail({ label, value }: ProfileDetailProps) {
   return (
     <div className="flex flex-col gap-1 flex-1">
-      <p className="text-xs text-gray-700 font-normal">{label}</p>
+      <p className="text-xs text-gray-900 font-normal">{label}</p>
       <p className="text-base text-black font-medium">{value}</p>
     </div>
   );
@@ -90,33 +91,60 @@ export default function RecruiterProfile({
 
         {/* Row 2: Gender, Company name */}
         <div className="flex flex-col md:flex-row gap-2">
-          <ProfileDetail label="Gender" value={profileData?.gender} />
+          <ProfileDetail
+            label="Gender"
+            value={
+              (profileData?.gender === "Male" && "Male") ||
+              (profileData?.gender === "Female" && "Female") ||
+              "-"
+            }
+          />
           <ProfileDetail
             label="Company name"
-            value={profileData?.company_name}
+            value={profileData?.company_name || "-"}
           />
         </div>
 
         {/* Row 3: Country, City */}
         <div className="flex flex-col md:flex-row gap-2">
-          <ProfileDetail label="Country" value={profileData?.country?.name} />
-          <ProfileDetail label="City" value={profileData?.city?.name} />
+          <ProfileDetail
+            label="Country"
+            value={profileData?.country?.name || "-"}
+          />
+          <ProfileDetail label="City" value={profileData?.city?.name || "-"} />
         </div>
 
         {/* Row 4: Email ID, Phone Number */}
         <div className="flex flex-col md:flex-row gap-2">
-          <ProfileDetail label="Email ID" value={profileData?.email} />
-          <ProfileDetail
-            label="Phone Number"
-            value={`${profileData?.mobile_details?.dial_code} ${profileData?.mobile_details?.mobile_number}`}
-          />
+          <ProfileDetail label="Email ID" value={profileData?.email || "-"} />
+
+          <div className="flex flex-col gap-1 flex-1">
+            <p className="text-xs text-gray-900 font-normal">Phone Number</p>
+            {profileData?.mobile_details?.mobile_number ? (
+              <div className="flex items-center gap-1">
+                <Image
+                  src={
+                    profileData?.mobile_details?.flag ??
+                    "https://flagcdn.com/in.svg"
+                  }
+                  alt="Flag"
+                  width={16}
+                  height={16}
+                  className="rounded-full w-4 h-4"
+                />
+                <p className="text-base text-black font-medium">{`${profileData?.mobile_details?.dial_code} ${profileData?.mobile_details?.mobile_number}`}</p>
+              </div>
+            ) : (
+              <p className="text-base text-black font-medium">-</p>
+            )}
+          </div>
         </div>
 
         {/* Row 5: Primary Job Posting Category */}
         <div className="flex flex-col md:flex-row gap-2">
           <ProfileDetail
             label="Primary Job Posting Category"
-            value={profileData?.job_category}
+            value={profileData?.job_category || "-"}
           />
         </div>
 
@@ -124,7 +152,7 @@ export default function RecruiterProfile({
         <div className="flex flex-col md:flex-row gap-2">
           <ProfileDetail
             label="Role using this platform primarily"
-            value={profileData?.platform_role}
+            value={profileData?.platform_role || "-"}
           />
         </div>
       </div>

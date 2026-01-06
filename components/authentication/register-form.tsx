@@ -438,7 +438,6 @@ export default function RegisterForm({ role, email }: RegisterFormProps) {
         gender: data.gender === "Male" ? "Male" : "Female",
         email,
         country_code: selectedCountryCode.dial_code,
-        country_id: selectedCountryCode?.id,
         mobile_number: data.phone,
         account_type: ("accountType" in data ? data.accountType : "") as
           | "Fresher"
@@ -601,10 +600,10 @@ export default function RegisterForm({ role, email }: RegisterFormProps) {
                       value={selectedCountryCode.dial_code}
                       onValueChange={(dialCode, country) => {
                         setSelectedCountryCode({
-                          id: country.id,
-                          name: country.name,
+                          id: country?.id || 0,
+                          name: country?.name || "",
                           dial_code: dialCode,
-                          flag: country.flag,
+                          flag: country?.flag || "",
                         });
                         // setSelectedCountryCode(country);
                       }}

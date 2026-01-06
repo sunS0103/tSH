@@ -269,7 +269,7 @@ export default function PaymentCards({
           <div>
             {/* Notes */}
             {card.bottomNotes && (
-              <p className="text-xs text-gray-700 text-center mt-2">
+              <p className="text-xs text-gray-900 text-center mt-2">
                 {card.bottomNotes}
               </p>
             )}
