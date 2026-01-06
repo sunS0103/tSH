@@ -1,22 +1,15 @@
-"use client";
-
-import { getCookie } from "cookies-next/client";
-import { useRouter } from "next/navigation";
-import { useEffect } from "react";
+import { cookies } from "next/headers";
+import { redirect } from "next/navigation";
 import RequestAssessmentForm from "@/components/assessments/request-assessment-form";
 
-export default function RequestAssessmentPage() {
-  const router = useRouter();
-  const role = getCookie("user_role");
+export const dynamic = "force-dynamic";
 
-  useEffect(() => {
-    if (role !== "RECRUITER") {
-      router.push("/jobs");
-    }
-  }, [role, router]);
+export default async function RequestAssessmentPage() {
+  const cookieStore = await cookies();
+  const role = cookieStore.get("user_role")?.value;
 
   if (role !== "RECRUITER") {
-    return null;
+    redirect("/jobs");
   }
 
   return (
@@ -34,4 +27,3 @@ export default function RequestAssessmentPage() {
     </div>
   );
 }
-
