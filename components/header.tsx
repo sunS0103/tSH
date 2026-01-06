@@ -21,7 +21,7 @@ import {
 import { toast } from "sonner";
 import { getCandidateProfile, getRecruiterProfile } from "@/api/profile";
 import { useEffect, useState } from "react";
-import { Dialog, DialogContent, DialogTrigger } from "./ui/dialog";
+import { Dialog, DialogContent } from "./ui/dialog";
 import Image from "next/image";
 
 interface NavItem {
@@ -98,7 +98,6 @@ const NAV_CONFIG: Record<string, NavItem[]> = {
 
 export default function Header() {
   const pathname = usePathname();
-  const router = useRouter();
   const role = getCookie("user_role");
   const [userDetails, setUserDetails] = useState();
 
@@ -396,43 +395,5 @@ function Logout({
         </DialogContent>
       </Dialog>
     </>
-  );
-}
-
-function logoutDialog() {
-  return (
-    <Dialog>
-      <DialogTrigger asChild>
-        <div
-          className="flex gap-2 items-center cursor-pointer text-red-500 hover:text-red-500!"
-          onClick={() => {
-            //   const cookies = getCookies?.();
-            //   if (cookies && typeof cookies === "object" && cookies !== null) {
-            //     Object.keys(cookies).forEach((key: string) => {
-            //       deleteCookie(key);
-            //     });
-            //   }
-            //   toast.success("Logged out successfully");
-            //   router.refresh();
-          }}
-        >
-          <Icon
-            icon="material-symbols:logout-rounded"
-            className="size-4 text-inherit!"
-          />
-          Logout
-        </div>
-      </DialogTrigger>
-      <DialogContent className="px-0 py-6 ">
-        <div className="flex flex-col items-center gap-2">
-          <h6 className="text-base md:text-lg font-semibold">Are you sure?</h6>
-          <p className="text-gray-700 text-xs text-center">
-            You’re about to log out of your account. Any unsaved changes
-            <br />
-            may be lost. Do you still want to continue?
-          </p>
-        </div>
-      </DialogContent>
-    </Dialog>
   );
 }

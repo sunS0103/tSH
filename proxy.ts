@@ -37,7 +37,7 @@ export function proxy(request: NextRequest) {
   if (pathname === "/") {
     const userRole = request.cookies.get("user_role")?.value;
     if (userRole === "CANDIDATE") {
-      return NextResponse.redirect(new URL("/assessments", request.url));
+      return NextResponse.redirect(new URL("/profile", request.url));
     } else if (userRole === "RECRUITER") {
       return NextResponse.redirect(new URL("/profile", request.url));
     }
