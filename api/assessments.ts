@@ -148,3 +148,53 @@ export const getTakenAssessmentsList = async ({
   });
   return response.data;
 };
+
+export const getRequestedAssessmentsList = async ({
+  page,
+  pageSize,
+  sortBy,
+  sortDirection,
+  query,
+}: {
+  page: number;
+  pageSize: number;
+  sortBy: string;
+  sortDirection: "asc" | "desc";
+  query?: string;
+}) => {
+  const response = await axios.get("/recruiter/assessment/request", {
+    params: {
+      page,
+      pageSize,
+      sortBy,
+      sortDirection,
+      query,
+    },
+    paramsSerializer: (params) => {
+      const searchParams = new URLSearchParams();
+      Object.keys(params).forEach((key) => {
+        const value = params[key];
+        if (value !== undefined && value !== null && value !== "") {
+          searchParams.append(key, value);
+        }
+      });
+      return searchParams.toString();
+    },
+  });
+  return response.data;
+};
+
+export const createAssessmentRequest = async (data: {
+  assessment_title: string;
+  name: string;
+  company_email: string;
+  skills_to_assess: string;
+  country_code: string;
+  mobile_number: string;
+  job_description: string;
+  assessment_creation_preference: string | null;
+  custom_instructions?: string;
+}) => {
+  const response = await axios.post("/recruiter/assessment/request", data);
+  return response.data;
+};
