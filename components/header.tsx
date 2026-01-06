@@ -184,10 +184,14 @@ export default function Header() {
                 <Button
                   variant="outline"
                   className="md:hidden bg-primary-50 border border-primary-500 flex items-center justify-center rounded-full size-8 hover:bg-primary-100 transition-colors p-0"
+                  onClick={() => router.push("/jobs/create")}
                 >
                   <Icon icon="mdi:plus" className="text-primary-500 size-5" />
                 </Button>
-                <Button className="hidden md:flex bg-primary-500 hover:bg-primary-600 text-white rounded-full px-4 h-9 text-sm font-medium gap-0">
+                <Button
+                  className="hidden md:flex bg-primary-500 hover:bg-primary-600 text-white rounded-full px-4 h-9 text-sm font-medium gap-0"
+                  onClick={() => router.push("/jobs/create")}
+                >
                   <Icon icon="mdi:plus" className="mr-2 size-4" />
                   Create Job
                 </Button>

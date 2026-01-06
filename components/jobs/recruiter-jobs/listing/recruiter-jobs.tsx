@@ -5,7 +5,7 @@ import { Input } from "@/components/ui/input";
 import { Icon } from "@iconify/react";
 import { useEffect, useState, useRef } from "react";
 import { toast } from "sonner";
-import AssessmentPagination from "../../assessments/assessment-pagination";
+import AssessmentPagination from "@/components/assessments/assessment-pagination";
 import JobCard from "./job-card";
 import JobFilterSheet from "./job-filter-sheet";
 import JobFilterSidebar from "./job-filter-sidebar";
