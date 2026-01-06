@@ -40,18 +40,6 @@ export const jobFormSchema = z
   })
   .refine(
     (data) => {
-      if (data.job_location_type === "client_location") {
-        return data.client_name && data.conversion_time;
-      }
-      return true;
-    },
-    {
-      message: "Client name and conversion time are required for client location",
-      path: ["client_name"],
-    }
-  )
-  .refine(
-    (data) => {
       if (data.require_assessment) {
         return data.assessment_id;
       }

@@ -98,6 +98,7 @@ const NAV_CONFIG: Record<string, NavItem[]> = {
 
 export default function Header() {
   const pathname = usePathname();
+  const router = useRouter();
   const role = getCookie("user_role");
   const [userDetails, setUserDetails] = useState();
 

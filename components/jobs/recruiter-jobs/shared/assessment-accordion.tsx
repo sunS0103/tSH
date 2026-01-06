@@ -193,16 +193,16 @@ export default function AssessmentAccordion({
     <>
       <Accordion type="single" collapsible className="w-full">
         <AccordionItem value="assessment" className="border-none">
-          <AccordionTrigger className="bg-primary-50 rounded-t-2xl px-6 py-4 hover:no-underline cursor-pointer">
+          <AccordionTrigger className="bg-primary-50 rounded-t-2xl px-4 sm:px-6 py-4 hover:no-underline cursor-pointer">
             <div className="flex flex-col items-start gap-1 flex-1">
-              <p className="text-base font-semibold text-gray-950">
+              <p className="text-sm sm:text-base font-semibold text-gray-950">
                 Do you want to mandate a Skill Assessment score for{" "}
-                <br />
+                <br className="hidden sm:block" />
                 candidates to apply the Job?
               </p>
             </div>
           </AccordionTrigger>
-          <AccordionContent className="bg-white rounded-b-2xl px-6 py-4">
+          <AccordionContent className="bg-white rounded-b-2xl px-4 sm:px-6 py-4">
             <div className="space-y-4">
               <FormField
                 control={form.control}

@@ -40,18 +40,20 @@ export default function ApplyFormAccordion({
   const [customFields, setCustomFields] = useState<CustomField[]>([]);
   const [newFieldTitle, setNewFieldTitle] = useState("");
   const [newFieldType, setNewFieldType] = useState("text");
+  const [fieldTitleError, setFieldTitleError] = useState("");
 
   const fieldTypes = [
     { label: "Text", value: "text" },
-    { label: "Number", value: "number" },
-    { label: "Email", value: "email" },
     { label: "Textarea", value: "textarea" },
-    { label: "Select", value: "select" },
   ];
 
   const addCustomField = () => {
-    if (!newFieldTitle.trim()) return;
+    if (!newFieldTitle.trim()) {
+      setFieldTitleError("Field title is required");
+      return;
+    }
 
+    setFieldTitleError("");
     const newField: CustomField = {
       id: Date.now().toString(),
       title: newFieldTitle,
@@ -76,9 +78,9 @@ export default function ApplyFormAccordion({
   return (
     <Accordion type="single" collapsible className="w-full">
       <AccordionItem value="apply-form" className="border-none">
-        <AccordionTrigger className="bg-primary-50 rounded-t-2xl px-6 py-4 hover:no-underline cursor-pointer">
+        <AccordionTrigger className="bg-primary-50 rounded-t-2xl px-4 sm:px-6 py-4 hover:no-underline cursor-pointer">
           <div className="flex flex-col items-start gap-1 flex-1">
-            <p className="text-base font-semibold text-gray-950">
+            <p className="text-sm sm:text-base font-semibold text-gray-950">
               What details you want to know from Candidate in prior screening?
             </p>
             <p className="text-xs text-gray-600">
@@ -87,11 +89,11 @@ export default function ApplyFormAccordion({
             </p>
           </div>
         </AccordionTrigger>
-        <AccordionContent className="bg-white rounded-b-2xl px-6 py-4">
+        <AccordionContent className="bg-white rounded-b-2xl px-4 sm:px-6 py-4">
           <div className="space-y-4">
             {/* Default Fields */}
             <div className="space-y-4">
-              <div className="grid grid-cols-2 gap-4">
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                 <div className="space-y-2">
                   <Label className="text-sm font-medium text-gray-950">
                     Current Company
@@ -116,15 +118,23 @@ export default function ApplyFormAccordion({
                   <Label className="text-sm font-medium text-gray-950">
                     Expected CTC
                   </Label>
-                  <Input placeholder="Enter Expected CTC" disabled className="h-8" />
+                  <Input
+                    placeholder="Enter Expected CTC"
+                    disabled
+                    className="h-8"
+                  />
                 </div>
                 <div className="space-y-2">
                   <Label className="text-sm font-medium text-gray-950">
                     Visa status
                   </Label>
-                  <Input placeholder="Enter Visa status" disabled className="h-8" />
+                  <Input
+                    placeholder="Enter Visa status"
+                    disabled
+                    className="h-8"
+                  />
                 </div>
-                <div className="space-y-2 col-span-2">
+                <div className="space-y-2 col-span-1 sm:col-span-2">
                   <Label className="text-sm font-medium text-gray-950">
                     About yourself
                   </Label>
@@ -143,28 +153,62 @@ export default function ApplyFormAccordion({
                 Would you like to add a custom field here?
               </h4>
 
-              {customFields.map((field) => (
-                <div
-                  key={field.id}
-                  className="flex items-center gap-2 p-3 border rounded-lg"
-                >
-                  <div className="flex-1">
-                    <p className="text-sm font-medium">{field.title}</p>
-                    <p className="text-xs text-gray-500">{field.type}</p>
+              {/* Preview of Added Fields */}
+              {customFields.length > 0 && (
+                <div className="space-y-2 border-t pt-4">
+                  <p className="text-xs font-medium text-gray-600 mb-2">
+                    Added Fields:
+                  </p>
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-4" >
+                  {customFields.map((field) => (
+                      <div key={field.id} className={`flex items-end gap-2 ${field.type === "textarea" ? "col-span-1 sm:col-span-2" : ""}`}>
+                        <div className="flex-1">
+                          <div className="space-y-2">
+                            <Label className="text-sm font-medium text-gray-950">
+                              {field.title}
+                            </Label>
+                            {field.type === "textarea" ? (
+                              <Textarea
+                                placeholder={`Enter ${field.title.toLowerCase()}`}
+                                disabled
+                                className="min-h-[99px]"
+                              />
+                            ) : field.type === "select" ? (
+                              <Select disabled>
+                                <SelectTrigger className="h-8 w-full">
+                                  <SelectValue
+                                    placeholder={`Select ${field.title}`}
+                                  />
+                                </SelectTrigger>
+                              </Select>
+                            ) : (
+                              <Input
+                                type={field.type}
+                                placeholder={`Enter ${field.title.toLowerCase()}`}
+                                disabled
+                                className="h-8"
+                              />
+                            )}
+                          </div>
+                        </div>
+                        <Button
+                          type="button"
+                          variant="ghost"
+                          size="sm"
+                          onClick={() => removeCustomField(field.id)}
+                          className="h-8 w-8 p-0 hover:bg-red-50 hover:text-red-600"
+                        >
+                          <Icon icon="mdi:delete" className="w-4 h-4" />
+                        </Button>
+                      </div>
+                  ))}
                   </div>
-                  <Button
-                    type="button"
-                    variant="ghost"
-                    size="sm"
-                    onClick={() => removeCustomField(field.id)}
-                  >
-                    <Icon icon="mdi:delete" className="w-4 h-4" />
-                  </Button>
                 </div>
-              ))}
+              )}
 
-              <div className="space-y-3">
-                <div className="grid grid-cols-2 gap-4">
+              {/* Add New Field Form */}
+              <div className="space-y-3 border-t pt-4">
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                   <div className="space-y-2">
                     <Label className="text-sm font-medium text-gray-950">
                       Field Title
@@ -172,9 +216,19 @@ export default function ApplyFormAccordion({
                     <Input
                       placeholder="Enter Title"
                       value={newFieldTitle}
-                      onChange={(e) => setNewFieldTitle(e.target.value)}
-                      className="h-9"
+                      onChange={(e) => {
+                        setNewFieldTitle(e.target.value);
+                        if (fieldTitleError) {
+                          setFieldTitleError("");
+                        }
+                      }}
+                      className="h-8"
                     />
+                    {fieldTitleError && (
+                      <p className="text-destructive text-sm">
+                        {fieldTitleError}
+                      </p>
+                    )}
                   </div>
                   <div className="space-y-2">
                     <Label className="text-sm font-medium text-gray-950">

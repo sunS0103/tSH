@@ -1,4 +1,4 @@
-import EditJobForm from "@/components/jobs/recruiter-jobs/edit/edit-job-form";
+import JobForm from "@/components/jobs/recruiter-jobs/shared/job-form";
 
 interface EditJobPageProps {
   params: {
@@ -7,6 +7,6 @@ interface EditJobPageProps {
 }
 
 export default function EditJobPage({ params }: EditJobPageProps) {
-  return <EditJobForm jobId={params.id} />;
+  return <JobForm jobId={params.id} />;
 }
 

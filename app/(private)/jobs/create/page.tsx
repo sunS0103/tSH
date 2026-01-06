@@ -1,6 +1,6 @@
-import CreateJobForm from "@/components/jobs/recruiter-jobs/create/create-job-form";
+import JobForm from "@/components/jobs/recruiter-jobs/shared/job-form";
 
 export default function CreateJobPage() {
-  return <CreateJobForm />;
+  return <JobForm />;
 }
 

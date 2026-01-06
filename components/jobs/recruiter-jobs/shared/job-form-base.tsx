@@ -120,6 +120,7 @@ export default function JobFormBase({
   const jobLocationType = form.watch("job_location_type");
   const requireAssessment = form.watch("require_assessment");
   const requireApplyForm = form.watch("require_apply_form");
+  const contractToHire = form.watch("contract_to_hire");
 
   // Fetch work modes
   useEffect(() => {
@@ -150,23 +151,23 @@ export default function JobFormBase({
 
   return (
     <div className="bg-gray-50 min-h-screen">
-      <div className="max-w-3xl mx-auto px-6 py-8">
+      <div className="max-w-3xl mx-auto px-4 sm:px-6 pt-4 pb-20 sm:py-8">
         <Form {...form}>
           <form
             onSubmit={form.handleSubmit(handleSubmit)}
             className="space-y-6"
           >
             {/* Title Section */}
-            <div className="bg-primary-50 rounded-t-2xl px-6 py-4">
-              <h1 className="text-xl font-bold text-gray-950">
+            <div className="bg-primary-50 rounded-t-2xl px-4 sm:px-6 py-4">
+              <h1 className="text-lg sm:text-xl font-bold text-gray-950">
                 {isEdit ? "Edit Job" : "Create Job"}
               </h1>
             </div>
 
             {/* Form Fields */}
-            <div className="bg-white rounded-b-2xl px-6 py-4 space-y-4">
+            <div className="bg-white rounded-b-2xl px-4 sm:px-6 py-4 space-y-4">
               {/* Company Name and Job Title */}
-              <div className="grid grid-cols-2 gap-4">
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                 <FormField
                   control={form.control as any}
                   name="company_name"
@@ -212,8 +213,12 @@ export default function JobFormBase({
                           <RadioGroupItem
                             value="client_location"
                             id="client_location"
+                            className="cursor-pointer"
                           />
-                          <Label htmlFor="client_location">
+                          <Label 
+                            htmlFor="client_location"
+                            className="cursor-pointer"
+                          >
                             Client location
                           </Label>
                         </div>
@@ -221,8 +226,12 @@ export default function JobFormBase({
                           <RadioGroupItem
                             value="inhouse_project"
                             id="inhouse_project"
+                            className="cursor-pointer"
                           />
-                          <Label htmlFor="inhouse_project">
+                          <Label 
+                            htmlFor="inhouse_project"
+                            className="cursor-pointer"
+                          >
                             Inhouse Project
                           </Label>
                         </div>
@@ -233,42 +242,8 @@ export default function JobFormBase({
                 )}
               />
 
-              {/* Client Location Specific Fields */}
-              {jobLocationType === "client_location" && (
-                <div className="grid grid-cols-2 gap-4">
-                  <FormField
-                    control={form.control as any}
-                    name="client_name"
-                    render={({ field }) => (
-                      <FormItem>
-                        <FormLabel>Client Name</FormLabel>
-                        <FormControl>
-                          <Input {...field} placeholder="Enter client name" />
-                        </FormControl>
-                        <FormMessage />
-                      </FormItem>
-                    )}
-                  />
-                  <FormField
-                    control={form.control as any}
-                    name="conversion_time"
-                    render={({ field }) => (
-                      <FormItem>
-                        <FormLabel>
-                          Approximate conversion time to full-time.
-                        </FormLabel>
-                        <FormControl>
-                          <Input {...field} placeholder="e.g., 3 months" />
-                        </FormControl>
-                        <FormMessage />
-                      </FormItem>
-                    )}
-                  />
-                </div>
-              )}
-
               {/* Employment Gaps and Contract to Hire Toggles */}
-              <div className="grid grid-cols-2 gap-4">
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                 <FormField
                   control={form.control as any}
                   name="employment_gaps"
@@ -303,8 +278,42 @@ export default function JobFormBase({
                 />
               </div>
 
+              {/* Contract to Hire Additional Fields */}
+              {contractToHire && (
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                  <FormField
+                    control={form.control as any}
+                    name="client_name"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel>Client Name </FormLabel>
+                        <FormControl>
+                          <Input {...field} placeholder="Enter client name" />
+                        </FormControl>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+                  <FormField
+                    control={form.control as any}
+                    name="conversion_time"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel>
+                          Approximate conversion time to full-time.
+                        </FormLabel>
+                        <FormControl>
+                          <Input {...field} placeholder="e.g., 3 months" />
+                        </FormControl>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+                </div>
+              )}
+
               {/* Location and Region */}
-              <div className="grid grid-cols-2 gap-4">
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                 <FormField
                   control={form.control as any}
                   name="location"
@@ -334,7 +343,7 @@ export default function JobFormBase({
               </div>
 
               {/* Salary Range and Years of Experience */}
-              <div className="grid grid-cols-2 gap-4">
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                 {/* Salary Range */}
                 <FormField
                   control={form.control as any}
@@ -381,7 +390,7 @@ export default function JobFormBase({
               </div>
 
               {/* Notice Period and Work Mode */}
-              <div className="grid grid-cols-2 gap-4">
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                 <FormField
                   control={form.control as any}
                   name="notice_period"
@@ -457,7 +466,7 @@ export default function JobFormBase({
               </div>
 
               {/* Primary Skill Set */}
-              <div className="grid grid-cols-2 gap-4">
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                 <FormField
                   control={form.control as any}
                   name="primary_skills"
@@ -518,21 +527,22 @@ export default function JobFormBase({
                 form={form}
                 requireApplyForm={requireApplyForm}
               />
-            </div>
 
-            {/* Action Buttons */}
-            <div className="flex justify-end gap-3">
-              <Button
-                type="button"
-                variant="outline"
-                onClick={handleSaveDraft}
-                disabled={isLoading}
-              >
-                Save as draft
-              </Button>
-              <Button type="submit" disabled={isLoading}>
-                {isLoading ? "Submitting..." : "Submit"}
-              </Button>
+              {/* Action Buttons */}
+              <div className="flex flex-col sm:flex-row justify-end gap-3 pt-4 border-t">
+                <Button
+                  type="button"
+                  variant="outline"
+                  onClick={handleSaveDraft}
+                  disabled={isLoading}
+                  className="w-full sm:w-auto"
+                >
+                  Save as draft
+                </Button>
+                <Button type="submit" disabled={isLoading} className="w-full sm:w-auto">
+                  {isLoading ? "Submitting..." : "Submit"}
+                </Button>
+              </div>
             </div>
           </form>
         </Form>
