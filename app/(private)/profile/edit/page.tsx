@@ -320,10 +320,14 @@ export default function EditProfilePage() {
               control={form.control}
               name="company_name"
               render={({ field }) => (
-                <FormItem>
+                <FormItem className="w-full md:w-1/2">
                   <Label className="text-sm font-medium">Company name</Label>
                   <FormControl>
-                    <Input {...field} className="border-gray-900" />
+                    <Input
+                      {...field}
+                      className="border-gray-900"
+                      placeholder="Enter company name"
+                    />
                   </FormControl>
                   <FormMessage />
                 </FormItem>
@@ -339,7 +343,11 @@ export default function EditProfilePage() {
                   <FormItem className="flex-1">
                     <Label className="text-sm font-medium">First Name</Label>
                     <FormControl>
-                      <Input {...field} className="border-gray-900" />
+                      <Input
+                        {...field}
+                        className="border-gray-900"
+                        placeholder="Enter First Name"
+                      />
                     </FormControl>
                     <FormMessage />
                   </FormItem>
@@ -352,7 +360,11 @@ export default function EditProfilePage() {
                   <FormItem className="flex-1">
                     <Label className="text-sm font-medium">Last Name</Label>
                     <FormControl>
-                      <Input {...field} className="border-gray-900" />
+                      <Input
+                        {...field}
+                        className="border-gray-900"
+                        placeholder="Enter Last Name"
+                      />
                     </FormControl>
                     <FormMessage />
                   </FormItem>
@@ -440,6 +452,7 @@ export default function EditProfilePage() {
                         <Input
                           {...field}
                           type="tel"
+                          placeholder="Enter Phone Number"
                           maxLength={10}
                           className="h-8 border-0 rounded-l-none"
                           onChange={(e) => {

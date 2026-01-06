@@ -22,7 +22,7 @@ interface Country {
 
 interface CountryCodeDropdownProps {
   value?: string;
-  onValueChange: (dialCode: string, country: Country) => void;
+  onValueChange: (dialCode: string, country?: Country) => void;
   className?: string;
 }
 
@@ -66,15 +66,37 @@ export function CountryCodeDropdown({
         ? response
         : response?.data || response?.countries || [];
 
+      // Filter out selected country from loaded data to avoid duplicates
+      // Only filter if there's no search query (when searching, show all results)
+      const shouldFilterSelected = selectedCountry && !query;
+      const filteredData = shouldFilterSelected
+        ? countriesData.filter((c: Country) => c.id !== selectedCountry.id)
+        : countriesData;
+
       // If page 1, replace countries; otherwise append (merge with previous data)
       if (pageNum === 1) {
-        setCountries(countriesData);
+        // If we have a selected country and no search query, put it at the top
+        const countriesList = shouldFilterSelected
+          ? [selectedCountry, ...filteredData]
+          : filteredData;
+        setCountries(countriesList);
         setSearchQuery(query || "");
         loadedPagesRef.current.clear();
         loadedPagesRef.current.add(pageNum);
       } else {
-        // For page 2, 3, etc., always append to previous data
-        setCountries((prev) => [...prev, ...countriesData]);
+        // For page 2, 3, etc., always append to previous data (excluding selected country if no search)
+        setCountries((prev) => {
+          if (shouldFilterSelected) {
+            // Remove selected country from prev if it exists, then add filtered new data
+            const prevFiltered = prev.filter(
+              (c) => c.id !== selectedCountry.id
+            );
+            return [selectedCountry, ...prevFiltered, ...filteredData];
+          } else {
+            // When searching, just append normally
+            return [...prev, ...filteredData];
+          }
+        });
         loadedPagesRef.current.add(pageNum);
       }
 
@@ -130,22 +152,43 @@ export function CountryCodeDropdown({
     debounceTimerRef.current = setTimeout(() => {
       loadedPagesRef.current.clear();
       setPage(1);
-      setCountries([]);
+      // Clear countries but preserve selected country if it matches search
       const query = value.trim() || undefined;
+      // If searching, don't preserve selected country at top (let search results show)
+      // If clearing search, selected country will be added back when loading
+      setCountries([]);
       loadCountries(1, query);
     }, 500);
   };
 
-  // Load initial countries when popover opens
+  // Load initial countries when popover opens - always call API on open
   useEffect(() => {
-    if (open && countries.length === 0 && !loading) {
+    if (open && !loading) {
       loadedPagesRef.current.clear();
       setPage(1);
       setSearchQuery("");
+      setCountries([]);
       loadCountries(1);
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [open]);
+
+  // When dropdown opens, ensure selected country is at the top and removed from list (only if no search)
+  useEffect(() => {
+    if (open && selectedCountry && countries.length > 0 && !searchQuery) {
+      // Check if selected country is already at the top
+      const isAtTop = countries[0]?.id === selectedCountry.id;
+      if (!isAtTop) {
+        // Remove selected country from the list if it exists elsewhere
+        setCountries((prev) => {
+          const filtered = prev.filter((c) => c.id !== selectedCountry.id);
+          // Put selected country at the top
+          return [selectedCountry, ...filtered];
+        });
+      }
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [open, searchQuery]);
 
   // Load countries on mount if value is provided (to preselect country)
   useEffect(() => {
@@ -177,6 +220,26 @@ export function CountryCodeDropdown({
     }
   }, [open]);
 
+  // Fetch selected country by dial_code if not in loaded countries
+  const fetchSelectedCountry = async (dialCode: string) => {
+    try {
+      // Search for the country by dial_code
+      const response = await getCountries(1, dialCode);
+      const countriesData = Array.isArray(response)
+        ? response
+        : response?.data || response?.countries || [];
+
+      const country = countriesData.find(
+        (c: Country) => c.dial_code === dialCode
+      );
+      if (country) {
+        setSelectedCountry(country);
+      }
+    } catch (error) {
+      console.error("Error fetching selected country:", error);
+    }
+  };
+
   // Set selected country from value prop (only when value changes externally)
   // Use a ref to track the last value to prevent unnecessary updates
   const lastValueRef = useRef<string | undefined>(value);
@@ -192,26 +255,25 @@ export function CountryCodeDropdown({
     // Only update if value actually changed (not just a re-render)
     const valueChanged = value !== lastValueRef.current;
 
-    // Also update if countries are loaded and we have a value but no selected country
-    const shouldUpdate =
-      valueChanged || (value && countries.length > 0 && !selectedCountry);
-
-    if (shouldUpdate) {
-      if (valueChanged) {
-        lastValueRef.current = value;
-      }
-
-      if (value && countries.length > 0) {
-        const country = countries.find((c) => c.dial_code === value);
-        if (country) {
-          setSelectedCountry(country);
-        }
-      } else if (!value) {
-        // Reset if value is cleared
-        setSelectedCountry(null);
-      }
+    if (valueChanged) {
+      lastValueRef.current = value;
     }
-  }, [value, countries, selectedCountry]);
+
+    if (value) {
+      // First check if country is already in loaded countries
+      const country = countries.find((c) => c.dial_code === value);
+      if (country) {
+        setSelectedCountry(country);
+      } else {
+        // If not found, fetch it separately
+        fetchSelectedCountry(value);
+      }
+    } else {
+      // Reset if value is cleared
+      setSelectedCountry(null);
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [value]);
 
   const handleSelect = (country: Country) => {
     isUserSelectionRef.current = true;
@@ -296,7 +358,7 @@ export function CountryCodeDropdown({
               type="button"
               onClick={() => handleSelect(country)}
               className={cn(
-                "w-full flex items-center gap-3 px-4 py-2 text-left hover:bg-gray-100 transition-colors focus:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-inset focus:ring-primary-500",
+                "w-full flex items-center gap-3 px-4 py-2 text-left cursor-pointer hover:bg-gray-100 transition-colors focus:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-inset focus:ring-primary-500",
                 selectedCountry?.id === country.id && "bg-gray-100"
               )}
               onKeyDown={(e) => {
