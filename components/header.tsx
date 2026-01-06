@@ -41,25 +41,60 @@ function shouldHideHeader(pathname: string | null): boolean {
 }
 // Routes where bottom navigation should be visible
 // Supports exact routes (e.g., "/") and route patterns (e.g., "/assessments/*")
-const BOTTOM_NAV_VISIBLE_ROUTES: string[] = ["/", "/assessments", "/jobs"];
+const BOTTOM_NAV_VISIBLE_ROUTES: string[] = [
+  "/",
+  "/talent-pool",
+  "/assessments",
+  "/jobs",
+];
 
 /**
  * Checks if the current pathname matches any route in the visible routes array
  * Supports exact matches and wildcard patterns (e.g., "/route/*")
  */
-function shouldShowBottomNav(pathname: string | null): boolean {
-  if (!pathname) return false;
+const BOTTOM_NAV_VISIBLE_ROUTES_BY_ROLE: Record<string, string[]> = {
+  RECRUITER: ["/", "/talent-pool", "/assessments", "/jobs"],
+  CANDIDATE: ["/", "/assessments", "/jobs"],
+};
 
-  return BOTTOM_NAV_VISIBLE_ROUTES.some((route) => {
-    // Handle wildcard patterns (e.g., "/route/*")
-    if (route.endsWith("/*")) {
-      const baseRoute = route.slice(0, -2); // Remove "/*"
-      return pathname === baseRoute || pathname.startsWith(`${baseRoute}/`);
-    }
-    // Handle exact matches
-    return pathname === route;
-  });
+function shouldShowBottomNav(pathname: string | null, role?: string): boolean {
+  if (!pathname || !role) return false;
+
+  return BOTTOM_NAV_VISIBLE_ROUTES_BY_ROLE[role]?.some(
+    (route) => pathname === route || pathname.startsWith(`${route}/`)
+  );
 }
+
+const NAV_CONFIG: Record<string, NavItem[]> = {
+  RECRUITER: [
+    { label: "Dashboard", href: "/", icon: "humbleicons:dashboard" },
+    {
+      label: "Talent Pool",
+      href: "/talent-pool",
+      icon: "mdi:lightbulb-variant-outline",
+    },
+    { label: "Jobs", href: "/jobs", icon: "mingcute:briefcase-2-line" },
+    {
+      label: "Assessments",
+      href: "/assessments",
+      icon: "mdi:help-box-multiple-outline",
+    },
+    {
+      label: "Credits",
+      href: "/credits",
+      icon: "mdi:coin-outline",
+    },
+  ],
+  CANDIDATE: [
+    { label: "Dashboard", href: "/", icon: "humbleicons:dashboard" },
+    {
+      label: "Assessment",
+      href: "/assessments",
+      icon: "mdi:help-box-multiple-outline",
+    },
+    { label: "Jobs", href: "/jobs", icon: "mingcute:briefcase-2-line" },
+  ],
+};
 
 export default function Header() {
   const pathname = usePathname();
@@ -90,23 +125,10 @@ export default function Header() {
     return null;
   }
 
-  const navItems: NavItem[] = [
-    {
-      label: "Dashboard",
-      href: "/",
-      icon: "humbleicons:dashboard",
-    },
-    {
-      label: "Assessment",
-      href: "/assessments",
-      icon: "mdi:help-box-multiple-outline",
-    },
-    {
-      label: "Jobs",
-      href: "/jobs",
-      icon: "mingcute:briefcase-2-line",
-    },
-  ];
+  const navItems: NavItem[] =
+    role && NAV_CONFIG[role as keyof typeof NAV_CONFIG]
+      ? NAV_CONFIG[role as keyof typeof NAV_CONFIG]
+      : [];
 
   return (
     <>
@@ -156,8 +178,21 @@ export default function Header() {
             })}
           </nav>
 
-          {/* Notification & Avatar */}
           <div className="flex items-center gap-3">
+            {role === "RECRUITER" && (
+              <>
+                <Button
+                  variant="outline"
+                  className="md:hidden bg-primary-50 border border-primary-500 flex items-center justify-center rounded-full size-8 hover:bg-primary-100 transition-colors p-0"
+                >
+                  <Icon icon="mdi:plus" className="text-primary-500 size-5" />
+                </Button>
+                <Button className="hidden md:flex bg-primary-500 hover:bg-primary-600 text-white rounded-full px-4 h-9 text-sm font-medium gap-0">
+                  <Icon icon="mdi:plus" className="mr-2 size-4" />
+                  Create Job
+                </Button>
+              </>
+            )}
             {/* Notification Bell */}
             <Button
               variant="outline"
@@ -177,7 +212,7 @@ export default function Header() {
       </header>
 
       {/* Mobile Bottom Navigation - Only visible on mobile and configured routes */}
-      {shouldShowBottomNav(pathname) && (
+      {shouldShowBottomNav(pathname, role as string) && (
         <nav className="md:hidden fixed bottom-0 left-0 right-0 bg-white border-t border-gray-100 flex items-center justify-center h-20 z-50">
           <div className="flex items-center justify-center w-full max-w-md">
             {navItems.map((item) => {

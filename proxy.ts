@@ -11,8 +11,15 @@ const publicRoutes = [
   "/for-recruiters",
 ];
 
+const ROLE_ONLY_ROUTES = {
+  RECRUITER: ["/talent-pool", "/credits"],
+  CANDIDATE: [],
+}
+
 export function proxy(request: NextRequest) {
   const { pathname } = request.nextUrl;
+
+  
 
   // Skip static files and Next.js internals
   if (
@@ -24,6 +31,7 @@ export function proxy(request: NextRequest) {
   }
 
   const token = request.cookies.get("token")?.value;
+  const role = request.cookies.get("user_role")?.value;
 
   // Root redirect
   if (pathname === "/") {
@@ -34,6 +42,16 @@ export function proxy(request: NextRequest) {
       return NextResponse.redirect(new URL("/profile", request.url));
     }
     return NextResponse.next();
+  }
+
+    if (role) {
+    const forbiddenRoutes = Object.entries(ROLE_ONLY_ROUTES)
+      .filter(([r]) => r !== role)
+      .flatMap(([, routes]) => routes);
+
+    if (forbiddenRoutes.some((route) => pathname.startsWith(route))) {
+      return NextResponse.redirect(new URL("/", request.url));
+    }
   }
 
   // Allow public routes without token
