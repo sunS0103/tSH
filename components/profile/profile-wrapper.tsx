@@ -294,7 +294,6 @@ export default function ProfilePage() {
       />
     );
   } else if (role === "RECRUITER") {
-    console.log(recruiterProfileData);
     return (
       <RecruiterProfile
         recruiterProfileData={recruiterProfileData as RecruiterProfileData}

@@ -77,6 +77,7 @@ export default function EditIdentityAndAccount() {
         message: "Please select account type",
       }
     ),
+    country_code: z.string().optional(),
   });
 
   const form = useForm<z.infer<typeof editAccountSchema>>({
@@ -107,6 +108,7 @@ export default function EditIdentityAndAccount() {
           })()
         : "",
       account_type: profileData?.account_type,
+      country_code: profileData?.mobile_details?.dial_code || "+91",
       // countryCode: profileData?.dial_code,
       // country: profileData?.country,
     },
@@ -305,7 +307,11 @@ export default function EditIdentityAndAccount() {
                     <FormControl>
                       <div className="flex border border-black rounded-lg">
                         <CountryCodeDropdown
-                          value={formDialCode || selectedCountryCode}
+                          value={
+                            formDialCode ||
+                            selectedCountryCode ||
+                            form.getValues("country_code")
+                          }
                           onValueChange={(dialCode, country) => {
                             setSelectedCountryCode(country.dial_code);
                             setSelectedCountryName(country.name);

@@ -2,6 +2,7 @@
 
 import { Button } from "@/components/ui/button";
 import { Icon } from "@iconify/react";
+import Image from "next/image";
 import { useRouter } from "next/navigation";
 
 interface ProfileDetailProps {
@@ -106,10 +107,25 @@ export default function RecruiterProfile({
         {/* Row 4: Email ID, Phone Number */}
         <div className="flex flex-col md:flex-row gap-2">
           <ProfileDetail label="Email ID" value={profileData?.email} />
-          <ProfileDetail
-            label="Phone Number"
-            value={`${profileData?.mobile_details?.dial_code} ${profileData?.mobile_details?.mobile_number}`}
-          />
+
+          <div className="flex flex-col gap-1 flex-1">
+            <p className="text-xs text-gray-900 font-normal">Phone Number</p>
+            {profileData?.mobile_details?.mobile_number && (
+              <div className="flex items-center gap-1">
+                <Image
+                  src={
+                    profileData?.mobile_details?.flag ??
+                    "https://flagcdn.com/in.svg"
+                  }
+                  alt="Flag"
+                  width={16}
+                  height={16}
+                  className="rounded-full w-4 h-4"
+                />
+                <p className="text-base text-black font-medium">{`${profileData?.mobile_details?.dial_code} ${profileData?.mobile_details?.mobile_number}`}</p>
+              </div>
+            )}
+          </div>
         </div>
 
         {/* Row 5: Primary Job Posting Category */}
