@@ -14,7 +14,6 @@ export default function AssessmentIntroduction({
   className,
   assessment,
 }: AssessmentIntroductionProps) {
-  console.log(assessment);
   const cards = [
     ...(assessment.duration && assessment.duration > 0
       ? [

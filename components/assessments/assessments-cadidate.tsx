@@ -134,7 +134,6 @@ export default function AssessmentCandidate() {
         // Skills can be multiple values
         const skills = skillsFilters.length > 0 ? skillsFilters : undefined;
 
-        console.log(selectedTab, "selectedTab");
         if (selectedTab === "all") {
           const res = await getAssessmentList({
             page: currentPage,
