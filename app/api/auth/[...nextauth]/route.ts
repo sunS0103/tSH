@@ -51,47 +51,72 @@ export const authOptions: NextAuthOptions = {
       return false;
     },
     async jwt({ token, user }) {
-      // Initial sign in - persist user data
-      if (user) {
-        token.idToken = (user as any).idToken;
-        token.backendData = (user as any).backendData;
-        token.role = (user as any).role || "CANDIDATE";
-        token.email = user.email || "";
-        token.name = user.name || "";
+      try {
+        // Initial sign in - persist user data
+        if (user) {
+          token.idToken = (user as any).idToken;
+          token.backendData = (user as any).backendData;
+          token.role = (user as any).role || "CANDIDATE";
+          token.email = user.email || "";
+          token.name = user.name || "";
 
-        // Store backend token in token if available
-        if ((user as any).backendData?.token) {
-          token.backendToken = (user as any).backendData.token;
+          // Store backend token in token if available
+          if ((user as any).backendData?.token) {
+            token.backendToken = (user as any).backendData.token;
+          }
         }
-      }
 
-      return token;
+        return token;
+      } catch (error) {
+        console.error("JWT callback error:", error);
+        // Return token as-is to prevent 500 error
+        return token;
+      }
     },
     async session({ session, token }) {
-      // Send properties to the client
-      if (token.backendData) {
-        session.backendData = token.backendData;
-        session.role = token.role as string;
-      }
+      try {
+        // Send properties to the client
+        if (token.backendData) {
+          session.backendData = token.backendData;
+          session.role = token.role as string;
+        }
 
-      // Set user data from token
-      if (session.user) {
-        session.user.email = token.email as string;
-        session.user.name = token.name as string;
-      }
+        // Set user data from token
+        if (session.user) {
+          session.user.email = token.email as string;
+          session.user.name = token.name as string;
+        }
 
-      return session;
+        return session;
+      } catch (error) {
+        console.log("Session callback error:", error);
+        // Return a minimal valid session to prevent 500 error
+        return {
+          ...session,
+          user: {
+            ...session.user,
+            email: (token.email as string) || "",
+            name: (token.name as string) || "",
+          },
+        };
+      }
     },
   },
   pages: {
     signIn: "/authentication",
-    error: "/authentication", // Error page
   },
   session: {
     strategy: "jwt",
   },
   secret: process.env.NEXTAUTH_SECRET,
 };
+
+// Validate required environment variables
+if (!process.env.NEXTAUTH_SECRET) {
+  console.warn(
+    "Warning: NEXTAUTH_SECRET is not set. This may cause authentication issues."
+  );
+}
 
 const handler = NextAuth(authOptions);
 

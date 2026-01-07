@@ -43,7 +43,7 @@ export function proxy(request: NextRequest) {
 
   // Prevent logged-in user accessing auth
   if (token && pathname.startsWith("/authentication")) {
-    return NextResponse.redirect(new URL("/", request.url));
+    return NextResponse.redirect(new URL("/profile", request.url));
   }
 
   // Protect private routes
