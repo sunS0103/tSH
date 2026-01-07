@@ -2,6 +2,14 @@
 import NextAuth, { NextAuthOptions } from "next-auth";
 import CredentialsProvider from "next-auth/providers/credentials";
 
+// Validate NEXT_PUBLIC_AUTH_SECRET
+const NEXT_PUBLIC_AUTH_SECRET = process.env.NEXT_PUBLIC_AUTH_SECRET;
+if (!NEXT_PUBLIC_AUTH_SECRET) {
+  console.error(
+    "ERROR: NEXT_PUBLIC_AUTH_SECRET is not set. Authentication will not work."
+  );
+}
+
 export const authOptions: NextAuthOptions = {
   providers: [
     CredentialsProvider({
@@ -109,16 +117,11 @@ export const authOptions: NextAuthOptions = {
   session: {
     strategy: "jwt",
   },
-  secret: process.env.NEXTAUTH_SECRET,
+  secret: NEXT_PUBLIC_AUTH_SECRET || "fallback-secret-change-in-production",
 };
 
-// Validate required environment variables
-if (!process.env.NEXTAUTH_SECRET) {
-  console.warn(
-    "Warning: NEXTAUTH_SECRET is not set. This may cause authentication issues."
-  );
-}
-
+// Initialize NextAuth handler
 const handler = NextAuth(authOptions);
 
+// Export handlers - NextAuth handles the route matching internally
 export { handler as GET, handler as POST };
