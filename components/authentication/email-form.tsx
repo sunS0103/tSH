@@ -202,8 +202,6 @@ export default function EmailForm({ role }: EmailFormProps) {
         return;
       }
 
-      console.log(response, "response");
-
       // Store backend token
       if (response.token) {
         setAxiosToken(response.token);
@@ -216,29 +214,34 @@ export default function EmailForm({ role }: EmailFormProps) {
 
       // Create NextAuth session with Firebase user data
       await signIn("credentials", {
+        callbackUrl: "/profile",
         idToken: idToken,
         email: user.email,
         name: user.displayName,
         role: role,
         backendData: response.data,
         redirect: false,
-      });
+      })
+        .then((result) => {
+          console.log(result);
+        })
+        .catch((error) => {
+          console.log(error);
+        })
+        .finally(() => {
+          setIsGoogleLoading(false);
+        });
 
       // Handle redirect based on registration status
       if (response?.token) {
-        console.log(response);
         if (role === "CANDIDATE") {
-          router.replace("/assessments");
+          router.replace("/profile");
         } else if (role === "RECRUITER") {
           router.replace("/profile");
         } else {
           router.replace("/");
         }
       }
-      // else {
-      //   // Use replace to avoid preserving query parameters and ensure clean redirect
-      //   router.replace("/authentication/register");
-      // }
     } catch (error: unknown) {
       console.error("Google sign-in error:", error);
       let errorMessage = "Failed to sign in with Google";

@@ -459,7 +459,7 @@ export default function RegisterForm({ role, email }: RegisterFormProps) {
             setCookie("token", response.token);
             setCookie("user_email", email);
             setCookie("user_role", role);
-            router.push("/assessments");
+            router.push("/profile");
           } else {
             toast.error(
               response.message || "Registration failed. Please try again."
