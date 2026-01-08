@@ -134,7 +134,6 @@ export default function EmailForm({ role }: EmailFormProps) {
       });
   };
 
-  // eslint-disable-next-line react-hooks/preserve-manual-memoization
   const onResendOtp = useCallback(async () => {
     if (!canResend) return;
 
@@ -154,7 +153,7 @@ export default function EmailForm({ role }: EmailFormProps) {
       .catch((error) => {
         toast.error(error?.response?.data?.message || "Failed to resend OTP");
       });
-  }, [canResend, form]);
+  }, [canResend, form, role]);
 
   const onVerifyOtp = async () => {
     if (otp.length !== 4) return;
@@ -221,16 +220,7 @@ export default function EmailForm({ role }: EmailFormProps) {
         role: role,
         backendData: response.data,
         redirect: false,
-      })
-        .then((result) => {
-          console.log(result);
-        })
-        .catch((error) => {
-          console.log(error);
-        })
-        .finally(() => {
-          setIsGoogleLoading(false);
-        });
+      });
 
       // Handle redirect based on registration status
       if (response?.token) {

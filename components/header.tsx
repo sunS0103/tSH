@@ -53,8 +53,8 @@ const BOTTOM_NAV_VISIBLE_ROUTES: string[] = [
  * Supports exact matches and wildcard patterns (e.g., "/route/*")
  */
 const BOTTOM_NAV_VISIBLE_ROUTES_BY_ROLE: Record<string, string[]> = {
-  RECRUITER: ["/", "/talent-pool", "/assessments", "/jobs"],
-  CANDIDATE: ["/", "/assessments", "/jobs"],
+  RECRUITER: ["/", "/talent-pool", "/assessments", "/jobs", "/jobs/*"],
+  CANDIDATE: ["/", "/assessments", "/jobs", "/jobs/*"],
 };
 
 function shouldShowBottomNav(pathname: string | null, role?: string): boolean {
@@ -73,12 +73,17 @@ const NAV_CONFIG: Record<string, NavItem[]> = {
       href: "/talent-pool",
       icon: "mdi:lightbulb-variant-outline",
     },
+    { label: "Jobs", href: "/jobs", icon: "mingcute:briefcase-2-line" },
     {
       label: "Assessments",
       href: "/assessments",
       icon: "mdi:help-box-multiple-outline",
     },
-    { label: "Jobs", href: "/jobs", icon: "mingcute:briefcase-2-line" },
+    {
+      label: "Credits",
+      href: "/credits",
+      icon: "mdi:coin-outline",
+    },
   ],
   CANDIDATE: [
     { label: "Dashboard", href: "/", icon: "humbleicons:dashboard" },
@@ -93,6 +98,7 @@ const NAV_CONFIG: Record<string, NavItem[]> = {
 
 export default function Header() {
   const pathname = usePathname();
+  const router = useRouter();
   const role = getCookie("user_role");
   const [userDetails, setUserDetails] = useState();
 
@@ -145,8 +151,7 @@ export default function Header() {
             {navItems.map((item) => {
               const isActive =
                 pathname === item.href ||
-                (item.href === "/assessments" &&
-                  pathname?.startsWith("/assessments"));
+                (item.href !== "/" && pathname?.startsWith(`${item.href}/`));
 
               return (
                 <Link
@@ -178,10 +183,14 @@ export default function Header() {
                 <Button
                   variant="outline"
                   className="md:hidden bg-primary-50 border border-primary-500 flex items-center justify-center rounded-full size-8 hover:bg-primary-100 transition-colors p-0"
+                  onClick={() => router.push("/jobs/create")}
                 >
                   <Icon icon="mdi:plus" className="text-primary-500 size-5" />
                 </Button>
-                <Button className="hidden md:flex bg-primary-500 hover:bg-primary-600 text-white rounded-full px-4 h-9 text-sm font-medium gap-0">
+                <Button
+                  className="hidden md:flex bg-primary-500 hover:bg-primary-600 text-white rounded-full px-4 h-9 text-sm font-medium gap-0"
+                  onClick={() => router.push("/jobs/create")}
+                >
                   <Icon icon="mdi:plus" className="mr-2 size-4" />
                   Create Job
                 </Button>
@@ -212,8 +221,7 @@ export default function Header() {
             {navItems.map((item) => {
               const isActive =
                 pathname === item.href ||
-                (item.href === "/assessments" &&
-                  pathname?.startsWith("/assessments"));
+                (item.href !== "/" && pathname?.startsWith(`${item.href}/`));
 
               return (
                 <Link
