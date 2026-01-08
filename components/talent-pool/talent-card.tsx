@@ -6,6 +6,7 @@ import { Icon } from "@iconify/react";
 import { Button } from "@/components/ui/button";
 import { Checkbox } from "@/components/ui/checkbox";
 import { useState } from "react";
+import { type AssessmentTaken } from "@/api/recruiter/talent-pool";
 
 export interface TalentCardProps {
   id: string;
@@ -18,6 +19,7 @@ export interface TalentCardProps {
   availability: string;
   location: string; // e.g. Mumbai, MH
   assessmentTaken: string[];
+  assessments?: AssessmentTaken[]; // Full assessment details for the score sheet
   about: string;
   isSelected?: boolean;
   onSelect?: (checked: boolean) => void;
@@ -36,6 +38,7 @@ export default function TalentCard({
   availability,
   location,
   assessmentTaken,
+  assessments,
   about,
   isSelected,
   onSelect,
@@ -70,8 +73,8 @@ export default function TalentCard({
             </div>
             <div className="flex flex-col items-start gap-1">
               <h1 className="text-black text-xl font-bold font-sans">{role}</h1>
-              <p className="text-left text-gray-600 text-xs font-normal font-sans">
-                ID: {location_code}
+              <p className="text-left text-gray-600 text-xs font-normal font-sans capitalize">
+                ID: {id.substring(0, 4)}
               </p>
             </div>
           </div>
@@ -166,7 +169,7 @@ export default function TalentCard({
         <div className="flex flex-col items-start gap-3 max-w-xs w-full shrink-0">
           <div className="w-full flex flex-col items-start gap-2">
             <div className="flex flex-col items-start gap-2 ">
-              <TalentScoreSheet>
+              <TalentScoreSheet assessments={assessments || []}>
                 <span className="text-gray-900 text-xs font-medium underline font-sans cursor-pointer">
                   Total Score
                 </span>
@@ -185,9 +188,9 @@ export default function TalentCard({
               {skillsAssessed.map((skill, index) => (
                 <div
                   key={index}
-                  className="px-2 py-1 rounded-full border border-gray-600 flex justify-start items-center gap-2"
+                  className="px-2 py-1 rounded-full border border-gray-600 flex justify-center items-center gap-2"
                 >
-                  <span className="text-center text-black text-xs font-normal font-sans">
+                  <span className="text-center text-black text-xs font-normal font-sans capitalize">
                     {skill}
                   </span>
                 </div>
@@ -243,29 +246,16 @@ export default function TalentCard({
               Assessment Taken
             </span>
             <div className="flex justify-start items-center gap-2 flex-wrap">
-              {assessmentTaken.map((assessment, index) => {
-                const isFirst = index === 0;
-                return (
-                  <div
-                    key={index}
-                    className={cn(
-                      "h-6 px-3 py-1 rounded-full border flex flex-col justify-center items-start gap-2.5",
-                      isFirst
-                        ? "bg-primary-50 border-primary-500"
-                        : "bg-gray-50 border-gray-600"
-                    )}
-                  >
-                    <span
-                      className={cn(
-                        "text-center text-xs italic font-normal font-sans",
-                        isFirst ? "text-primary-500 underline" : "text-gray-800"
-                      )}
-                    >
-                      {assessment}
-                    </span>
-                  </div>
-                );
-              })}
+              {assessmentTaken.map((assessment, index) => (
+                <div
+                  key={index}
+                  className="h-6 px-3 py-1 rounded-full border border-gray-600 bg-gray-50 flex flex-col justify-center items-start gap-2.5 hover:bg-primary-50 hover:border-primary-500 transition-colors cursor-pointer"
+                >
+                  <span className="text-center text-xs italic font-normal font-sans text-gray-800 hover:text-primary-500 hover:underline transition-colors">
+                    {assessment}
+                  </span>
+                </div>
+              ))}
             </div>
           </div>
 
@@ -275,9 +265,9 @@ export default function TalentCard({
             </span>
             <div className="self-stretch">
               <span className="text-gray-800 text-sm font-normal font-sans leading-relaxed">
-                {about.length <= 500 ? about : `${about.substring(0, 500)}... `}
+                {about.length <= 200 ? about : `${about.substring(0, 200)}... `}
               </span>
-              {about.length > 500 && (
+              {about.length > 200 && (
                 <TalentAboutModal
                   about={about}
                   trigger={

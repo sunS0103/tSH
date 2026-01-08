@@ -9,6 +9,8 @@ interface TalentFilterSidebarProps {
   selectedFilters: string[];
   onFilterChange: (filters: string[]) => void;
   onRefresh: () => void;
+  onLocationDataUpdate?: (locationMap: Map<string, string>) => void;
+  locationIdToTitleMap?: Map<string, string>;
 }
 
 export default function TalentFilterSidebar({
@@ -16,6 +18,8 @@ export default function TalentFilterSidebar({
   selectedFilters,
   onFilterChange,
   onRefresh,
+  onLocationDataUpdate,
+  locationIdToTitleMap,
 }: TalentFilterSidebarProps) {
   return (
     <div className="hidden lg:flex bg-white rounded-3xl shadow-sm border border-gray-100 sticky top-22 h-[calc(100vh-100px)] min-w-64 max-w-72 flex-col overflow-hidden">
@@ -45,6 +49,8 @@ export default function TalentFilterSidebar({
           groups={groups}
           selectedFilters={selectedFilters}
           onFilterChange={onFilterChange}
+          onLocationDataUpdate={onLocationDataUpdate}
+          locationIdToTitleMap={locationIdToTitleMap}
         />
       </div>
     </div>

@@ -16,6 +16,8 @@ interface TalentFilterSheetProps {
   selectedFilters: string[];
   onFilterChange: (filters: string[]) => void;
   onRefresh: () => void;
+  onLocationDataUpdate?: (locationMap: Map<string, string>) => void;
+  locationIdToTitleMap?: Map<string, string>;
 }
 
 export default function TalentFilterSheet({
@@ -23,6 +25,8 @@ export default function TalentFilterSheet({
   selectedFilters,
   onFilterChange,
   onRefresh,
+  onLocationDataUpdate,
+  locationIdToTitleMap,
 }: TalentFilterSheetProps) {
   return (
     <Sheet>
@@ -71,6 +75,8 @@ export default function TalentFilterSheet({
             groups={groups}
             selectedFilters={selectedFilters}
             onFilterChange={onFilterChange}
+            onLocationDataUpdate={onLocationDataUpdate}
+            locationIdToTitleMap={locationIdToTitleMap}
           />
         </div>
       </SheetContent>

@@ -6,9 +6,8 @@ import {
 } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
 import { Icon } from "@iconify/react";
-import { useEffect, useState } from "react";
-import { getRecruiterJobs } from "@/api/recruiter/jobs";
-import { getRequestAssessment } from "@/api/recruiter/request-assessment";
+import { useEffect, useState, useRef } from "react";
+import { getRecruiterJobs } from "@/api/jobs/recruiter";
 import {
   Select,
   SelectContent,
@@ -18,6 +17,7 @@ import {
 } from "@/components/ui/select";
 import { Loader2 } from "lucide-react";
 import Link from "next/link";
+import { getAssessmentList } from "@/api/assessments";
 
 export type InviteMode = "job" | "assessment";
 
@@ -29,6 +29,7 @@ interface InviteDialogProps {
 
 interface Item {
   id: string;
+  slug: string;
   title: string;
 }
 
@@ -40,6 +41,10 @@ export default function InviteDialog({
   const [loading, setLoading] = useState(false);
   const [items, setItems] = useState<Item[]>([]);
   const [selectedItem, setSelectedItem] = useState<string>("");
+  const [currentPage, setCurrentPage] = useState(1);
+  const [hasMore, setHasMore] = useState(true);
+  const [loadingMore, setLoadingMore] = useState(false);
+  const loadedPagesRef = useRef<Set<number>>(new Set());
 
   const isJob = mode === "job";
   const title = isJob ? "Invite for Job" : "Request Assessment";
@@ -54,30 +59,123 @@ export default function InviteDialog({
 
   useEffect(() => {
     if (open) {
-      fetchData();
+      setSelectedItem(""); // Reset selection when dialog opens or mode changes
+      loadedPagesRef.current.clear();
+      setCurrentPage(1);
+      setHasMore(true);
+      setItems([]);
+      fetchData(1, true);
+    } else {
+      // Reset selection when dialog closes
+      setSelectedItem("");
+      setItems([]);
+      setCurrentPage(1);
+      setHasMore(true);
+      loadedPagesRef.current.clear();
     }
   }, [open, mode]);
 
-  const fetchData = async () => {
+  const fetchData = async (page: number = 1, isInitial: boolean = false) => {
     try {
-      setLoading(true);
+      if (isInitial) {
+        setLoading(true);
+      } else {
+        setLoadingMore(true);
+      }
+
       let data: any;
 
       if (isJob) {
-        data = await getRecruiterJobs();
+        data = await getRecruiterJobs({ status: ["active"] });
+        const list = Array.isArray(data) ? data : data?.data || [];
+        setItems(list);
+        setHasMore(false); // Jobs don't have pagination in this API
       } else {
-        data = await getRequestAssessment();
-      }
+        data = await getAssessmentList({
+          page,
+          pageSize: 10,
+          sortBy: "created_at",
+          sortDirection: "desc",
+        });
 
-      const list = Array.isArray(data) ? data : data?.data || [];
-      // Ensure we map to { id, title } structure if needed
-      setItems(list);
+        // Extract assessments from the response
+        const assessments = data?.data?.assessments || [];
+        const pagination = data?.meta?.pagination;
+
+        // Map assessments to Item structure
+        const mappedItems: Item[] = assessments.map((assessment: any) => ({
+          id: assessment.id,
+          slug: assessment.slug,
+          title: assessment.title,
+        }));
+
+        if (isInitial) {
+          setItems(mappedItems);
+        } else {
+          setItems((prev) => [...prev, ...mappedItems]);
+        }
+
+        // Check if there are more pages
+        if (pagination) {
+          setHasMore(page < pagination.totalPages);
+        } else {
+          setHasMore(assessments.length === 10); // If we got 10 items, might have more
+        }
+
+        loadedPagesRef.current.add(page);
+      }
     } catch (error) {
       console.error(`Failed to fetch ${mode}s`, error);
     } finally {
       setLoading(false);
+      setLoadingMore(false);
     }
   };
+
+  // Handle scroll for infinite loading (only for assessments)
+  useEffect(() => {
+    if (isJob || !open) return;
+
+    let cleanup: (() => void) | undefined;
+
+    // Small delay to ensure the SelectContent is rendered
+    const timeoutId = setTimeout(() => {
+      // Find the scrollable element - try SelectContent first, then viewport
+      const selectContent = document.querySelector('[data-slot="select-content"]') as HTMLElement;
+      if (!selectContent) return;
+      
+      // The SelectContent itself might be scrollable, or the viewport inside
+      const viewport = selectContent.querySelector('div[class*="p-1"]') as HTMLElement || selectContent;
+
+      const handleScroll = () => {
+        if (loadingMore || !hasMore) return;
+
+        const { scrollTop, scrollHeight, clientHeight } = viewport;
+
+        // Load more when user scrolls to 80% of the container
+        if (scrollTop + clientHeight >= scrollHeight * 0.8) {
+          const nextPage = currentPage + 1;
+
+          if (!loadedPagesRef.current.has(nextPage) && !loadingMore) {
+            setCurrentPage(nextPage);
+            fetchData(nextPage, false);
+          }
+        }
+      };
+
+      viewport.addEventListener('scroll', handleScroll);
+
+      cleanup = () => {
+        viewport.removeEventListener('scroll', handleScroll);
+      };
+    }, 100);
+
+    return () => {
+      clearTimeout(timeoutId);
+      if (cleanup) cleanup();
+    };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [open, isJob, currentPage, loadingMore, hasMore, mode]);
 
   const hasItems = items.length > 0;
 
@@ -142,12 +240,17 @@ export default function InviteDialog({
                   <SelectTrigger className="w-full h-8 px-3 border-gray-200 rounded-lg text-gray-600 text-sm font-normal font-sans bg-white focus:ring-0 focus:ring-offset-0">
                     <SelectValue placeholder={selectPlaceholder} />
                   </SelectTrigger>
-                  <SelectContent>
+                  <SelectContent className="max-h-[300px]">
                     {items.map((item) => (
-                      <SelectItem key={item.id} value={item.id}>
+                      <SelectItem key={item.slug || item.id} value={item.slug || item.id}>
                         {item.title}
                       </SelectItem>
                     ))}
+                    {loadingMore && (
+                      <div className="flex items-center justify-center py-2">
+                        <Loader2 className="h-4 w-4 animate-spin text-primary-500" />
+                      </div>
+                    )}
                   </SelectContent>
                 </Select>
               </div>

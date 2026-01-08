@@ -1,12 +1,13 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect, useRef, useCallback } from "react";
+import { useSearchParams, useRouter } from "next/navigation";
 import { Icon } from "@iconify/react";
 import TalentFilterSidebar from "./talent-filter-sidebar";
 import TalentFilterSheet from "./talent-filter-sheet";
 import TalentCard from "./talent-card";
-import { MOCK_FILTERS, MOCK_TALENTS } from "./mock-data";
 import { Input } from "@/components/ui/input";
+import { FilterGroup } from "./talent-filters";
 import { Button } from "@/components/ui/button";
 import AssessmentPagination from "../assessments/assessment-pagination";
 import {
@@ -15,12 +16,68 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
+import { SortDropdown } from "@/components/ui/sort-dropdown";
 import InviteDialog, { InviteMode } from "./invite-dialog";
+import { getRecruiterTalentPool, getTalentPoolFilters, addFavoriteTalent, removeFavoriteTalent, type Candidate } from "@/api/recruiter/talent-pool";
+import { toast } from "sonner";
+import { Loader } from "@/components/ui/loader";
+import { TalentCardProps } from "./talent-card";
+
+// Helper function to map API candidate to TalentCardProps
+const mapCandidateToTalentCard = (
+  candidate: Candidate,
+  isFavorite: boolean
+): Omit<TalentCardProps, "isSelected" | "onSelect" | "onToggleFavorite"> => {
+  // Format years of experience
+  const formatExperience = (years: number): string => {
+    if (years === 0) return "0-1 Years";
+    if (years === 1) return "1-2 Years";
+    if (years >= 2 && years < 4) return "2-3 Years";
+    if (years >= 4 && years < 6) return "4-5 Years";
+    if (years >= 6 && years < 10) return "6-10 Years";
+    if (years >= 10 && years < 15) return "10-15 Years";
+    return "15+ Years";
+  };
+
+  // Extract skill names from skills_assessed
+  const skillsAssessed = candidate.skills_assessed.map(
+    (skill) => skill.skill_name
+  );
+
+  // Extract assessment titles or IDs
+  const assessmentTaken = candidate.assessments_taken.map(
+    (assessment) => assessment.assessment_title || assessment.assessment_id
+  );
+
+  // Generate location_code (using first 2 letters of city + last 4 digits of candidate_id)
+  const locationCode = `${candidate.city.substring(0, 2).toUpperCase()} ${candidate.candidate_id.slice(-4)}`;
+
+  return {
+    id: candidate.candidate_id,
+    role: candidate.expertise,
+    location_code: locationCode,
+    totalScore: candidate.score,
+    skillsAssessed,
+    experience: formatExperience(candidate.years_of_experience),
+    company: candidate.company,
+    availability: candidate.availability || candidate.notice_period,
+    location: candidate.location,
+    assessmentTaken,
+    assessments: candidate.assessments_taken, // Pass full assessment details
+    about: candidate.about || "",
+    isFavorite,
+  };
+};
 
 export default function TalentPoolPage() {
+  const searchParams = useSearchParams();
+  const router = useRouter();
   const [searchQuery, setSearchQuery] = useState("");
+  const [debouncedSearchQuery, setDebouncedSearchQuery] = useState("");
   const [selectedFilters, setSelectedFilters] = useState<string[]>([]);
   const [currentPage, setCurrentPage] = useState(1);
+  const [sortBy, setSortBy] = useState<"score" | "experience" | "recently_assessed">("score");
+  const [sortDirection, setSortDirection] = useState<"asc" | "desc">("desc");
   const [selectedTalents, setSelectedTalents] = useState<string[]>([]);
   const [favoriteTalents, setFavoriteTalents] = useState<string[]>([]);
   const [bulkInviteDialog, setBulkInviteDialog] = useState<{
@@ -30,75 +87,409 @@ export default function TalentPoolPage() {
     open: false,
     mode: "job",
   });
+  const [talents, setTalents] = useState<
+    Omit<TalentCardProps, "isSelected" | "onSelect" | "onToggleFavorite">[]
+  >([]);
+  const [isLoading, setIsLoading] = useState(true);
+  const [totalPages, setTotalPages] = useState(1);
+  const [totalCount, setTotalCount] = useState(0);
+  const [filterGroups, setFilterGroups] = useState<FilterGroup[]>([]);
+  const [locationIdToTitleMap, setLocationIdToTitleMap] = useState<Map<string, string>>(new Map());
+  const debounceTimerRef = useRef<NodeJS.Timeout | null>(null);
+  const isInitialMount = useRef(true);
 
-  // Derived state (filtering logic)
-  const filteredTalents = MOCK_TALENTS.filter((talent) => {
-    // Search filter
-    const matchesSearch =
-      talent.role.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      talent.skillsAssessed.some((skill) =>
-        skill.toLowerCase().includes(searchQuery.toLowerCase())
-      ) ||
-      talent.company.toLowerCase().includes(searchQuery.toLowerCase());
+  const ITEMS_PER_PAGE = 10;
 
-    // Category filters (basic implementation)
-    // In a real app, we would check which group the selectedFilter belongs to.
-    // For now, if any selected filter matches any property, we show it?
-    // Actually, let's just do a simple "if filters selected, check if matches"
-    // Since mock data IDs are unique (mumbai, python, etc), we can check roughly.
+  // Memoize the location data update callback to prevent infinite loops
+  const handleLocationDataUpdate = useCallback((locationMap: Map<string, string>) => {
+    setLocationIdToTitleMap((prev) => {
+      // Only update if the map actually changed
+      if (prev.size !== locationMap.size) {
+        return locationMap;
+      }
+      for (const [key, value] of locationMap) {
+        if (prev.get(key) !== value) {
+          return locationMap;
+        }
+      }
+      return prev; // No change, return previous map
+    });
+  }, []);
 
-    // Better logic:
-    // Location: talent.location or location_code contains filter?
-    // Technology/Skill: talent.skillsAssessed includes filter?
-    // Availability: ...
+  // Fetch filter options from API
+  useEffect(() => {
+    const fetchFilters = async () => {
+      try {
+        const response = await getTalentPoolFilters();
+        if (response.success && response.data) {
+          const groups: FilterGroup[] = [
+            // Location filter
+            {
+              title: "Location",
+              items: response.data.location.map((loc) => ({
+                id: loc.value.toString(),
+                value: loc.title,
+              })),
+            },
+            // Favorite Talent filter (client-side only)
+            {
+              title: "Favorite Talent",
+              items: [{ id: "favorites", value: "Show Favorites Only" }],
+            },
+            // Technology filter
+            {
+              title: "Technology",
+              items: response.data.technology.map((tech) => ({
+                id: tech.value,
+                value: tech.title,
+              })),
+            },
+            // Years of Experience filter (client-side only)
+            {
+              title: "Years of Experience",
+              items: [
+                { id: "0-1", value: "0-1 Years" },
+                { id: "1-3", value: "1-3 Years" },
+                { id: "4-5", value: "4-5 Years" },
+                { id: "6-10", value: "6-10 Years" },
+                { id: "10+", value: "10+ Years" },
+              ],
+            },
+            // Skill Assessed filter
+            {
+              title: "Skill Assessed",
+              items: response.data.skill_assessed.map((skill) => ({
+                id: skill.value,
+                value: skill.title,
+              })),
+            },
+          ];
+          setFilterGroups(groups);
+        }
+      } catch (error) {
+        console.error("Failed to fetch filters:", error);
+        // Fallback to empty filters on error
+        setFilterGroups([]);
+      }
+    };
 
-    if (selectedFilters.length === 0) return matchesSearch;
+    fetchFilters();
+  }, []);
 
-    const matchesFilters = selectedFilters.some((filterId) => {
-      // Simple fuzzy matching for mock
+  // Helper function to parse experience filter ID to min/max years
+  const parseExperienceFilter = (filterId: string): { min?: number; max?: number } | null => {
+    // Filter IDs are like "0-1", "1-3", "4-5", "6-10", "10+"
+    if (filterId.includes("-")) {
+      const [min, max] = filterId.split("-").map(Number);
+      if (!isNaN(min) && !isNaN(max)) {
+        return { min, max };
+      }
+    } else if (filterId.endsWith("+")) {
+      const min = parseInt(filterId.replace("+", ""), 10);
+      if (!isNaN(min)) {
+        return { min, max: undefined }; // No upper limit
+      }
+    }
+    return null;
+  };
+
+  // Extract API parameters from selected filters
+  const getApiParamsFromFilters = () => {
+    const params: {
+      favorite_only?: boolean;
+      years_of_experience_min?: number;
+      years_of_experience_max?: number;
+      location?: string | string[];
+      technology?: string | string[];
+    } = {};
+
+    // Check for favorites filter
+    if (selectedFilters.includes("favorites")) {
+      params.favorite_only = true;
+    }
+
+    // Check for experience filters
+    const experienceFilters = selectedFilters
+      .map(parseExperienceFilter)
+      .filter((f): f is { min?: number; max?: number } => f !== null);
+
+    if (experienceFilters.length > 0) {
+      // If multiple experience filters, use the widest range
+      const allMins = experienceFilters
+        .map((f) => f.min)
+        .filter((m): m is number => m !== undefined);
+      const allMaxs = experienceFilters
+        .map((f) => f.max)
+        .filter((m): m is number => m !== undefined);
+
+      if (allMins.length > 0) {
+        params.years_of_experience_min = Math.min(...allMins);
+      }
+      
+      // If any filter has no max (like "10+"), don't set max
+      const hasUnlimitedMax = experienceFilters.some((f) => f.max === undefined);
+      if (!hasUnlimitedMax && allMaxs.length > 0) {
+        params.years_of_experience_max = Math.max(...allMaxs);
+      }
+      // If hasUnlimitedMax is true, we don't set max (undefined means no upper limit)
+    }
+
+    // Extract location filters
+    const locationGroup = filterGroups.find((g) => g.title === "Location");
+    const locationFilterIds = selectedFilters.filter((filterId) => {
+      // Check if it's a location ID (numeric string that could be a location)
+      // or if it exists in the location group
+      return locationGroup?.items.some((item) => item.id === filterId) || 
+             locationIdToTitleMap.has(filterId);
+    });
+    
+    if (locationFilterIds.length > 0) {
+      // Get location titles from filter group or from the mapping
+      const locationTitles = locationFilterIds
+        .map((id) => {
+          // First try to get from filter group
+          const fromGroup = locationGroup?.items.find((item) => item.id === id)?.value;
+          if (fromGroup) return fromGroup;
+          // Otherwise get from mapping
+          return locationIdToTitleMap.get(id);
+        })
+        .filter((title): title is string => !!title);
+      
+      if (locationTitles.length === 1) {
+        params.location = locationTitles[0];
+      } else if (locationTitles.length > 1) {
+        params.location = locationTitles;
+      }
+    }
+
+    // Extract technology filters
+    const technologyGroup = filterGroups.find((g) => g.title === "Technology");
+    if (technologyGroup) {
+      const technologyFilterIds = selectedFilters.filter((filterId) =>
+        technologyGroup.items.some((item) => item.id === filterId)
+      );
+      if (technologyFilterIds.length > 0) {
+        // Get technology values (IDs) from filter group
+        const technologyValues = technologyFilterIds
+          .map((id) => technologyGroup.items.find((item) => item.id === id)?.id)
+          .filter((value): value is string => !!value);
+        
+        if (technologyValues.length === 1) {
+          params.technology = technologyValues[0];
+        } else if (technologyValues.length > 1) {
+          params.technology = technologyValues;
+        }
+      }
+    }
+
+    return params;
+  };
+
+  // Initialize state from URL params on mount
+  useEffect(() => {
+    const query = searchParams.get("query") || "";
+    const page = searchParams.get("page");
+    const filters = searchParams.get("filters");
+    const sortByParam = searchParams.get("sortBy");
+    const sortDirectionParam = searchParams.get("sortDirection");
+
+    if (query) {
+      setSearchQuery(query);
+      // Set debounced query immediately on mount (no delay needed)
+      setDebouncedSearchQuery(query);
+    }
+    if (page) {
+      const pageNum = parseInt(page, 10);
+      if (!isNaN(pageNum) && pageNum > 0) {
+        setCurrentPage(pageNum);
+      }
+    }
+    if (filters) {
+      try {
+        const parsedFilters = JSON.parse(decodeURIComponent(filters));
+        if (Array.isArray(parsedFilters)) {
+          setSelectedFilters(parsedFilters);
+        }
+      } catch {
+        // Invalid filters in URL, ignore
+      }
+    }
+    if (sortByParam && ["score", "experience", "recently_assessed"].includes(sortByParam)) {
+      setSortBy(sortByParam as "score" | "experience" | "recently_assessed");
+    }
+    if (sortDirectionParam && ["asc", "desc"].includes(sortDirectionParam)) {
+      setSortDirection(sortDirectionParam as "asc" | "desc");
+    }
+    // Mark as no longer initial mount after a brief delay to allow state to settle
+    setTimeout(() => {
+      isInitialMount.current = false;
+    }, 100);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []); // Only run on mount
+
+  // Update URL params when state changes (but not on initial mount)
+  useEffect(() => {
+    if (isInitialMount.current) return;
+
+    const params = new URLSearchParams();
+    
+    if (debouncedSearchQuery) {
+      params.set("query", debouncedSearchQuery);
+    }
+    if (currentPage > 1) {
+      params.set("page", currentPage.toString());
+    }
+    if (selectedFilters.length > 0) {
+      params.set("filters", encodeURIComponent(JSON.stringify(selectedFilters)));
+    }
+    if (sortBy !== "score" || sortDirection !== "desc") {
+      params.set("sortBy", sortBy);
+      params.set("sortDirection", sortDirection);
+    }
+
+    const newUrl = params.toString() 
+      ? `${window.location.pathname}?${params.toString()}`
+      : window.location.pathname;
+    
+    router.replace(newUrl, { scroll: false });
+  }, [debouncedSearchQuery, currentPage, selectedFilters, sortBy, sortDirection, router]);
+
+  // Debounce search query
+  useEffect(() => {
+    // Skip debounce on initial mount when loading from URL
+    if (isInitialMount.current) {
+      return;
+    }
+
+    if (debounceTimerRef.current) {
+      clearTimeout(debounceTimerRef.current);
+    }
+
+    debounceTimerRef.current = setTimeout(() => {
+      setDebouncedSearchQuery(searchQuery);
+      setCurrentPage(1); // Reset to first page on search
+    }, 500);
+
+    return () => {
+      if (debounceTimerRef.current) {
+        clearTimeout(debounceTimerRef.current);
+      }
+    };
+  }, [searchQuery]);
+
+  // Fetch talent pool data
+  useEffect(() => {
+    const fetchTalentPool = async () => {
+      setIsLoading(true);
+      try {
+        // Get filter-based API parameters
+        const filterParams = getApiParamsFromFilters();
+
+        const response = await getRecruiterTalentPool({
+          page: currentPage,
+          pageSize: ITEMS_PER_PAGE,
+          sortBy: sortBy === "recently_assessed" ? "recently_assessed" : sortBy,
+          sortDirection: sortDirection,
+          query: debouncedSearchQuery.trim() || undefined, // Only include query param if search query exists
+          ...filterParams, // Include favorite_only and years_of_experience filters
+        });
+
+        if (response.success && response.data) {
+          // Update favorite talents from API response (merge with existing favorites)
+          const apiFavoriteIds = response.data.candidates
+            .filter((c) => c.is_favorite)
+            .map((c) => c.candidate_id);
+          
+          // Get current favorites and merge with API favorites
+          setFavoriteTalents((prev) => {
+            const combined = new Set([...prev, ...apiFavoriteIds]);
+            const favoriteSet = Array.from(combined);
+            
+            // Map candidates with favorite status
+            const mappedTalents = response.data.candidates.map((candidate) =>
+              mapCandidateToTalentCard(
+                candidate,
+                favoriteSet.includes(candidate.candidate_id) || candidate.is_favorite
+              )
+            );
+
+            setTalents(mappedTalents);
+            return favoriteSet;
+          });
+
+          setTotalCount(response.data.total_count);
+
+          // Calculate total pages
+          const calculatedTotalPages = Math.ceil(
+            response.data.total_count / ITEMS_PER_PAGE
+          );
+          setTotalPages(calculatedTotalPages);
+        }
+      } catch (error) {
+        console.error("Error fetching talent pool:", error);
+        toast.error(
+          (error as { response?: { data?: { message?: string } } })?.response
+            ?.data?.message || "Failed to fetch talent pool"
+        );
+        setTalents([]);
+        setTotalPages(1);
+        setTotalCount(0);
+      } finally {
+        setIsLoading(false);
+      }
+    };
+
+    fetchTalentPool();
+  }, [currentPage, debouncedSearchQuery, selectedFilters, sortBy, sortDirection]);
+
+  // Update talents when favoriteTalents changes (without re-fetching)
+  useEffect(() => {
+    setTalents((prevTalents) =>
+      prevTalents.map((talent) => ({
+        ...talent,
+        isFavorite: favoriteTalents.includes(talent.id),
+      }))
+    );
+  }, [favoriteTalents]);
+
+  // Filter talents based on selected filters (client-side filtering for API-unsupported filters)
+  // Note: favorite_only, years_of_experience, location, and technology are now handled by the API
+  const filteredTalents = talents.filter((talent) => {
+    // Get filters that are NOT handled by the API (skills, etc.)
+    const locationGroup = filterGroups.find((g) => g.title === "Location");
+    const technologyGroup = filterGroups.find((g) => g.title === "Technology");
+    
+    const clientSideFilters = selectedFilters.filter(
+      (filterId) =>
+        filterId !== "favorites" && // Handled by API (favorite_only)
+        !filterId.match(/^\d+-\d+$|^\d+\+$/) && // Experience filters handled by API
+        !locationGroup?.items.some((item) => item.id === filterId) && // Location handled by API (from filterGroups)
+        !locationIdToTitleMap.has(filterId) && // Location handled by API (dynamically searched)
+        !technologyGroup?.items.some((item) => item.id === filterId) // Technology handled by API
+    );
+
+    if (clientSideFilters.length === 0) return true;
+
+    // Check other filters (skills, etc.)
+    const matchesOtherFilters = clientSideFilters.some((filterId) => {
       const idLower = filterId.toLowerCase();
-
-      // Location check
-      if (talent.location.toLowerCase().includes(idLower)) return true;
 
       // Skill check
       if (talent.skillsAssessed.some((s) => s.toLowerCase() === idLower))
         return true;
 
-      // Exp check (exact match on ID maybe not easy, but let's try)
-      // Mock IDs are like "4-5", "mumbai", "python".
-
-      if (idLower === "favorites" && favoriteTalents.includes(talent.id))
-        return true;
-
       return false;
     });
 
-    // If 'favorites' is the ONLY filter, we must ensure it matches
-    if (
-      selectedFilters.includes("favorites") &&
-      !favoriteTalents.includes(talent.id)
-    ) {
-      return false;
-    }
-
-    return matchesSearch; // For this mock, pure filtering is tricky without complex logic, so let's rely mostly on search + simple pass-through or just return all if only search is used to match the user's "create based on current" request which might be more about UI.
-    // Re-reading: "based on current implementation" -> The current one does API calls.
-    // Since I'm mocking, I'll just return matchesSearch for now to ensure UI works.
-    // I will strictly allow search.
+    return matchesOtherFilters;
   });
-
-  const ITEMS_PER_PAGE = 5;
-  const totalPages = Math.ceil(filteredTalents.length / ITEMS_PER_PAGE);
-  const currentTalents = filteredTalents.slice(
-    (currentPage - 1) * ITEMS_PER_PAGE,
-    currentPage * ITEMS_PER_PAGE
-  );
 
   const handleRefreshFilters = () => {
     setSelectedFilters([]);
     setSearchQuery("");
     setCurrentPage(1);
+    // Clear URL params
+    router.replace(window.location.pathname, { scroll: false });
   };
 
   const toggleTalentSelection = (id: string) => {
@@ -109,23 +500,90 @@ export default function TalentPoolPage() {
     }
   };
 
-  const toggleFavorite = (id: string) => {
-    if (favoriteTalents.includes(id)) {
+  const toggleFavorite = async (id: string) => {
+    const isCurrentlyFavorite = favoriteTalents.includes(id);
+    
+    // Optimistic update - update UI immediately
+    if (isCurrentlyFavorite) {
       setFavoriteTalents(favoriteTalents.filter((tid) => tid !== id));
     } else {
       setFavoriteTalents([...favoriteTalents, id]);
     }
+
+    // Update talents list optimistically
+    setTalents((prevTalents) =>
+      prevTalents.map((talent) =>
+        talent.id === id
+          ? { ...talent, isFavorite: !isCurrentlyFavorite }
+          : talent
+      )
+    );
+
+    try {
+      // Call appropriate API based on current favorite status
+      const response = isCurrentlyFavorite
+        ? await removeFavoriteTalent(id)
+        : await addFavoriteTalent(id);
+      
+      if (!response.success) {
+        // Revert optimistic update on failure
+        if (isCurrentlyFavorite) {
+          setFavoriteTalents([...favoriteTalents, id]);
+        } else {
+          setFavoriteTalents(favoriteTalents.filter((tid) => tid !== id));
+        }
+        
+        // Revert talents list
+        setTalents((prevTalents) =>
+          prevTalents.map((talent) =>
+            talent.id === id
+              ? { ...talent, isFavorite: isCurrentlyFavorite }
+              : talent
+          )
+        );
+        
+        toast.error(response.message || "Failed to update favorite status");
+      } else {
+        // Use the message from API response
+        toast.success(response.message || "Favorite status updated successfully");
+      }
+    } catch (error) {
+      // Revert optimistic update on error
+      if (isCurrentlyFavorite) {
+        setFavoriteTalents([...favoriteTalents, id]);
+      } else {
+        setFavoriteTalents(favoriteTalents.filter((tid) => tid !== id));
+      }
+      
+      // Revert talents list
+      setTalents((prevTalents) =>
+        prevTalents.map((talent) =>
+          talent.id === id
+            ? { ...talent, isFavorite: isCurrentlyFavorite }
+            : talent
+        )
+      );
+      
+      toast.error(
+        (error as { response?: { data?: { message?: string } } })?.response
+          ?.data?.message || "Failed to update favorite status"
+      );
+    }
   };
 
   return (
-    <div className="flex flex-col lg:flex-row gap-8 min-h-screen bg-gray-50/50">
+    <>
+      <Loader show={isLoading} />
+      <div className="flex flex-col lg:flex-row gap-8 min-h-screen bg-gray-50/50">
       {/* Sidebar */}
       <div className="shrink-0 lg:w-72">
         <TalentFilterSidebar
-          groups={MOCK_FILTERS}
+          groups={filterGroups}
           selectedFilters={selectedFilters}
           onFilterChange={setSelectedFilters}
           onRefresh={handleRefreshFilters}
+          onLocationDataUpdate={handleLocationDataUpdate}
+          locationIdToTitleMap={locationIdToTitleMap}
         />
       </div>
 
@@ -194,24 +652,37 @@ export default function TalentPoolPage() {
             </div>
 
             <TalentFilterSheet
-              groups={MOCK_FILTERS}
+              groups={filterGroups}
               selectedFilters={selectedFilters}
               onFilterChange={setSelectedFilters}
               onRefresh={handleRefreshFilters}
+              onLocationDataUpdate={handleLocationDataUpdate}
+              locationIdToTitleMap={locationIdToTitleMap}
             />
 
-            <Button
-              variant="outline"
-              size="icon"
-              className="h-10 w-10 bg-white border-gray-200 text-gray-600 rounded-lg hover:bg-gray-50 shrink-0"
-            >
-              <Icon icon="mdi:sort-alphabetical-variant" className="size-5" />
-            </Button>
+            <SortDropdown
+              value={`${sortBy}-${sortDirection}`}
+              onValueChange={(value) => {
+                const [newSortBy, newSortDirection] = value.split("-") as [
+                  "score" | "experience" | "recently_assessed",
+                  "asc" | "desc"
+                ];
+                setSortBy(newSortBy);
+                setSortDirection(newSortDirection);
+                setCurrentPage(1);
+              }}
+              options={[
+                { value: "score-desc", label: "Score (High to Low)" },
+                { value: "score-asc", label: "Score (Low to High)" },
+                { value: "experience-desc", label: "Experience (High to Low)" },
+                { value: "recently_assessed-desc", label: "Recently Assessed" },
+              ]}
+            />
           </div>
         </div>
 
         <div className="flex flex-col gap-5">
-          {currentTalents.map((talent) => (
+          {filteredTalents.map((talent) => (
             <TalentCard
               key={talent.id}
               {...talent}
@@ -222,7 +693,7 @@ export default function TalentPoolPage() {
             />
           ))}
 
-          {currentTalents.length === 0 && (
+          {!isLoading && filteredTalents.length === 0 && (
             <div className="text-center py-12">
               <div className="inline-flex items-center justify-center w-16 h-16 rounded-full bg-gray-100 mb-4">
                 <Icon
@@ -265,6 +736,7 @@ export default function TalentPoolPage() {
         }
         mode={bulkInviteDialog.mode}
       />
-    </div>
+      </div>
+    </>
   );
 }
