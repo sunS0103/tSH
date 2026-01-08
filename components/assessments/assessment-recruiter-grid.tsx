@@ -1,3 +1,4 @@
+import NoDataFound from "../common/no-data-found";
 import AssessmentRecruiterCard from "./assessment-recruiter-card";
 
 interface Topics {
@@ -30,7 +31,7 @@ export default function AssessmentRecruiterGrid({
   if (assessments.length === 0) {
     return (
       <div className="col-span-full text-center py-12 text-gray-500">
-        No assessments found matching your criteria.
+        <NoDataFound note="No assessments found matching your criteria." />
       </div>
     );
   }

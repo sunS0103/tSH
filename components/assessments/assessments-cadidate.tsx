@@ -14,6 +14,7 @@ import {
   getAssessmentsFilter,
   getTakenAssessmentsList,
 } from "@/api/assessments";
+import NoDataFound from "../common/no-data-found";
 
 // Common item structure
 interface OptionItem {
@@ -244,7 +245,7 @@ export default function AssessmentCandidate() {
             />
           ) : (
             <div className="col-span-full text-center py-8 text-gray-500">
-              No assessments found
+              <NoDataFound note="No assessments found matching your criteria." />
             </div>
           )}
         </div>

@@ -81,13 +81,16 @@ export default function AssessmentCard({
                       +{remainingCount}
                     </Badge>
                   </TooltipTrigger>
-                  <TooltipContent className="max-w-80 bg-white" side="bottom">
+                  <TooltipContent
+                    className="max-w-80 bg-white border border-gray-200"
+                    side="bottom"
+                  >
                     {undisplayedTopics.length > 0 && (
                       <ul>
                         {undisplayedTopics.map((item) => {
                           return (
                             <li
-                              className="text-gray-800 text-xs font-normal whitespace-nowrap list-disc list-inside"
+                              className="text-gray-800 text-xs font-normal whitespace-normal list-disc list-inside"
                               key={item.id}
                             >
                               {item.value}
