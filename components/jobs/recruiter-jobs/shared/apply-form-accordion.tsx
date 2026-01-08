@@ -24,7 +24,6 @@ import { UseFormReturn } from "react-hook-form";
 
 interface ApplyFormAccordionProps {
   form: UseFormReturn<JobFormData>;
-  requireApplyForm: boolean;
 }
 
 interface CustomField {
@@ -33,11 +32,14 @@ interface CustomField {
   type: string;
 }
 
-export default function ApplyFormAccordion({
-  form,
-  requireApplyForm,
-}: ApplyFormAccordionProps) {
-  const [customFields, setCustomFields] = useState<CustomField[]>([]);
+export default function ApplyFormAccordion({ form }: ApplyFormAccordionProps) {
+  const applyFormFields =
+    form
+      .getValues("apply_form_fields")
+      ?.slice(5, form.getValues("apply_form_fields")?.length) || [];
+
+  const [customFields, setCustomFields] =
+    useState<CustomField[]>(applyFormFields);
   const [newFieldTitle, setNewFieldTitle] = useState("");
   const [newFieldType, setNewFieldType] = useState("text");
   const [fieldTitleError, setFieldTitleError] = useState("");
@@ -159,9 +161,16 @@ export default function ApplyFormAccordion({
                   <p className="text-xs font-medium text-gray-600 mb-2">
                     Added Fields:
                   </p>
-                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-4" >
-                  {customFields.map((field) => (
-                      <div key={field.id} className={`flex items-end gap-2 ${field.type === "textarea" ? "col-span-1 sm:col-span-2" : ""}`}>
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                    {customFields.map((field) => (
+                      <div
+                        key={field.title + field.id}
+                        className={`flex items-end gap-2 ${
+                          field.type === "textarea"
+                            ? "col-span-1 sm:col-span-2"
+                            : ""
+                        }`}
+                      >
                         <div className="flex-1">
                           <div className="space-y-2">
                             <Label className="text-sm font-medium text-gray-950">
@@ -201,7 +210,7 @@ export default function ApplyFormAccordion({
                           <Icon icon="mdi:delete" className="w-4 h-4" />
                         </Button>
                       </div>
-                  ))}
+                    ))}
                   </div>
                 </div>
               )}
@@ -268,4 +277,3 @@ export default function ApplyFormAccordion({
     </Accordion>
   );
 }
-

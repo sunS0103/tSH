@@ -15,28 +15,22 @@ import {
 } from "@/components/ui/accordion";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Label } from "@/components/ui/label";
+import { FilterResponse, OptionItem } from "./recruiter-jobs";
 
-interface FilterOption {
-  id: string;
-  label: string;
-  count?: number;
-}
-
-interface FilterGroup {
-  id: string;
-  label: string;
-  options: FilterOption[];
-}
+type FilterGroups = {
+  title: string;
+  items: OptionItem[];
+};
 
 interface JobFilterSheetProps {
-  groups: FilterGroup[];
+  filterItems: FilterResponse;
   selectedFilters: string[];
   onFilterChange: (filters: string[]) => void;
   onRefresh: () => void;
 }
 
 export default function JobFilterSheet({
-  groups,
+  filterItems,
   selectedFilters,
   onFilterChange,
   onRefresh,
@@ -48,6 +42,17 @@ export default function JobFilterSheet({
       onFilterChange(selectedFilters.filter((f) => f !== id));
     }
   };
+
+  const filterGroups: FilterGroups[] | undefined = filterItems?.map(
+    (group): FilterGroups => {
+      const [key, items] = Object.entries(group)[0];
+
+      return {
+        title: key,
+        items: Array.isArray(items) ? (items as OptionItem[]) : [],
+      };
+    }
+  );
 
   return (
     <Sheet>
@@ -93,47 +98,45 @@ export default function JobFilterSheet({
         </SheetHeader>
         <div className="flex-1 overflow-y-auto scrollbar-thin scrollbar-thumb-gray-200 scrollbar-track-transparent">
           <div className="w-full">
-            <Accordion
-              type="multiple"
-              className="w-full"
-              defaultValue={groups.map((g) => g.id)}
-            >
-              {groups.map((group) => (
+            <Accordion type="multiple" className="w-full">
+              {filterGroups.map((group) => (
                 <AccordionItem
-                  key={group.id}
-                  value={group.id}
+                  key={group.title}
+                  value={group.title}
                   className="border-gray-100"
                 >
                   <div className="py-0">
                     <AccordionTrigger className="px-4 py-3 text-sm font-semibold uppercase text-gray-900 hover:no-underline hover:bg-gray-50/50">
-                      {group.label}
+                      {group.title.replace(/_/g, " ")}
                     </AccordionTrigger>
                   </div>
                   <AccordionContent className="px-4 pb-3 pt-0 text-sm text-gray-700">
                     <div className="flex flex-col gap-3 mt-2">
-                      {group.options.map((option) => {
-                        const isSelected = selectedFilters.includes(option.id);
+                      {group.items.map((option) => {
+                        const isSelected = selectedFilters.includes(
+                          option.value
+                        );
                         return (
                           <div
-                            key={option.id}
+                            key={option.value}
                             className="flex items-center gap-2.5"
                           >
                             <Checkbox
-                              id={`sheet-${group.id}-${option.id}`}
+                              id={option.value}
                               checked={isSelected}
                               onCheckedChange={(checked) =>
                                 handleCheckboxChange(
-                                  option.id,
+                                  option.value,
                                   checked as boolean
                                 )
                               }
                               className="border-gray-300 data-[state=checked]:bg-primary-600 data-[state=checked]:border-primary-600"
                             />
                             <Label
-                              htmlFor={`sheet-${group.id}-${option.id}`}
+                              htmlFor={option.value}
                               className="text-sm font-medium text-gray-700 leading-none cursor-pointer"
                             >
-                              {option.label}
+                              {option.title}
                             </Label>
                           </div>
                         );

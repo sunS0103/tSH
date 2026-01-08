@@ -12,15 +12,18 @@ import {
 } from "@/api/jobs/recruiter";
 import Breadcrumbs from "@/components/common/breadcrumbs";
 import { type JobFormData } from "@/validation/job";
+import { RecruiterJob } from "@/types/job";
+import { getCookie } from "cookies-next/client";
 
 interface JobFormProps {
   jobId?: string;
 }
 
 export default function JobForm({ jobId }: JobFormProps) {
+  const token = getCookie("token");
   const router = useRouter();
   const isEditMode = !!jobId;
-  const [isLoading, setIsLoading] = useState(isEditMode);
+  const [isLoading, setIsLoading] = useState(false);
   const [defaultValues, setDefaultValues] = useState<Partial<JobFormData>>();
 
   useEffect(() => {
@@ -28,17 +31,20 @@ export default function JobForm({ jobId }: JobFormProps) {
       const fetchJob = async () => {
         try {
           setIsLoading(true);
-          const response = await getRecruiterJob(jobId);
+          const response = await getRecruiterJob({ jobId, token });
 
           if (response.success && response.data) {
-            const job = response.data;
+            const job = response.data as RecruiterJob;
             setDefaultValues(transformJobToFormData(job));
           } else {
             toast.error("Failed to load job details");
             router.push("/jobs");
           }
-        } catch (error: any) {
-          toast.error(error?.response?.data?.message || "Failed to load job");
+        } catch (error) {
+          toast.error(
+            (error as { response?: { data?: { message?: string } } })?.response
+              ?.data?.message || "Failed to load job"
+          );
           router.push("/jobs");
         } finally {
           setIsLoading(false);
@@ -47,14 +53,19 @@ export default function JobForm({ jobId }: JobFormProps) {
 
       fetchJob();
     }
-  }, [jobId, isEditMode, router]);
+  }, [jobId, isEditMode, router, token]);
 
   const handleSubmit = async (data: JobFormData) => {
     try {
       const payload = transformFormDataToPayload(data);
-      
+
+      const payloadWithStatus = {
+        ...payload,
+        status: "in_review",
+      };
+
       if (isEditMode && jobId) {
-        const response = await updateRecruiterJob(jobId, payload);
+        const response = await updateRecruiterJob(jobId, payloadWithStatus);
         if (response.success) {
           toast.success("Job updated successfully");
           router.push("/jobs");
@@ -70,9 +81,10 @@ export default function JobForm({ jobId }: JobFormProps) {
           toast.error(response.message || "Failed to create job");
         }
       }
-    } catch (error: any) {
+    } catch (error) {
       toast.error(
-        error?.response?.data?.message ||
+        (error as { response?: { data?: { message?: string } } })?.response
+          ?.data?.message ||
           (isEditMode ? "Failed to update job" : "Failed to create job")
       );
     }
@@ -81,7 +93,11 @@ export default function JobForm({ jobId }: JobFormProps) {
   const handleSaveDraft = async (data: JobFormData) => {
     try {
       const payload = transformFormDataToPayload(data);
-      const response = await saveJobAsDraft(jobId || null, payload);
+      const payloadWithStatus = {
+        ...payload,
+        status: "draft",
+      };
+      const response = await saveJobAsDraft(jobId || null, payloadWithStatus);
 
       if (response.success) {
         toast.success("Job saved as draft");
@@ -89,8 +105,11 @@ export default function JobForm({ jobId }: JobFormProps) {
       } else {
         toast.error(response.message || "Failed to save draft");
       }
-    } catch (error: any) {
-      toast.error(error?.response?.data?.message || "Failed to save draft");
+    } catch (error) {
+      toast.error(
+        (error as { response?: { data?: { message?: string } } })?.response
+          ?.data?.message || "Failed to save draft"
+      );
     }
   };
 
@@ -108,10 +127,11 @@ export default function JobForm({ jobId }: JobFormProps) {
     <div className="bg-gray-50 min-h-screen">
       <div className="max-w-7xl mx-auto px-6 py-4">
         <Breadcrumbs
-          routes={[{ label: "Dashboard", href: "/dashboard" }]}
+          routes={[{ label: "Jobs", href: "/jobs" }]}
           currentRoute={{ label: isEditMode ? "Edit Job" : "Create Job" }}
         />
       </div>
+
       <JobFormBase
         defaultValues={defaultValues}
         onSubmit={handleSubmit}
@@ -124,26 +144,17 @@ export default function JobForm({ jobId }: JobFormProps) {
 
 // Skill name to ID mapping (this should ideally come from an API)
 const skillNameToIdMap: Record<string, number> = {
-  "React": 1,
-  "Node.js": 2,
-  "Python": 3,
-  "Java": 4,
-  "JavaScript": 5,
-  "TypeScript": 6,
-  "Angular": 7,
-  "Vue.js": 8,
-  "AWS": 9,
-  "Docker": 10,
-  "Kubernetes": 11,
-  "PostgreSQL": 12,
-  "MongoDB": 13,
-  "MySQL": 14,
-  "Machine Learning": 15,
-  "Data Science": 16,
-  "DevOps": 17,
-  "Selenium": 18,
-  "Playwright": 19,
-  "LangChain": 20,
+  "Selenium Java": 1,
+  "Playwright JS/TS": 2,
+  Appium: 3,
+  "Core Java": 4,
+  Python: 5,
+  React: 6,
+  "Node.js": 7,
+  AWS: 8,
+  LangChain: 9,
+  PostgreSQL: 10,
+  MongoDB: 11,
 };
 
 // Reverse mapping: skill_id to skill name
@@ -151,7 +162,7 @@ const skillIdToNameMap: Record<number, string> = Object.fromEntries(
   Object.entries(skillNameToIdMap).map(([name, id]) => [id, name])
 );
 
-function transformJobToFormData(job: any): Partial<JobFormData> {
+function transformJobToFormData(job: RecruiterJob): Partial<JobFormData> {
   // Parse experience range from API response
   const experienceMinYears = job.experience_min_years || 0;
   const experienceMaxYears = job.experience_max_years || 0;
@@ -176,11 +187,17 @@ function transformJobToFormData(job: any): Partial<JobFormData> {
       ? "client_location"
       : "inhouse_project";
 
-  // Get primary skill from skills array
-  const primarySkillId = job.skills?.[0]?.skill_id;
-  const primarySkill = primarySkillId
-    ? skillIdToNameMap[primarySkillId] || ""
-    : "";
+  // Get primary skills from skills array - convert all skills to array of skill names
+  const primarySkills = job.skills
+    ? job.skills
+        .map((skill: { skill_id?: number }) => {
+          const skillName = skill.skill_id
+            ? skillIdToNameMap[skill.skill_id] || ""
+            : "";
+          return skillName;
+        })
+        .filter((name: string) => name !== "")
+    : [];
 
   // Transform work_modes back to lowercase array
   const workMode = job.work_modes
@@ -194,20 +211,28 @@ function transformJobToFormData(job: any): Partial<JobFormData> {
     company_name: job.company_name || "",
     job_title: job.title || "",
     job_location_type: jobLocationType,
-    location: job.location || "", // Location as string
-    region: job.region || "",
+    country_id: job.country.id || 0,
+    city_id: job.city.id || 0,
     salary_min: salaryStr,
     experience_min: experienceMin,
     notice_period: job.required_notice_period || "",
     work_mode: workMode,
-    primary_skills: primarySkill,
+    skills: primarySkills,
     job_description: job.description || "",
     employment_gaps: job.employment_gaps || false,
     contract_to_hire: job.contract_to_hire || false,
     client_name: job.client_name || "",
     conversion_time: job.conversion_time || "",
-    require_assessment: job.require_assessment || false,
-    assessment_id: job.assessment_id || "",
+    mandate_assessment: Array.isArray(job.mandate_assessment)
+      ? job.mandate_assessment.map((item) => {
+          // Handle both object format {id, title} and string format
+          if (typeof item === "string") {
+            return { id: item, title: "" };
+          }
+          return { id: item.id, title: item.title };
+        })
+      : [],
+    assessment_id: job.id || "",
     require_apply_form: applyFormFields.length > 0,
     apply_form_fields: applyFormFields,
   };
@@ -246,33 +271,39 @@ function transformFormDataToPayload(data: JobFormData) {
   );
 
   // Transform skills to array with skill_id and is_required
-  const skillId = skillNameToIdMap[data.primary_skills] || 1;
-  const skills = [{ skill_id: skillId, is_required: true }];
+  const skills = Array.isArray(data.skills)
+    ? data.skills.map((skillName: string) => ({
+        skill_id: skillNameToIdMap[skillName] || 1,
+        is_required: true,
+      }))
+    : [];
 
   // Transform custom fields
   const customFields =
     data.apply_form_fields &&
     Array.isArray(data.apply_form_fields) &&
     data.apply_form_fields.length > 0
-      ? data.apply_form_fields.map((field: any) => ({
-          title: field.title || field.label || "",
-          type: field.type || "text",
-        }))
+      ? data.apply_form_fields.map(
+          (field: { title?: string; label?: string; type?: string }) => ({
+            title: field.title || field.label || "",
+            type: field.type || "text",
+          })
+        )
       : [];
 
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const payload: any = {
     title: data.job_title,
     description: data.job_description,
     company_name: data.company_name,
-    city_id: 1, // Default value - should be mapped from location string
-    country_id: 65, // Default value - should be mapped from location string
+    city_id: data.city_id,
+    country_id: data.country_id, // Default value - should be mapped from location string
     required_notice_period: data.notice_period,
     experience_min_years: experienceMinYears,
     experience_max_years: experienceMaxYears,
     contract_to_hire: data.contract_to_hire,
     job_serving_location: jobServingLocation,
     employment_gaps: data.employment_gaps,
-    region: data.region,
     compensation: {
       min_amount: salaryMin,
       max_amount: salaryMax,
@@ -282,6 +313,15 @@ function transformFormDataToPayload(data: JobFormData) {
     custom_fields: customFields,
     work_modes: workModes,
     skills: skills,
+    mandate_assessment: Array.isArray(data.mandate_assessment)
+      ? data.mandate_assessment.map((item) => {
+          // Extract only the ID (string) for the payload
+          if (typeof item === "string") {
+            return item;
+          }
+          return item.id;
+        })
+      : [],
   };
 
   // Add contract to hire specific fields
@@ -292,4 +332,3 @@ function transformFormDataToPayload(data: JobFormData) {
 
   return payload;
 }
-

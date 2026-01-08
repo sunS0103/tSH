@@ -6,7 +6,8 @@ interface EditJobPageProps {
   };
 }
 
-export default function EditJobPage({ params }: EditJobPageProps) {
-  return <JobForm jobId={params.id} />;
-}
+export default async function EditJobPage({ params }: EditJobPageProps) {
+  const { id } = await params;
 
+  return <JobForm jobId={id} />;
+}

@@ -1,15 +1,20 @@
 "use client";
 
-import { getRecruiterJobs } from "@/api/jobs/recruiter";
+import {
+  getRecruiterJobs,
+  getRecruiterJobsFilters,
+} from "@/api/jobs/recruiter";
 import { Input } from "@/components/ui/input";
 import { Icon } from "@iconify/react";
-import { useEffect, useState, useRef } from "react";
+import { useEffect, useState, useRef, useCallback } from "react";
 import { toast } from "sonner";
 import AssessmentPagination from "@/components/assessments/assessment-pagination";
 import JobCard from "./job-card";
 import JobFilterSheet from "./job-filter-sheet";
 import JobFilterSidebar from "./job-filter-sidebar";
-import NoJobFound from "./no-job-found";
+import NoDataFound from "@/components/common/no-data-found";
+import { Loader } from "@/components/ui/loader";
+import { RecruiterJob } from "@/types/job";
 
 interface Job {
   id: string;
@@ -23,6 +28,35 @@ interface Job {
   applicants: number;
 }
 
+export interface OptionItem {
+  id: string;
+  title: string;
+  value: string;
+}
+
+// Technology wrapper
+interface WorkModeBlock {
+  work_mode: OptionItem[];
+}
+
+// Skills wrapper
+interface SkillsBlock {
+  primary_skills: OptionItem[];
+}
+
+interface StatusBlock {
+  status: OptionItem[];
+}
+
+interface YearsOfExperience {
+  years_of_experience: OptionItem[];
+}
+
+// Final API response type
+export type FilterResponse = Array<
+  WorkModeBlock | SkillsBlock | StatusBlock | YearsOfExperience
+>;
+
 export default function RecruiterJobs() {
   const [searchQuery, setSearchQuery] = useState("");
   const [debouncedSearchQuery, setDebouncedSearchQuery] = useState("");
@@ -31,25 +65,44 @@ export default function RecruiterJobs() {
   const [jobs, setJobs] = useState<Job[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [totalPages, setTotalPages] = useState(1);
-  const [totalItems, setTotalItems] = useState(0);
   const debounceTimerRef = useRef<NodeJS.Timeout | null>(null);
+  const [filterItems, setFilterItems] = useState<FilterResponse>([]);
+
+  useEffect(() => {
+    const fetchFilters = async () => {
+      setIsLoading(true);
+      await getRecruiterJobsFilters()
+        .then((res) => {
+          setFilterItems(res.data);
+        })
+        .catch((err) => {
+          toast.error(err.response.data.message);
+        })
+        .finally(() => {
+          setIsLoading(false);
+        });
+    };
+    fetchFilters();
+  }, []);
 
   // Helper function to parse experience range (e.g., "6-10 Years" -> { min: 6, max: 10 })
-  const parseExperienceRange = (experienceRange: string | null | undefined): { min: number; max: number } => {
+  const parseExperienceRange = (
+    experienceRange: string | null | undefined
+  ): { min: number; max: number } => {
     if (!experienceRange) return { min: 0, max: 0 };
-    
+
     const match = experienceRange.match(/(\d+)\s*-\s*(\d+)/);
     if (match) {
       return { min: parseInt(match[1], 10), max: parseInt(match[2], 10) };
     }
-    
+
     // Handle single number or "X+ Years" format
     const singleMatch = experienceRange.match(/(\d+)/);
     if (singleMatch) {
       const num = parseInt(singleMatch[1], 10);
       return { min: num, max: num };
     }
-    
+
     return { min: 0, max: 0 };
   };
 
@@ -75,9 +128,60 @@ export default function RecruiterJobs() {
     };
   }, [searchQuery]);
 
+  const getFilterType = useCallback(
+    (
+      filterId: string
+    ):
+      | "work_mode"
+      | "status"
+      | "primary_skills"
+      | "years_of_experience"
+      | null => {
+      for (const group of filterItems) {
+        if ("work_mode" in group) {
+          if (group.work_mode.some((item) => item.value === filterId)) {
+            return "work_mode";
+          }
+        }
+        if ("primary_skills" in group) {
+          if (group.primary_skills.some((item) => item.value === filterId)) {
+            return "primary_skills";
+          }
+        }
+        if ("status" in group) {
+          if (group.status.some((item) => item.value === filterId)) {
+            return "status";
+          }
+        }
+        if ("years_of_experience" in group) {
+          if (
+            group.years_of_experience.some((item) => item.value === filterId)
+          ) {
+            return "years_of_experience";
+          }
+        }
+      }
+      return null;
+    },
+    [filterItems]
+  );
+
   useEffect(() => {
     const fetchJobs = async () => {
       try {
+        const workModeFilters = selectedFilters.filter(
+          (filterId) => getFilterType(filterId) === "work_mode"
+        );
+        const primarySkillsFilters = selectedFilters.filter(
+          (filterId) => getFilterType(filterId) === "primary_skills"
+        );
+        const statusFilters = selectedFilters.filter(
+          (filterId) => getFilterType(filterId) === "status"
+        );
+        const yearsOfExperienceFilters = selectedFilters.filter(
+          (filterId) => getFilterType(filterId) === "years_of_experience"
+        );
+
         setIsLoading(true);
         const response = await getRecruiterJobs({
           page: currentPage,
@@ -85,14 +189,18 @@ export default function RecruiterJobs() {
           query: debouncedSearchQuery.trim() || undefined,
           sortBy: "created_at",
           sortDirection: "desc",
+          work_mode: workModeFilters,
+          primary_skills: primarySkillsFilters,
+          status: statusFilters,
+          years_of_experience: yearsOfExperienceFilters,
         });
-        
+
         // Handle the API response structure: { success, message, data, meta }
         const data = response?.data || [];
         const meta = response?.meta || {};
 
         // Map API response to Job interface
-        const mappedJobs: Job[] = data.map((job: any) => {
+        const mappedJobs: Job[] = data.map((job: RecruiterJob) => {
           const rawStatus = job.status || "";
           let normalizedStatus = rawStatus;
 
@@ -111,24 +219,22 @@ export default function RecruiterJobs() {
           const experience = parseExperienceRange(job.experience_range);
 
           return {
-            id: job.id || job._id || job.slug || "",
+            id: job.id || job.slug || "",
             title: job.title || "",
             status: normalizedStatus,
             minExperience: experience.min,
             maxExperience: experience.max,
-            companyName: job.company_name ?? job.companyName ?? "",
-            skills: job.primary_skills || job.skills || [],
-            location: job.location ?? "",
-            applicants: job.applicants_count ?? job.applicants ?? 0,
+            companyName: job.company_name ?? "",
+            skills: job.primary_skills || [],
+            location: job.city?.name + ", " + job.country?.name || "",
           };
         });
-        
+
         setJobs(mappedJobs);
-        
+
         // Update pagination from meta
         if (meta.pagination) {
           setTotalPages(meta.pagination.totalPages || 1);
-          setTotalItems(meta.pagination.totalItems || 0);
         }
       } catch (error) {
         console.error("Failed to fetch jobs:", error);
@@ -139,34 +245,13 @@ export default function RecruiterJobs() {
     };
 
     fetchJobs();
-  }, [currentPage, debouncedSearchQuery]);
-
-  // Filter Logic (client-side for selected filters only, search is server-side)
-  const filteredJobs = jobs.filter((job) => {
-    // Search is handled server-side, so we only need to filter by selectedFilters
-    if (selectedFilters.length === 0) return true;
-
-    // Simple ID matching for mock
-    // In real app, we would distinct by category
-    const matchesFilters = selectedFilters.some((filterId) => {
-      const idLower = filterId.toLowerCase();
-      // Status
-      if (
-        job.status.toLowerCase().replace(" ", "_").replace("-", "_") === idLower
-      )
-        return true;
-      // Experience (Simple Logic)
-      // Skills
-      if (job.skills.some((s) => s.toLowerCase() === idLower)) return true;
-
-      return false; // Add more mock logic if needed
-    });
-
-    return matchesFilters;
-  });
-
-  // Jobs are already paginated from API, just apply client-side filters
-  const currentJobs = filteredJobs;
+  }, [
+    currentPage,
+    debouncedSearchQuery,
+    filterItems,
+    selectedFilters,
+    getFilterType,
+  ]);
 
   const handleRefreshFilters = () => {
     setSelectedFilters([]);
@@ -179,7 +264,7 @@ export default function RecruiterJobs() {
       {/* Sidebar */}
       <div className="shrink-0 lg:w-72 hidden lg:block">
         <JobFilterSidebar
-          groups={[]}
+          filterItems={filterItems}
           selectedFilters={selectedFilters}
           onFilterChange={setSelectedFilters}
           onRefresh={handleRefreshFilters}
@@ -211,7 +296,7 @@ export default function RecruiterJobs() {
             {/* Mobile Filter Sheet */}
             <div className="lg:hidden">
               <JobFilterSheet
-                groups={[]}
+                filterItems={filterItems}
                 selectedFilters={selectedFilters}
                 onFilterChange={setSelectedFilters}
                 onRefresh={handleRefreshFilters}
@@ -222,18 +307,17 @@ export default function RecruiterJobs() {
 
         {/* Job List */}
         {isLoading ? (
-          <div className="flex justify-center items-center py-20">
-            <Icon
-              icon="mdi:loading"
-              className="animate-spin text-primary-600 size-8"
-            />
-          </div>
+          <Loader show={isLoading} />
         ) : (
           <div className="grid grid-cols-1 md:grid-cols-2  gap-4">
-            {currentJobs.length > 0 ? (
-              currentJobs.map((job) => <JobCard key={job.id} {...job} />)
+            {jobs.length > 0 ? (
+              jobs.map((job) => {
+                return <JobCard key={job.id} {...job} />;
+              })
             ) : (
-              <NoJobFound />
+              <div className="col-span-full text-center py-8">
+                <NoDataFound note="There are no Jobs at the moment. Please come back later." />
+              </div>
             )}
           </div>
         )}
@@ -247,7 +331,7 @@ export default function RecruiterJobs() {
               onPageChange={(page) => {
                 setCurrentPage(page);
                 // Scroll to top when page changes
-                window.scrollTo({ top: 0, behavior: 'smooth' });
+                window.scrollTo({ top: 0, behavior: "smooth" });
               }}
             />
           </div>

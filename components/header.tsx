@@ -53,8 +53,8 @@ const BOTTOM_NAV_VISIBLE_ROUTES: string[] = [
  * Supports exact matches and wildcard patterns (e.g., "/route/*")
  */
 const BOTTOM_NAV_VISIBLE_ROUTES_BY_ROLE: Record<string, string[]> = {
-  RECRUITER: ["/", "/talent-pool", "/assessments", "/jobs"],
-  CANDIDATE: ["/", "/assessments", "/jobs"],
+  RECRUITER: ["/", "/talent-pool", "/assessments", "/jobs", "/jobs/*"],
+  CANDIDATE: ["/", "/assessments", "/jobs", "/jobs/*"],
 };
 
 function shouldShowBottomNav(pathname: string | null, role?: string): boolean {
@@ -151,8 +151,7 @@ export default function Header() {
             {navItems.map((item) => {
               const isActive =
                 pathname === item.href ||
-                (item.href === "/assessments" &&
-                  pathname?.startsWith("/assessments"));
+                (item.href !== "/" && pathname?.startsWith(`${item.href}/`));
 
               return (
                 <Link
@@ -222,8 +221,7 @@ export default function Header() {
             {navItems.map((item) => {
               const isActive =
                 pathname === item.href ||
-                (item.href === "/assessments" &&
-                  pathname?.startsWith("/assessments"));
+                (item.href !== "/" && pathname?.startsWith(`${item.href}/`));
 
               return (
                 <Link

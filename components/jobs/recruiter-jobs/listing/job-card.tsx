@@ -1,12 +1,23 @@
+"use client";
+
 import { Badge } from "@/components/ui/badge";
-import { Button } from "@/components/ui/button";
 import { Icon } from "@iconify/react";
 import { cn } from "@/lib/utils";
 import { Job, JOB_STATUS } from "./types";
+import Link from "next/link";
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipTrigger,
+} from "@/components/ui/tooltip";
+import { useRouter } from "next/navigation";
 
-interface JobCardProps extends Job {}
+interface JobCardProps extends Job {
+  id: string;
+}
 
 export default function JobCard({
+  id,
   title,
   status,
   minExperience,
@@ -15,6 +26,8 @@ export default function JobCard({
   skills,
   location,
 }: JobCardProps) {
+  const router = useRouter();
+
   const getStatusColor = (status: string) => {
     switch (status) {
       case JOB_STATUS.ACTIVE:
@@ -33,8 +46,13 @@ export default function JobCard({
   const visibleSkills = skills.slice(0, 2);
   const remainingSkills = skills.length - 2;
 
+  const undisplayedSkills = skills.slice(2, skills.length);
+
   return (
-    <div className="bg-white border border-gray-200 rounded-2xl flex flex-col justify-start items-start w-full hover:shadow-sm transition-shadow">
+    <div
+      className="bg-white border border-gray-200 rounded-2xl flex flex-col justify-start items-start w-full hover:shadow-sm transition-shadow cursor-pointer"
+      onClick={() => router.push(`/jobs/${id}`)}
+    >
       {/* Top Section Padding */}
       <div className="p-3 pb-0 w-full flex flex-col gap-4">
         {/* Header: Title + Status */}
@@ -88,22 +106,46 @@ export default function JobCard({
               Primary Skills
             </span>
             <div className="flex items-center gap-1 flex-wrap">
-              {visibleSkills.map((skill) => (
-                <div
-                  key={skill}
-                  className="px-2 py-1 rounded-full border border-gray-300 flex justify-center items-center"
+              {visibleSkills.map((skill, index) => (
+                <Badge
+                  key={index}
+                  variant="outline"
+                  className="border-gray-300 text-black text-xs font-normal px-2 py-1 rounded-full"
                 >
-                  <span className="text-[10px] text-gray-950 font-normal font-sans text-center">
-                    {skill}
-                  </span>
-                </div>
+                  {skill}
+                </Badge>
               ))}
+
               {remainingSkills > 0 && (
-                <div className="px-2 py-1 rounded-full border border-gray-300 flex justify-center items-center">
-                  <span className="text-[10px] text-gray-950 font-normal font-sans text-center">
-                    +{remainingSkills}
-                  </span>
-                </div>
+                <Tooltip>
+                  <TooltipTrigger>
+                    <Badge
+                      variant="outline"
+                      className="border-gray-300 text-black text-xs font-normal px-2 py-1 rounded-full"
+                    >
+                      +{remainingSkills}
+                    </Badge>
+                  </TooltipTrigger>
+                  <TooltipContent
+                    className="max-w-80 bg-white border border-gray-200"
+                    side="bottom"
+                  >
+                    {undisplayedSkills.length > 0 && (
+                      <ul>
+                        {undisplayedSkills.map((item, index) => {
+                          return (
+                            <li
+                              className="text-gray-800 text-xs font-normal whitespace-normal list-disc list-inside"
+                              key={index}
+                            >
+                              {item}
+                            </li>
+                          );
+                        })}
+                      </ul>
+                    )}
+                  </TooltipContent>
+                </Tooltip>
               )}
             </div>
           </div>
@@ -112,13 +154,13 @@ export default function JobCard({
 
       {/* Footer Section (Location + Action) */}
       <div className="p-3 w-full flex flex-col gap-2.5">
-        <div className="w-full bg-primary-50/50 rounded-xl px-2 py-1 flex flex-wrap justify-between items-center gap-2">
+        <div className="w-full bg-primary-50/50 rounded-xl px-2 py-1 flex flex-wrap justify-between items-center gap-2 min-h-10">
           {/* Location Pill */}
           <div className="flex items-center gap-0.5">
             <div className="w-3.5 h-3.5 flex items-center justify-center">
               <Icon
-                icon="mdi:map-marker"
-                className="w-2.5 h-2.5 text-primary-800"
+                icon="material-symbols:location-on-outline-rounded"
+                className="w-3.5 h-3.5 text-primary-800"
               />
             </div>
             <span className="text-xs text-primary-800 font-normal font-sans">
@@ -127,15 +169,18 @@ export default function JobCard({
           </div>
 
           {/* Button */}
-          <Button
-            variant="outline"
-            className="h-8 px-3 rounded-lg border border-primary-600 text-primary-600 hover:bg-primary-600 hover:text-white flex items-center gap-2 bg-transparent ml-auto sm:ml-0"
-          >
-            <span className="text-xs sm:text-sm font-normal font-sans">
-              View applicants
-            </span>
-            <Icon icon="mdi:arrow-top-right" className="w-3.5 h-3.5" />
-          </Button>
+          {(status === JOB_STATUS.ACTIVE ||
+            status === JOB_STATUS.IN_ACTIVE) && (
+            <Link
+              href={`/jobs`}
+              className="h-8 px-3 rounded-lg border border-primary-600 text-primary-600 hover:bg-primary-600 hover:text-white flex items-center gap-2 bg-transparent ml-auto sm:ml-0"
+            >
+              <span className="text-xs sm:text-sm font-normal font-sans">
+                View applicants
+              </span>
+              <Icon icon="mdi:arrow-top-right" className="w-3.5 h-3.5" />
+            </Link>
+          )}
         </div>
       </div>
     </div>

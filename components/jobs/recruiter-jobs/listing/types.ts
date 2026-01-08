@@ -16,4 +16,3 @@ export const JOB_STATUS = {
   IN_ACTIVE: "In-Active",
   DRAFT: "Draft",
 } as const;
-
