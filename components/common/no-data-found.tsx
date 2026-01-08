@@ -21,7 +21,7 @@ export default function NoDataFound({
 
       {/* Title */}
       <div className="flex flex-col gap-2 items-center justify-center text-center">
-        <h3 className="text-lg font-semibold text-gray-900">{title}</h3>
+        <h3 className="text-2xl font-bold text-gray-900">{title}</h3>
 
         {/* Note */}
         {note && (
