@@ -1,0 +1,291 @@
+import { cn } from "@/lib/utils";
+import TalentScoreSheet from "./talent-score-sheet";
+import TalentAboutModal from "./talent-about-modal";
+import InviteDialog, { InviteMode } from "./invite-dialog";
+import { Icon } from "@iconify/react";
+import { Button } from "@/components/ui/button";
+import { Checkbox } from "@/components/ui/checkbox";
+import { useState } from "react";
+import { type AssessmentTaken } from "@/api/recruiter/talent-pool";
+
+export interface TalentCardProps {
+  id: string;
+  role: string;
+  location_code: string; // e.g. D.C 8852
+  totalScore: number;
+  skillsAssessed: string[];
+  experience: string; // e.g. 4-5 Years
+  company: string;
+  availability: string;
+  location: string; // e.g. Mumbai, MH
+  assessmentTaken: string[];
+  assessments?: AssessmentTaken[]; // Full assessment details for the score sheet
+  about: string;
+  isSelected?: boolean;
+  onSelect?: (checked: boolean) => void;
+  isFavorite?: boolean;
+  onToggleFavorite?: () => void;
+}
+
+export default function TalentCard({
+  id,
+  role,
+  location_code,
+  totalScore,
+  skillsAssessed,
+  experience,
+  company,
+  availability,
+  location,
+  assessmentTaken,
+  assessments,
+  about,
+  isSelected,
+  onSelect,
+  isFavorite,
+  onToggleFavorite,
+}: TalentCardProps) {
+  const [showInviteDialog, setShowInviteDialog] = useState(false);
+  const [inviteMode, setInviteMode] = useState<InviteMode>("job");
+
+  const onInviteToJob = () => {
+    setInviteMode("job");
+    setShowInviteDialog(true);
+  };
+
+  const onRequestAssessment = () => {
+    setInviteMode("assessment");
+    setShowInviteDialog(true);
+  };
+
+  return (
+    <div className="bg-white border border-gray-200 rounded-2xl w-full flex flex-col items-start gap-3 pb-4">
+      {/* Header */}
+      <div className="w-full flex md:flex-row flex-col justify-between items-start md:items-center px-4 py-3 border-b border-gray-200 gap-4">
+        <div className="flex justify-between items-start w-full md:w-auto">
+          <div className="flex justify-start items-start gap-2">
+            <div className="relative w-5 h-6 flex items-start justify-center py-1">
+              <Checkbox
+                checked={isSelected}
+                onCheckedChange={onSelect}
+                className="w-5 h-5 border-gray-600 rounded data-[state=checked]:bg-white data-[state=checked]:text-black data-[state=checked]:border-black"
+              />
+            </div>
+            <div className="flex flex-col items-start gap-1">
+              <h1 className="text-black text-xl font-bold font-sans">{role}</h1>
+              <p className="text-left text-gray-600 text-xs font-normal font-sans capitalize">
+                ID: {id.substring(0, 4)}
+              </p>
+            </div>
+          </div>
+
+          {/* Mobile Actions (Visible <= md) */}
+          <div className="flex md:hidden justify-end items-center gap-2">
+            <Button
+              variant="outline"
+              className="w-8 h-8 rounded-lg border border-primary-500 p-0 flex items-center justify-center hover:bg-primary-50 bg-white"
+              onClick={onToggleFavorite}
+            >
+              <Icon
+                icon={
+                  isFavorite ? "mdi:cards-heart" : "mdi:cards-heart-outline"
+                }
+                className={cn(
+                  "w-4.5 h-4.5",
+                  isFavorite ? "text-primary-500" : "text-primary-500"
+                )}
+              />
+            </Button>
+            <Button
+              variant="outline"
+              className="w-8 h-8 rounded-lg border border-primary-500 p-0 flex items-center justify-center hover:bg-primary-50 bg-white"
+            >
+              <Icon
+                icon="majesticons:briefcase-line"
+                className="w-4.5 h-4.5 text-primary-500"
+              />
+            </Button>
+            <Button
+              variant="outline"
+              className="w-8 h-8 rounded-lg border border-primary-500 p-0 flex items-center justify-center hover:bg-primary-50 bg-white"
+            >
+              <Icon
+                icon="mdi:help-box-multiple-outline"
+                className="w-4.5 h-4.5 text-primary-500"
+              />
+            </Button>
+          </div>
+        </div>
+
+        {/* Desktop Actions (Hidden on mobile) */}
+        <div className="hidden md:flex justify-start items-center gap-3">
+          <Button
+            variant="outline"
+            className="w-8 h-8 rounded-lg border border-primary-500 p-0 flex items-center justify-center hover:bg-primary-50 bg-white"
+            onClick={onToggleFavorite}
+          >
+            <Icon
+              icon={isFavorite ? "mdi:cards-heart" : "mdi:cards-heart-outline"}
+              className={cn(
+                "w-4.5 h-4.5",
+                isFavorite ? "text-primary-500" : "text-primary-500"
+              )}
+            />
+          </Button>
+
+          <Button
+            variant="outline"
+            className="h-8 px-3 rounded-lg border border-primary-500 flex items-center justify-center gap-2 hover:bg-primary-50 bg-white"
+            onClick={() => onInviteToJob()}
+          >
+            <Icon
+              icon="majesticons:briefcase-line"
+              className="w-4.5 h-4.5 text-primary-500"
+            />
+            <span className="text-center text-primary-500 text-sm font-normal font-sans">
+              Invite to Job
+            </span>
+          </Button>
+
+          <Button
+            variant="outline"
+            className="h-8 px-3 rounded-lg border border-primary-500 flex items-center justify-center gap-2 hover:bg-primary-50 bg-white"
+            onClick={() => onRequestAssessment()}
+          >
+            <Icon
+              icon="mdi:help-box-multiple-outline"
+              className="w-4.5 h-4.5 text-primary-500"
+            />
+            <span className="text-center text-primary-500 text-sm font-normal font-sans">
+              Request Assessment
+            </span>
+          </Button>
+        </div>
+      </div>
+
+      {/* Body */}
+      <div className="w-full px-4 flex flex-col xl:flex-row items-start gap-6 xl:gap-8">
+        {/* Left Column: Score & Skills */}
+        <div className="flex flex-col items-start gap-3 max-w-xs w-full shrink-0">
+          <div className="w-full flex flex-col items-start gap-2">
+            <div className="flex flex-col items-start gap-2 ">
+              <TalentScoreSheet assessments={assessments || []}>
+                <span className="text-gray-900 text-xs font-medium underline font-sans cursor-pointer">
+                  Total Score
+                </span>
+              </TalentScoreSheet>
+              <span className="text-primary-500 text-lg font-semibold font-sans">
+                {totalScore}%
+              </span>
+            </div>
+          </div>
+
+          <div className="w-full flex flex-col items-start gap-2">
+            <span className="text-gray-900 text-xs font-medium font-sans">
+              Skill Assessed
+            </span>
+            <div className="flex w-full flex-wrap gap-2 content-center items-center">
+              {skillsAssessed.map((skill, index) => (
+                <div
+                  key={index}
+                  className="px-2 py-1 rounded-full border border-gray-600 flex justify-center items-center gap-2"
+                >
+                  <span className="text-center text-black text-xs font-normal font-sans capitalize">
+                    {skill}
+                  </span>
+                </div>
+              ))}
+            </div>
+          </div>
+        </div>
+
+        {/* Middle Column: Details (Responsive Grid on Mobile, Column on Desktop) */}
+        <div className="w-full xl:w-52 grid grid-cols-2 xl:flex xl:flex-col xl:justify-center items-start gap-x-4 gap-y-4 shrink-0">
+          <div className="flex justify-start items-center gap-2">
+            <Icon
+              icon="mdi:card-account-details-outline"
+              className="w-4.5 h-4.5 text-gray-900"
+            />
+            <span className="text-center text-gray-900 text-base font-normal font-sans">
+              {experience}
+            </span>
+          </div>
+          <div className="flex justify-start items-center gap-2">
+            <Icon
+              icon="mdi:office-building-outline"
+              className="w-4.5 h-4.5 text-gray-900"
+            />
+            <span className="text-center text-gray-900 text-base font-normal font-sans">
+              {company}
+            </span>
+          </div>
+          <div className="flex justify-start items-center gap-2">
+            <Icon
+              icon="mdi:timer-outline"
+              className="w-4.5 h-4.5 text-gray-900"
+            />
+            <span className="text-center text-gray-900 text-base font-normal font-sans">
+              {availability}
+            </span>
+          </div>
+          <div className="flex justify-start items-center gap-2">
+            <Icon
+              icon="mdi:map-marker-outline"
+              className="w-4.5 h-4.5 text-gray-900"
+            />
+            <span className="text-center text-gray-900 text-base font-normal font-sans">
+              {location}
+            </span>
+          </div>
+        </div>
+
+        {/* Right Column: Assessments & About */}
+        <div className="flex-1 flex flex-col justify-start items-start gap-3 w-full min-w-0">
+          <div className="flex flex-col justify-start items-start gap-2 w-full">
+            <span className="text-gray-900 text-xs font-medium font-sans">
+              Assessment Taken
+            </span>
+            <div className="flex justify-start items-center gap-2 flex-wrap">
+              {assessmentTaken.map((assessment, index) => (
+                <div
+                  key={index}
+                  className="h-6 px-3 py-1 rounded-full border border-gray-600 bg-gray-50 flex flex-col justify-center items-start gap-2.5 hover:bg-primary-50 hover:border-primary-500 transition-colors cursor-pointer"
+                >
+                  <span className="text-center text-xs italic font-normal font-sans text-gray-800 hover:text-primary-500 hover:underline transition-colors">
+                    {assessment}
+                  </span>
+                </div>
+              ))}
+            </div>
+          </div>
+
+          <div className="w-full flex flex-col justify-start items-start gap-1">
+            <span className="text-gray-900 text-xs font-medium font-sans">
+              About
+            </span>
+            <div className="self-stretch">
+              <span className="text-gray-800 text-sm font-normal font-sans leading-relaxed">
+                {about.length <= 200 ? about : `${about.substring(0, 200)}... `}
+              </span>
+              {about.length > 200 && (
+                <TalentAboutModal
+                  about={about}
+                  trigger={
+                    <span className="text-primary-500 text-sm cursor-pointer font-normal underline ml-1 hover:text-primary-600 font-sans ">
+                      Learn More
+                    </span>
+                  }
+                />
+              )}
+            </div>
+          </div>
+        </div>
+      </div>
+      <InviteDialog
+        open={showInviteDialog}
+        onOpenChange={setShowInviteDialog}
+        mode={inviteMode}
+      />
+    </div>
+  );
+}
