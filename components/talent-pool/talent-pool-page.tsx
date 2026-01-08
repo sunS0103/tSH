@@ -22,6 +22,7 @@ import { getRecruiterTalentPool, getTalentPoolFilters, addFavoriteTalent, remove
 import { toast } from "sonner";
 import { Loader } from "@/components/ui/loader";
 import { TalentCardProps } from "./talent-card";
+import NoDataFound from "@/components/common/no-data-found";
 
 // Helper function to map API candidate to TalentCardProps
 const mapCandidateToTalentCard = (
@@ -694,26 +695,20 @@ export default function TalentPoolPage() {
           ))}
 
           {!isLoading && filteredTalents.length === 0 && (
-            <div className="text-center py-12">
-              <div className="inline-flex items-center justify-center w-16 h-16 rounded-full bg-gray-100 mb-4">
-                <Icon
-                  icon="mdi:account-off-outline"
-                  className="size-8 text-gray-400"
-                />
+            <div className="w-full">
+              <NoDataFound
+                title="No talents found"
+                note="Try adjusting your search or filters"
+              />
+              <div className="flex justify-center mt-4">
+                <Button
+                  variant="link"
+                  onClick={handleRefreshFilters}
+                  className="text-primary-600"
+                >
+                  Clear all filters
+                </Button>
               </div>
-              <h3 className="text-lg font-medium text-gray-900">
-                No talents found
-              </h3>
-              <p className="text-gray-500 mt-1">
-                Try adjusting your search or filters
-              </p>
-              <Button
-                variant="link"
-                onClick={handleRefreshFilters}
-                className="mt-2 text-primary-600"
-              >
-                Clear all filters
-              </Button>
             </div>
           )}
         </div>
