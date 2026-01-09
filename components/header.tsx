@@ -53,8 +53,8 @@ const BOTTOM_NAV_VISIBLE_ROUTES: string[] = [
  * Supports exact matches and wildcard patterns (e.g., "/route/*")
  */
 const BOTTOM_NAV_VISIBLE_ROUTES_BY_ROLE: Record<string, string[]> = {
-  RECRUITER: ["/", "/talent-pool", "/assessments", "/jobs", "/jobs/*"],
-  CANDIDATE: ["/", "/assessments", "/jobs", "/jobs/*"],
+  RECRUITER: ["/dashboard", "/talent-pool", "/assessments", "/jobs", "/jobs/*"],
+  CANDIDATE: ["/dashboard", "/assessments", "/jobs", "/jobs/*"],
 };
 
 function shouldShowBottomNav(pathname: string | null, role?: string): boolean {
@@ -67,7 +67,7 @@ function shouldShowBottomNav(pathname: string | null, role?: string): boolean {
 
 const NAV_CONFIG: Record<string, NavItem[]> = {
   RECRUITER: [
-    { label: "Dashboard", href: "/", icon: "humbleicons:dashboard" },
+    { label: "Dashboard", href: "/dashboard", icon: "humbleicons:dashboard" },
     {
       label: "Talent Pool",
       href: "/talent-pool",
@@ -86,7 +86,7 @@ const NAV_CONFIG: Record<string, NavItem[]> = {
     },
   ],
   CANDIDATE: [
-    { label: "Dashboard", href: "/", icon: "humbleicons:dashboard" },
+    { label: "Dashboard", href: "/dashboard", icon: "humbleicons:dashboard" },
     {
       label: "Assessment",
       href: "/assessments",
