@@ -39,6 +39,13 @@ export interface Assessment {
     purchase_status: "ACTIVE" | "INACTIVE";
     purchased_at: number;
   };
+  candidate_status?:
+    | "ON_GOING"
+    | "INVITED"
+    | "LATER"
+    | "COMPLETED"
+    | "ENROLLED"
+    | "PENDING";
 }
 
 interface StepContentProps {
@@ -108,6 +115,7 @@ export default function StepContent({
             assessment_id={assessment.assessment_id}
             payment={assessmentPayment || assessment.payment}
             onUserAssessmentIdChange={onUserAssessmentIdChange}
+            candidate_status={assessment.candidate_status}
           />
         )}
       </div>

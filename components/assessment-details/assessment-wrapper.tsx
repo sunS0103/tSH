@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useEffect, useLayoutEffect, useRef } from "react";
-import { useParams, usePathname } from "next/navigation";
+import { useParams, usePathname, useRouter } from "next/navigation";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 import AssessmentStepper from "./assessment-stepper";
@@ -60,6 +60,7 @@ export default function AssessmentWrapper({
   const params = useParams();
   const pathname = usePathname();
   const assessmentId = params?.id as string;
+  const router = useRouter();
 
   // Check if we're on an assessment route
   const isAssessmentRoute = pathname?.startsWith("/assessments/") ?? false;
@@ -255,6 +256,7 @@ export default function AssessmentWrapper({
           window.open(res.data.invite_link, "_blank");
           setUserAssessmentId(null);
           setAssessmentPayment(null);
+          router.push(`/assessments`);
         }
       })
       .catch((err) => {
@@ -275,8 +277,9 @@ export default function AssessmentWrapper({
       .then((res) => {
         if (res.success) {
           toast.success(res.message || "Exam link will send via email");
-          setUserAssessmentId(null);
-          setAssessmentPayment(null);
+          // setUserAssessmentId(null);
+          // setAssessmentPayment(null);
+          router.push(`/assessments`);
         }
       })
       .catch((err) => {
@@ -357,6 +360,10 @@ export default function AssessmentWrapper({
               <Dialog>
                 <DialogTrigger asChild>
                   <Button
+                    disabled={
+                      assessment.candidate_status !== null &&
+                      assessment.candidate_status !== "PENDING"
+                    }
                     variant="secondary"
                     className="text-xs md:text-sm px-2 md:px-4"
                   >
@@ -393,7 +400,7 @@ export default function AssessmentWrapper({
                       </Button>
                     </DialogClose>
 
-                    <Button className="" onClick={handleStartAssessmentLater}>
+                    <Button onClick={handleStartAssessmentLater}>
                       Proceed
                     </Button>
                   </div>
@@ -401,7 +408,13 @@ export default function AssessmentWrapper({
               </Dialog>
               <Dialog>
                 <DialogTrigger asChild>
-                  <Button className="text-xs md:text-sm px-2 md:px-4">
+                  <Button
+                    disabled={
+                      assessment.candidate_status !== null &&
+                      assessment.candidate_status !== "PENDING"
+                    }
+                    className="text-xs md:text-sm px-2 md:px-4"
+                  >
                     Start Assessment Now
                   </Button>
                 </DialogTrigger>

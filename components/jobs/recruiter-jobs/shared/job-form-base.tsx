@@ -91,6 +91,7 @@ export default function JobFormBase({
   // Note: `as any` is used here due to a type incompatibility between
   // react-hook-form's resolver types and zodResolver. This is a known issue
   // and doesn't affect runtime behavior. The form is still fully type-safe.
+
   const form = useForm<JobFormData>({
     resolver: zodResolver(jobFormSchema),
     defaultValues: {
