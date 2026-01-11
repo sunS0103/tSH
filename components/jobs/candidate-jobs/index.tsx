@@ -65,11 +65,13 @@ export default async function CandidateJobDetails({
           <div className="text-sm text-gray-500">{job.company_name}</div>
         </div>
 
-        <JobApplyForm
-          isAssessmentNotCompleted={isAssessmentNotCompleted}
-          customFields={customFields}
-          jobId={job.slug}
-        />
+        <div>
+          <JobApplyForm
+            isAssessmentNotCompleted={isAssessmentNotCompleted}
+            customFields={customFields}
+            jobId={job.slug}
+          />
+        </div>
       </div>
       <div className="bg-white border border-gray-200 rounded-2xl p-4 flex flex-col gap-3 w-full mt-4">
         <JobDetailsSection job={job as RecruiterJob} />

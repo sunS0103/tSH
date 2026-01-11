@@ -20,7 +20,7 @@ import { toast } from "sonner";
 export interface Payment {
   initial_paid: boolean;
   initial_payment_status: "PAID";
-  package_type: "BASIC" | "PREMIUM" | "PLATINUM";
+  package_type: "FREE" | "BASIC" | "PREMIUM" | "PLATINUM";
   purchase_status: "ACTIVE" | "INACTIVE";
   purchased_at: number;
 }
@@ -28,10 +28,13 @@ export interface Payment {
 export default function PaymentCards({
   assessment_id,
   payment,
+  is_free_plan_available,
+
   onUserAssessmentIdChange,
 }: {
   assessment_id: string;
   payment: Payment | null;
+  is_free_plan_available: boolean;
   onUserAssessmentIdChange?: ({
     id,
     payment,
@@ -194,7 +197,7 @@ export default function PaymentCards({
   };
 
   const handlePurchase = async (
-    packageType: "BASIC" | "PREMIUM" | "PLATINUM"
+    packageType: "FREE" | "BASIC" | "PREMIUM" | "PLATINUM"
   ) => {
     try {
       // 1️⃣ Create Order
@@ -202,6 +205,16 @@ export default function PaymentCards({
         assessment_id: assessment_id,
         packageType,
       });
+
+      if (packageType === "FREE") {
+        onUserAssessmentIdChange?.({
+          id: orderData?.data?.user_assessment_id,
+          payment: orderData?.data?.payment,
+          message: orderData?.message,
+        });
+        toast.success(orderData?.response?.data?.message || orderData?.message);
+        return;
+      }
 
       // 2️⃣ Open Razorpay
       openRazorpayCheckout({
@@ -213,14 +226,53 @@ export default function PaymentCards({
           toast.success("Assessment purchased successfully 🎉");
         },
       });
+
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
     } catch (err: any) {
-      toast.error(err.message || "Payment failed");
+      toast.error(err.response?.data?.message || "Payment failed");
     }
   };
 
   return (
-    <>
+    <div>
+      {is_free_plan_available && (
+        <div className="flex flex-col gap-4 mt-4   mb-6">
+          {/* Banner */}
+          <div className="bg-primary-50 border border-primary-200 rounded-xl p-4 flex items-start gap-3">
+            <Icon
+              icon="material-symbols:campaign-outline-rounded"
+              className="w-8 md:w-10 h-8 md:h-10 text-primary-600"
+            />
+            <div className="flex-1 flex flex-col gap-1">
+              <p className="text-sm md:text-base font-semibold text-gray-950">
+                Early Access: Take the assessment{" "}
+                <span className="text-primary-500">FREE!</span>
+              </p>
+              <p className="text-sm text-gray-700 font-normal">
+                Upgrade only to unlock full benefits after results.
+              </p>
+            </div>
+          </div>
+
+          {/* CTA Button */}
+          <div className="flex flex-col items-center gap-2">
+            <Button
+              disabled={
+                currentPayment?.package_type !== "FREE" &&
+                currentPayment?.package_type === null
+              }
+              className="w-fit px-10"
+              onClick={() => handlePurchase("FREE")}
+            >
+              Start Assessment - Free
+            </Button>
+            <p className="text-sm text-gray-600 text-center font-normal">
+              No payment required now
+            </p>
+          </div>
+        </div>
+      )}
+
       <div className="flex gap-3 overflow-auto">
         {cards.map((card) => (
           <div
@@ -283,7 +335,11 @@ export default function PaymentCards({
                       onClick={() => {
                         if (card.packageType === "PLATINUM") {
                           handlePurchase(
-                            card.packageType as "BASIC" | "PREMIUM" | "PLATINUM"
+                            card.packageType as
+                              | "FREE"
+                              | "BASIC"
+                              | "PREMIUM"
+                              | "PLATINUM"
                           );
                         }
                       }}
@@ -331,7 +387,11 @@ export default function PaymentCards({
                         className=""
                         onClick={() =>
                           handlePurchase(
-                            card.packageType as "BASIC" | "PREMIUM" | "PLATINUM"
+                            card.packageType as
+                              | "FREE"
+                              | "BASIC"
+                              | "PREMIUM"
+                              | "PLATINUM"
                           )
                         }
                       >
@@ -346,7 +406,11 @@ export default function PaymentCards({
                   className="w-full mt-1"
                   onClick={() =>
                     handlePurchase(
-                      card.packageType as "BASIC" | "PREMIUM" | "PLATINUM"
+                      card.packageType as
+                        | "FREE"
+                        | "BASIC"
+                        | "PREMIUM"
+                        | "PLATINUM"
                     )
                   }
                   disabled={
@@ -364,6 +428,6 @@ export default function PaymentCards({
           </div>
         ))}
       </div>
-    </>
+    </div>
   );
 }

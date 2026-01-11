@@ -13,8 +13,11 @@ import {
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Label } from "@/components/ui/label";
-import { useState } from "react";
-import { applyToJob } from "@/api/jobs/candidate";
+import { useEffect, useState } from "react";
+import {
+  applyToJob,
+  getCandidateJobAdditionalDetails,
+} from "@/api/jobs/candidate";
 import { getCookie } from "cookies-next/client";
 import { toast } from "sonner";
 import { useRouter } from "next/navigation";
@@ -167,13 +170,38 @@ export default function JobApplyForm({
     : { inputFields: [], textareaFields: [] };
   const inputFieldRows = groupInputFieldsIntoRows(inputFields);
 
+  const isCustomFieldFilled =
+    (customFields &&
+      customFields?.length > 0 &&
+      customFields.some((field) => field.value !== null)) ||
+    false;
+
+  // const fetchAdditionalDetails = async () => {
+  //   const additionalDetails = await getCandidateJobAdditionalDetails({
+  //     jobId,
+  //   });
+  //   return additionalDetails;
+  // };
+
+  useEffect(() => {
+    const fetchAdditionalDetails = async () => {
+      const additionalDetails = await getCandidateJobAdditionalDetails({
+        jobId,
+      });
+      return additionalDetails;
+    };
+    if (isCustomFieldFilled) {
+      fetchAdditionalDetails();
+    }
+  }, [isCustomFieldFilled, jobId]);
+
   return (
     <>
       <Dialog open={open} onOpenChange={setOpen}>
         <DialogTrigger asChild>
           <Button
             className="text-sm flex items-center gap-2"
-            disabled={isAssessmentNotCompleted}
+            disabled={isAssessmentNotCompleted || isCustomFieldFilled}
             onClick={() => setOpen(true)}
           >
             Contact Recruiter

@@ -158,3 +158,20 @@ export const applyToJob = async ({
   });
   return response.data;
 };
+
+export const getCandidateJobAdditionalDetails = async ({
+  jobId,
+}: {
+  jobId: string;
+  token?: string;
+}) => {
+  const response = await axios.get(
+    `/candidate/jobs/${jobId}/additional-details`,
+    {
+      params: {
+        job_id: jobId,
+      },
+    }
+  );
+  return response.data;
+};

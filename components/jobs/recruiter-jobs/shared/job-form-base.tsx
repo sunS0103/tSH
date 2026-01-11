@@ -21,7 +21,7 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { Switch } from "@/components/ui/switch";
-import { Textarea } from "@/components/ui/textarea";
+import TiptapEditor from "@/components/ui/tiptap-editor";
 import { WorkModeMultiSelect } from "@/components/ui/work-mode-multi-select";
 import { jobFormSchema, type JobFormData } from "@/validation/job";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -536,11 +536,13 @@ export default function JobFormBase({
                 <FormItem>
                   <FormLabel>Job Description</FormLabel>
                   <FormControl>
-                    <Textarea
-                      {...field}
+                    <TiptapEditor
+                      value={field.value || ""}
+                      onChange={field.onChange}
                       placeholder="Enter job description..."
-                      className="min-h-25 max-h-25 relative"
-                      rows={5}
+                      // className="h-50"
+                      minHeight="200px"
+                      maxHeight="200px"
                     />
                   </FormControl>
                   <FormMessage />

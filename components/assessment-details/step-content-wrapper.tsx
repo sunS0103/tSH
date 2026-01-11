@@ -46,6 +46,7 @@ export interface Assessment {
     | "COMPLETED"
     | "ENROLLED"
     | "PENDING";
+  is_free_plan_available: boolean;
 }
 
 interface StepContentProps {
@@ -116,6 +117,7 @@ export default function StepContent({
             payment={assessmentPayment || assessment.payment}
             onUserAssessmentIdChange={onUserAssessmentIdChange}
             candidate_status={assessment.candidate_status}
+            is_free_plan_available={assessment.is_free_plan_available}
           />
         )}
       </div>

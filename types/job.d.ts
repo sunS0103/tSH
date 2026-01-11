@@ -90,6 +90,7 @@ export interface CustomField {
   id?: string | number;
   title: string;
   type: "text" | "number" | "select" | string;
+  value?: string;
 }
 
 export interface Recruiter {

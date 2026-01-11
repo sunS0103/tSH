@@ -46,7 +46,7 @@ export default function CandidateJobCard({
 
   return (
     <div
-      className="bg-white border border-gray-200 rounded-2xl flex flex-col justify-start items-start w-full hover:shadow-sm transition-shadow cursor-pointer min-h-52"
+      className="bg-white border border-gray-200 rounded-2xl flex flex-col justify-between items-start w-full hover:shadow-sm transition-shadow cursor-pointer min-h-52 h-full"
       onClick={handleCardClick}
     >
       {/* Top Section Padding */}

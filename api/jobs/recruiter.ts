@@ -1,5 +1,6 @@
 import { RecruiterJob } from "@/types/job";
 import axios from "../axios";
+import { AdditionalDetailsField } from "@/components/jobs/recruiter-jobs/applicants/additional-details-dialog";
 
 export const getRecruiterJobs = async ({
   page = 1,
@@ -109,5 +110,43 @@ export const saveJobAsDraft = async (
 
 export const getRecruiterJobsFilters = async () => {
   const response = await axios.get("/recruiter/jobs/filters");
+  return response.data;
+};
+
+export const getRecruiterJobApplicants = async ({
+  jobId,
+  token,
+}: {
+  jobId: string;
+  token?: string;
+}) => {
+  const config = token
+    ? {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      }
+    : {};
+  const response = await axios.get(
+    `/recruiter/jobs/${jobId}/applicants`,
+    config
+  );
+  return response.data;
+};
+
+export const sendAdditionalDetails = async (
+  jobId: string,
+  data: {
+    additional_details: {
+      title: string;
+      type: "text" | "textarea";
+    }[];
+    user_id: string;
+  }
+) => {
+  const response = await axios.post(
+    `/recruiter/jobs/${jobId}/additional-details`,
+    data
+  );
   return response.data;
 };

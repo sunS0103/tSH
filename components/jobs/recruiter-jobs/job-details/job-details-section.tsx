@@ -25,16 +25,18 @@ export default function JobDetailsSection({ job }: { job: RecruiterJob }) {
 
   // Format skills
   // Support both `primary_skills` and `skills` keys
-  const skillsText =
-    (job.primary_skills && job.primary_skills.length > 0
-      ? job.primary_skills
-      : job.skills && job.skills.length > 0
-      ? job.skills
-      : []
-    )
-      .map((skill) => skill?.name)
-      .filter(Boolean)
-      .join(", ") || "-";
+
+  const primarySkills =
+    job.skills && job.skills.length > 0
+      ? job.skills.map((skill) => skill?.name).join(", ")
+      : null;
+
+  const skills =
+    job.skills && job.skills.length > 0
+      ? job.skills.map((skill) => skill.skill?.name).join(", ")
+      : null;
+
+  const skillsText = primarySkills || skills || "-";
 
   // Format job serving location
   const jobWorkType =
@@ -86,9 +88,12 @@ export default function JobDetailsSection({ job }: { job: RecruiterJob }) {
       {/* Job Description (Full Width) */}
       <div className="flex flex-col gap-1 w-full">
         <p className="text-xs text-gray-900 font-normal">Job Description</p>
-        <p className="text-base text-black font-normal leading-normal wrap-break-words">
-          {job.description || "-"}
-        </p>
+        <div className="text-base text-black font-normal leading-normal wrap-break-words">
+          <div
+            className="prose prose-sm max-w-none [&_ul]:list-disc [&_ul]:ml-4 [&_ul]:my-2 [&_ol]:list-decimal [&_ol]:ml-4 [&_ol]:my-2 [&_li]:mb-1 [&_li]:wrap-break-words"
+            dangerouslySetInnerHTML={{ __html: job.description || "-" }}
+          />
+        </div>
       </div>
     </div>
   );

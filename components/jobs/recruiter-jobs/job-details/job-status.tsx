@@ -46,7 +46,7 @@ export default function JobStatus({
       )}
       {(status === "inactive" || status === "active") && (
         <Link
-          href={`/jobs/${slug}#`}
+          href={`/jobs/${slug}/applicants-list`}
           aria-label="View Applicants List"
           className="flex items-center gap-2 bg-primary-500 text-white rounded-md px-4 py-2"
         >

@@ -17,15 +17,18 @@ import { Loader } from "@/components/ui/loader";
 import { RecruiterJob } from "@/types/job";
 
 interface Job {
+  company_name: string;
   id: string;
+  slug: string;
   title: string;
   status: string;
-  minExperience: number;
-  maxExperience: number;
-  companyName: string;
+  minExperience?: number;
+  maxExperience?: number;
   skills: string[];
+  primary_skills: string[];
   location: string;
   applicants: number;
+  experience_range?: string;
 }
 
 export interface OptionItem {
@@ -209,37 +212,38 @@ export default function RecruiterJobs() {
         const meta = response?.meta || {};
 
         // Map API response to Job interface
-        const mappedJobs: Job[] = data.map((job: RecruiterJob) => {
-          const rawStatus = job.status || "";
-          let normalizedStatus = rawStatus;
+        // const mappedJobs: Job[] = data.map((job: RecruiterJob) => {
+        //   const rawStatus = job.status || "";
+        //   let normalizedStatus = rawStatus;
 
-          // Normalize status values
-          const lowerStatus = rawStatus.toLowerCase().replace(/[-_]/g, " ");
-          if (lowerStatus.includes("review")) normalizedStatus = "In Review";
-          else if (
-            lowerStatus.includes("inactive") ||
-            lowerStatus.includes("in active")
-          )
-            normalizedStatus = "In-Active";
-          else if (lowerStatus === "active") normalizedStatus = "Active";
-          else if (lowerStatus === "draft") normalizedStatus = "Draft";
+        //   // Normalize status values
+        //   const lowerStatus = rawStatus.toLowerCase().replace(/[-_]/g, " ");
+        //   if (lowerStatus.includes("review")) normalizedStatus = "In Review";
+        //   else if (
+        //     lowerStatus.includes("inactive") ||
+        //     lowerStatus.includes("in active")
+        //   )
+        //     normalizedStatus = "In-Active";
+        //   else if (lowerStatus === "active") normalizedStatus = "Active";
+        //   else if (lowerStatus === "draft") normalizedStatus = "Draft";
 
-          // Parse experience range
-          const experience = parseExperienceRange(job.experience_range);
+        //   // Parse experience range
+        //   const experience = parseExperienceRange(job.experience_range);
 
-          return {
-            id: job.id || job.slug || "",
-            title: job.title || "",
-            status: normalizedStatus,
-            minExperience: experience.min,
-            maxExperience: experience.max,
-            companyName: job.company_name ?? "",
-            skills: job.primary_skills || [],
-            location: job.city?.name + ", " + job.country?.name || "",
-          };
-        });
+        //   return {
+        //     id: job.id || job.slug || "",
+        //     title: job.title || "",
+        //     status: normalizedStatus,
+        //     minExperience: experience.min,
+        //     maxExperience: experience.max,
+        //     companyName: job.company_name ?? "",
+        //     skills: job.primary_skills || [],
+        //     location: job.city?.name + ", " + job.country?.name || "",
+        //     slug: job.slug || "",
+        //   };
+        // });
 
-        setJobs(mappedJobs);
+        setJobs(data);
 
         // Update pagination from meta
         if (meta.pagination) {
@@ -320,8 +324,23 @@ export default function RecruiterJobs() {
         ) : (
           <div className="grid grid-cols-1 md:grid-cols-2  gap-4">
             {jobs.length > 0 ? (
-              jobs.map((job) => {
-                return <JobCard key={job.id} {...job} />;
+              jobs.map((job, index) => {
+                return (
+                  <JobCard
+                    key={index}
+                    id={job.id}
+                    title={job.title}
+                    status={job.status}
+                    minExperience={job.minExperience || 0}
+                    maxExperience={job.maxExperience || 0}
+                    companyName={job.company_name}
+                    skills={job.skills || job.primary_skills}
+                    location={job.location}
+                    slug={job.slug}
+                    applicants={job.applicants}
+                    experience_range={job.experience_range}
+                  />
+                );
               })
             ) : (
               <div className="col-span-full text-center py-8">

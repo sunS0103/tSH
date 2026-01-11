@@ -6,12 +6,14 @@ export default function FinalStartSection({
   payment,
   onUserAssessmentIdChange,
   candidate_status,
+  is_free_plan_available,
 }: {
   assessment_id: string;
+  is_free_plan_available: boolean;
   payment: {
     initial_paid: boolean;
     initial_payment_status: "PAID";
-    package_type: "BASIC" | "PREMIUM" | "PLATINUM";
+    package_type: "FREE" | "BASIC" | "PREMIUM" | "PLATINUM";
     purchase_status: "ACTIVE" | "INACTIVE";
     purchased_at: number;
   };
@@ -45,6 +47,7 @@ export default function FinalStartSection({
           assessment_id={assessment_id}
           payment={payment}
           onUserAssessmentIdChange={onUserAssessmentIdChange}
+          is_free_plan_available={is_free_plan_available}
         />
       </div>
       {candidate_status === "INVITED" && (
