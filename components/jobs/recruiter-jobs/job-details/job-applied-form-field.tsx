@@ -17,21 +17,26 @@ export default function JobAppliedFormField({
         <h2 className="text-lg font-semibold text-black">Apply form Fields</h2>
       </div>
 
-      {/* Fields List */}
-      <ul className="grid grid-cols-1 sm:grid-cols-2 gap-3 p-6 w-full list-none">
-        {allFields.map((field, index) => (
-          <li key={index} className="flex items-start gap-4 min-w-0 px-2">
-            {/* Purple Bullet Point */}
-            <div className="flex items-center shrink-0 self-stretch">
-              <div className="size-2 bg-primary-200 rounded-full shrink-0" />
-            </div>
-            {/* Field Text */}
-            <span className="text-base text-gray-800 font-medium leading-normal">
-              {field}
-            </span>
-          </li>
-        ))}
-      </ul>
+      {allFields.length <= 0 ? (
+        <div className="p-6 text-gray-500">
+          There are no apply form fields for this job.
+        </div>
+      ) : (
+        <ul className="grid grid-cols-1 sm:grid-cols-2 gap-3 p-6 w-full list-none">
+          {allFields.map((field, index) => (
+            <li key={index} className="flex items-start gap-4 min-w-0 px-2">
+              {/* Purple Bullet Point */}
+              <div className="flex items-center shrink-0 self-stretch">
+                <div className="size-2 bg-primary-200 rounded-full shrink-0" />
+              </div>
+              {/* Field Text */}
+              <span className="text-base text-gray-800 font-medium leading-normal">
+                {field}
+              </span>
+            </li>
+          ))}
+        </ul>
+      )}
     </div>
   );
 }

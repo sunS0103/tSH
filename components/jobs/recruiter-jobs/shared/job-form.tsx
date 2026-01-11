@@ -167,7 +167,7 @@ function transformJobToFormData(job: RecruiterJob): Partial<JobFormData> {
   const experienceMinYears = job.experience_min_years || 0;
   const experienceMaxYears = job.experience_max_years || 0;
   const experienceMin =
-    experienceMinYears && experienceMaxYears
+    experienceMinYears >= 0 && experienceMaxYears >= 0
       ? `${experienceMinYears}-${experienceMaxYears} Years`
       : "";
 
@@ -199,13 +199,17 @@ function transformJobToFormData(job: RecruiterJob): Partial<JobFormData> {
         .filter((name: string) => name !== "")
     : [];
 
-  // Transform work_modes back to lowercase array
-  const workMode = job.work_modes
-    ? job.work_modes.map((mode: string) => mode.toLowerCase())
+  // Transform work_mode back to lowercase array
+  const workMode = job.work_mode
+    ? job.work_mode.map((mode: string) => mode.toLowerCase())
     : [];
 
   // Transform custom_fields back to apply_form_fields
-  const applyFormFields = job.custom_fields || [];
+  // The API returns all fields (default 5 + custom), but we only store custom fields in apply_form_fields
+  // Default fields are: Current Company, Notice Period, Expected CTC, Visa status, About yourself
+  const allFields = job.custom_fields || [];
+  // Skip the first 5 default fields, only keep custom fields added by recruiter
+  const applyFormFields = allFields.length > 5 ? allFields.slice(5) : [];
 
   return {
     company_name: job.company_name || "",
@@ -278,7 +282,16 @@ function transformFormDataToPayload(data: JobFormData) {
       }))
     : [];
 
-  // Transform custom fields
+  // Default apply form fields (always included)
+  const defaultFields = [
+    { title: "Current Company", type: "text" },
+    { title: "Notice Period", type: "text" },
+    { title: "Expected CTC", type: "text" },
+    { title: "Visa status", type: "text" },
+    { title: "About yourself", type: "textarea" },
+  ];
+
+  // Transform custom fields (fields added by recruiter beyond the default 5)
   const customFields =
     data.apply_form_fields &&
     Array.isArray(data.apply_form_fields) &&
@@ -290,6 +303,9 @@ function transformFormDataToPayload(data: JobFormData) {
           })
         )
       : [];
+
+  // Combine default fields with custom fields
+  const allCustomFields = [...defaultFields, ...customFields];
 
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const payload: any = {
@@ -310,8 +326,8 @@ function transformFormDataToPayload(data: JobFormData) {
       currency: "INR",
       period: "LPA",
     },
-    custom_fields: customFields,
-    work_modes: workModes,
+    custom_fields: allCustomFields,
+    work_mode: workModes,
     skills: skills,
     mandate_assessment: Array.isArray(data.mandate_assessment)
       ? data.mandate_assessment.map((item) => {

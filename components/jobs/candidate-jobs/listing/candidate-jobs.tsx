@@ -1,74 +1,23 @@
-"use client";
-
-import {
-  getRecruiterJobs,
-  getRecruiterJobsFilters,
-} from "@/api/jobs/recruiter";
-import { Input } from "@/components/ui/input";
 import { Icon } from "@iconify/react";
-import { useEffect, useState, useRef, useCallback } from "react";
-import { toast } from "sonner";
-import AssessmentPagination from "@/components/assessments/assessment-pagination";
-import JobCard from "./job-card";
-import JobFilterSheet from "./job-filter-sheet";
-import JobFilterSidebar from "./job-filter-sidebar";
-import NoDataFound from "@/components/common/no-data-found";
+import JobFilterSidebar from "../../recruiter-jobs/listing/job-filter-sidebar";
+import { Input } from "@/components/ui/input";
+import JobFilterSheet from "../../recruiter-jobs/listing/job-filter-sheet";
 import { Loader } from "@/components/ui/loader";
-import { RecruiterJob } from "@/types/job";
+import AssessmentPagination from "@/components/assessments/assessment-pagination";
+import { useCallback, useEffect, useRef, useState } from "react";
+import {
+  getCandidateJobs,
+  getCandidateJobsFilters,
+} from "@/api/jobs/candidate";
+import { toast } from "sonner";
+import { FilterResponse } from "../../recruiter-jobs/listing/recruiter-jobs";
+import CandidateJobCard from "./candidate-job-card";
+import NoDataFound from "@/components/common/no-data-found";
+import { Job } from "../../recruiter-jobs/listing/types";
+import AssessmentOrJobHeader from "@/components/candidates/assessment-or-job-header";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 
-interface Job {
-  company_name: string;
-  id: string;
-  slug: string;
-  title: string;
-  status: string;
-  minExperience?: number;
-  maxExperience?: number;
-  skills: string[];
-  primary_skills: string[];
-  location: string;
-  applicants: number;
-  experience_range?: string;
-}
-
-export interface OptionItem {
-  id: string;
-  title: string;
-  value: string;
-}
-
-// Technology wrapper
-export interface WorkModeBlock {
-  work_mode: OptionItem[];
-}
-
-// Skills wrapper
-export interface SkillsBlock {
-  primary_skills: OptionItem[];
-}
-
-export interface StatusBlock {
-  status: OptionItem[];
-}
-
-export interface YearsOfExperience {
-  years_of_experience: OptionItem[];
-}
-
-export interface AssessmentsBlock {
-  assessments: OptionItem[];
-}
-
-// Final API response type
-export type FilterResponse = Array<
-  | WorkModeBlock
-  | SkillsBlock
-  | StatusBlock
-  | YearsOfExperience
-  | AssessmentsBlock
->;
-
-export default function RecruiterJobs() {
+export default function CandidateJobs() {
   const ITEMS_PER_PAGE = 10;
   const [searchQuery, setSearchQuery] = useState("");
   const [debouncedSearchQuery, setDebouncedSearchQuery] = useState("");
@@ -78,12 +27,14 @@ export default function RecruiterJobs() {
   const [isLoading, setIsLoading] = useState(true);
   const [totalPages, setTotalPages] = useState(1);
   const debounceTimerRef = useRef<NodeJS.Timeout | null>(null);
+  //   const [filterItems, setFilterItems] = useState<FilterResponse>([]);
   const [filterItems, setFilterItems] = useState<FilterResponse>([]);
+  const [selectedTab, setSelectedTab] = useState("all");
 
   useEffect(() => {
     const fetchFilters = async () => {
       setIsLoading(true);
-      await getRecruiterJobsFilters()
+      await getCandidateJobsFilters()
         .then((res) => {
           setFilterItems(res.data);
         })
@@ -96,27 +47,6 @@ export default function RecruiterJobs() {
     };
     fetchFilters();
   }, []);
-
-  // Helper function to parse experience range (e.g., "6-10 Years" -> { min: 6, max: 10 })
-  const parseExperienceRange = (
-    experienceRange: string | null | undefined
-  ): { min: number; max: number } => {
-    if (!experienceRange) return { min: 0, max: 0 };
-
-    const match = experienceRange.match(/(\d+)\s*-\s*(\d+)/);
-    if (match) {
-      return { min: parseInt(match[1], 10), max: parseInt(match[2], 10) };
-    }
-
-    // Handle single number or "X+ Years" format
-    const singleMatch = experienceRange.match(/(\d+)/);
-    if (singleMatch) {
-      const num = parseInt(singleMatch[1], 10);
-      return { min: num, max: num };
-    }
-
-    return { min: 0, max: 0 };
-  };
 
   // Debounce search query
   useEffect(() => {
@@ -143,33 +73,21 @@ export default function RecruiterJobs() {
   const getFilterType = useCallback(
     (
       filterId: string
-    ):
-      | "work_mode"
-      | "status"
-      | "primary_skills"
-      | "years_of_experience"
-      | null => {
+    ): "work_mode" | "assessments" | "primary_skills" | null => {
       for (const group of filterItems) {
         if ("work_mode" in group) {
           if (group.work_mode.some((item) => item.value === filterId)) {
             return "work_mode";
           }
         }
+        if ("assessments" in group) {
+          if (group.assessments.some((item) => item.value === filterId)) {
+            return "assessments";
+          }
+        }
         if ("primary_skills" in group) {
           if (group.primary_skills.some((item) => item.value === filterId)) {
             return "primary_skills";
-          }
-        }
-        if ("status" in group) {
-          if (group.status.some((item) => item.value === filterId)) {
-            return "status";
-          }
-        }
-        if ("years_of_experience" in group) {
-          if (
-            group.years_of_experience.some((item) => item.value === filterId)
-          ) {
-            return "years_of_experience";
           }
         }
       }
@@ -187,32 +105,45 @@ export default function RecruiterJobs() {
         const primarySkillsFilters = selectedFilters.filter(
           (filterId) => getFilterType(filterId) === "primary_skills"
         );
-        const statusFilters = selectedFilters.filter(
-          (filterId) => getFilterType(filterId) === "status"
-        );
-        const yearsOfExperienceFilters = selectedFilters.filter(
-          (filterId) => getFilterType(filterId) === "years_of_experience"
+        const assessmentsFilters = selectedFilters.filter(
+          (filterId) => getFilterType(filterId) === "assessments"
         );
 
         setIsLoading(true);
-        const response = await getRecruiterJobs({
-          page: currentPage,
-          pageSize: ITEMS_PER_PAGE,
-          query: debouncedSearchQuery.trim() || undefined,
-          sortBy: "created_at",
-          sortDirection: "desc",
-          work_mode: workModeFilters,
-          primary_skills: primarySkillsFilters,
-          status: statusFilters,
-          years_of_experience: yearsOfExperienceFilters,
-        });
+
+        let res;
+
+        if (selectedTab === "all") {
+          const response = await getCandidateJobs({
+            page: currentPage,
+            pageSize: ITEMS_PER_PAGE,
+            query: debouncedSearchQuery.trim() || undefined,
+            sortBy: "created_at",
+            sortDirection: "desc",
+            work_mode: workModeFilters,
+            primary_skills: primarySkillsFilters,
+            assessments: assessmentsFilters,
+          });
+          res = response;
+        } else if (selectedTab === "applied") {
+          const response = await getCandidateJobs({
+            page: currentPage,
+            pageSize: ITEMS_PER_PAGE,
+            query: debouncedSearchQuery.trim() || undefined,
+            sortBy: "created_at",
+            sortDirection: "desc",
+            applied_only: 1,
+          });
+
+          res = response;
+        }
 
         // Handle the API response structure: { success, message, data, meta }
-        const data = response?.data || [];
-        const meta = response?.meta || {};
+        // const data = response?.data || [];
+        const meta = res?.meta || {};
 
         // Map API response to Job interface
-        // const mappedJobs: Job[] = data.map((job: RecruiterJob) => {
+        // const mappedJobs: any[] = data.map((job: any) => {
         //   const rawStatus = job.status || "";
         //   let normalizedStatus = rawStatus;
 
@@ -239,11 +170,10 @@ export default function RecruiterJobs() {
         //     companyName: job.company_name ?? "",
         //     skills: job.primary_skills || [],
         //     location: job.city?.name + ", " + job.country?.name || "",
-        //     slug: job.slug || "",
         //   };
         // });
 
-        setJobs(data);
+        setJobs(res.data);
 
         // Update pagination from meta
         if (meta.pagination) {
@@ -264,11 +194,17 @@ export default function RecruiterJobs() {
     filterItems,
     selectedFilters,
     getFilterType,
+    selectedTab,
   ]);
 
   const handleRefreshFilters = () => {
     setSelectedFilters([]);
     setSearchQuery("");
+    setCurrentPage(1);
+  };
+
+  const handleTabChange = (value: string) => {
+    setSelectedTab(value);
     setCurrentPage(1);
   };
 
@@ -287,9 +223,9 @@ export default function RecruiterJobs() {
       {/* Main Content */}
       <div className="flex-1 min-w-0 pb-8">
         <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 mb-4">
-          <h1 className="text-2xl font-bold font-sans text-primary-600">
-            Jobs
-          </h1>
+          <div>
+            <AssessmentOrJobHeader />
+          </div>
 
           <div className="flex items-center gap-3 w-full md:w-auto">
             <div className="relative w-full md:w-80">
@@ -318,27 +254,53 @@ export default function RecruiterJobs() {
           </div>
         </div>
 
+        <Tabs
+          value={selectedTab}
+          onValueChange={handleTabChange}
+          className="mb-3"
+        >
+          <TabsList className="rounded-full bg-white border border-gray-200">
+            <TabsTrigger
+              value="all"
+              className="aria-selected:text-primary rounded-full"
+            >
+              All Jobs
+            </TabsTrigger>
+            <TabsTrigger
+              value="applied"
+              className="aria-selected:text-primary rounded-full"
+            >
+              Applied Jobs
+            </TabsTrigger>
+          </TabsList>
+          {/* Tabs content for all and taken assessments for screen readers */}
+          <TabsContent value="all" className="sr-only">
+            <span>All jobs</span>
+          </TabsContent>
+          <TabsContent value="applied" className="sr-only">
+            <span>Applied jobs</span>
+          </TabsContent>
+        </Tabs>
+
         {/* Job List */}
         {isLoading ? (
           <Loader show={isLoading} />
         ) : (
           <div className="grid grid-cols-1 md:grid-cols-2  gap-4">
             {jobs.length > 0 ? (
-              jobs.map((job, index) => {
+              jobs.map((job) => {
                 return (
-                  <JobCard
-                    key={index}
+                  <CandidateJobCard
+                    key={job.id}
                     id={job.id}
                     title={job.title}
-                    status={job.status}
-                    minExperience={job.minExperience || 0}
-                    maxExperience={job.maxExperience || 0}
-                    companyName={job.company_name}
-                    skills={job.skills || job.primary_skills}
-                    location={job.location}
-                    slug={job.slug}
-                    applicants={job.applicants}
+                    company_name={job.company_name}
                     experience_range={job.experience_range}
+                    work_mode={job.work_mode}
+                    relevant_assessments={job.relevant_assessments}
+                    city={job.city}
+                    country={job.country}
+                    slug={job.slug}
                   />
                 );
               })
