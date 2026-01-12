@@ -1,5 +1,5 @@
-export const dynamic = "force-dynamic";
+import DashboardWrapper from "@/components/dashboard/dashboard-wrapper";
 
-export default function Page() {
-  return <div>Dashboard</div>;
+export default function DashboardPage() {
+  return <DashboardWrapper />;
 }
