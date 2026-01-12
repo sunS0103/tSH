@@ -141,11 +141,15 @@ export default function InviteDialog({
     // Small delay to ensure the SelectContent is rendered
     const timeoutId = setTimeout(() => {
       // Find the scrollable element - try SelectContent first, then viewport
-      const selectContent = document.querySelector('[data-slot="select-content"]') as HTMLElement;
+      const selectContent = document.querySelector(
+        '[data-slot="select-content"]'
+      ) as HTMLElement;
       if (!selectContent) return;
-      
+
       // The SelectContent itself might be scrollable, or the viewport inside
-      const viewport = selectContent.querySelector('div[class*="p-1"]') as HTMLElement || selectContent;
+      const viewport =
+        (selectContent.querySelector('div[class*="p-1"]') as HTMLElement) ||
+        selectContent;
 
       const handleScroll = () => {
         if (loadingMore || !hasMore) return;
@@ -163,10 +167,10 @@ export default function InviteDialog({
         }
       };
 
-      viewport.addEventListener('scroll', handleScroll);
+      viewport.addEventListener("scroll", handleScroll);
 
       cleanup = () => {
-        viewport.removeEventListener('scroll', handleScroll);
+        viewport.removeEventListener("scroll", handleScroll);
       };
     }, 100);
 
@@ -242,7 +246,10 @@ export default function InviteDialog({
                   </SelectTrigger>
                   <SelectContent className="max-h-[300px]">
                     {items.map((item) => (
-                      <SelectItem key={item.slug || item.id} value={item.slug || item.id}>
+                      <SelectItem
+                        key={item.slug || item.id}
+                        value={item.slug || item.id}
+                      >
                         {item.title}
                       </SelectItem>
                     ))}
@@ -267,7 +274,6 @@ export default function InviteDialog({
               <Button
                 className="h-8 px-4 bg-primary-500 hover:bg-primary-600 text-white rounded-lg text-sm font-normal font-sans"
                 onClick={() => {
-                  console.log(`Submitting ${mode}:`, selectedItem);
                   onOpenChange(false);
                 }}
                 disabled={!selectedItem}

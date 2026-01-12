@@ -15,22 +15,28 @@ export default function JobDetailsSection({ job }: { job: RecruiterJob }) {
 
   // Format experience
   const experienceText =
-    job.experience_min_years !== undefined &&
-    job.experience_max_years !== undefined
+    job.experience_min_years >= 0 && job.experience_max_years >= 0
       ? `${job.experience_min_years} - ${job.experience_max_years} Years`
-      : null;
+      : "-";
 
   // Format work modes
   const workModesText =
-    job.work_modes && job.work_modes.length > 0
-      ? job.work_modes.join(", ")
-      : null;
+    job.work_mode && job.work_mode.length > 0 ? job.work_mode.join(", ") : null;
 
   // Format skills
-  const skillsText =
+  // Support both `primary_skills` and `skills` keys
+
+  const primarySkills =
     job.skills && job.skills.length > 0
-      ? job.skills.map((skill) => skill.skill?.name || "").join(", ")
+      ? job.skills.map((skill) => skill?.name).join(", ")
       : null;
+
+  const skills =
+    job.skills && job.skills.length > 0
+      ? job.skills.map((skill) => skill.skill?.name).join(", ")
+      : null;
+
+  const skillsText = primarySkills || skills || "-";
 
   // Format job serving location
   const jobWorkType =
@@ -61,24 +67,33 @@ export default function JobDetailsSection({ job }: { job: RecruiterJob }) {
     { label: "Work Mode", value: workModesText },
     { label: "Years of Experience", value: experienceText },
     { label: "Notice Period", value: job.required_notice_period },
-    { label: "Primary Skill Set", value: skillsText },
   ];
 
   return (
-    <div className="bg-white border border-gray-200 rounded-2xl p-4 flex flex-col gap-3 w-full">
+    <div className="space-y-3">
       {/* Details Grid */}
-      <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-2 w-full">
+      <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-3 w-full">
         {detailFields.map((field, index) => (
           <DetailItem key={index} label={field.label} value={field.value} />
         ))}
       </div>
 
+      <div className="flex flex-col gap-1 w-full">
+        <p className="text-xs text-gray-900 font-normal">Primary Skill Set</p>
+        <p className="text-base text-black font-medium wrap-break-words">
+          {skillsText || "-"}
+        </p>
+      </div>
+
       {/* Job Description (Full Width) */}
       <div className="flex flex-col gap-1 w-full">
         <p className="text-xs text-gray-900 font-normal">Job Description</p>
-        <p className="text-base text-black font-normal leading-normal wrap-break-words">
-          {job.description || "-"}
-        </p>
+        <div className="text-base text-black font-normal leading-normal wrap-break-words">
+          <div
+            className="prose prose-sm max-w-none [&_ul]:list-disc [&_ul]:ml-4 [&_ul]:my-2 [&_ol]:list-decimal [&_ol]:ml-4 [&_ol]:my-2 [&_li]:mb-1 [&_li]:wrap-break-words"
+            dangerouslySetInnerHTML={{ __html: job.description || "-" }}
+          />
+        </div>
       </div>
     </div>
   );

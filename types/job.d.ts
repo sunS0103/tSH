@@ -24,7 +24,8 @@ export interface RecruiterJob {
 
   compensation: Compensation;
 
-  work_modes: WorkMode[];
+  work_mode: WorkMode[];
+  work_mode?: WorkMode[];
 
   skills: JobSkill[];
   primary_skills?: JobSkill[];
@@ -32,6 +33,11 @@ export interface RecruiterJob {
   custom_fields: CustomField[];
 
   mandate_assessment: { id: string; title: string }[] | [] | null;
+
+  relevant_assessments?:
+    | { id: string; title: string; slug?: string; assessment_id?: string }[]
+    | []
+    | null;
 
   recruiter: Recruiter;
 
@@ -65,6 +71,8 @@ export interface JobSkill {
   skill_id: number;
   is_required: boolean;
   skill: Skill;
+  id?: string;
+  name?: string;
 }
 
 export interface Skill {
@@ -79,8 +87,10 @@ export interface SkillCategory {
 }
 
 export interface CustomField {
+  id?: string | number;
   title: string;
   type: "text" | "number" | "select" | string;
+  value?: string;
 }
 
 export interface Recruiter {

@@ -60,9 +60,7 @@ export function WorkModeMultiSelect({
           variant="outline"
           role="combobox"
           className={cn(
-            "h-8 w-full justify-between bg-transparent text-left font-normal",
-            "border-input hover:bg-transparent",
-            "text-sm",
+            "h-9 w-full justify-between bg-transparent text-left font-normal border border-gray-900",
             className
           )}
           disabled={disabled}
@@ -117,5 +115,3 @@ export function WorkModeMultiSelect({
     </Popover>
   );
 }
-
-

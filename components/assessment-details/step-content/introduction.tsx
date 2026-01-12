@@ -18,7 +18,7 @@ export default function AssessmentIntroduction({
     ...(assessment.duration && assessment.duration > 0
       ? [
           {
-            icon: "lineicons:stopwatch",
+            icon: "material-symbols:location-on-outline-rounded",
             label: "Duration",
             value: formatDurationWithSeconds(assessment.duration || 0),
             bgColor: "bg-info-50",

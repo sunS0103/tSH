@@ -21,7 +21,7 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { Switch } from "@/components/ui/switch";
-import { Textarea } from "@/components/ui/textarea";
+import TiptapEditor from "@/components/ui/tiptap-editor";
 import { WorkModeMultiSelect } from "@/components/ui/work-mode-multi-select";
 import { jobFormSchema, type JobFormData } from "@/validation/job";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -91,6 +91,7 @@ export default function JobFormBase({
   // Note: `as any` is used here due to a type incompatibility between
   // react-hook-form's resolver types and zodResolver. This is a known issue
   // and doesn't affect runtime behavior. The form is still fully type-safe.
+
   const form = useForm<JobFormData>({
     resolver: zodResolver(jobFormSchema),
     defaultValues: {
@@ -535,11 +536,13 @@ export default function JobFormBase({
                 <FormItem>
                   <FormLabel>Job Description</FormLabel>
                   <FormControl>
-                    <Textarea
-                      {...field}
+                    <TiptapEditor
+                      value={field.value || ""}
+                      onChange={field.onChange}
                       placeholder="Enter job description..."
-                      className="min-h-25 max-h-25 relative"
-                      rows={5}
+                      // className="h-50"
+                      minHeight="200px"
+                      maxHeight="200px"
                     />
                   </FormControl>
                   <FormMessage />

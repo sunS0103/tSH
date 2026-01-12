@@ -20,7 +20,7 @@ import { toast } from "sonner";
 export interface Payment {
   initial_paid: boolean;
   initial_payment_status: "PAID";
-  package_type: "BASIC" | "PREMIUM" | "PLATINUM";
+  package_type: "FREE" | "BASIC" | "PREMIUM" | "PLATINUM";
   purchase_status: "ACTIVE" | "INACTIVE";
   purchased_at: number;
 }
@@ -28,10 +28,13 @@ export interface Payment {
 export default function PaymentCards({
   assessment_id,
   payment,
+  is_free_plan_available,
+
   onUserAssessmentIdChange,
 }: {
   assessment_id: string;
   payment: Payment | null;
+  is_free_plan_available: boolean;
   onUserAssessmentIdChange?: ({
     id,
     payment,
@@ -45,7 +48,6 @@ export default function PaymentCards({
   const [paymentSuccessData, setPaymentSuccessData] = useState<Payment | null>(
     payment || null
   );
-  const [isPlatinumDialogOpen, setIsPlatinumDialogOpen] = useState(false);
 
   // Reset paymentSuccessData when payment prop becomes null (after proceed success)
   // This syncs the local state with parent state reset
@@ -195,7 +197,7 @@ export default function PaymentCards({
   };
 
   const handlePurchase = async (
-    packageType: "BASIC" | "PREMIUM" | "PLATINUM"
+    packageType: "FREE" | "BASIC" | "PREMIUM" | "PLATINUM"
   ) => {
     try {
       // 1️⃣ Create Order
@@ -203,6 +205,16 @@ export default function PaymentCards({
         assessment_id: assessment_id,
         packageType,
       });
+
+      if (packageType === "FREE") {
+        onUserAssessmentIdChange?.({
+          id: orderData?.data?.user_assessment_id,
+          payment: orderData?.data?.payment,
+          message: orderData?.message,
+        });
+        toast.success(orderData?.response?.data?.message || orderData?.message);
+        return;
+      }
 
       // 2️⃣ Open Razorpay
       openRazorpayCheckout({
@@ -214,155 +226,208 @@ export default function PaymentCards({
           toast.success("Assessment purchased successfully 🎉");
         },
       });
+
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
     } catch (err: any) {
-      toast.error(err.message || "Payment failed");
+      toast.error(err.response?.data?.message || "Payment failed");
     }
   };
 
   return (
-    <div className="flex gap-3 overflow-auto">
-      {cards.map((card) => (
-        <div
-          key={card.title}
-          className={cn(
-            "border border-gray-200 rounded-lg p-2 md:p-3 flex flex-col gap-10 justify-between min-w-64",
-            currentPayment?.initial_payment_status === "PAID" &&
-              currentPayment?.package_type === card.packageType &&
-              "border-primary-500"
-          )}
-        >
-          <div>
-            <div className="flex items-center justify-between w-full mb-1">
-              <div className="bg-gray-50 flex items-center justify-center rounded-lg size-8">
-                <Icon icon={card.icon} className="size-5 text-primary-500" />
-              </div>
-              <span className="text-xs italic underline text-primary-500">
-                {card.topNotes}
-              </span>
-            </div>
-            <div className="font-semibold text-xs md:text-sm mb-1">
-              {card.title}
-            </div>
-            <div
-              dangerouslySetInnerHTML={{ __html: card.description }}
-              className="text-xs text-gray-500 mb-2"
+    <div>
+      {is_free_plan_available && (
+        <div className="flex flex-col gap-4 mt-4   mb-6">
+          {/* Banner */}
+          <div className="bg-primary-50 border border-primary-200 rounded-xl p-4 flex items-start gap-3">
+            <Icon
+              icon="material-symbols:campaign-outline-rounded"
+              className="w-8 md:w-10 h-8 md:h-10 text-primary-600"
             />
-
-            <h2 className="text-lg md:text-xl font-bold">{card.price}</h2>
-
-            <hr className="my-4 border-gray-200" />
-
-            <div className="text-xs md:text-sm font-semibold">
-              What&apos;s Included
+            <div className="flex-1 flex flex-col gap-1">
+              <p className="text-sm md:text-base font-semibold text-gray-950">
+                Early Access: Take the assessment{" "}
+                <span className="text-primary-500">FREE!</span>
+              </p>
+              <p className="text-sm text-gray-700 font-normal">
+                Upgrade only to unlock full benefits after results.
+              </p>
             </div>
-
-            <ul className="list-disc list-outside text-gray-600 px-2 mt-2 marker:text-primary-100 pl-4">
-              {card.includedItems.map((item: string) => (
-                <li key={item} className="text-xs text-gray-600 font-medium">
-                  {item}
-                </li>
-              ))}
-            </ul>
           </div>
 
-          <div>
-            {/* Notes */}
-            {card.bottomNotes && (
-              <p className="text-xs text-gray-900 text-center mt-2">
-                {card.bottomNotes}
-              </p>
-            )}
-
-            {card.title === "Platinum Package" ? (
-              <Dialog
-                open={isPlatinumDialogOpen}
-                onOpenChange={setIsPlatinumDialogOpen}
-              >
-                <DialogTrigger asChild>
-                  <Button
-                    variant="secondary"
-                    className="w-full mt-1"
-                    disabled={
-                      currentPayment?.initial_payment_status === "PAID" &&
-                      currentPayment?.package_type === card.packageType
-                    }
-                  >
-                    {currentPayment?.initial_payment_status === "PAID" &&
-                    currentPayment?.package_type === card.packageType
-                      ? "Activated"
-                      : card.buttonText}
-                  </Button>
-                </DialogTrigger>
-                <DialogContent className="py-4 px-0 md:max-w-100!">
-                  <DialogHeader className="px-6">
-                    <DialogTitle className="text-left text-base md:text-lg">
-                      {card.title}
-                    </DialogTitle>
-                  </DialogHeader>
-                  <hr className="border-gray-200" />
-                  <div className="pl-6">
-                    <div className="text-xs md:text-sm font-semibold">
-                      Mentor Services Typically Include (May Vary):
-                    </div>
-
-                    <ul className="list-disc list-outside text-gray-600 px-2 mt-2 marker:text-primary-100 pl-4">
-                      {card.mentorServices?.map((item: string) => (
-                        <li
-                          key={item}
-                          className="text-xs md:text-sm text-gray-600 font-medium"
-                        >
-                          {item}
-                        </li>
-                      ))}
-                    </ul>
-                  </div>
-                  <div className="flex gap-2 justify-end px-6">
-                    <DialogClose asChild>
-                      <Button variant="secondary" className="">
-                        Cancel
-                      </Button>
-                    </DialogClose>
-                    <Button
-                      className=""
-                      onClick={() => {
-                        setIsPlatinumDialogOpen(false);
-                        // Use setTimeout to ensure dialog closes before opening Razorpay
-                        setTimeout(() => {
-                          handlePurchase(
-                            card.packageType as "BASIC" | "PREMIUM" | "PLATINUM"
-                          );
-                        }, 100);
-                      }}
-                    >
-                      Proceed
-                    </Button>
-                  </div>
-                </DialogContent>
-              </Dialog>
-            ) : (
-              <Button
-                variant="secondary"
-                className="w-full mt-1"
-                onClick={() =>
-                  handlePurchase(
-                    card.packageType as "BASIC" | "PREMIUM" | "PLATINUM"
-                  )
-                }
-                disabled={
-                  currentPayment?.initial_payment_status === "PAID" &&
-                  currentPayment?.package_type === card.packageType
-                }
-              >
-                {currentPayment?.initial_payment_status === "PAID" &&
-                currentPayment?.package_type === card.packageType
-                  ? "Activated"
-                  : card.buttonText}
-              </Button>
-            )}
+          {/* CTA Button */}
+          <div className="flex flex-col items-center gap-2">
+            <Button
+              disabled={
+                currentPayment?.package_type !== "FREE" &&
+                currentPayment?.package_type === null
+              }
+              className="w-fit px-10"
+              onClick={() => handlePurchase("FREE")}
+            >
+              Start Assessment - Free
+            </Button>
+            <p className="text-sm text-gray-600 text-center font-normal">
+              No payment required now
+            </p>
           </div>
         </div>
-      ))}
+      )}
+
+      <div className="flex gap-3 overflow-auto">
+        {cards.map((card) => (
+          <div
+            key={card.title}
+            className={cn(
+              "border border-gray-200 rounded-lg p-2 md:p-3 flex flex-col gap-10 justify-between min-w-64",
+              currentPayment?.initial_payment_status === "PAID" &&
+                currentPayment?.package_type === card.packageType &&
+                "border-primary-500"
+            )}
+          >
+            <div>
+              <div className="flex items-center justify-between w-full mb-1">
+                <div className="bg-gray-50 flex items-center justify-center rounded-lg size-8">
+                  <Icon icon={card.icon} className="size-5 text-primary-500" />
+                </div>
+                <span className="text-xs italic underline text-primary-500">
+                  {card.topNotes}
+                </span>
+              </div>
+              <div className="font-semibold text-xs md:text-sm mb-1">
+                {card.title}
+              </div>
+              <div
+                dangerouslySetInnerHTML={{ __html: card.description }}
+                className="text-xs text-gray-500 mb-2"
+              />
+
+              <h2 className="text-lg md:text-xl font-bold">{card.price}</h2>
+
+              <hr className="my-4 border-gray-200" />
+
+              <div className="text-xs md:text-sm font-semibold">
+                What&apos;s Included
+              </div>
+
+              <ul className="list-disc list-outside text-gray-600 px-2 mt-2 marker:text-primary-100 pl-4">
+                {card.includedItems.map((item: string) => (
+                  <li key={item} className="text-xs text-gray-600 font-medium">
+                    {item}
+                  </li>
+                ))}
+              </ul>
+            </div>
+
+            <div>
+              {/* Notes */}
+              {card.bottomNotes && (
+                <p className="text-xs text-gray-700 text-center mt-2">
+                  {card.bottomNotes}
+                </p>
+              )}
+
+              {card.title === "Platinum Package" ? (
+                <Dialog>
+                  <DialogTrigger asChild>
+                    <Button
+                      variant="secondary"
+                      className="w-full mt-1"
+                      onClick={() => {
+                        if (card.packageType === "PLATINUM") {
+                          handlePurchase(
+                            card.packageType as
+                              | "FREE"
+                              | "BASIC"
+                              | "PREMIUM"
+                              | "PLATINUM"
+                          );
+                        }
+                      }}
+                      disabled={
+                        currentPayment?.initial_payment_status === "PAID" &&
+                        currentPayment?.package_type === card.packageType
+                      }
+                    >
+                      {currentPayment?.initial_payment_status === "PAID" &&
+                      currentPayment?.package_type === card.packageType
+                        ? "Activated"
+                        : card.buttonText}
+                    </Button>
+                  </DialogTrigger>
+                  <DialogContent className="py-4 px-0 md:max-w-100!">
+                    <DialogHeader className="px-6">
+                      <DialogTitle className="text-left text-base md:text-lg">
+                        {card.title}
+                      </DialogTitle>
+                    </DialogHeader>
+                    <hr className="border-gray-200" />
+                    <div className="pl-6">
+                      <div className="text-xs md:text-sm font-semibold">
+                        Mentor Services Typically Include (May Vary):
+                      </div>
+
+                      <ul className="list-disc list-outside text-gray-600 px-2 mt-2 marker:text-primary-100 pl-4">
+                        {card.mentorServices?.map((item: string) => (
+                          <li
+                            key={item}
+                            className="text-xs md:text-sm text-gray-600 font-medium"
+                          >
+                            {item}
+                          </li>
+                        ))}
+                      </ul>
+                    </div>
+                    <div className="flex gap-2 justify-end px-6">
+                      <DialogClose asChild>
+                        <Button variant="secondary" className="">
+                          Cancel
+                        </Button>
+                      </DialogClose>
+                      <Button
+                        className=""
+                        onClick={() =>
+                          handlePurchase(
+                            card.packageType as
+                              | "FREE"
+                              | "BASIC"
+                              | "PREMIUM"
+                              | "PLATINUM"
+                          )
+                        }
+                      >
+                        Proceed
+                      </Button>
+                    </div>
+                  </DialogContent>
+                </Dialog>
+              ) : (
+                <Button
+                  variant="secondary"
+                  className="w-full mt-1"
+                  onClick={() =>
+                    handlePurchase(
+                      card.packageType as
+                        | "FREE"
+                        | "BASIC"
+                        | "PREMIUM"
+                        | "PLATINUM"
+                    )
+                  }
+                  disabled={
+                    currentPayment?.initial_payment_status === "PAID" &&
+                    currentPayment?.package_type === card.packageType
+                  }
+                >
+                  {currentPayment?.initial_payment_status === "PAID" &&
+                  currentPayment?.package_type === card.packageType
+                    ? "Activated"
+                    : card.buttonText}
+                </Button>
+              )}
+            </div>
+          </div>
+        ))}
+      </div>
     </div>
   );
 }

@@ -44,6 +44,7 @@ interface Assessment {
 export default function AssessmentAccordion({
   form,
 }: AssessmentAccordionProps) {
+  const ITEMS_PER_PAGE = 10;
   const [assessments, setAssessments] = useState<Assessment[]>([]);
   const [isLoadingAssessments, setIsLoadingAssessments] = useState(false);
   const [hasMore, setHasMore] = useState(true);
@@ -84,7 +85,7 @@ export default function AssessmentAccordion({
     try {
       const response = await getAssessmentList({
         page: pageNum,
-        pageSize: 10,
+        pageSize: ITEMS_PER_PAGE,
 
         sortBy: "created_at",
         sortDirection: "desc",

@@ -1,6 +1,6 @@
 import axios from "./axios";
 
-type PackageType = "BASIC" | "PREMIUM" | "PLATINUM";
+type PackageType = "FREE" | "BASIC" | "PREMIUM" | "PLATINUM";
 
 export const initiatePurchase = async ({
   assessment_id,
