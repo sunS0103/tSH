@@ -3,17 +3,21 @@ import axios from "../axios";
 export interface CandidateDashboardStatistics {
   applied_jobs: number;
   average_score: number;
-  recruiters_shortlisted_you: number;
+  recruiter_shortlisted_you: number;
 }
 
 export interface CandidateDashboardStatisticsResponse {
+  success: boolean;
   message: string;
-  data: CandidateDashboardStatistics;
+  greeting: string;
+  applied_jobs: number;
+  average_score: number;
+  recruiter_shortlisted_you: number;
 }
 
 export const getCandidateDashboardStatistics =
   async (): Promise<CandidateDashboardStatisticsResponse> => {
-    const response = await axios.get("/candidate/dashboard/statistics");
+    const response = await axios.get("/candidate/dashboard");
     return response.data;
   };
 

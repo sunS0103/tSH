@@ -3,6 +3,7 @@
 import { getCookie } from "cookies-next/client";
 import RecruiterDashboard from "./recruiter-dashboard";
 import CandidateDashboard from "./candidate-dashboard";
+import { Loader } from "../ui/loader";
 
 export default function DashboardWrapper() {
   const role = getCookie("user_role");
@@ -17,7 +18,7 @@ export default function DashboardWrapper() {
 
   return (
     <div className="flex items-center justify-center min-h-[400px]">
-      <div className="text-gray-500">Loading...</div>
+      <Loader/>
     </div>
   );
 }
