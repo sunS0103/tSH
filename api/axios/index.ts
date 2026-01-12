@@ -1,5 +1,10 @@
 import axios from "axios";
-import { getCookie, setCookie, deleteCookie } from "cookies-next/client";
+import {
+  getCookie,
+  setCookie,
+  deleteCookie,
+  getCookies,
+} from "cookies-next/client";
 
 const config = {
   baseURL: process.env.NEXT_PUBLIC_API_URL,
@@ -55,7 +60,13 @@ axiosClient.interceptors.response.use(
   },
   function (error) {
     if (error.response?.status === 401) {
-      deleteCookie("token");
+      const cookies = getCookies?.();
+      if (cookies && typeof cookies === "object" && cookies !== null) {
+        Object.keys(cookies).forEach((key: string) => {
+          deleteCookie(key);
+        });
+      }
+
       if (typeof window !== "undefined") {
         window.location.replace("/authentication");
       }

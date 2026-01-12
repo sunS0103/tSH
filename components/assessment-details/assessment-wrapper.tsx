@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useEffect, useLayoutEffect, useRef } from "react";
-import { useParams, usePathname } from "next/navigation";
+import { useParams, usePathname, useRouter } from "next/navigation";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 import AssessmentStepper from "./assessment-stepper";
@@ -60,6 +60,7 @@ export default function AssessmentWrapper({
   const params = useParams();
   const pathname = usePathname();
   const assessmentId = params?.id as string;
+  const router = useRouter();
 
   // Check if we're on an assessment route
   const isAssessmentRoute = pathname?.startsWith("/assessments/") ?? false;
@@ -255,6 +256,7 @@ export default function AssessmentWrapper({
           window.open(res.data.invite_link, "_blank");
           setUserAssessmentId(null);
           setAssessmentPayment(null);
+          router.push(`/assessments`);
         }
       })
       .catch((err) => {
@@ -275,8 +277,9 @@ export default function AssessmentWrapper({
       .then((res) => {
         if (res.success) {
           toast.success(res.message || "Exam link will send via email");
-          setUserAssessmentId(null);
-          setAssessmentPayment(null);
+          // setUserAssessmentId(null);
+          // setAssessmentPayment(null);
+          router.push(`/assessments`);
         }
       })
       .catch((err) => {
@@ -296,7 +299,7 @@ export default function AssessmentWrapper({
   };
 
   return (
-    <div className="flex flex-col h-[calc(100vh-240px)] sm:h-[calc(100vh-180px)] md:h-[calc(100vh-180px)] lg:h-[calc(100vh-190px)] mt-4 lg:mt-6">
+    <div className="flex flex-col mt-4 lg:mt-6 pb-20">
       <div className="flex flex-col lg:flex-row gap-6 flex-1">
         {/* Mobile Stepper - Horizontal (Fluid Layout) */}
         <div
@@ -331,129 +334,141 @@ export default function AssessmentWrapper({
         {/* Right Sidebar */}
         <AssessmentHelpVideo />
       </div>
-      {/* Navigation Buttons */}
-      <FluidLayout>
-        <div className="flex justify-end items-center gap-2 md:gap-3 bg-white p-4 border-y">
-          <Button
-            variant="secondary"
-            onClick={handleBack}
-            disabled={currentStep === 1}
-            className="flex items-center gap-1"
-          >
-            {currentStep === 6 && (
+      {/* Navigation Buttons - Fixed at Bottom */}
+      <div className="fixed bottom-0 left-0 right-0 z-50">
+        <FluidLayout>
+          <div className="flex justify-end items-center gap-2 md:gap-3 bg-white p-4 border-y border-t">
+            <Button
+              variant="secondary"
+              onClick={handleBack}
+              disabled={currentStep === 1}
+              className="flex items-center gap-1"
+            >
+              {currentStep === 6 && (
+                <>
+                  <Icon
+                    icon="material-symbols:arrow-back-ios-new-rounded"
+                    className="size-4 md:hidden"
+                  />
+                  <span className="md:block hidden">Back</span>
+                </>
+              )}
+              {currentStep !== 6 && <span className="block">Back</span>}
+            </Button>
+
+            {currentStep === totalSteps && (
               <>
-                <Icon
-                  icon="material-symbols:arrow-back-ios-new-rounded"
-                  className="size-4 md:hidden"
-                />
-                <span className="md:block hidden">Back</span>
+                <Dialog>
+                  <DialogTrigger asChild>
+                    <Button
+                      disabled={
+                        assessment.candidate_status !== null &&
+                        assessment.candidate_status !== "PENDING"
+                      }
+                      variant="secondary"
+                      className="text-xs md:text-sm px-2 md:px-4"
+                    >
+                      Start Assessment Later
+                    </Button>
+                  </DialogTrigger>
+                  <DialogContent className="py-4 px-0 md:max-w-100!">
+                    <DialogHeader className="px-6">
+                      <DialogTitle className="text-left text-base md:text-lg">
+                        Start Assessment Later
+                      </DialogTitle>
+                    </DialogHeader>
+                    <hr className="border-gray-200" />
+                    <div className="pl-6">
+                      <div className="text-xs md:text-sm font-semibold">
+                        If You’re Not Ready to Start Now
+                      </div>
+
+                      <ul className="list-disc list-outside text-gray-600 px-2 mt-2 marker:text-primary-100 pl-4">
+                        {assessmentLaterDetails?.map((item: string) => (
+                          <li
+                            key={item}
+                            className="text-xs md:text-sm text-gray-600 font-medium"
+                          >
+                            {item}
+                          </li>
+                        ))}
+                      </ul>
+                    </div>
+                    <div className="flex gap-2 justify-end px-6">
+                      <DialogClose asChild>
+                        <Button variant="secondary" className="">
+                          Cancel
+                        </Button>
+                      </DialogClose>
+
+                      <Button onClick={handleStartAssessmentLater}>
+                        Proceed
+                      </Button>
+                    </div>
+                  </DialogContent>
+                </Dialog>
+                <Dialog>
+                  <DialogTrigger asChild>
+                    <Button
+                      disabled={
+                        assessment.candidate_status !== null &&
+                        assessment.candidate_status !== "PENDING"
+                      }
+                      className="text-xs md:text-sm px-2 md:px-4"
+                    >
+                      Start Assessment Now
+                    </Button>
+                  </DialogTrigger>
+                  <DialogContent className="py-4 px-0 md:max-w-100!">
+                    <DialogHeader className="px-6">
+                      <DialogTitle className="text-left text-base md:text-lg">
+                        Start Assessment Now
+                      </DialogTitle>
+                    </DialogHeader>
+                    <hr className="border-gray-200" />
+                    <div className="pl-6">
+                      <div className="text-xs md:text-sm font-semibold">
+                        Prepare Before You Start
+                      </div>
+
+                      <ul className="list-disc list-outside text-gray-600 px-2 mt-2 marker:text-primary-100 pl-4">
+                        {assessmentNowDetails?.map((item: string) => (
+                          <li
+                            key={item}
+                            className="text-xs md:text-sm text-gray-600 font-medium"
+                          >
+                            {item}
+                          </li>
+                        ))}
+                      </ul>
+                    </div>
+                    <div className="flex gap-2 justify-end px-6">
+                      <DialogClose asChild>
+                        <Button variant="secondary" className="">
+                          Cancel
+                        </Button>
+                      </DialogClose>
+
+                      <Button className="" onClick={handleStartAssessmentNow}>
+                        Proceed
+                      </Button>
+                    </div>
+                  </DialogContent>
+                </Dialog>
               </>
             )}
-            {currentStep !== 6 && <span className="block">Back</span>}
-          </Button>
-
-          {currentStep === totalSteps && (
-            <>
-              <Dialog>
-                <DialogTrigger asChild>
-                  <Button
-                    variant="secondary"
-                    className="text-xs md:text-sm px-2 md:px-4"
-                  >
-                    Start Assessment Later
-                  </Button>
-                </DialogTrigger>
-                <DialogContent className="py-4 px-0 md:max-w-100!">
-                  <DialogHeader className="px-6">
-                    <DialogTitle className="text-left text-base md:text-lg">
-                      Start Assessment Later
-                    </DialogTitle>
-                  </DialogHeader>
-                  <hr className="border-gray-200" />
-                  <div className="pl-6">
-                    <div className="text-xs md:text-sm font-semibold">
-                      If You’re Not Ready to Start Now
-                    </div>
-
-                    <ul className="list-disc list-outside text-gray-600 px-2 mt-2 marker:text-primary-100 pl-4">
-                      {assessmentLaterDetails?.map((item: string) => (
-                        <li
-                          key={item}
-                          className="text-xs md:text-sm text-gray-600 font-medium"
-                        >
-                          {item}
-                        </li>
-                      ))}
-                    </ul>
-                  </div>
-                  <div className="flex gap-2 justify-end px-6">
-                    <DialogClose asChild>
-                      <Button variant="secondary" className="">
-                        Cancel
-                      </Button>
-                    </DialogClose>
-
-                    <Button className="" onClick={handleStartAssessmentLater}>
-                      Proceed
-                    </Button>
-                  </div>
-                </DialogContent>
-              </Dialog>
-              <Dialog>
-                <DialogTrigger asChild>
-                  <Button className="text-xs md:text-sm px-2 md:px-4">
-                    Start Assessment Now
-                  </Button>
-                </DialogTrigger>
-                <DialogContent className="py-4 px-0 md:max-w-100!">
-                  <DialogHeader className="px-6">
-                    <DialogTitle className="text-left text-base md:text-lg">
-                      Start Assessment Now
-                    </DialogTitle>
-                  </DialogHeader>
-                  <hr className="border-gray-200" />
-                  <div className="pl-6">
-                    <div className="text-xs md:text-sm font-semibold">
-                      Prepare Before You Start
-                    </div>
-
-                    <ul className="list-disc list-outside text-gray-600 px-2 mt-2 marker:text-primary-100 pl-4">
-                      {assessmentNowDetails?.map((item: string) => (
-                        <li
-                          key={item}
-                          className="text-xs md:text-sm text-gray-600 font-medium"
-                        >
-                          {item}
-                        </li>
-                      ))}
-                    </ul>
-                  </div>
-                  <div className="flex gap-2 justify-end px-6">
-                    <DialogClose asChild>
-                      <Button variant="secondary" className="">
-                        Cancel
-                      </Button>
-                    </DialogClose>
-
-                    <Button className="" onClick={handleStartAssessmentNow}>
-                      Proceed
-                    </Button>
-                  </div>
-                </DialogContent>
-              </Dialog>
-            </>
-          )}
-          {currentStep !== totalSteps && (
-            <Button
-              className="bg-primary text-white hover:bg-primary/90"
-              onClick={handleNext}
-              disabled={isNextDisabled}
-            >
-              Next
-            </Button>
-          )}
-        </div>
-      </FluidLayout>
+            {currentStep !== totalSteps && (
+              <Button
+                className="bg-primary text-white hover:bg-primary/90"
+                onClick={handleNext}
+                disabled={isNextDisabled}
+              >
+                Next
+              </Button>
+            )}
+          </div>
+        </FluidLayout>
+      </div>
     </div>
   );
 }

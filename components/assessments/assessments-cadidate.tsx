@@ -5,7 +5,7 @@ import { useState, useEffect, useCallback, useRef } from "react";
 const ITEMS_PER_PAGE = 12;
 
 import FilterSidebar from "./filter-sidebar";
-import AssessmentHeader from "./assessment-header";
+import AssessmentOrJobHeader from "../candidates/assessment-or-job-header";
 import AssessmentControls from "./assessment-controls";
 import AssessmentGrid from "./assessment-grid";
 import AssessmentPagination from "./assessment-pagination";
@@ -222,7 +222,7 @@ export default function AssessmentCandidate() {
         filterItem={filterItems}
       />
       <div className="flex-1">
-        <AssessmentHeader />
+        <AssessmentOrJobHeader />
         <AssessmentControls
           selectedTab={selectedTab}
           searchQuery={searchQuery}

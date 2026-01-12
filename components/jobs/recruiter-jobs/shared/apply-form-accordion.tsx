@@ -33,13 +33,9 @@ interface CustomField {
 }
 
 export default function ApplyFormAccordion({ form }: ApplyFormAccordionProps) {
-  const applyFormFields =
-    form
-      .getValues("apply_form_fields")
-      ?.slice(5, form.getValues("apply_form_fields")?.length) || [];
-
-  const [customFields, setCustomFields] =
-    useState<CustomField[]>(applyFormFields);
+  const [customFields, setCustomFields] = useState<CustomField[]>(
+    form.getValues("apply_form_fields") || []
+  );
   const [newFieldTitle, setNewFieldTitle] = useState("");
   const [newFieldType, setNewFieldType] = useState("text");
   const [fieldTitleError, setFieldTitleError] = useState("");

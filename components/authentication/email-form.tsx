@@ -354,7 +354,10 @@ export default function EmailForm({ role }: EmailFormProps) {
 
                 {timer > 0 && (
                   <div className="flex items-center gap-1 text-xs text-gray-900">
-                    <Icon icon="lineicons:stopwatch" className="size-3.5" />
+                    <Icon
+                      icon="material-symbols:location-on-outline-rounded"
+                      className="size-3.5"
+                    />
                     <span>{formatTime(timer)}</span>
                   </div>
                 )}

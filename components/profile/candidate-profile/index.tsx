@@ -288,7 +288,7 @@ export default function CandidateProfile({
       value: `${locationAndWorkPreferencesData?.preferred_cities
         .map((city) => city.name)
         .join(", ")}(${locationAndWorkPreferencesData?.preferred_work_modes
-        .map((mode) => mode.name)
+        ?.map((mode) => mode.name)
         .join(", ")})`,
     },
     {

@@ -3,7 +3,7 @@
 import { Badge } from "@/components/ui/badge";
 import { Icon } from "@iconify/react";
 import { cn } from "@/lib/utils";
-import { Job, JOB_STATUS } from "./types";
+import { Job } from "./types";
 import Link from "next/link";
 import {
   Tooltip,
@@ -17,7 +17,7 @@ interface JobCardProps extends Job {
 }
 
 export default function JobCard({
-  id,
+  slug,
   title,
   status,
   minExperience,
@@ -25,23 +25,47 @@ export default function JobCard({
   companyName,
   skills,
   location,
+  experience_range,
 }: JobCardProps) {
   const router = useRouter();
 
+  const formattedStatus = () => {
+    switch (status) {
+      case "active":
+        return "Active";
+      case "in_review":
+        return "In Review";
+      case "inactive":
+        return "In-Active";
+      case "draft":
+        return "Draft";
+      default:
+        return null;
+    }
+  };
+
   const getStatusColor = (status: string) => {
     switch (status) {
-      case JOB_STATUS.ACTIVE:
+      case "active":
         return "bg-primary-50 text-primary-600 border-transparent";
-      case JOB_STATUS.IN_REVIEW:
+      case "in_review":
         return "bg-blue-50 text-blue-500 border-transparent";
-      case JOB_STATUS.IN_ACTIVE:
+      case "inactive":
         return "bg-yellow-50 text-yellow-600 border-transparent";
-      case JOB_STATUS.DRAFT:
+      case "draft":
         return "bg-gray-100 text-gray-600 border-gray-200";
       default:
         return "bg-gray-100 text-gray-600";
     }
   };
+
+  let experienceRange;
+
+  if (minExperience && maxExperience) {
+    experienceRange = `${minExperience}-${maxExperience} Years`;
+  } else if (experience_range) {
+    experienceRange = experience_range;
+  }
 
   const visibleSkills = skills.slice(0, 2);
   const remainingSkills = skills.length - 2;
@@ -51,7 +75,7 @@ export default function JobCard({
   return (
     <div
       className="bg-white border border-gray-200 rounded-2xl flex flex-col justify-start items-start w-full hover:shadow-sm transition-shadow cursor-pointer"
-      onClick={() => router.push(`/jobs/${id}`)}
+      onClick={() => router.push(`/jobs/${slug}`)}
     >
       {/* Top Section Padding */}
       <div className="p-3 pb-0 w-full flex flex-col gap-4">
@@ -70,7 +94,7 @@ export default function JobCard({
             )}
           >
             <span className="text-[10px] italic font-normal font-sans text-center">
-              {status}
+              {formattedStatus()}
             </span>
           </div>
         </div>
@@ -84,7 +108,7 @@ export default function JobCard({
                 Years of Experience
               </span>
               <span className="text-xs font-normal font-sans text-gray-950">
-                {minExperience}-{maxExperience} Years
+                {experienceRange}
               </span>
             </div>
             <div className="flex-1 flex flex-col items-start gap-1">
@@ -169,10 +193,10 @@ export default function JobCard({
           </div>
 
           {/* Button */}
-          {(status === JOB_STATUS.ACTIVE ||
-            status === JOB_STATUS.IN_ACTIVE) && (
+          {(status === "active" || status === "inactive") && (
             <Link
-              href={`/jobs`}
+              href={`/jobs/${slug}/applicants-list`}
+              onClick={(e) => e.stopPropagation()}
               className="h-8 px-3 rounded-lg border border-primary-600 text-primary-600 hover:bg-primary-600 hover:text-white flex items-center gap-2 bg-transparent ml-auto sm:ml-0"
             >
               <span className="text-xs sm:text-sm font-normal font-sans">

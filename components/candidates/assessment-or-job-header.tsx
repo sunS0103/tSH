@@ -1,4 +1,4 @@
-export default function AssessmentHeader() {
+export default function AssessmentOrJobHeader() {
   return (
     <>
       <h2 className="text-xl md:text-2xl font-semibold">
@@ -22,4 +22,3 @@ export default function AssessmentHeader() {
     </>
   );
 }
-

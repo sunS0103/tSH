@@ -21,7 +21,9 @@ export default function JobDetails({ job }: { job: RecruiterJob }) {
         </div>
       </div>
       <div className="space-y-5 mb-24 md:mb-0">
-        <JobDetailsSection job={job} />
+        <div className="bg-white border border-gray-200 rounded-2xl p-4 flex flex-col gap-3 w-full">
+          <JobDetailsSection job={job} />
+        </div>
         <JobSelectedAssessment
           mandateAssessment={job.mandate_assessment || []}
         />

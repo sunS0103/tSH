@@ -20,6 +20,7 @@ export interface AssessmentCardProps {
   className?: string;
   score: number;
   selectedTab: string;
+  is_assessment_complete?: boolean;
 }
 
 export default function AssessmentCard({
@@ -168,7 +169,7 @@ export default function AssessmentCard({
       href={`/assessments/${slug}`}
       aria-label="Start assessment"
       className={cn(
-        "bg-white border border-gray-200 flex flex-col items-start justify-between rounded-2xl w-full group hover:shadow-lg duration-500 min-h-57",
+        "bg-white border border-gray-200 flex flex-col items-start justify-between rounded-2xl w-full group hover:shadow-lg duration-500 min-h-57 h-full",
         className
       )}
     >
