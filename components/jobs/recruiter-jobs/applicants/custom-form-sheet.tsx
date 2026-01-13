@@ -11,16 +11,22 @@ import {
 import { Icon } from "@iconify/react";
 import { XIcon } from "lucide-react";
 import { CustomField } from "@/types/job";
+import { cn } from "@/lib/utils";
+import { useEffect, useState } from "react";
+import { getRecruiterJobApplicantsCustomFields } from "@/api/jobs/recruiter";
 
 export interface CustomFormSheetProps {
   open: boolean;
+  jobId: string;
+  userId: string;
   onOpenChange: (open: boolean) => void;
   applicantName?: string;
   applicantData?: {
     first_name?: string | null;
     last_name?: string | null;
     email?: string | null;
-    phone?: string | null;
+    country_code?: string | null;
+    mobile_number?: string | null;
     location?: string;
     current_ctc?: string;
     experience?: string;
@@ -31,128 +37,97 @@ export interface CustomFormSheetProps {
     work_mode?: string;
     about_yourself?: string;
     total_score?: string;
+    application_id?: string;
+    application_status?: string;
   };
   customFields?: CustomField[];
   onThumbUp?: () => void;
   onHandshake?: () => void;
   onThumbDown?: () => void;
   showCloseIcon?: boolean;
+  isCustomFieldsPending?: boolean | null;
 }
 
 export default function CustomFormSheet({
+  jobId,
+  userId,
   open,
   onOpenChange,
-  applicantName,
   applicantData,
-  customFields = [],
   onThumbUp,
   onHandshake,
   onThumbDown,
   showCloseIcon = false,
 }: CustomFormSheetProps) {
-  // Get field value by title from customFields or applicantData
-  const getFieldValue = (fieldTitle: string): string => {
-    // First check customFields
-    const customField = customFields.find(
-      (field) => field.title.toLowerCase() === fieldTitle.toLowerCase()
-    );
-    if (customField?.value) {
-      return customField.value;
-    }
+  const [customFields, setCustomFields] = useState<CustomField[]>([]);
 
-    // Then check applicantData
-    const titleLower = fieldTitle.toLowerCase();
-    if (titleLower === "name") {
-      return (
-        applicantName ||
-        `${applicantData?.first_name || ""} ${
-          applicantData?.last_name || ""
-        }`.trim() ||
-        "-"
-      );
-    }
-    if (titleLower === "email id" || titleLower === "email") {
-      return applicantData?.email || "-";
-    }
-    if (titleLower === "mobile number" || titleLower === "phone") {
-      return applicantData?.phone || "-";
-    }
-    if (titleLower === "location") {
-      return applicantData?.location || "-";
-    }
-    if (titleLower === "current ctc") {
-      return applicantData?.current_ctc || "-";
-    }
-    if (titleLower === "years of experience" || titleLower === "experience") {
-      return applicantData?.experience || "-";
-    }
-    if (titleLower === "current company") {
-      return applicantData?.current_company || "-";
-    }
-    if (titleLower === "notice period") {
-      return applicantData?.notice_period || "-";
-    }
-    if (titleLower === "expected ctc") {
-      return applicantData?.expected_ctc || "-";
-    }
-    if (titleLower === "visa status") {
-      return applicantData?.visa_status || "-";
-    }
-    if (titleLower === "work mode") {
-      return applicantData?.work_mode || "-";
-    }
-    if (titleLower === "total score") {
-      return applicantData?.total_score || "-";
-    }
-    if (titleLower === "about yourself" || titleLower === "about") {
-      return applicantData?.about_yourself || "-";
-    }
+  useEffect(() => {
+    const fetchCustomFields = async () => {
+      const response = await getRecruiterJobApplicantsCustomFields({
+        jobId: jobId,
+        userId: userId,
+      });
+      return response.data;
+    };
 
-    return "-";
-  };
+    if (open) {
+      fetchCustomFields().then((response) => {
+        setCustomFields(response);
+      });
+    }
+  }, [open, jobId, userId]);
 
-  // All form fields in a single array
-  const formFields: Array<{
-    title: string;
-    value: string | null;
-    showSkeleton?: boolean;
-    lastName?: string | null;
-  }> = [
+  const staticFields = [
     {
       title: "Name",
-      value: applicantData?.first_name
-        ? `${applicantData.first_name}${
-            applicantData?.last_name ? ` ${applicantData.last_name}` : ""
-          }`.trim()
-        : null,
+      value: `${applicantData?.first_name} ${applicantData?.last_name}`,
+      type: "text",
       showSkeleton: !applicantData?.first_name,
       lastName: applicantData?.last_name || null,
     },
-    { title: "Total Score", value: getFieldValue("Total Score") },
+    { title: "Total Score", value: applicantData?.total_score, type: "text" },
     {
       title: "Mobile Number",
-      value: applicantData?.phone || null,
-      showSkeleton: !applicantData?.phone,
+      value: applicantData?.mobile_number,
+      type: "text",
     },
-    {
-      title: "Email ID",
-      value: applicantData?.email || null,
-      showSkeleton: !applicantData?.email,
-    },
-    { title: "Current CTC", value: getFieldValue("Current CTC") },
+    { title: "Email ID", value: applicantData?.email, type: "text" },
+    { title: "Current CTC", value: applicantData?.current_ctc, type: "text" },
     {
       title: "Years of Experience",
-      value: getFieldValue("Years of Experience"),
+      value: applicantData?.experience,
+      type: "text",
     },
-    { title: "Notice Period", value: getFieldValue("Notice Period") },
-    { title: "Location", value: getFieldValue("Location") },
-    { title: "Current Company", value: getFieldValue("Current Company") },
-    { title: "Expected CTC", value: getFieldValue("Expected CTC") },
-    { title: "Visa status", value: getFieldValue("Visa status") },
-    { title: "Work Mode", value: getFieldValue("Work Mode") },
   ];
 
-  const aboutYourself = getFieldValue("About yourself");
+  const allFields: Array<{
+    title: string;
+    value: string | null | undefined;
+    type: string;
+    showSkeleton?: boolean;
+    lastName?: string | null;
+  }> = [
+    ...staticFields,
+    ...customFields.map((field) => ({
+      title: field.title,
+      value: field.value,
+      type: field.type,
+      showSkeleton: false,
+    })),
+  ];
+
+  const formFields = allFields.map((field) => ({
+    title: field.title,
+    value: field.value,
+    type: field.type,
+    showSkeleton: field.showSkeleton,
+    lastName: field?.lastName || null,
+  }));
+
+  const inputFields = formFields.filter((field) => field.type === "text");
+  const textareaFields = formFields.filter(
+    (field) => field.type === "textarea"
+  );
 
   return (
     <Sheet open={open} onOpenChange={onOpenChange}>
@@ -175,6 +150,10 @@ export default function CustomFormSheet({
               variant="outline"
               size="sm"
               onClick={onThumbUp}
+              disabled={
+                applicantData?.application_status === "THUMBS_UP" ||
+                applicantData?.application_status === "HANDSHAKE"
+              }
               className="h-8 px-4 border-primary-500 text-primary-500 hover:bg-primary-500 hover:text-white rounded-lg"
             >
               <Icon
@@ -187,7 +166,12 @@ export default function CustomFormSheet({
               variant="outline"
               size="sm"
               onClick={onHandshake}
-              className="h-8 px-4 border-primary-500 text-primary-500 hover:bg-primary-500 hover:text-white rounded-lg"
+              disabled={applicantData?.application_status === "HANDSHAKE"}
+              className={cn(
+                "h-8 px-4 border-primary-500 text-primary-500 hover:bg-primary-500 hover:text-white rounded-lg disabled:opacity-100 disabled:cursor-not-allowed",
+                applicantData?.application_status === "HANDSHAKE" &&
+                  "bg-success-500 text-white hover:bg-success-500 hover:text-white border-success-500"
+              )}
             >
               <Icon
                 icon="material-symbols:handshake-outline"
@@ -199,6 +183,7 @@ export default function CustomFormSheet({
               variant="outline"
               size="sm"
               onClick={onThumbDown}
+              disabled={applicantData?.application_status === "HANDSHAKE"}
               className="h-8 px-4 border-primary-500 text-primary-500 hover:bg-primary-500 hover:text-white rounded-lg"
             >
               <Icon
@@ -213,14 +198,14 @@ export default function CustomFormSheet({
         <div className="flex flex-col gap-3">
           {/* Form Fields Grid */}
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-2">
-            {formFields.map((field) => (
+            {inputFields.map((field) => (
               <div key={field.title} className="flex flex-col gap-1">
                 <p className="text-xs font-normal text-gray-900">
                   {field.title}
                 </p>
                 {field.showSkeleton ? (
                   <div className="flex items-center gap-2">
-                    <span className="w-20 h-7 bg-gray-200 rounded" />
+                    <span className="w-16 h-7 bg-gray-200 rounded" />
                     {field.title === "Name" && field.lastName && (
                       <p className="text-base font-medium text-black">
                         {field.lastName}
@@ -236,12 +221,17 @@ export default function CustomFormSheet({
             ))}
           </div>
 
-          {/* About Yourself - Full Width */}
-          <div className="flex flex-col gap-1 pt-2">
-            <p className="text-xs font-normal text-gray-900">About yourself</p>
-            <p className="text-base font-normal text-black leading-normal">
-              {aboutYourself}
-            </p>
+          <div className="space-y-2">
+            {textareaFields.map((field) => (
+              <div key={field.title} className="flex flex-col">
+                <p className="text-xs font-normal text-gray-900">
+                  {field.title}
+                </p>
+                <p className="text-base font-medium text-black">
+                  {field.value || "-"}
+                </p>
+              </div>
+            ))}
           </div>
         </div>
       </SheetContent>

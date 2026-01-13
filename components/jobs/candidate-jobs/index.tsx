@@ -6,6 +6,8 @@ import { cookies } from "next/headers";
 import { CustomField, RecruiterJob } from "@/types/job";
 import JobApplyForm from "./job-details/job-apply-form";
 import ContactRecruiterFormDetails from "./job-details/contact-recruiter-form-details";
+import AdditionalDetailsForm from "./job-details/additional-details-form";
+import AdditionalDetails from "./job-details/additional-details";
 
 interface CandidateJob
   extends Omit<Partial<RecruiterJob>, "mandate_assessment" | "custom_fields"> {
@@ -65,13 +67,20 @@ export default async function CandidateJobDetails({
           <div className="text-sm text-gray-500">{job.company_name}</div>
         </div>
 
-        <div>
-          <JobApplyForm
-            isAssessmentNotCompleted={isAssessmentNotCompleted}
-            customFields={customFields}
-            jobId={job.slug}
-          />
-        </div>
+        <>
+          {job?.additional_details ? (
+            <AdditionalDetailsForm
+              additional_details={job.additional_details || []}
+              jobId={job.slug}
+            />
+          ) : (
+            <JobApplyForm
+              isAssessmentNotCompleted={isAssessmentNotCompleted}
+              customFields={customFields}
+              jobId={job.slug}
+            />
+          )}
+        </>
       </div>
       <div className="bg-white border border-gray-200 rounded-2xl p-4 flex flex-col gap-3 w-full mt-4">
         <JobDetailsSection job={job as RecruiterJob} />
@@ -110,6 +119,12 @@ export default async function CandidateJobDetails({
       {job.custom_fields && (
         <ContactRecruiterFormDetails customFields={customFields || []} />
       )}
+      {job?.additional_details &&
+        job.additional_details?.some((detail) => detail.value) && (
+          <AdditionalDetails
+            additional_details={job.additional_details || []}
+          />
+        )}
     </div>
   );
 }

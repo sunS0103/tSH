@@ -44,6 +44,12 @@ export interface RecruiterJob {
   published_at: string | null;
   created_at: string;
   updated_at: string;
+
+  additional_details?: {
+    title: string;
+    type: "text" | "textarea";
+    value: string;
+  }[];
 }
 
 /* ---------- Nested Types ---------- */
