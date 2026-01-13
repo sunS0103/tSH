@@ -166,11 +166,22 @@ export const getCandidateJobAdditionalDetails = async ({
   token?: string;
 }) => {
   const response = await axios.get(
+    `/candidate/jobs/${jobId}/additional-details`
+  );
+  return response.data;
+};
+
+export const sendCandidateJobAdditionalDetails = async ({
+  jobId,
+  additionalDetails,
+}: {
+  jobId: string;
+  additionalDetails: Array<{ title: string; value: string }>;
+}) => {
+  const response = await axios.post(
     `/candidate/jobs/${jobId}/additional-details`,
     {
-      params: {
-        job_id: jobId,
-      },
+      additional_details: additionalDetails,
     }
   );
   return response.data;

@@ -9,6 +9,7 @@ import {
   DialogHeader,
   DialogTitle,
   DialogTrigger,
+  DialogClose,
 } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
@@ -21,6 +22,22 @@ import {
 import { getCookie } from "cookies-next/client";
 import { toast } from "sonner";
 import { useRouter } from "next/navigation";
+import { getCurrentEmploymentDetails } from "@/api/profile";
+
+type EmploymentDetails = {
+  company_name?: string | null;
+  designation?: string | null;
+  total_years_of_experience?: number | null;
+  current_ctc_amount?: number | null;
+  expected_ctc_amount?: number | null;
+  [key: string]: unknown;
+};
+
+export interface AdditionalDetails {
+  title: string;
+  type?: "text" | "textarea";
+  value: string;
+}
 
 export default function JobApplyForm({
   isAssessmentNotCompleted,
@@ -35,6 +52,8 @@ export default function JobApplyForm({
   const [formData, setFormData] = useState<Record<number, string>>({});
   const [errors, setErrors] = useState<Record<number, string>>({});
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [customFieldsDetailsValue, setCustomFieldsDetailsValue] =
+    useState<EmploymentDetails | null>(null);
   const router = useRouter();
 
   const handleInputChange = (fieldId: number, value: string) => {
@@ -115,6 +134,7 @@ export default function JobApplyForm({
         toast.success("Application submitted successfully!");
         setOpen(false);
         setFormData({});
+        setCustomFieldsDetailsValue(null);
         router.refresh();
       } else {
         toast.error(response.message || "Failed to submit application");
@@ -138,6 +158,7 @@ export default function JobApplyForm({
     setOpen(false);
     setFormData({});
     setErrors({});
+    setCustomFieldsDetailsValue(null);
   };
 
   // Separate fields into inputs and textareas
@@ -176,24 +197,90 @@ export default function JobApplyForm({
       customFields.some((field) => field.value !== null)) ||
     false;
 
-  // const fetchAdditionalDetails = async () => {
-  //   const additionalDetails = await getCandidateJobAdditionalDetails({
-  //     jobId,
-  //   });
-  //   return additionalDetails;
-  // };
-
   useEffect(() => {
     const fetchAdditionalDetails = async () => {
-      const additionalDetails = await getCandidateJobAdditionalDetails({
+      const details = await getCandidateJobAdditionalDetails({
         jobId,
       });
-      return additionalDetails;
+      return details;
     };
     if (isCustomFieldFilled) {
       fetchAdditionalDetails();
     }
   }, [isCustomFieldFilled, jobId]);
+
+  useEffect(() => {
+    const fetchCustomFieldsDetails = async () => {
+      try {
+        const fieldsDetailsValue = await getCurrentEmploymentDetails();
+        const employmentData = fieldsDetailsValue.data;
+        setCustomFieldsDetailsValue(employmentData);
+
+        // Populate default values for first 5 fields
+        if (customFields && customFields.length >= 5 && employmentData) {
+          const defaultFormData: Record<number, string> = {};
+
+          // Map first 5 fields to employment details
+          // The first 5 fields are always the same, so we map them by index
+          // Adjust the mapping below to match your actual field order
+          const first5Fields = customFields.slice(0, 5);
+
+          first5Fields.forEach((field, index) => {
+            const fieldId =
+              typeof field.id === "number" ? field.id : Number(field.id);
+            let defaultValue = "";
+
+            // Map first 5 fields to employment details values
+            // You can also map by field.title if needed: field.title.toLowerCase().includes('company')
+            switch (index) {
+              case 0:
+                // First field mapping
+                defaultValue = employmentData?.company_name || "";
+                break;
+              case 1:
+                // Second field mapping
+                defaultValue = employmentData?.notice_period_type || "";
+                break;
+              case 2:
+                // Third field mapping
+                defaultValue = employmentData?.expected_ctc_amount || "";
+                break;
+              // case 3:
+              //   // Fourth field mapping
+              //   defaultValue =
+              //     employmentData?.current_ctc_amount?.toString() || "";
+              //   break;
+              // case 4:
+              //   // Fifth field mapping
+              //   defaultValue =
+              //     employmentData?.expected_ctc_amount?.toString() ||
+              //     "";
+              //   break;
+              default:
+                defaultValue = "";
+            }
+
+            if (defaultValue) {
+              defaultFormData[fieldId] = defaultValue;
+            }
+          });
+
+          // Set default values in formData
+          if (Object.keys(defaultFormData).length > 0) {
+            setFormData((prev) => ({
+              ...prev,
+              ...defaultFormData,
+            }));
+          }
+        }
+      } catch (error) {
+        console.error("Error fetching custom fields details:", error);
+      }
+    };
+    if (open) {
+      fetchCustomFieldsDetails();
+    }
+  }, [open, customFields]);
 
   return (
     <>
@@ -208,16 +295,31 @@ export default function JobApplyForm({
             <Icon icon="mdi:arrow-top-right" className="w-4.5 h-4.5" />
           </Button>
         </DialogTrigger>
-        <DialogContent className="max-w-3xl! max-h-[90vh] overflow-y-auto p-0 shadow-[0px_0px_25px_0px_rgba(0,0,0,0.15)]">
+        <DialogContent
+          className="max-w-3xl! max-h-[90vh] overflow-y-auto p-0 shadow-[0px_0px_25px_0px_rgba(0,0,0,0.15)]"
+          showCloseButton={false}
+        >
           <DialogHeader className="border-b border-gray-200 px-6 py-4">
             <div className="flex items-center justify-between">
               <DialogTitle className="text-lg font-semibold text-gray-950">
-                Fill details
+                Fill Additional Details
               </DialogTitle>
+              <DialogClose asChild>
+                <button
+                  className="rounded-sm opacity-70 transition-opacity hover:opacity-100 focus:outline-none disabled:pointer-events-none cursor-pointer"
+                  onClick={handleCancel}
+                >
+                  <Icon
+                    icon="mdi:close"
+                    className="h-4.5 w-4.5 text-gray-950"
+                  />
+                  <span className="sr-only">Close</span>
+                </button>
+              </DialogClose>
             </div>
           </DialogHeader>
 
-          <div className="flex flex-col gap-4 px-6 py-0">
+          <div className="flex flex-col gap-4 px-6 py-4">
             {/* Render Input Fields in 2-column layout */}
             {inputFieldRows.map((row, rowIndex) => (
               <div key={rowIndex} className="flex gap-4 w-full">
@@ -240,10 +342,10 @@ export default function JobApplyForm({
                         onChange={(e) =>
                           handleInputChange(fieldId, e.target.value)
                         }
-                        className={`h-8 ${
+                        className={`h-8 bg-white border-gray-200 ${
                           hasError
                             ? "border-red-500 focus-visible:border-red-500 focus-visible:ring-red-500/50"
-                            : "border-gray-200"
+                            : ""
                         }`}
                       />
                       {hasError && (
@@ -302,19 +404,19 @@ export default function JobApplyForm({
             </div> */}
           </div>
 
-          <div className="flex gap-3 justify-end px-6 py-6">
+          <div className="flex gap-3 justify-end px-6 py-4 border-t border-gray-200">
             <Button
               variant="secondary"
               onClick={handleCancel}
               disabled={isSubmitting}
-              className="h-8 px-4 text-sm "
+              className="h-8 px-3 text-sm font-normal"
             >
               Cancel
             </Button>
             <Button
               onClick={handleSubmit}
               disabled={isSubmitting}
-              className="h-8 px-4 text-sm "
+              className="h-8 px-3 text-sm font-normal"
             >
               {isSubmitting ? "Submitting..." : "Submit"}
             </Button>

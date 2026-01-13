@@ -168,7 +168,7 @@ export default function EmailForm({ role }: EmailFormProps) {
           setCookie("user_role", role);
 
           if (response.is_registered) {
-            router.push("/profile");
+            router.push("/dashboard");
           } else {
             // Use replace to avoid preserving query parameters and ensure clean redirect
             router.replace("/authentication/register");
@@ -213,7 +213,7 @@ export default function EmailForm({ role }: EmailFormProps) {
 
       // Create NextAuth session with Firebase user data
       await signIn("credentials", {
-        callbackUrl: "/profile",
+        callbackUrl: "/dashboard",
         idToken: idToken,
         email: user.email,
         name: user.displayName,
@@ -225,9 +225,9 @@ export default function EmailForm({ role }: EmailFormProps) {
       // Handle redirect based on registration status
       if (response?.token) {
         if (role === "CANDIDATE") {
-          router.replace("/profile");
+          router.replace("/dashboard");
         } else if (role === "RECRUITER") {
-          router.replace("/profile");
+          router.replace("/dashboard");
         } else {
           router.replace("/");
         }

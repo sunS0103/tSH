@@ -10,10 +10,7 @@ import {
   getCandidateAppliedJobs,
 } from "@/api/candidate/dashboard";
 import { getCandidateProfile } from "@/api/profile";
-import {
-  getTakenAssessmentsList,
-  getAssessmentList,
-} from "@/api/assessments";
+import { getTakenAssessmentsList, getAssessmentList } from "@/api/assessments";
 import AssessmentCard from "@/components/assessments/assessment-card";
 
 interface CandidateDashboardStats {
@@ -32,7 +29,9 @@ export default function CandidateDashboard() {
   const [userName, setUserName] = useState<string>("");
   const [isLoading, setIsLoading] = useState(true);
   const [takenAssessments, setTakenAssessments] = useState<any[]>([]);
-  const [recommendedAssessments, setRecommendedAssessments] = useState<any[]>([]);
+  const [recommendedAssessments, setRecommendedAssessments] = useState<any[]>(
+    []
+  );
   const [appliedJobs, setAppliedJobs] = useState<any[]>([]);
   const [profileCompletion, setProfileCompletion] = useState<number>(0);
 
@@ -49,7 +48,7 @@ export default function CandidateDashboard() {
             const nameMatch = statsRes.greeting.match(/Hello,?\s*(\w+)/i);
             setUserName(nameMatch ? nameMatch[1] : "");
           }
-          
+
           // Set statistics from API response
           setStats({
             applied_jobs: statsRes.applied_jobs || 0,
@@ -333,7 +332,7 @@ export default function CandidateDashboard() {
                 </div>
                 <div className="text-center">
                   <p className="font-semibold text-base text-black mb-1">
-                    You haven't taken any assessments yet.
+                    You haven&apos;t taken any assessments yet.
                   </p>
                   <p className="font-semibold text-base text-black">
                     Assessments help recruiters discover and shortlist your
@@ -431,7 +430,7 @@ export default function CandidateDashboard() {
         <div className="bg-white border border-gray-200 rounded-2xl overflow-hidden">
           <div className="bg-primary-50 px-4 py-3 border-b border-gray-200 flex items-center justify-between">
             <h2 className="font-semibold text-base md:text-lg text-black">
-              Jobs You've Applied For
+              Jobs You&apos;ve Applied For
             </h2>
             {appliedJobs.length > 0 && (
               <Link
@@ -453,7 +452,7 @@ export default function CandidateDashboard() {
                 </div>
                 <div className="text-center">
                   <p className="font-semibold text-base text-black mb-1">
-                    You haven't applied to any jobs yet.
+                    You haven&apos;t applied to any jobs yet.
                   </p>
                   <p className="font-semibold text-base text-black">
                     Start exploring opportunities that match your skills.
@@ -508,14 +507,16 @@ export default function CandidateDashboard() {
                             Relevant Assessments
                           </p>
                           <div className="flex gap-2 flex-wrap">
-                            {job.relevant_assessments.map((assessment: string, idx: number) => (
-                              <span
-                                key={idx}
-                                className="bg-gray-100 text-gray-700 text-xs px-3 py-1 rounded-full italic underline"
-                              >
-                                {assessment}
-                              </span>
-                            ))}
+                            {job.relevant_assessments.map(
+                              (assessment: string, idx: number) => (
+                                <span
+                                  key={idx}
+                                  className="bg-gray-100 text-gray-700 text-xs px-3 py-1 rounded-full italic underline"
+                                >
+                                  {assessment}
+                                </span>
+                              )
+                            )}
                           </div>
                         </div>
                       )}
