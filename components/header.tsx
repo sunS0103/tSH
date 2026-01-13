@@ -23,6 +23,9 @@ import { getCandidateProfile, getRecruiterProfile } from "@/api/profile";
 import { useEffect, useState } from "react";
 import { Dialog, DialogContent } from "./ui/dialog";
 import Image from "next/image";
+import NotificationPopover from "./notifications/notification-dialog";
+import { PopoverTrigger } from "./ui/popover";
+import { getUnreadCount } from "@/api/notifications";
 
 interface NavItem {
   label: string;
@@ -104,6 +107,8 @@ export default function Header() {
   // Track mounted state to prevent hydration mismatch
   // This is necessary because getCookie is client-only and causes SSR/client mismatch
   const [mounted, setMounted] = useState(false);
+  const [notificationDialogOpen, setNotificationDialogOpen] = useState(false);
+  const [unreadCount, setUnreadCount] = useState(0);
 
   // Initialize role and mounted state on client side only
   // This prevents hydration mismatch by ensuring server and client render the same initial state
@@ -134,6 +139,27 @@ export default function Header() {
     };
     if (role) {
       fetchUserDetails();
+    }
+  }, [role]);
+
+  useEffect(() => {
+    // Fetch unread notification count
+    const fetchUnreadCount = async () => {
+      try {
+        const response = await getUnreadCount();
+        if (response?.unread_count !== undefined) {
+          setUnreadCount(response.unread_count);
+        }
+      } catch (error) {
+        console.error("Error fetching unread count:", error);
+      }
+    };
+
+    if (role) {
+      fetchUnreadCount();
+      // Refresh unread count every 30 seconds
+      const interval = setInterval(fetchUnreadCount, 30000);
+      return () => clearInterval(interval);
     }
   }, [role]);
 
@@ -214,17 +240,42 @@ export default function Header() {
               </>
             )}
             {/* Notification Bell */}
-            <Button
-              variant="outline"
-              // className="rounded-full size-8"
-              className="bg-primary-50 border border-primary-500 flex items-center justify-center rounded-full size-8 hover:bg-primary-100 transition-colors"
-              aria-label="Notifications"
+            <NotificationPopover
+              open={notificationDialogOpen}
+              onOpenChange={setNotificationDialogOpen}
+              onNotificationRead={() => {
+                // Refresh unread count when notification is read
+                getUnreadCount()
+                  .then((response) => {
+                    if (response?.unread_count !== undefined) {
+                      setUnreadCount(response.unread_count);
+                    }
+                  })
+                  .catch((error) => {
+                    console.error("Error fetching unread count:", error);
+                  });
+              }}
             >
-              <Icon
-                icon="material-symbols:notifications-outline-rounded"
-                className="text-primary-500 size-5"
-              />
-            </Button>
+              <PopoverTrigger asChild>
+                <Button
+                  variant="outline"
+                  className="bg-primary-50 border border-primary-500 flex items-center justify-center rounded-full size-8 hover:bg-primary-100 transition-colors relative"
+                  aria-label="Notifications"
+                >
+                  <Icon
+                    icon="material-symbols:notifications-outline-rounded"
+                    className="text-primary-500 size-5"
+                  />
+                  {unreadCount > 0 && (
+                    <div className="absolute -top-1 -right-1 size-4 bg-red-500 rounded-full flex items-center justify-center">
+                      <span className="text-white text-[10px] font-bold">
+                        {unreadCount > 9 ? "9+" : unreadCount}
+                      </span>
+                    </div>
+                  )}
+                </Button>
+              </PopoverTrigger>
+            </NotificationPopover>
 
             <Logout data={userDetails} />
           </div>
