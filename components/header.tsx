@@ -99,8 +99,22 @@ const NAV_CONFIG: Record<string, NavItem[]> = {
 export default function Header() {
   const pathname = usePathname();
   const router = useRouter();
-  const role = getCookie("user_role");
+  const [role, setRole] = useState<string | undefined>(undefined);
   const [userDetails, setUserDetails] = useState();
+  // Track mounted state to prevent hydration mismatch
+  // This is necessary because getCookie is client-only and causes SSR/client mismatch
+  const [mounted, setMounted] = useState(false);
+
+  // Initialize role and mounted state on client side only
+  // This prevents hydration mismatch by ensuring server and client render the same initial state
+  // Note: Setting state in useEffect is necessary here to prevent SSR/client mismatch
+  // This is a standard Next.js pattern for client-only values (like cookies)
+  useEffect(() => {
+    // eslint-disable-next-line react-hooks/set-state-in-effect
+    setMounted(true);
+    const userRole = getCookie("user_role");
+    setRole(userRole as string | undefined);
+  }, []);
 
   useEffect(() => {
     // Only call getUserDetails if role is present
@@ -118,15 +132,18 @@ export default function Header() {
         });
       }
     };
-    fetchUserDetails();
+    if (role) {
+      fetchUserDetails();
+    }
   }, [role]);
 
   if (shouldHideHeader(pathname)) {
     return null;
   }
 
+  // Prevent hydration mismatch by not rendering nav items until mounted
   const navItems: NavItem[] =
-    role && NAV_CONFIG[role as keyof typeof NAV_CONFIG]
+    mounted && role && NAV_CONFIG[role as keyof typeof NAV_CONFIG]
       ? NAV_CONFIG[role as keyof typeof NAV_CONFIG]
       : [];
 
@@ -215,7 +232,7 @@ export default function Header() {
       </header>
 
       {/* Mobile Bottom Navigation - Only visible on mobile and configured routes */}
-      {shouldShowBottomNav(pathname, role as string) && (
+      {mounted && shouldShowBottomNav(pathname, role as string) && (
         <nav className="md:hidden fixed bottom-0 left-0 right-0 bg-white border-t border-gray-100 flex items-center justify-center h-20 z-50">
           <div className="flex items-center justify-center w-full max-w-md">
             {navItems.map((item) => {

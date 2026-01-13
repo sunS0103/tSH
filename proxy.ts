@@ -14,12 +14,10 @@ const publicRoutes = [
 const ROLE_ONLY_ROUTES = {
   RECRUITER: ["/talent-pool", "/credits"],
   CANDIDATE: [],
-}
+};
 
 export function proxy(request: NextRequest) {
   const { pathname } = request.nextUrl;
-
-  
 
   // Skip static files and Next.js internals
   if (
@@ -37,14 +35,14 @@ export function proxy(request: NextRequest) {
   if (pathname === "/") {
     const userRole = request.cookies.get("user_role")?.value;
     if (userRole === "CANDIDATE") {
-      return NextResponse.redirect(new URL("/profile", request.url));
+      return NextResponse.redirect(new URL("/dashboard", request.url));
     } else if (userRole === "RECRUITER") {
-      return NextResponse.redirect(new URL("/profile", request.url));
+      return NextResponse.redirect(new URL("/dashboard", request.url));
     }
     return NextResponse.next();
   }
 
-    if (role) {
+  if (role) {
     const forbiddenRoutes = Object.entries(ROLE_ONLY_ROUTES)
       .filter(([r]) => r !== role)
       .flatMap(([, routes]) => routes);
@@ -61,7 +59,7 @@ export function proxy(request: NextRequest) {
 
   // Prevent logged-in user accessing auth
   if (token && pathname.startsWith("/authentication")) {
-    return NextResponse.redirect(new URL("/profile", request.url));
+    return NextResponse.redirect(new URL("/dashboard", request.url));
   }
 
   // Protect private routes
