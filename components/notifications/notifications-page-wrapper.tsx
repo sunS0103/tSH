@@ -122,9 +122,9 @@ export default function NotificationsPageWrapper() {
         <h1 className="text-2xl font-bold text-black mb-6">Notifications</h1>
 
         {/* Notifications List */}
-        <div className="w-full max-w-2xl mx-auto">
+        <div className="w-full max-w-2xl ">
           {isLoading ? (
-            <div className="flex items-center justify-center py-12">
+            <div className="flex items-center mx-auto justify-center py-12">
               <Loader />
             </div>
           ) : notifications.length === 0 ? (
@@ -133,7 +133,9 @@ export default function NotificationsPageWrapper() {
                 icon="mdi:bell-off-outline"
                 className="size-16 text-gray-400 mb-4"
               />
-              <p className="text-gray-500 text-lg font-medium">No notifications</p>
+              <p className="text-gray-500 text-lg font-medium">
+                No notifications
+              </p>
               <p className="text-gray-400 text-sm mt-2">
                 You're all caught up! Check back later for updates.
               </p>
