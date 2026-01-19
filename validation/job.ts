@@ -1,13 +1,13 @@
 import { z } from "zod";
 
 export const jobFormSchema = z.object({
-  company_name: z.string().min(1, "Company name is required"),
-  job_title: z.string().min(1, "Job title is required"),
+  company_name: z.string().trim().min(1, "Company name is required"),
+  job_title: z.string().trim().min(1, "Job title is required"),
   job_location_type: z.enum(["client_location", "inhouse_project"]),
 
   country_id: z.number().min(1, "Country is required"),
   city_id: z.number().min(1, "City is required"),
-  salary_min: z.string().min(1, "Salary is required"),
+  salary_min: z.string().trim().min(1, "Salary is required"),
   experience_min: z.string().min(1, "Minimum experience is required"),
   notice_period: z.string().min(1, "Notice period is required"),
   work_mode: z.array(z.string()).min(1, "Work mode is required"),
