@@ -95,7 +95,7 @@ export interface SkillCategory {
 export interface CustomField {
   id?: string | number;
   title: string;
-  type: "text" | "number" | "select" | string;
+  type: "text" | "textarea" | string;
   value?: string;
 }
 

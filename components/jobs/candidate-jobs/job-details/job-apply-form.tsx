@@ -52,9 +52,10 @@ export default function JobApplyForm({
   const [formData, setFormData] = useState<Record<number, string>>({});
   const [errors, setErrors] = useState<Record<number, string>>({});
   const [isSubmitting, setIsSubmitting] = useState(false);
-  const [customFieldsDetailsValue, setCustomFieldsDetailsValue] =
-    useState<EmploymentDetails | null>(null);
+  // const [customFieldsDetailsValue, setCustomFieldsDetailsValue] =
+  //   useState<EmploymentDetails | null>(null);
   const router = useRouter();
+
 
   const handleInputChange = (fieldId: number, value: string) => {
     setFormData((prev) => ({
@@ -82,7 +83,7 @@ export default function JobApplyForm({
     customFields.forEach((field) => {
       const fieldId =
         typeof field.id === "number" ? field.id : Number(field.id);
-      const value = formData[fieldId]?.trim() || "";
+      const value = formData[fieldId] || "";
 
       if (!value) {
         newErrors[fieldId] = `Field is required`;
@@ -121,7 +122,7 @@ export default function JobApplyForm({
           typeof field.id === "number" ? field.id : Number(field.id);
         return {
           job_custom_field_id: fieldId,
-          value: formData[fieldId]?.trim() || "",
+          value: String(formData[fieldId]) || "",
         };
       });
 
@@ -134,7 +135,7 @@ export default function JobApplyForm({
         toast.success("Application submitted successfully!");
         setOpen(false);
         setFormData({});
-        setCustomFieldsDetailsValue(null);
+        // setCustomFieldsDetailsValue(null);
         router.refresh();
       } else {
         toast.error(response.message || "Failed to submit application");
@@ -146,8 +147,8 @@ export default function JobApplyForm({
       };
       toast.error(
         axiosError.response?.data?.message ||
-          axiosError.message ||
-          "Failed to submit application"
+        axiosError.message ||
+        "Failed to submit application"
       );
     } finally {
       setIsSubmitting(false);
@@ -158,7 +159,7 @@ export default function JobApplyForm({
     setOpen(false);
     setFormData({});
     setErrors({});
-    setCustomFieldsDetailsValue(null);
+    // setCustomFieldsDetailsValue(null);
   };
 
   // Separate fields into inputs and textareas
@@ -210,76 +211,20 @@ export default function JobApplyForm({
   }, [isCustomFieldFilled, jobId]);
 
   useEffect(() => {
-    const fetchCustomFieldsDetails = async () => {
-      try {
-        const fieldsDetailsValue = await getCurrentEmploymentDetails();
-        const employmentData = fieldsDetailsValue.data;
-        setCustomFieldsDetailsValue(employmentData);
+    if (!open || !customFields?.length) return;
 
-        // Populate default values for first 5 fields
-        if (customFields && customFields.length >= 5 && employmentData) {
-          const defaultFormData: Record<number, string> = {};
+    const initialFormData: Record<number, string> = {};
 
-          // Map first 5 fields to employment details
-          // The first 5 fields are always the same, so we map them by index
-          // Adjust the mapping below to match your actual field order
-          const first5Fields = customFields.slice(0, 5);
+    customFields.forEach((field) => {
+      const fieldId =
+        typeof field.id === "number" ? field.id : Number(field.id);
 
-          first5Fields.forEach((field, index) => {
-            const fieldId =
-              typeof field.id === "number" ? field.id : Number(field.id);
-            let defaultValue = "";
-
-            // Map first 5 fields to employment details values
-            // You can also map by field.title if needed: field.title.toLowerCase().includes('company')
-            switch (index) {
-              case 0:
-                // First field mapping
-                defaultValue = employmentData?.company_name || "";
-                break;
-              case 1:
-                // Second field mapping
-                defaultValue = employmentData?.notice_period_type || "";
-                break;
-              case 2:
-                // Third field mapping
-                defaultValue = employmentData?.expected_ctc_amount || "";
-                break;
-              // case 3:
-              //   // Fourth field mapping
-              //   defaultValue =
-              //     employmentData?.current_ctc_amount?.toString() || "";
-              //   break;
-              // case 4:
-              //   // Fifth field mapping
-              //   defaultValue =
-              //     employmentData?.expected_ctc_amount?.toString() ||
-              //     "";
-              //   break;
-              default:
-                defaultValue = "";
-            }
-
-            if (defaultValue) {
-              defaultFormData[fieldId] = defaultValue;
-            }
-          });
-
-          // Set default values in formData
-          if (Object.keys(defaultFormData).length > 0) {
-            setFormData((prev) => ({
-              ...prev,
-              ...defaultFormData,
-            }));
-          }
-        }
-      } catch (error) {
-        console.error("Error fetching custom fields details:", error);
+      if (field.value !== null && field.value !== undefined) {
+        initialFormData[fieldId] = String(field.value);
       }
-    };
-    if (open) {
-      fetchCustomFieldsDetails();
-    }
+    });
+
+    setFormData(initialFormData);
   }, [open, customFields]);
 
   return (
@@ -288,7 +233,7 @@ export default function JobApplyForm({
         <DialogTrigger asChild>
           <Button
             className="text-sm flex items-center gap-2"
-            disabled={isAssessmentNotCompleted || isCustomFieldFilled}
+            disabled={isAssessmentNotCompleted}
             onClick={() => setOpen(true)}
           >
             Contact Recruiter
@@ -342,11 +287,10 @@ export default function JobApplyForm({
                         onChange={(e) =>
                           handleInputChange(fieldId, e.target.value)
                         }
-                        className={`h-8 bg-white border-gray-200 ${
-                          hasError
-                            ? "border-red-500 focus-visible:border-red-500 focus-visible:ring-red-500/50"
-                            : ""
-                        }`}
+                        className={`h-8 bg-white border-gray-200 ${hasError
+                          ? "border-red-500 focus-visible:border-red-500 focus-visible:ring-red-500/50"
+                          : ""
+                          }`}
                       />
                       {hasError && (
                         <p className="text-sm text-red-500 mt-0.5">
@@ -378,11 +322,10 @@ export default function JobApplyForm({
                     placeholder={placeholder}
                     value={formData[fieldId] || ""}
                     onChange={(e) => handleInputChange(fieldId, e.target.value)}
-                    className={`min-h-[99px] resize-none ${
-                      hasError
-                        ? "border-red-500 focus-visible:border-red-500 focus-visible:ring-red-500/50"
-                        : "border-gray-200"
-                    }`}
+                    className={`min-h-[99px] resize-none ${hasError
+                      ? "border-red-500 focus-visible:border-red-500 focus-visible:ring-red-500/50"
+                      : "border-gray-200"
+                      }`}
                   />
                   {hasError && (
                     <p className="text-sm text-red-500 mt-0.5">
