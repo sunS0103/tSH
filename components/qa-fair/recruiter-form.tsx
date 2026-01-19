@@ -1,0 +1,284 @@
+"use client";
+
+import { useState, useRef } from "react";
+import { useForm } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { z } from "zod";
+import { Loader2, CheckCircle2, Building2, User, Mail, ArrowRight } from "lucide-react";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import { toast } from "sonner";
+import { getContact, getImports } from "@/api/waitlist";
+import ReCAPTCHA from "react-google-recaptcha";
+
+// List of disallowed free email providers
+const FREE_EMAIL_DOMAINS = [
+    "gmail.com",
+    "yahoo.com",
+    "hotmail.com",
+    "outlook.com",
+    "aol.com",
+    "icloud.com",
+    "mail.com",
+    "protonmail.com",
+    "yandex.com",
+    "live.com",
+    "msn.com",
+    "me.com",
+    "mac.com",
+];
+
+// Zod schema for recruiter form
+const recruiterSchema = z.object({
+    name: z.string().min(2, "Name must be at least 2 characters"),
+    email: z
+        .string()
+        .min(1, "Email is required")
+        .email("Please enter a valid email address")
+        .refine((email) => {
+            const domain = email.toLowerCase().split("@")[1];
+            return !FREE_EMAIL_DOMAINS.includes(domain);
+        }, "Please use your company email address (no gmail, yahoo, etc.)"),
+    company: z.string().min(2, "Company name must be at least 2 characters"),
+});
+
+type RecruiterFormValues = z.infer<typeof recruiterSchema>;
+
+interface RecruiterFormProps { }
+
+const RecruiterForm: React.FC<RecruiterFormProps> = () => {
+    const [submitted, setSubmitted] = useState(false);
+    const [recaptchaToken, setRecaptchaToken] = useState<string | null>(null);
+    const [recaptchaError, setRecaptchaError] = useState<string | null>(null);
+    const recaptchaRef = useRef<ReCAPTCHA>(null);
+
+    const {
+        register,
+        handleSubmit,
+        reset,
+        formState: { errors, isSubmitting },
+    } = useForm<RecruiterFormValues>({
+        resolver: zodResolver(recruiterSchema),
+        defaultValues: {
+            name: "",
+            email: "",
+            company: "",
+        },
+    });
+
+    const onSubmit = async (values: RecruiterFormValues) => {
+        setRecaptchaError(null);
+
+        if (!recaptchaToken) {
+            setRecaptchaError("Please complete the reCAPTCHA challenge.");
+            return;
+        }
+
+        try {
+            try {
+                const response = await getContact(values.email);
+                const listIds = response.listIds || [];
+                if (listIds.includes(24)) {
+                    toast.info("You're already subscribed with this email address!");
+                    reset({ name: "", email: "", company: "" });
+                    resetRecaptcha();
+                    return;
+                }
+            } catch (error: any) {
+                if (error.response?.status !== 404 && error.response?.status !== 400) {
+                    throw error;
+                }
+            }
+
+            const importBody = {
+                jsonBody: [
+                    {
+                        email: values.email,
+                        attributes: {
+                            FIRSTNAME: values.name,
+                            COMPANY_NAME: values.company,
+                        },
+                    },
+                ],
+                listIds: [24],
+                recaptchaToken: recaptchaToken,
+            };
+
+            await getImports({ data: importBody });
+            toast.success("You're on the list!");
+            setSubmitted(true);
+            reset({
+                name: "",
+                email: "",
+                company: "",
+            });
+        } catch (error: any) {
+            console.error("Recruiter Registration Error:", error);
+            toast.error(error.response?.data?.message || "Failed to submit your information.");
+        }
+    };
+
+    const resetRecaptcha = () => {
+        recaptchaRef.current?.reset();
+        setRecaptchaToken(null);
+        setRecaptchaError(null);
+    };
+
+    if (submitted) {
+        return (
+            <div className="p-8 rounded-2xl bg-white border-2 border-emerald-300 shadow-xl text-center">
+                <div className="w-20 h-20 mx-auto mb-6 rounded-full bg-emerald-100 flex items-center justify-center">
+                    <CheckCircle2 className="w-10 h-10 text-emerald-600" />
+                </div>
+
+                <h3 className="text-2xl font-bold mb-4 text-slate-900">
+                    You're on the list!
+                </h3>
+
+                <div className="space-y-4 text-center">
+                    <p className="text-slate-700">
+                        We'll keep you posted on our Beta progress. Have any questions about the pilot program? Send a brief note to{" "}
+                        <a
+                            href="mailto:info@techsmarthire.com?subject=Pilot Program"
+                            className="text-emerald-600 hover:underline font-medium"
+                        >
+                            info@techsmarthire.com
+                        </a>
+                    </p>
+                </div>
+
+                <Button
+                    onClick={() => {
+                        setSubmitted(false);
+                        resetRecaptcha();
+                    }}
+                    variant="outline"
+                    className="mt-6 w-full cursor-pointer"
+                >
+                    Register Another Email
+                </Button>
+            </div>
+        );
+    }
+
+    return (
+        <form
+            onSubmit={handleSubmit(onSubmit)}
+            className="p-8 rounded-2xl bg-white border-2 border-slate-200 shadow-lg space-y-6"
+        >
+            {/* NAME FIELD */}
+            <div className="space-y-2">
+                <Label htmlFor="recruiter-name" className="text-slate-700 font-semibold">
+                    Your Name *
+                </Label>
+                <div className="relative">
+                    <User className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-slate-400" />
+                    <Input
+                        {...register("name")}
+                        id="recruiter-name"
+                        placeholder="Your full name"
+                        className={`h-12 pl-12 rounded-xl ${errors.name
+                                ? "border-red-400 focus-visible:ring-red-400"
+                                : "border-slate-300 focus-visible:ring-emerald-500"
+                            }`}
+                    />
+                </div>
+                {errors.name && (
+                    <p className="text-xs text-red-500">{errors.name.message}</p>
+                )}
+            </div>
+
+            {/* EMAIL FIELD */}
+            <div className="space-y-2">
+                <Label htmlFor="recruiter-email" className="text-slate-700 font-semibold">
+                    Work Email *
+                </Label>
+                <div className="relative">
+                    <Mail className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-slate-400" />
+                    <Input
+                        {...register("email")}
+                        id="recruiter-email"
+                        type="email"
+                        placeholder="your@company.com"
+                        className={`h-12 pl-12 rounded-xl ${errors.email
+                                ? "border-red-400 focus-visible:ring-red-400"
+                                : "border-slate-300 focus-visible:ring-emerald-500"
+                            }`}
+                    />
+                </div>
+                {errors.email && (
+                    <p className="text-xs text-red-500">{errors.email.message}</p>
+                )}
+            </div>
+
+            {/* COMPANY FIELD */}
+            <div className="space-y-2">
+                <Label htmlFor="recruiter-company" className="text-slate-700 font-semibold">
+                    Company Name *
+                </Label>
+                <div className="relative">
+                    <Building2 className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-slate-400" />
+                    <Input
+                        {...register("company")}
+                        id="recruiter-company"
+                        placeholder="Your company"
+                        className={`h-12 pl-12 rounded-xl ${errors.company
+                                ? "border-red-400 focus-visible:ring-red-400"
+                                : "border-slate-300 focus-visible:ring-emerald-500"
+                            }`}
+                    />
+                </div>
+                {errors.company && (
+                    <p className="text-xs text-red-500">{errors.company.message}</p>
+                )}
+            </div>
+
+            {/* reCAPTCHA */}
+            <div className="flex justify-start">
+                <ReCAPTCHA
+                    ref={recaptchaRef}
+                    sitekey={process.env.NEXT_PUBLIC_RECAPTCHA_SITE_KEY || ""}
+                    onChange={(token: string | null) => {
+                        setRecaptchaToken(token);
+                        setRecaptchaError(null);
+                    }}
+                    onExpired={() => {
+                        setRecaptchaToken(null);
+                        setRecaptchaError("reCAPTCHA expired. Please complete the challenge again.");
+                    }}
+                    onErrored={() => {
+                        setRecaptchaToken(null);
+                        setRecaptchaError("reCAPTCHA error. Please try again.");
+                    }}
+                    theme="light"
+                    size="normal"
+                />
+            </div>
+            {recaptchaError && (
+                <p className="text-xs text-red-500 text-center">{recaptchaError}</p>
+            )}
+
+            <Button
+                type="submit"
+                size="lg"
+                className="w-full cursor-pointer h-14 text-lg rounded-xl bg-linear-to-r from-blue-600 to-emerald-600 hover:from-blue-700 hover:to-emerald-700 transition-all"
+                disabled={isSubmitting}
+            >
+                {isSubmitting ? (
+                    <>
+                        <Loader2 className="mr-2 w-5 h-5 animate-spin" />
+                        Submitting...
+                    </>
+                ) : (
+                    <>
+                        <span>Submit Information</span>
+                        <ArrowRight className="ml-2 w-5 h-5" />
+                    </>
+                )}
+            </Button>
+        </form>
+    );
+};
+
+export default RecruiterForm;

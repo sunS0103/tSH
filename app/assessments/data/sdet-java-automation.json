@@ -1,0 +1,14 @@
+{
+  "title": "SDET Java Automation Profile – Level 1",
+  "description": "Prove your expertise in Selenium WebDriver, API Testing, Core Java, and Testing Fundamentals through our comprehensive, AI-proctored assessment.",
+  "questions": 20,
+  "minutes": 25,
+  "level": "Intermediate",
+  "sampleQuestionsHref": "https://aws.com/sample",
+  "skills": [
+    { "name": "Selenium WebDriver", "level": "Advanced" },
+    { "name": "API Testing", "level": "Intermediate" },
+    { "name": "Core Java", "level": "Intermediate" },
+    { "name": "Testing Fundamentals", "level": "Foundation" }
+  ]
+}
