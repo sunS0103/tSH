@@ -13,6 +13,7 @@ import { Icon } from "@iconify/react";
 import ApplicantsFilterSidebar from "./applicants-filter-sidebar";
 import ApplicantsFilterSheet from "./applicants-filter-sheet";
 import ApplicantsPagination from "./applicants-pagination";
+import NoDataFound from "@/components/common/no-data-found";
 
 interface FilterGroup {
   title: string;
@@ -149,14 +150,18 @@ export default function ApplicantsWrapper({ jobId }: { jobId: string }) {
         {isLoading ? (
           <div className="text-center py-8 text-gray-500">Loading...</div>
         ) : (
-          <>
-            <ApplicantsList applicants={applicants} jobId={jobId} />
-            <ApplicantsPagination
-              currentPage={currentPage}
-              totalPages={totalPages}
-              onPageChange={setCurrentPage}
-            />
-          </>
+          applicants.length > 0 ? (
+            <>
+              <ApplicantsList applicants={applicants} jobId={jobId} />
+              <ApplicantsPagination
+                currentPage={currentPage}
+                totalPages={totalPages}
+                onPageChange={setCurrentPage}
+              />
+            </>
+          ) : (
+            <NoDataFound title="No Applicants Found" note="There are no applicants for this job. Please come back later." />
+          )
         )}
       </div>
     </div>

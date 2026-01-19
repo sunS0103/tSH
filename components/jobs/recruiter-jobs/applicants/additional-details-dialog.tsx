@@ -32,6 +32,7 @@ import {
   SheetTitle,
 } from "@/components/ui/sheet";
 import { cn } from "@/lib/utils";
+import { useRouter } from "next/navigation";
 
 export interface AdditionalDetailsField {
   id: string;
@@ -67,6 +68,9 @@ export default function AdditionalDetailsDialog({
   showCloseIcon = false,
   application_status,
 }: AdditionalDetailsDialogProps) {
+
+  const router = useRouter();
+
   const [newFieldTitle, setNewFieldTitle] = useState("");
   const [newFieldType, setNewFieldType] = useState<"text" | "textarea">("text");
   const [fields, setFields] = useState<AdditionalDetailsField[]>([]);
@@ -128,6 +132,7 @@ export default function AdditionalDetailsDialog({
       setFields([]);
       setNewFieldTitle("");
       setNewFieldType("text");
+      router.refresh();
     } else {
       toast.error(response.message);
     }
@@ -350,7 +355,7 @@ export default function AdditionalDetailsDialog({
                   className={cn(
                     "h-8 px-4 border-primary-500 text-primary-500 hover:bg-primary-500 hover:text-white rounded-lg disabled:opacity-100 disabled:cursor-not-allowed",
                     application_status === "HANDSHAKE" &&
-                      "bg-success-500 text-white hover:bg-success-500 hover:text-white border-success-500"
+                    "bg-success-500 text-white hover:bg-success-500 hover:text-white border-success-500"
                   )}
                 >
                   <Icon

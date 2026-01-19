@@ -373,7 +373,7 @@ export default function TiptapEditor({
           <EditorContent editor={editor} />
         </div>
         {!editor.getText() && (
-          <div className="absolute top-2 left-3 pointer-events-none text-gray-400 text-sm">
+          <div className="absolute top-5 left-6 pointer-events-none text-gray-400 text-sm">
             {placeholder}
           </div>
         )}
