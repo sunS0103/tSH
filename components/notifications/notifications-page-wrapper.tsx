@@ -52,7 +52,7 @@ export default function NotificationsPageWrapper() {
       await markNotificationAsRead(notificationId);
       setNotifications((prev) =>
         prev.map((notif) =>
-          notif.id === notificationId ? { ...notif, read: true } : notif
+          notif.id === notificationId ? { ...notif, is_read: true } : notif
         )
       );
       // Refresh unread count
@@ -69,7 +69,7 @@ export default function NotificationsPageWrapper() {
     try {
       await markAllNotificationsAsRead();
       setNotifications((prev) =>
-        prev.map((notif) => ({ ...notif, read: true }))
+        prev.map((notif) => ({ ...notif, is_read: true }))
       );
     } catch (error) {
       console.error("Error marking all notifications as read:", error);
@@ -101,7 +101,6 @@ export default function NotificationsPageWrapper() {
       year: date.getFullYear() !== now.getFullYear() ? "numeric" : undefined,
     });
   };
-
 
   return (
     <div className="w-full min-h-screen bg-gray-50">
@@ -156,21 +155,27 @@ export default function NotificationsPageWrapper() {
                     }
                   }}
                 >
-                  <div className="flex flex-col gap-1">
-                    <div className="flex items-center justify-between gap-1">
-                      <div className="flex items-center flex-1 min-w-0">
-                        <span className="text-sm font-semibold text-gray-900">
+                  <div className="flex gap-3 items-start">
+                    {/* Unread Indicator */}
+                    <div className="shrink-0 mt-1.5">
+                      {!notification.is_read && (
+                        <div className="size-1 rounded-full bg-primary-600" />
+                      )}
+                    </div>
+
+                    {/* Content */}
+                    <div className="flex flex-col gap-1 flex-1 min-w-0">
+                      <div className="flex items-start justify-between gap-2">
+                        <span className="text-sm font-semibold text-gray-900 leading-tight">
                           {notification.title}
                         </span>
+                        <div className="shrink-0">
+                          <p className="text-xs text-gray-500 text-right whitespace-nowrap">
+                            {notification.created_at}
+                          </p>
+                        </div>
                       </div>
-                      <div className="flex items-center justify-center shrink-0">
-                        <p className="text-xs text-gray-500 text-center">
-                          {notification.created_at}
-                        </p>
-                      </div>
-                    </div>
-                    <div className="flex items-center">
-                      <p className="text-xs text-gray-700 flex-1">
+                      <p className="text-xs text-gray-700 leading-normal">
                         {notification.description}
                       </p>
                     </div>
