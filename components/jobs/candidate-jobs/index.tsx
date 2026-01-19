@@ -85,19 +85,22 @@ export default async function CandidateJobDetails({
       <div className="bg-white border border-gray-200 rounded-2xl p-4 flex flex-col gap-3 w-full mt-4">
         <JobDetailsSection job={job as RecruiterJob} />
 
-        <hr className="border-gray-200" />
+        {job.mandate_assessment.length > 0 && (
+          <>
+            <hr className="border-gray-200" />
 
-        {isAssessmentNotCompleted ? (
-          <p className="text-info-500 text-base md:text-lg font-semibold">
-            “Taking this assessment will increase your chances of being
-            shortlisted.”
-          </p>
-        ) : (
-          <p className="text-success-600 text-base md:text-lg font-semibold">
-            “ 🎉 Congratulations! 🎉 You’ve already completed this assessment —
-            you have a high chance of being shortlisted. Apply now!”
-          </p>
-        )}
+            {isAssessmentNotCompleted ? (
+              <p className="text-info-500 text-base md:text-lg font-semibold">
+                “Taking this assessment will increase your chances of being
+                shortlisted.”
+              </p>
+            ) : (
+              <p className="text-success-600 text-base md:text-lg font-semibold">
+                “ 🎉 Congratulations! 🎉 You’ve already completed this assessment —
+                you have a high chance of being shortlisted. Apply now!”
+              </p>
+            )}
+          </>)}
 
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-2 xl:grid-cols-3 gap-4 mt-3">
           {job.mandate_assessment.map((assessment) => (

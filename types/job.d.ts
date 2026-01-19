@@ -22,7 +22,8 @@ export interface RecruiterJob {
   experience_max_years: number;
   experience_range?: string;
 
-  compensation: Compensation;
+  compensation: Compensation | string;
+  
 
   work_mode: WorkMode[];
   work_mode?: WorkMode[];
@@ -95,7 +96,7 @@ export interface SkillCategory {
 export interface CustomField {
   id?: string | number;
   title: string;
-  type: "text" | "number" | "select" | string;
+  type: "text" | "textarea" | string;
   value?: string;
 }
 
