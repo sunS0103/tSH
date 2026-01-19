@@ -78,7 +78,7 @@ export default async function JobDetailsSection({ job }: { job: RecruiterJob }) 
       {/* Details Grid */}
       <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-3 w-full">
         {detailFields.map((field, index) => (
-          <DetailItem key={index} label={field.label} value={field.value} />
+          <DetailItem key={index} label={field.label} value={field.value as string} />
         ))}
       </div>
 

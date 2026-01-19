@@ -12,7 +12,7 @@ import {
 } from "@/api/jobs/recruiter";
 import Breadcrumbs from "@/components/common/breadcrumbs";
 import { type JobFormData } from "@/validation/job";
-import { RecruiterJob } from "@/types/job";
+import { Compensation, RecruiterJob } from "@/types/job";
 import { getCookie } from "cookies-next/client";
 
 interface JobFormProps {
@@ -172,11 +172,11 @@ function transformJobToFormData(job: RecruiterJob): Partial<JobFormData> {
       : "";
 
   // Parse salary from compensation object
-  const salaryMin = job.compensation?.min_amount || 0;
-  const salaryMax = job.compensation?.max_amount || 0;
+  const salaryMin = (job?.compensation as Compensation)?.min_amount || 0;
+  const salaryMax = (job?.compensation as Compensation)?.max_amount || 0;
   const salaryStr =
     salaryMin && salaryMax
-      ? `${salaryMin} to ${salaryMax} ${job.compensation?.period || "LPA"}`
+      ? `${salaryMin} to ${salaryMax} ${(job?.compensation as Compensation)?.period || "LPA"}`
       : "";
 
   // Map job_serving_location back to job_location_type
