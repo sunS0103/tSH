@@ -11,11 +11,11 @@ export default async function JobDetailsSection({ job }: { job: RecruiterJob }) 
   const role = cookieStore.get("user_role")?.value;
 
   // Format salary
-  const salaryText =
-    job.compensation?.min_amount && job.compensation?.max_amount
-      ? `${job.compensation.min_amount} to ${job.compensation.max_amount} ${job.compensation.period || "Per annum"
-      }`
-      : null;
+  const salaryText = job?.compensation || null;
+  // job.compensation?.min_amount && job.compensation?.max_amount
+  //   ? `${job.compensation.min_amount} to ${job.compensation.max_amount} ${job.compensation.period || "Per annum"
+  //   }`
+  //   : null;
 
   // Format experience
   const experienceText =

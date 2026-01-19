@@ -22,7 +22,8 @@ export interface RecruiterJob {
   experience_max_years: number;
   experience_range?: string;
 
-  compensation: Compensation;
+  compensation: string;
+  
 
   work_mode: WorkMode[];
   work_mode?: WorkMode[];
