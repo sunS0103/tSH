@@ -19,10 +19,10 @@ export default async function JobDetailsSection({
 
 
   // Format experience
-  const experienceText =
-    job.experience_min_years >= 0 && job.experience_max_years >= 0
-      ? `${job.experience_min_years} - ${job.experience_max_years} Years`
-      : "-";
+  const experienceText = job.experience_range || "-";
+  // job.experience_min_years >= 0 && job.experience_max_years >= 0
+  //   ? `${job.experience_min_years} - ${job.experience_max_years} Years`
+  //   : "-";
 
   // Format work modes
   const workModesText =
@@ -48,8 +48,8 @@ export default async function JobDetailsSection({
     job.job_serving_location === "in-house project"
       ? "Inhouse Project"
       : job.job_serving_location === "client location"
-      ? "Client location"
-      : job.job_serving_location || null;
+        ? "Client location"
+        : job.job_serving_location || null;
 
   // Build array of detail fields
   const detailFields = [
