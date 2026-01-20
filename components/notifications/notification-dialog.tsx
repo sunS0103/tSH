@@ -7,6 +7,7 @@ import { Icon } from "@iconify/react";
 import { useRouter } from "next/navigation";
 import { getNotifications, markNotificationAsRead } from "@/api/notifications";
 import type { Notification } from "@/api/notifications";
+import { sanitizeHtml } from "@/lib/utils";
 
 interface NotificationPopoverProps {
   open: boolean;
@@ -127,9 +128,12 @@ export default function NotificationPopover({
                           </p>
                         </div>
                       </div>
-                      <p className="text-xs text-gray-700 leading-normal">
-                        {notification.description}
-                      </p>
+                      <div
+                        className="text-xs text-gray-700 leading-normal"
+                        dangerouslySetInnerHTML={{
+                          __html: sanitizeHtml(notification.description),
+                        }}
+                      />
                     </div>
                   </div>
                 </div>
