@@ -115,9 +115,18 @@ export default function JobApplyForm({
         return;
       }
 
-      // Format the payload according to the API specification
-      // All fields are mandatory, so include all of them
-      const customFieldsPayload = customFields.map((field) => {
+
+
+      const profile_fields = customFields.slice(0, 5).map((field) => {
+        const fieldId =
+          typeof field.id === "number" ? field.id : Number(field.id);
+        return {
+          title: field.title,
+          value: String(formData[fieldId]) || "",
+        };
+      });
+
+      const custom_fields = customFields.slice(5).map((field) => {
         const fieldId =
           typeof field.id === "number" ? field.id : Number(field.id);
         return {
@@ -126,9 +135,26 @@ export default function JobApplyForm({
         };
       });
 
+      const updated_fields = profile_fields.map((field, index) => {
+        const updatedFields: { title: string; value: string }[] = [];
+        if (field.value !== customFields[index].value) {
+          updatedFields.push({
+            title: field.title,
+            value: field.value,
+          });
+        }
+
+        return updatedFields;
+      })?.flat()
+
+      const payload = {
+        profile_fields: updated_fields,
+        custom_fields: custom_fields,
+      }
+
       const response = await applyToJob({
         jobId,
-        customFields: customFieldsPayload,
+        payload,
       });
 
       if (response.success) {
