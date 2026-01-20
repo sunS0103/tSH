@@ -28,30 +28,27 @@
       "title": "Java SDET Automation Engineer - Selenium & API Testing",
       "companies": ["Cognizant", "Innocito", "CapGemini", "+ 4 More Companies"],
       "experience": ["2-5 Years", "5-17 Years"],
-      "location": ["Multiple Indian Cities,  Dubai"],
+      "location": ["Multiple Indian Cities"],
       "examId": "TSH-SDETJAVA-101",
-      "examName": "Java SDET - Selenium & API Testing",
       "route": "/assessments/TSH-SDETJAVA-101"
     },
     {
       "jobId": "TSH-JOB-002",
       "title": "JS/TS SDET Engineer - Playwright & API Testing",
-      "companies": ["TCS", "Innocito", "CapGemini",  "JP Morgan", "Optimworks", "+ 9 More Companies"],
+      "companies": ["TCS", "JP Morgan", "Optimworks", "+ 5 More Companies"],
       "experience": ["3-17 Years"],
-      "location": ["Multiple Indian Cities, Dubai, USA"],
+      "location": ["Multiple Indian Cities", "Dubai", "USA"],
       "examId": "TSH-SDETJS-101",
-      "examName": "JS/TS SDET - Playwright & API Testing",
       "route": "/assessments/TSH-SDETJS-101"
     },
      {
       "jobId": "TSH-JOB-003",
-      "title": "Java SDET Automation Engineer - Playwright & API Testing",
-      "companies": ["Cognizant", "Deloitte", "+ 2 More Companies"],
-      "experience": ["2-5 Years", "5-17 Years"],
-      "location": ["Multiple Indian Cities"],
-      "examId": "TSH-SDETJAVA-201",
-      "examName": "Java SDET - Playwright & API Testing",
-      "route": "/assessments/TSH-SDETJAVA-201"
+      "title": "FullStack QA Lead/Test Architect",
+      "companies": ["Cognizant", "Deloitte", "Innocito", "+ 5 More Companies"],
+      "experience": ["10+ Years"],
+      "location": ["Multiple Indian Cities", "Dubai", "USA"],
+      "examId": "TSH-SDETFULLSTACK-101",
+      "route": "/assessments/TSH-SDETFULLSTACK-101"
     }
   ],
   "selectionSteps": [
