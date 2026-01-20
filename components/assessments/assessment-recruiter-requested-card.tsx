@@ -49,14 +49,14 @@ export default function AssessmentRecruiterRequestedCard({
         {/* Details Section */}
         <div className="flex flex-col gap-3 items-start p-3 w-full">
           {/* Row 1: Name and Company Email */}
-          <div className="flex items-center relative shrink-0 w-full">
-            <div className="flex flex-col gap-1 items-start relative shrink-0 w-1/2 pr-2">
+          <div className="flex flex-col md:flex-row gap-2 md:items-center relative shrink-0 w-full">
+            <div className="flex flex-col gap-1 items-start relative shrink-0 w-1/2">
               <p className="text-gray-900 text-xs font-normal text-center">
                 Name
               </p>
               <p className="text-black text-xs font-normal w-full">{name}</p>
             </div>
-            <div className="flex flex-col gap-1 items-start relative shrink-0 w-1/2 pl-2">
+            <div className="flex flex-col gap-1 items-start relative shrink-0 w-1/2">
               <p className="text-gray-900 text-xs font-normal text-center">
                 Company Email
               </p>
@@ -67,8 +67,8 @@ export default function AssessmentRecruiterRequestedCard({
           </div>
 
           {/* Row 2: Skills to Assess and Phone Number */}
-          <div className="flex items-start relative shrink-0 w-full">
-            <div className="flex flex-col gap-1 items-start relative shrink-0 w-1/2 pr-2">
+          <div className="flex flex-col md:flex-row gap-2 md:items-center relative shrink-0 w-full">
+            <div className="flex flex-col gap-1 items-start relative shrink-0 w-1/2">
               <p className="text-gray-900 text-xs font-normal text-center">
                 Skills to Assess
               </p>
@@ -76,7 +76,7 @@ export default function AssessmentRecruiterRequestedCard({
                 {skillsToAssess}
               </p>
             </div>
-            <div className="flex flex-col gap-1 items-start relative shrink-0 w-1/2 pl-2">
+            <div className="flex flex-col gap-1 items-start relative shrink-0 w-1/2">
               <p className="text-gray-900 text-xs font-normal text-center">
                 Phone Number
               </p>
@@ -93,7 +93,7 @@ export default function AssessmentRecruiterRequestedCard({
                 Assessment Creation Preference
               </p>
               <p className="text-black text-xs font-normal w-full">
-                {assessmentCreationPreference}
+                {assessmentCreationPreference === "Recruiter Create" && "Recruiter will create their own questions" || assessmentCreationPreference === "Collaborate" && "Collaborate with TechSmartHire for creation" || "-"}
               </p>
             </div>
           </div>

@@ -10,7 +10,7 @@ import {
   DialogTitle,
   DialogTrigger,
 } from "@/components/ui/dialog";
-import { cn } from "@/lib/utils";
+import { cn, sanitizeHtml } from "@/lib/utils";
 // import { initiatePurchase, openRazorpayCheckout } from "@/lib/razorpay";
 import { Icon } from "@iconify/react";
 import { getCookie } from "cookies-next/client";
@@ -297,7 +297,9 @@ export default function PaymentCards({
                 {card.title}
               </div>
               <div
-                dangerouslySetInnerHTML={{ __html: card.description }}
+                dangerouslySetInnerHTML={{
+                  __html: sanitizeHtml(card.description),
+                }}
                 className="text-xs text-gray-500 mb-2"
               />
 

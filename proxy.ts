@@ -67,5 +67,12 @@ export function proxy(request: NextRequest) {
     return NextResponse.redirect(new URL("/authentication", request.url));
   }
 
-  return NextResponse.next();
+  const response = NextResponse.next();
+
+  // Add headers to prevent caching of protected routes
+  response.headers.set("Cache-Control", "no-store, no-cache, must-revalidate, proxy-revalidate");
+  response.headers.set("Pragma", "no-cache");
+  response.headers.set("Expires", "0");
+
+  return response;
 }
