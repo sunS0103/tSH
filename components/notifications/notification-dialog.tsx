@@ -7,6 +7,7 @@ import { Icon } from "@iconify/react";
 import { useRouter } from "next/navigation";
 import { getNotifications, markNotificationAsRead } from "@/api/notifications";
 import type { Notification } from "@/api/notifications";
+import { sanitizeHtml } from "@/lib/utils";
 
 interface NotificationPopoverProps {
   open: boolean;
@@ -107,23 +108,32 @@ export default function NotificationPopover({
                     }
                   }}
                 >
-                  <div className="flex flex-col gap-1">
-                    <div className="flex items-center justify-between gap-1">
-                      <div className="flex items-center flex-1 min-w-0">
-                        <span className="text-sm font-semibold text-gray-900">
+                  <div className="flex gap-3 items-start">
+                    {/* Unread Indicator */}
+                    <div className="shrink-0 mt-1.5">
+                      {!notification.is_read && (
+                        <div className="size-1 rounded-full bg-primary-600" />
+                      )}
+                    </div>
+
+                    {/* Content */}
+                    <div className="flex flex-col gap-1 flex-1 min-w-0">
+                      <div className="flex items-start justify-between gap-2">
+                        <span className="text-sm font-semibold text-gray-900 leading-tight">
                           New Job Alert: {notification.title}
                         </span>
+                        <div className="shrink-0">
+                          <p className="text-xs text-gray-500 text-right whitespace-nowrap">
+                            {notification.created_at}
+                          </p>
+                        </div>
                       </div>
-                      <div className="flex items-center justify-center shrink-0">
-                        <p className="text-xs text-gray-500 text-center">
-                          {notification.created_at}
-                        </p>
-                      </div>
-                    </div>
-                    <div className="flex items-center">
-                      <p className="text-xs text-gray-700 flex-1">
-                        {notification.description}
-                      </p>
+                      <div
+                        className="text-xs text-gray-700 leading-normal"
+                        dangerouslySetInnerHTML={{
+                          __html: sanitizeHtml(notification.description),
+                        }}
+                      />
                     </div>
                   </div>
                 </div>
@@ -134,14 +144,14 @@ export default function NotificationPopover({
 
         {/* Footer with See All Button */}
         {/* {notifications.length > 0 && ( */}
-          <div className="w-full ">
-            <button
-              className="w-full rounded-b-2xl h-8 px-3 bg-primary-500 hover:bg-primary-600 text-white text-sm font-normal flex items-center justify-center transition-colors"
-              onClick={handleSeeAll}
-            >
-              See All Updates
-            </button>
-          </div>
+        <div className="w-full ">
+          <button
+            className="w-full rounded-b-2xl h-8 px-3 bg-primary-500 hover:bg-primary-600 text-white text-sm font-normal flex items-center justify-center transition-colors"
+            onClick={handleSeeAll}
+          >
+            See All Updates
+          </button>
+        </div>
         {/* )} */}
       </PopoverContent>
     </Popover>

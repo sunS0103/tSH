@@ -1,12 +1,16 @@
 import { RecruiterJob } from "@/types/job";
+import { sanitizeHtml } from "@/lib/utils";
 import { cookies } from "next/headers";
 
 interface DetailItemProps {
   label: string;
   value: string | null | undefined;
 }
-export default async function JobDetailsSection({ job }: { job: RecruiterJob }) {
-
+export default async function JobDetailsSection({
+  job,
+}: {
+  job: RecruiterJob;
+}) {
   const cookieStore = await cookies();
   const role = cookieStore.get("user_role")?.value;
 
@@ -44,8 +48,8 @@ export default async function JobDetailsSection({ job }: { job: RecruiterJob }) 
     job.job_serving_location === "in-house project"
       ? "Inhouse Project"
       : job.job_serving_location === "client location"
-        ? "Client location"
-        : job.job_serving_location || null;
+      ? "Client location"
+      : job.job_serving_location || null;
 
   // Build array of detail fields
   const detailFields = [
@@ -57,12 +61,12 @@ export default async function JobDetailsSection({ job }: { job: RecruiterJob }) 
     // Conditionally include contract-to-hire fields
     ...(job.contract_to_hire
       ? [
-        { label: "Client Name", value: job.client_name },
-        {
-          label: "Approximate conversion time to full-time.",
-          value: job.conversion_time,
-        },
-      ]
+          { label: "Client Name", value: job.client_name },
+          {
+            label: "Approximate conversion time to full-time.",
+            value: job.conversion_time,
+          },
+        ]
       : []),
     { label: "Salary", value: salaryText },
     { label: "Work Mode", value: workModesText },
@@ -75,7 +79,11 @@ export default async function JobDetailsSection({ job }: { job: RecruiterJob }) 
       {/* Details Grid */}
       <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-3 w-full">
         {detailFields.map((field, index) => (
-          <DetailItem key={index} label={field.label} value={field.value as string} />
+          <DetailItem
+            key={index}
+            label={field.label}
+            value={field.value as string}
+          />
         ))}
       </div>
 
@@ -92,7 +100,9 @@ export default async function JobDetailsSection({ job }: { job: RecruiterJob }) 
         <div className="text-base text-black font-normal leading-normal wrap-break-words">
           <div
             className="prose prose-sm max-w-none [&_ul]:list-disc [&_ul]:ml-4 [&_ul]:my-2 [&_ol]:list-decimal [&_ol]:ml-4 [&_ol]:my-2 [&_li]:mb-1 [&_li]:wrap-break-words"
-            dangerouslySetInnerHTML={{ __html: job.description || "-" }}
+            dangerouslySetInnerHTML={{
+              __html: sanitizeHtml(job.description || "-"),
+            }}
           />
         </div>
       </div>
