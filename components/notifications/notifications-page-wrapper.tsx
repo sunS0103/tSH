@@ -13,6 +13,7 @@ import {
 import type { Notification } from "@/api/notifications";
 import { Loader } from "@/components/ui/loader";
 import Link from "next/link";
+import { sanitizeHtml } from "@/lib/utils";
 
 export default function NotificationsPageWrapper() {
   const router = useRouter();
@@ -175,9 +176,12 @@ export default function NotificationsPageWrapper() {
                           </p>
                         </div>
                       </div>
-                      <p className="text-xs text-gray-700 leading-normal">
-                        {notification.description}
-                      </p>
+                      <div
+                        className="text-xs text-gray-700 leading-normal"
+                        dangerouslySetInnerHTML={{
+                          __html: sanitizeHtml(notification.description),
+                        }}
+                      />
                     </div>
                   </div>
                 </div>
