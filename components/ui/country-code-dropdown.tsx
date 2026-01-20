@@ -407,6 +407,12 @@ export function CountryCodeDropdown({
               No more countries
             </div>
           )}
+
+          {countries.length === 0 && (
+            <div className="px-4 py-2 text-xs text-gray-400 text-center">
+              No countries found
+            </div>
+          )}
         </div>
       </PopoverContent>
     </Popover>
