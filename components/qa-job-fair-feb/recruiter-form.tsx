@@ -133,19 +133,45 @@ const RecruiterForm: React.FC<RecruiterFormProps> = () => {
                 </div>
 
                 <h3 className="text-2xl font-bold mb-4 text-slate-900">
-                    You're on the list!
+                    Thank You for Your Interest!
                 </h3>
 
-                <div className="space-y-4 text-center">
+                <div className="space-y-4 text-left">
                     <p className="text-slate-700">
-                        We'll keep you posted on our Beta progress. Have any questions about the pilot program? Send a brief note to{" "}
-                        <a
-                            href="mailto:info@techsmarthire.com?subject=Pilot Program"
-                            className="text-emerald-600 hover:underline font-medium"
-                        >
-                            info@techsmarthire.com
-                        </a>
+                        We've received your request to participate in the February QA Job Fair. One of our representatives will be in touch within 24 hours to discuss:
                     </p>
+                    <ul className="space-y-2 text-slate-700 ml-4">
+                        <li className="flex items-start gap-2">
+                            <span className="text-emerald-600 mt-1">•</span>
+                            Your hiring needs and open positions
+                        </li>
+                        <li className="flex items-start gap-2">
+                            <span className="text-emerald-600 mt-1">•</span>
+                            Candidate assessment criteria
+                        </li>
+                        <li className="flex items-start gap-2">
+                            <span className="text-emerald-600 mt-1">•</span>
+                            Job fair participation details
+                        </li>
+                        <li className="flex items-start gap-2">
+                            <span className="text-emerald-600 mt-1">•</span>
+                            Timeline and next steps
+                        </li>
+                    </ul>
+                    <div className="mt-6 p-4 rounded-xl bg-slate-50 border-2 border-slate-200">
+                        <p className="text-slate-700 font-medium">
+                            Need immediate assistance?
+                        </p>
+                        <p className="text-slate-600">
+                            Email us at{" "}
+                            <a
+                                href="mailto:info@techsmarthire.com"
+                                className="text-emerald-600 hover:underline font-medium"
+                            >
+                                info@techsmarthire.com
+                            </a>
+                        </p>
+                    </div>
                 </div>
 
                 <Button
@@ -165,7 +191,7 @@ const RecruiterForm: React.FC<RecruiterFormProps> = () => {
     return (
         <form
             onSubmit={handleSubmit(onSubmit)}
-            className="p-8 rounded-2xl bg-white border-2 border-slate-200 shadow-lg space-y-6"
+            className="p-4 md:p-8 rounded-2xl bg-white border-2 border-slate-200 shadow-lg space-y-6"
         >
             {/* NAME FIELD */}
             <div className="space-y-2">
