@@ -1,9 +1,10 @@
 'use client';
 
-import React, { useState, useRef } from 'react';
+import React, { useState, useRef, useEffect } from 'react';
 import {
   CheckCircle,
   Clock,
+  Globe,
   FileText,
   Shield,
   AlertTriangle,
@@ -97,6 +98,17 @@ They can log in anytime to:
 Once you accept, your profile is unlocked only for that recruiter.`
     },
     {
+      icon: Globe,
+      question: "Can I apply for international positions?",
+      answer: `For most international roles, you need valid work authorization for that country.
+
+UAE Exception:
+Dubai/UAE companies actively recruit from India for exceptional profiles and do not require prior work authorization. Indian candidates can apply directly.
+
+Other Countries:
+You must hold a valid work visa or permit for that specific country before applying.`
+    },
+    {
       icon: Award,
       question: "Why is there a fee to take the assessment?",
       answer: `Each assessment actually costs us around ₹999 / $10 to conduct due to:
@@ -116,7 +128,6 @@ So you invest very little upfront — and pay more only when there is real hirin
       answer: `We provide a complete Exam Guide that includes:
 • Topics covered
 • Sample questions
-• Difficulty level
 • Preparation tips
 
 👉 Download the Exam Guide to know exactly what to expect before taking the test. No surprises. Full transparency.`
@@ -290,6 +301,27 @@ export default function DynamicAssessmentPageClient({ config }: DynamicAssessmen
   const [recaptchaError, setRecaptchaError] = useState<string | null>(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const recaptchaRef = useRef<ReCAPTCHA>(null);
+
+  const [timeLeft, setTimeLeft] = useState({ days: 0, hours: 0, minutes: 0 });
+
+useEffect(() => {
+  const launchDate = new Date('2026-02-05T00:00:00').getTime();
+  
+  const timer = setInterval(() => {
+    const now = new Date().getTime();
+    const distance = launchDate - now;
+    
+    if (distance > 0) {
+      setTimeLeft({
+        days: Math.floor(distance / (1000 * 60 * 60 * 24)),
+        hours: Math.floor((distance % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60)),
+        minutes: Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60))
+      });
+    }
+  }, 1000);
+
+  return () => clearInterval(timer);
+}, []);
 
   // Use provided config or fallback to default
   const assessmentConfig: AssessmentConfig = config || {
@@ -801,102 +833,130 @@ export default function DynamicAssessmentPageClient({ config }: DynamicAssessmen
       </section>
 
       {/* Smart CTA - Email Capture Before Launch, Active Signup After */}
-      <section className="py-16 bg-linear-to-br from-emerald-600 via-emerald-700 to-blue-600 text-white relative overflow-hidden">
-        <div className="absolute inset-0 bg-[linear-gradient(to_right,#ffffff10_1px,transparent_1px),linear-gradient(to_bottom,#ffffff10_1px,transparent_1px)] bg-size-[64px_64px]"></div>
+      <section className="py-16 bg-gradient-to-br from-emerald-600 via-emerald-700 to-blue-600 text-white relative overflow-hidden">
+  <div className="absolute inset-0 bg-[linear-gradient(to_right,#ffffff10_1px,transparent_1px),linear-gradient(to_bottom,#ffffff10_1px,transparent_1px)] bg-[size:64px_64px]"></div>
 
-        <div className="relative max-w-4xl mx-auto px-6 text-center">
-          {new Date() >= new Date('2026-02-05T00:00:00') ? (
-            // PHASE 2: Assessments Are Open
-            <>
-              <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-white/20 border border-white/30 text-sm font-semibold mb-4 animate-pulse">
-                <Zap className="w-4 h-4" />
-                Assessments Are Now Open!
-              </div>
-
-              <h2 className="text-4xl md:text-5xl font-bold mb-4">
-                Ready to Get into Top Recruiters' Attention?
-              </h2>
-
-              <p className="text-xl text-emerald-100 mb-8 max-w-3xl mx-auto">
-                Prove your QA skills through our skill-based assessments and get shortlisted by leading companies.
-              </p>
-
-              <button className="group cursor-pointer inline-flex items-center gap-3 px-12 py-5 rounded-xl bg-white text-emerald-600 font-bold text-xl hover:shadow-2xl hover:shadow-white/50 transition-all hover:scale-105 mb-6">
-                <Users className="w-6 h-6" />
-                <span>Signup for TechSmartHire & Begin Assessment</span>
-                <ArrowRight className="w-5 h-5 group-hover:translate-x-1 transition-transform" />
-              </button>
-
-              <div className="flex items-center justify-center gap-8 text-sm text-emerald-100">
-                <div className="flex items-center gap-2">
-                  <CheckCircle className="w-5 h-5" />
-                  <span>22 QA Positions</span>
-                </div>
-                <div className="flex items-center gap-2">
-                  <CheckCircle className="w-5 h-5" />
-                  <span>7 Companies</span>
-                </div>
-                <div className="flex items-center gap-2">
-                  <CheckCircle className="w-5 h-5" />
-                  <span>Multiple Cities</span>
-                </div>
-              </div>
-            </>
-          ) : (
-            // PHASE 1: Pre-Launch - Email Capture
-            <>
-              <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-yellow-400/20 border border-yellow-400/50 text-yellow-100 text-sm font-semibold mb-4">
-                <Calendar className="w-4 h-4" />
-                Open Window: Feb 5–27, 2026
-              </div>
-
-              <h2 className="text-4xl md:text-5xl font-bold mb-4">
-                Ready to Get into Top Recruiters' Attention?
-              </h2>
-
-              <p className="text-xl text-emerald-100 mb-8 max-w-3xl mx-auto">
-                Don't miss out! Get notified when the assessment window opens (Feb 5-27) and receive <strong>exclusive early access</strong> to sample questions.
-              </p>
-
-              {/* Email Capture Form */}
-              <div className="max-w-2xl mx-auto mb-8">
-                <button
-                  onClick={handleNotifyMe}
-                  className="group cursor-pointer inline-flex items-center justify-center gap-3 px-8 py-4 rounded-xl bg-yellow-400 text-slate-900 font-bold text-lg hover:bg-yellow-300 hover:shadow-2xl transition-all hover:scale-105 whitespace-nowrap"
-                >
-                  <span>🔔 Notify Me When It's Live!</span>
-                  <ArrowRight className="w-5 h-5 group-hover:translate-x-1 transition-transform" />
-                </button>
-              </div>
-
-              {/* Trust Indicators */}
-              <div className="grid md:grid-cols-3 gap-6 max-w-3xl mx-auto mb-6">
-                <div className="p-4 rounded-xl bg-white/10 backdrop-blur-sm border border-white/20">
-                  <CheckCircle className="w-8 h-8 text-yellow-300 mx-auto mb-2" />
-                  <p className="text-sm font-semibold">Instant Notification</p>
-                  <p className="text-xs text-emerald-100 mt-1">When window opens</p>
-                </div>
-
-                <div className="p-4 rounded-xl bg-white/10 backdrop-blur-sm border border-white/20">
-                  <Award className="w-8 h-8 text-yellow-300 mx-auto mb-2" />
-                  <p className="text-sm font-semibold">Free Sample Questions</p>
-                  <p className="text-xs text-emerald-100 mt-1">In your inbox now</p>
-                </div>
-
-                <div className="p-4 rounded-xl bg-white/10 backdrop-blur-sm border border-white/20">
-                  <Shield className="w-8 h-8 text-yellow-300 mx-auto mb-2" />
-                  <p className="text-sm font-semibold">No Spam, Ever</p>
-                  <p className="text-xs text-emerald-100 mt-1">Just one reminder</p>
-                </div>
-              </div>
-
-              <p className="text-sm text-emerald-200">
-                Take the assessment anytime between Feb 5-27, 2026 • Be first in line when it opens
-              </p>
-            </>
-          )}
+  <div className="relative max-w-4xl mx-auto px-6 text-center">
+    {new Date() >= new Date('2026-02-05T00:00:00') ? (
+      // PHASE 2: Assessments Are Open - UNLOCKED
+      <>
+        <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-white/20 border border-white/30 text-sm font-semibold mb-4 animate-pulse">
+          <Zap className="w-4 h-4" />
+          Assessments Are Now Open!
         </div>
-      </section>
+
+        <h2 className="text-4xl md:text-5xl font-bold mb-4">
+          Ready to Get into Top Recruiters' Attention?
+        </h2>
+
+        <p className="text-xl text-emerald-100 mb-8 max-w-3xl mx-auto">
+          Prove your QA skills through our skill-based assessments and get shortlisted by leading companies.
+        </p>
+
+        {/* UNLOCKED BUTTON */}
+        <div className="mb-8">
+          <div className="relative inline-block">
+            <button className="cursor-pointer px-12 py-5 rounded-xl bg-white text-emerald-600 font-black text-xl hover:shadow-2xl hover:scale-105 transition-all flex items-center gap-3">
+              <CheckCircle className="w-6 h-6" />
+              <span>Signup & Begin Assessment</span>
+              <ArrowRight className="w-6 h-6" />
+            </button>
+
+            {/* Live Badge */}
+            <div className="absolute -top-3 -right-3 px-3 py-1 rounded-full bg-green-400 text-slate-900 text-xs font-black shadow-lg animate-pulse">
+              ✨ LIVE NOW
+            </div>
+          </div>
+
+          <p className="text-sm text-emerald-200 mt-3">
+            Take the assessment anytime until Feb 27
+          </p>
+        </div>
+
+        <div className="flex items-center justify-center gap-8 text-sm text-emerald-100">
+          <div className="flex items-center gap-2">
+            <CheckCircle className="w-5 h-5" />
+            <span>22 QA Positions</span>
+          </div>
+          <div className="flex items-center gap-2">
+            <CheckCircle className="w-5 h-5" />
+            <span>7 Companies</span>
+          </div>
+          <div className="flex items-center gap-2">
+            <CheckCircle className="w-5 h-5" />
+            <span>Multiple Cities</span>
+          </div>
+        </div>
+      </>
+    ) : (
+      // PHASE 1: Pre-Launch - LOCKED
+      <>
+        <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-yellow-400/20 border border-yellow-400/50 text-yellow-100 text-sm font-semibold mb-4">
+          <Calendar className="w-4 h-4" />
+          Open Window: Feb 6–27, 2026
+        </div>
+
+        <h2 className="text-4xl md:text-5xl font-bold mb-4">
+          Ready to Get into Top Recruiters' Attention?
+        </h2>
+
+        {/* Dynamic Countdown */}
+        <p className="text-xl text-emerald-100 mb-8 max-w-3xl mx-auto">
+          Registration opens in <strong className="text-yellow-300">
+            {timeLeft.days} days, {timeLeft.hours} hours
+          </strong>
+        </p>
+
+        {/* LOCKED BUTTON */}
+        <div className="mb-8">
+          <div className="relative inline-block">
+            <button
+              disabled
+              className="px-12 py-5 rounded-xl bg-slate-700/50 text-slate-300 font-bold text-xl cursor-not-allowed border-2 border-slate-600 backdrop-blur-sm flex items-center gap-3"
+            >
+              <Lock className="w-6 h-6" />
+              <span>Signup Opens February 6</span>
+            </button>
+
+            {/* Lock Badge */}
+            <div className="absolute -top-3 -right-3 px-3 py-1 rounded-full bg-yellow-400 text-slate-900 text-xs font-black shadow-lg animate-pulse">
+              🔒 LOCKED
+            </div>
+          </div>
+
+          <p className="text-sm text-emerald-200 mt-3">
+            Button will unlock automatically on Feb 6 at 12:00 AM
+          </p>
+        </div>
+
+        {/* Divider */}
+        <div className="flex items-center gap-4 max-w-md mx-auto mb-8">
+          <div className="flex-1 h-px bg-white/20"></div>
+          <span className="text-sm font-semibold text-emerald-200">Meanwhile</span>
+          <div className="flex-1 h-px bg-white/20"></div>
+        </div>
+
+        {/* Email Capture Button */}
+        <div className="max-w-2xl mx-auto mb-8">
+          <button
+            onClick={handleNotifyMe}
+            className="group cursor-pointer inline-flex items-center justify-center gap-3 px-8 py-4 rounded-xl bg-yellow-400 text-slate-900 font-bold text-lg hover:bg-yellow-300 hover:shadow-2xl transition-all hover:scale-105 whitespace-nowrap"
+          >
+            <span>🔔 Join the List to Get Notified When It's Live!</span>
+            <ArrowRight className="w-5 h-5 group-hover:translate-x-1 transition-transform" />
+          </button>
+        </div>
+
+        {/* Trust Indicators */}
+      
+
+        <p className="text-sm text-emerald-200">
+          Take the assessment anytime between Feb 6-27, 2026 • Be first in line when it opens
+        </p>
+      </>
+    )}
+  </div>
+</section>
 
       {/* Footer */}
       <footer className="py-8 bg-slate-900 text-white">
@@ -1010,7 +1070,7 @@ export default function DynamicAssessmentPageClient({ config }: DynamicAssessmen
                       ) : (
                         <>
                           <FileText className="w-5 h-5" />
-                          Download PDF
+                          Access PDF
                         </>
                       )}
                     </button>

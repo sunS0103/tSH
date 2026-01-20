@@ -17,7 +17,7 @@ import {
   FileText,
 } from "lucide-react";
 import config from "./config.json";
-import RecruiterForm from "@/components/qa-fair/recruiter-form";
+import RecruiterForm from "@/components/qa-job-fair-feb/recruiter-form";
 
 // Icon mapping for config icons
 const iconMap: Record<string, React.ElementType> = {
@@ -33,8 +33,8 @@ interface Job {
   jobId: string;
   title: string;
   companies: string[];
-  experience: string;
-  location: string;
+  experience: string[];
+  location: string[];
   examId: string;
   examName: string;
   route: string;
@@ -316,13 +316,23 @@ export default function TechSmartHireLanding() {
 
                   {/* Experience & Location */}
                   <div className="flex flex-wrap gap-2 mb-4">
-                    <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-lg bg-emerald-100 border border-emerald-300 text-sm text-emerald-700 font-medium">
-                      {job.experience}
-                    </div>
-                    <div className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-blue-100 border border-blue-300 text-sm text-blue-700 font-medium">
-                      <MapPin className="w-3.5 h-3.5" />
-                      {job.location}
-                    </div>
+                    {job.experience.map((exp, idx) => (
+                      <div
+                        key={idx}
+                        className="inline-flex items-center gap-2 px-3 py-1.5 rounded-lg bg-emerald-100 border border-emerald-300 text-sm text-emerald-700 font-medium"
+                      >
+                        {exp}
+                      </div>
+                    ))}
+                    {job.location.map((loc, idx) => (
+                      <div
+                        key={idx}
+                        className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-blue-100 border border-blue-300 text-sm text-blue-700 font-medium"
+                      >
+                        <MapPin className="w-3.5 h-3.5" />
+                        {loc}
+                      </div>
+                    ))}
                   </div>
 
                   {/* Assessment Info */}

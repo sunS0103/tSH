@@ -10,9 +10,9 @@
     "ended": "Job Fair Has Ended"
   },
   "stats": {
-    "companiesParticipating": 7,
-    "positionsOpen": 22,
-    "jobLocations": "Multiple Indian Cities"
+    "companiesParticipating":15,
+    "positionsOpen": 27,
+    "jobLocations": "India, Dubai, USA"
   },
   "hero": {
     "title": {
@@ -25,33 +25,33 @@
   "jobs": [
     {
       "jobId": "TSH-JOB-001",
-      "title": "QA Automation Engineer (Playwright/Java)",
-      "companies": ["TechCorp", "InnovateSoft"],
-      "experience": "2-5 Years",
-      "location": "Bangalore",
-      "examId": "TSH-EXAM-AUTO-101",
-      "examName": "Automation Testing - Level 1",
-      "route": "/assessments/sdet-java-automation"
+      "title": "Java SDET Automation Engineer - Selenium & API Testing",
+      "companies": ["Cognizant", "Innocito", "CapGemini", "+ 4 More Companies"],
+      "experience": ["2-5 Years", "5-17 Years"],
+      "location": ["Multiple Indian Cities,  Dubai"],
+      "examId": "TSH-SDETJAVA-101",
+      "examName": "Java SDET - Selenium & API Testing",
+      "route": "/assessments/TSH-SDETJAVA-101"
     },
     {
       "jobId": "TSH-JOB-002",
-      "title": "Senior SDET (Selenium/Python)",
-      "companies": ["CloudBase Solutions"],
-      "experience": "3-7 Years",
-      "location": "Hyderabad",
-      "examId": "TSH-EXAM-AUTO-201",
-      "examName": "Automation Testing - Level 2",
-      "route": "/assessments/sdet-java-automation"
+      "title": "JS/TS SDET Engineer - Playwright & API Testing",
+      "companies": ["TCS", "Innocito", "CapGemini",  "JP Morgan", "Optimworks", "+ 9 More Companies"],
+      "experience": ["3-17 Years"],
+      "location": ["Multiple Indian Cities, Dubai, USA"],
+      "examId": "TSH-SDETJS-101",
+      "examName": "JS/TS SDET - Playwright & API Testing",
+      "route": "/assessments/TSH-SDETJS-101"
     },
-    {
+     {
       "jobId": "TSH-JOB-003",
-      "title": "API Test Engineer (RestAssured/Postman)",
-      "companies": ["DataDyne", "QualityFirst", "TestLabs Inc"],
-      "experience": "1-4 Years",
-      "location": "Any",
-      "examId": "TSH-EXAM-API-101",
-      "examName": "API Testing Fundamentals",
-      "route": "/assessments/sdet-java-automation"
+      "title": "Java SDET Automation Engineer - Playwright & API Testing",
+      "companies": ["Cognizant", "Deloitte", "+ 2 More Companies"],
+      "experience": ["2-5 Years", "5-17 Years"],
+      "location": ["Multiple Indian Cities"],
+      "examId": "TSH-SDETJAVA-201",
+      "examName": "Java SDET - Playwright & API Testing",
+      "route": "/assessments/TSH-SDETJAVA-201"
     }
   ],
   "selectionSteps": [
