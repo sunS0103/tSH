@@ -428,9 +428,13 @@ export default function DynamicAssessmentPageClient({ config }: DynamicAssessmen
 
     try {
       // Check if email already exists
+      let listIds = [];
       try {
-        const response = await getContact(email);
-        const listIds = response.listIds || [];
+        try {
+          const response = await getContact(email);
+          listIds = response.listIds || [];
+        } catch (error) {
+        }
         if (!listIds.includes(23)) {
           // Import contact to waitlist
           const importBody = {
