@@ -416,7 +416,7 @@ export default function JobFormBase({
                   <FormItem>
                     <FormLabel>Salary Range (in CTC)</FormLabel>
                     <FormControl>
-                      <Input {...field} placeholder="e.g., 3.0 to 6.8 LPA" />
+                      <Input {...field} placeholder="Enter Salary Range" />
                     </FormControl>
                     <FormMessage />
                   </FormItem>
@@ -486,20 +486,20 @@ export default function JobFormBase({
                       <WorkModeMultiSelect
                         value={
                           Array.isArray(field.value) &&
-                          workModeOptions.length > 0
+                            workModeOptions.length > 0
                             ? field.value
-                                .map((v) => {
-                                  // If value is a string, find the matching ID
-                                  if (typeof v === "string") {
-                                    const mode = workModeOptions.find(
-                                      (m) =>
-                                        m.name.toLowerCase() === v.toLowerCase()
-                                    );
-                                    return mode?.id;
-                                  }
-                                  return typeof v === "number" ? v : null;
-                                })
-                                .filter((id): id is number => id !== null)
+                              .map((v) => {
+                                // If value is a string, find the matching ID
+                                if (typeof v === "string") {
+                                  const mode = workModeOptions.find(
+                                    (m) =>
+                                      m.name.toLowerCase() === v.toLowerCase()
+                                  );
+                                  return mode?.id;
+                                }
+                                return typeof v === "number" ? v : null;
+                              })
+                              .filter((id): id is number => id !== null)
                             : []
                         }
                         onValueChange={(modeIds: number[]) => {

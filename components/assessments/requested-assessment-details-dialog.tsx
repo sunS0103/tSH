@@ -97,7 +97,7 @@ export default function RequestedAssessmentDetailsDialog({
                 Assessment Creation Preference
               </p>
               <p className="font-medium leading-normal text-black text-base text-center">
-                {assessmentCreationPreference}
+                {assessmentCreationPreference === "Recruiter Create" && "Recruiter will create their own questions" || assessmentCreationPreference === "Collaborate" && "Collaborate with TechSmartHire for creation" || "-"}
               </p>
             </div>
           </div>

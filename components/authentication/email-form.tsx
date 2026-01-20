@@ -232,22 +232,16 @@ export default function EmailForm({ role }: EmailFormProps) {
           router.replace("/");
         }
       }
-    } catch (error: unknown) {
+    } catch (error) {
       console.error("Google sign-in error:", error);
       let errorMessage = "Failed to sign in with Google";
 
-      if (error && typeof error === "object") {
-        if (
-          "response" in error &&
-          error.response &&
-          typeof error.response === "object" &&
-          "data" in error.response
-        ) {
-          const responseData = error.response.data as { message?: string };
-          errorMessage = responseData?.message || errorMessage;
-        } else if ("message" in error && typeof error.message === "string") {
-          errorMessage = error.message;
-        }
+      if (
+        (error as { code?: string })?.code === "auth/popup-closed-by-user"
+      ) {
+        errorMessage = "Google sign-in popup window closed by user";
+      } else if ((error as unknown as { message?: string })?.message) {
+        errorMessage = (error as unknown as { message?: string })?.message || "Failed to sign in with Google";
       }
 
       toast.error(errorMessage);
