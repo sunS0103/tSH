@@ -834,8 +834,8 @@ export default function DynamicAssessmentPageClient({ config }: DynamicAssessmen
       </section>
 
       {/* Smart CTA - Email Capture Before Launch, Active Signup After */}
-      <section className="py-16 bg-gradient-to-br from-emerald-600 via-emerald-700 to-blue-600 text-white relative overflow-hidden">
-        <div className="absolute inset-0 bg-[linear-gradient(to_right,#ffffff10_1px,transparent_1px),linear-gradient(to_bottom,#ffffff10_1px,transparent_1px)] bg-[size:64px_64px]"></div>
+      <section className="py-16 bg-linear-to-br from-emerald-600 via-emerald-700 to-blue-600 text-white relative overflow-hidden">
+        <div className="absolute inset-0 bg-[linear-gradient(to_right,#ffffff10_1px,transparent_1px),linear-gradient(to_bottom,#ffffff10_1px,transparent_1px)] bg-size-[64px_64px]"></div>
 
         <div className="relative max-w-4xl mx-auto px-6 text-center">
           {new Date() >= new Date('2026-02-05T00:00:00') ? (

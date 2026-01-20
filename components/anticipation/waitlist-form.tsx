@@ -23,6 +23,7 @@ const WaitlistForm: React.FC<WaitlistFormProps> = ({ initialRole = null }) => {
   const [submittedRole, setSubmittedRole] = useState<"candidate" | "recruiter">(
     "candidate"
   );
+  const [isAlreadySubscribed, setIsAlreadySubscribed] = useState(false);
   const [recaptchaToken, setRecaptchaToken] = useState<string | null>(null);
   const [recaptchaError, setRecaptchaError] = useState<string | null>(null);
   const recaptchaRef = useRef<ReCAPTCHA>(null);
@@ -75,6 +76,9 @@ const WaitlistForm: React.FC<WaitlistFormProps> = ({ initialRole = null }) => {
             response.message ||
               "You're already subscribed with this email address!"
           );
+          setSubmitted(true);
+          setSubmittedRole(currentRole);
+          setIsAlreadySubscribed(true);
           reset({ name: "", email: "", company: "", role: currentRole });
           resetRecaptcha();
           return;
@@ -111,6 +115,7 @@ const WaitlistForm: React.FC<WaitlistFormProps> = ({ initialRole = null }) => {
         company: "",
         role: currentRole,
       });
+      setIsAlreadySubscribed(false);
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
     } catch (error: any) {
       console.error("Waitlist Error:", error);
@@ -118,6 +123,7 @@ const WaitlistForm: React.FC<WaitlistFormProps> = ({ initialRole = null }) => {
         error.response?.data?.message || "Failed to join the waitlist."
       );
     }
+
   };
 
   const resetRecaptcha = () => {
@@ -132,7 +138,9 @@ const WaitlistForm: React.FC<WaitlistFormProps> = ({ initialRole = null }) => {
     "Sign up now to get exclusive early-bird access to our upcoming Pilot Job Fair and Beta features of the platform for FREE.";
 
   const recruiterSuccessTitle = "You're on the list!";
+  const recruiterSuccessTitleAlreadySubscribed = "You're already on the list!";
   const candidateSuccessTitle = "Welcome to the TechSmartHire Insider List!";
+  const candidateSuccessTitleAlreadySubscribed = "You're already on the list!";
 
   if (submitted) {
     return (
@@ -159,8 +167,8 @@ const WaitlistForm: React.FC<WaitlistFormProps> = ({ initialRole = null }) => {
 
               <h3 className="text-2xl font-bold mb-4">
                 {submittedRole === "recruiter"
-                  ? recruiterSuccessTitle
-                  : candidateSuccessTitle}
+                  ? isAlreadySubscribed ? recruiterSuccessTitleAlreadySubscribed : recruiterSuccessTitle
+                  : isAlreadySubscribed ? candidateSuccessTitleAlreadySubscribed : candidateSuccessTitle}
               </h3>
 
               {submittedRole === "recruiter" ? (
@@ -177,7 +185,7 @@ const WaitlistForm: React.FC<WaitlistFormProps> = ({ initialRole = null }) => {
                   </div>
 
                   {/* February Job Fair CTA */}
-                  <div className="p-5 rounded-xl bg-gradient-to-br from-primary/5 to-primary/10 border-2 border-primary/20">
+                  <div className="p-5 rounded-xl bg-linear-to-br from-primary/5 to-primary/10 border-2 border-primary/20">
                     <h4 className="text-base font-bold text-foreground mb-2">
                       Join February QA Job Fair 🎯
                     </h4>
@@ -223,7 +231,7 @@ const WaitlistForm: React.FC<WaitlistFormProps> = ({ initialRole = null }) => {
                   </div>
 
                   {/* CTA Box */}
-                  <div className="p-5 rounded-xl bg-gradient-to-br from-primary/5 to-primary/10 border-2 border-primary/20">
+                  <div className="p-5 rounded-xl bg-linear-to-br from-primary/5 to-primary/10 border-2 border-primary/20">
                     <h4 className="text-base font-bold text-foreground mb-2">
                       Get Hired in February! 🚀
                     </h4>
@@ -247,6 +255,7 @@ const WaitlistForm: React.FC<WaitlistFormProps> = ({ initialRole = null }) => {
               <Button
                 onClick={() => {
                   setSubmitted(false);
+                  setIsAlreadySubscribed(false);
                   resetRecaptcha();
                 }}
                 variant="outline"

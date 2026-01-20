@@ -4,7 +4,7 @@
   "questions": 20,
   "minutes": 25,
   "level": "Intermediate",
-  "sampleQuestionsHref": "https://aws.com/sample",
+  "sampleQuestionsHref": "/assessments/TSH-SDETJS-101.pdf",
   "skills": [
     { "name": "Playwright", "level": "Advanced" },
     { "name": "API Testing", "level": "Intermediate" },

@@ -4,7 +4,7 @@
   "questions": 30,
   "minutes": 40,
   "level": "Intermediate",
-  "sampleQuestionsHref": "https://aws.com/sample",
+  "sampleQuestionsHref": "/assessments/TSH-SDETFULLSTACK-101.pdf",
   "skills": [
     { "name": "Test Architecture & Strategy", "level": "Advanced" },
     { "name": "Multiple Automation Frameworks", "level": "Intermediate" },

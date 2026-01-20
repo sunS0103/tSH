@@ -36,7 +36,6 @@ interface Job {
   experience: string[];
   location: string[];
   examId: string;
-  examName: string;
   route: string;
 }
 
@@ -339,9 +338,6 @@ export default function TechSmartHireLanding() {
                     </p>
                     <p className="font-mono text-sm text-blue-600 font-bold mb-1">
                       {job.examId}
-                    </p>
-                    <p className="text-xs text-slate-700 font-medium">
-                      {job.examName}
                     </p>
                   </div>
 
