@@ -137,7 +137,7 @@ export default function TechSmartHireLanding() {
         <div className="absolute top-0 -left-48 w-96 h-96 bg-emerald-200 rounded-full mix-blend-multiply filter blur-3xl opacity-30 animate-blob"></div>
         <div className="absolute top-0 -right-48 w-96 h-96 bg-blue-200 rounded-full mix-blend-multiply filter blur-3xl opacity-30 animate-blob animation-delay-2000"></div>
 
-        <div className="relative max-w-7xl mx-auto px-6 py-24 lg:py-32">
+        <div className="relative max-w-7xl mx-auto px-4 md:px-6 py-24 lg:py-32">
           <div className="text-center space-y-8">
             <div className="inline-block">
               <span className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-linear-to-r from-emerald-100 to-blue-100 border-2 border-emerald-500 text-sm font-semibold text-emerald-700">
@@ -151,7 +151,7 @@ export default function TechSmartHireLanding() {
 
             <h1 className="text-5xl md:text-7xl lg:text-8xl font-bold tracking-tight text-slate-900">
               <span className="block">{config.hero.title.primary}</span>
-              <span className="block mt-2 bg-linear-to-r from-emerald-600 via-blue-600 to-emerald-600 bg-clip-text text-transparent">
+              <span className="block mt-2 pb-2 md:pb-4 bg-linear-to-r from-emerald-600 via-blue-600 to-emerald-600 bg-clip-text text-transparent">
                 {config.hero.title.secondary}
               </span>
             </h1>
@@ -229,7 +229,7 @@ export default function TechSmartHireLanding() {
               <p className="text-sm uppercase tracking-wider text-slate-600 font-semibold mb-4">
                 {countdownLabel}
               </p>
-              <div className="grid grid-cols-4 gap-4">
+              <div className="grid grid-cols-4 md:gap-4 gap-2">
                 {[
                   { label: "Days", value: timeLeft.days },
                   { label: "Hours", value: timeLeft.hours },
@@ -238,12 +238,12 @@ export default function TechSmartHireLanding() {
                 ].map((item, idx) => (
                   <div
                     key={idx}
-                    className="bg-white backdrop-blur-xl rounded-xl p-6 border-2 border-slate-200 shadow-lg"
+                    className="bg-white backdrop-blur-xl rounded-xl border-2 py-3 md:py-6 border-slate-200 shadow-lg"
                   >
-                    <div className="text-4xl md:text-5xl font-bold bg-linear-to-r from-emerald-600 to-blue-600 bg-clip-text text-transparent">
+                    <div className="text-2xl md:text-5xl font-bold bg-linear-to-r from-emerald-600 to-blue-600 bg-clip-text text-transparent">
                       {String(item.value).padStart(2, "0")}
                     </div>
-                    <div className="text-sm text-slate-600 mt-2 uppercase tracking-wider font-semibold">
+                    <div className="text-xs md:text-sm text-slate-600 mt-2 uppercase tracking-wider font-semibold">
                       {item.label}
                     </div>
                   </div>
@@ -364,7 +364,7 @@ export default function TechSmartHireLanding() {
 
       {/* Selection Story */}
       <section className="py-20 bg-linear-to-b from-slate-50 via-white to-slate-50">
-        <div className="max-w-7xl mx-auto px-6">
+        <div className="max-w-7xl mx-auto px-4 md:px-6">
           <div className="text-center mb-16">
             <h2 className="text-4xl md:text-5xl font-bold mb-4">
               <span className="bg-linear-to-r from-emerald-600 to-blue-600 bg-clip-text text-transparent">
@@ -381,7 +381,7 @@ export default function TechSmartHireLanding() {
               {/* Vertical line */}
               <div className="absolute left-8 top-0 bottom-0 w-[2px] bg-linear-to-b from-emerald-400 via-blue-400 to-emerald-400"></div>
 
-              <div className="space-y-12">
+              <div className="space-y-4">
                 {selectionSteps.map((step, idx) => (
                   <div key={idx} className="relative flex gap-8 group">
                     {/* Number circle */}
@@ -394,8 +394,8 @@ export default function TechSmartHireLanding() {
 
                     {/* Content */}
                     <div className="flex-1 pb-12">
-                      <div className="bg-white rounded-2xl border-2 border-slate-200 p-8 group-hover:border-emerald-400 group-hover:shadow-xl transition-all">
-                        <div className="flex items-start gap-4">
+                      <div className="bg-white rounded-2xl border-2 border-slate-200 p-4 md:p-8 group-hover:border-emerald-400 group-hover:shadow-xl transition-all">
+                        <div className="flex flex-col md:flex-row items-start gap-4">
                           <div className="p-3 rounded-xl bg-linear-to-br from-emerald-100 to-blue-100 border-2 border-emerald-300">
                             <step.icon className="w-6 h-6 text-emerald-600" />
                           </div>
@@ -560,10 +560,7 @@ export default function TechSmartHireLanding() {
           <div className="flex flex-col md:flex-row items-center justify-between gap-6">
             <div className="text-center md:text-left">
               <p className="text-slate-700 mb-2">
-                {config.footer.builtBy}{" "}
-                <span className="text-slate-900 font-bold">
-                  {config.footer.linkedinText.split(" ")[2]}
-                </span>
+                {config.footer.builtBy}
               </p>
               <p className="text-sm text-slate-600">
                 {config.footer.instructorDescription}

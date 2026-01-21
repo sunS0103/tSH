@@ -120,7 +120,7 @@ const WhoIsItForSection: React.FC<WhoIsItForSectionProps> = ({
                     transition={{ duration: 0.4, delay: 0.4 }}
                     className="mt-auto mb-6 flex items-center gap-2 px-4 py-2 rounded-full bg-secondary/10 border border-secondary/30 w-fit"
                   >
-                    <span className="text-sm font-medium text-secondary">
+                    <span className="text-sm font-medium text-secondary text-center">
                       {persona.badge}
                     </span>
                   </motion.div>
