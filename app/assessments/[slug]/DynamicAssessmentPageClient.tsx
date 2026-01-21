@@ -637,9 +637,9 @@ export default function DynamicAssessmentPageClient({ config }: DynamicAssessmen
             {questionTypes.map((type, idx) => (
               <div
                 key={idx}
-                className="group relative p-6 rounded-xl bg-white border-2 border-slate-200 hover:border-blue-400 hover:shadow-xl transition-all"
+                className="group relative p-6 rounded-xl bg-white border-2 border-slate-200 hover:border-blue-400 hover:shadow-xl transition-all md:overflow-visible overflow-hidden"
               >
-                <div className="absolute top-0 right-0 w-24 h-24 bg-linear-to-br from-blue-100 to-emerald-100 rounded-full -mr-12 -mt-12 opacity-50 group-hover:scale-150 transition-transform duration-500"></div>
+                <div className="absolute top-0 right-0 w-20 h-20 md:w-24 md:h-24 md:-mr-12 md:-mt-12 -mr-4 -mt-4 bg-linear-to-br from-blue-100 to-emerald-100 rounded-full opacity-50 group-hover:scale-150 transition-transform duration-500"></div>
 
                 <div className="relative">
                   <div className="flex items-center gap-3 mb-3">
@@ -947,7 +947,7 @@ export default function DynamicAssessmentPageClient({ config }: DynamicAssessmen
                   onClick={handleNotifyMe}
                   className="group cursor-pointer inline-flex items-center justify-center gap-3 px-8 py-4 rounded-xl bg-yellow-400 text-slate-900 font-bold text-lg hover:bg-yellow-300 hover:shadow-2xl transition-all hover:scale-105 whitespace-nowrap"
                 >
-                  <span>🔔 Join the List to Get Notified When It's Live!</span>
+                  <span className='text-wrap'>🔔 Join the List to Get Notified When It's Live!</span>
                   <ArrowRight className="w-5 h-5 group-hover:translate-x-1 transition-transform" />
                 </button>
               </div>

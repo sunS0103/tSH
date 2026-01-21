@@ -60,7 +60,7 @@ const WhoIsItForSection: React.FC<WhoIsItForSectionProps> = ({
           className="text-center mb-16"
         >
           <h2 className="text-3xl md:text-4xl lg:text-5xl font-bold mb-4">
-            Who Is TechSmartHire <span className="gradient-text">For?</span>
+            Who Is techSmartHire <span className="gradient-text">For?</span>
           </h2>
         </motion.div>
 
@@ -120,7 +120,7 @@ const WhoIsItForSection: React.FC<WhoIsItForSectionProps> = ({
                     transition={{ duration: 0.4, delay: 0.4 }}
                     className="mt-auto mb-6 flex items-center gap-2 px-4 py-2 rounded-full bg-secondary/10 border border-secondary/30 w-fit"
                   >
-                    <span className="text-sm font-medium text-secondary">
+                    <span className="text-sm font-medium text-secondary text-center">
                       {persona.badge}
                     </span>
                   </motion.div>

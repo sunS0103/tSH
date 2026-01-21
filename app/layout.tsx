@@ -14,11 +14,11 @@ const plusJakartaSans = Plus_Jakarta_Sans({
 
 export const metadata: Metadata = {
   title: {
-    default: "TechSmartHire – Skill-Based QA Hiring Platform",
-    template: "%s | TechSmartHire",
+    default: "techSmartHire – Skill-Based QA Hiring Platform",
+    template: "%s | techSmartHire",
   },
   description:
-    "TechSmartHire is a skill-first hiring platform for QA roles. Get early access to role-based assessments, pre-vetted candidates, and faster hiring through our beta program",
+    "techSmartHire is a skill-first hiring platform for QA roles. Get early access to role-based assessments, pre-vetted candidates, and faster hiring through our beta program",
   metadataBase: new URL(process.env.NEXT_PUBLIC_APP_URL as string),
   keywords: [
     "QA Hiring",
@@ -28,9 +28,9 @@ export const metadata: Metadata = {
     "QA Assessment",
     "Beta Access",
   ],
-  authors: [{ name: "TechSmartHire Team" }],
-  creator: "TechSmartHire",
-  publisher: "TechSmartHire",
+  authors: [{ name: "techSmartHire Team" }],
+  creator: "techSmartHire",
+  publisher: "techSmartHire",
   robots: {
     index: true,
     follow: true,
