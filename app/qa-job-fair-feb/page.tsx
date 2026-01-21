@@ -53,7 +53,7 @@ interface TimeLeft {
   seconds: number;
 }
 
-export default function TechSmartHireLanding() {
+export default function techSmartHireLanding() {
   const router = useRouter();
   const [isFormPopupOpen, setIsFormPopupOpen] = useState(false);
   const [timeLeft, setTimeLeft] = useState<TimeLeft>({

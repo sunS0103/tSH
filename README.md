@@ -1,5 +1,5 @@
-# TechSmartHire Frontend NextJS
-NextJS frontend for TechSmartHire
+# techSmartHire Frontend NextJS
+NextJS frontend for techSmartHire
 
 ## Setup
 1. Copy .env.example to .env and fill in the values

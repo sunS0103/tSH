@@ -60,7 +60,7 @@ const WhoIsItForSection: React.FC<WhoIsItForSectionProps> = ({
           className="text-center mb-16"
         >
           <h2 className="text-3xl md:text-4xl lg:text-5xl font-bold mb-4">
-            Who Is TechSmartHire <span className="gradient-text">For?</span>
+            Who Is techSmartHire <span className="gradient-text">For?</span>
           </h2>
         </motion.div>
 

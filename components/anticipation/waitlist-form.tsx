@@ -139,7 +139,7 @@ const WaitlistForm: React.FC<WaitlistFormProps> = ({ initialRole = null }) => {
 
   const recruiterSuccessTitle = "You're on the list!";
   const recruiterSuccessTitleAlreadySubscribed = "You're already on the list!";
-  const candidateSuccessTitle = "Welcome to the TechSmartHire Insider List!";
+  const candidateSuccessTitle = "Welcome to the techSmartHire Insider List!";
   const candidateSuccessTitleAlreadySubscribed = "You're already on the list!";
 
   if (submitted) {

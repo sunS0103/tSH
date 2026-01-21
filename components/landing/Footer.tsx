@@ -18,7 +18,7 @@ const Footer = () => {
           <div className="flex items-center gap-2">
             <Image
               src="/Logo.svg"
-              alt="TechSmartHire Logo"
+              alt="techSmartHire Logo"
               width={150}
               height={150}
             />
@@ -32,7 +32,7 @@ const Footer = () => {
 
           {/* Copyright */}
           <p className="text-sm text-subtle">
-            © {new Date().getFullYear()} TechSmartHire. All rights reserved.
+            © {new Date().getFullYear()} techSmartHire. All rights reserved.
           </p>
         </motion.div>
       </div>

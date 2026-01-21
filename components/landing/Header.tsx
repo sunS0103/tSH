@@ -48,7 +48,7 @@ const Header = () => {
           <Link href="/" className="flex items-center gap-2">
             <Image
               src="/Logo.svg"
-              alt="TechSmartHire Logo"
+              alt="techSmartHire Logo"
               width={150}
               height={150}
             />

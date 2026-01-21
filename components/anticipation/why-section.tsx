@@ -51,7 +51,7 @@ const WhySection = () => {
                   className="pt-4"
                 >
                   <p className="text-foreground font-medium">
-                    TechSmartHire flips the model —
+                    techSmartHire flips the model —
                   </p>
                   <p className="text-primary text-xl md:text-2xl font-semibold mt-2">
                     skills first, matching later, conversations only when it
