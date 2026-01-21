@@ -2,6 +2,7 @@
 
 import { motion } from "framer-motion";
 import { UserCircle, Briefcase, CheckCircle2 } from "lucide-react";
+import { useRouter } from "next/navigation";
 
 interface WhoIsItForSectionProps {
   onRoleSelect: (role: "candidate" | "recruiter") => void;
@@ -10,6 +11,7 @@ interface WhoIsItForSectionProps {
 const WhoIsItForSection: React.FC<WhoIsItForSectionProps> = ({
   onRoleSelect,
 }) => {
+  const router = useRouter();
   const personas = [
     {
       icon: UserCircle,
@@ -45,7 +47,7 @@ const WhoIsItForSection: React.FC<WhoIsItForSectionProps> = ({
   ];
 
   return (
-    <section className="py-24 md:py-32 relative overflow-hidden">
+    <section id="who-is-it-for" className="py-24 md:py-32 relative overflow-hidden">
       {/* Background */}
       <div className="absolute inset-0 bg-linear-to-b from-background via-muted/30 to-background" />
 
@@ -133,7 +135,13 @@ const WhoIsItForSection: React.FC<WhoIsItForSectionProps> = ({
                   className="mt-auto"
                 >
                   <button
-                    onClick={() => onRoleSelect(persona.role)}
+                    onClick={() => {
+                      if (persona.role === "recruiter") {
+                        router.push("/qa-job-fair-feb");
+                      } else {
+                        onRoleSelect(persona.role);
+                      }
+                    }}
                     className={`w-full py-3 px-6 rounded-xl font-semibold transition-all duration-300 ${
                       persona.role === "candidate"
                         ? "bg-primary text-primary-foreground hover:bg-primary/90 hover:shadow-glow"

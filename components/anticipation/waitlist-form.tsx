@@ -4,7 +4,7 @@ import { useState, useEffect, useRef } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { motion, AnimatePresence } from "framer-motion";
-import { Loader2, CheckCircle2, User, Briefcase } from "lucide-react";
+import { Loader2, CheckCircle2, User, Briefcase, ArrowRight } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -12,6 +12,7 @@ import { toast } from "sonner";
 import { getContact, getImports } from "@/api/waitlist";
 import { waitlistSchema, WaitlistValues } from "@/validation/waitlist";
 import ReCAPTCHA from "react-google-recaptcha";
+import Link from "next/link";
 
 interface WaitlistFormProps {
   initialRole?: "candidate" | "recruiter" | null;
@@ -22,6 +23,7 @@ const WaitlistForm: React.FC<WaitlistFormProps> = ({ initialRole = null }) => {
   const [submittedRole, setSubmittedRole] = useState<"candidate" | "recruiter">(
     "candidate"
   );
+  const [isAlreadySubscribed, setIsAlreadySubscribed] = useState(false);
   const [recaptchaToken, setRecaptchaToken] = useState<string | null>(null);
   const [recaptchaError, setRecaptchaError] = useState<string | null>(null);
   const recaptchaRef = useRef<ReCAPTCHA>(null);
@@ -74,6 +76,9 @@ const WaitlistForm: React.FC<WaitlistFormProps> = ({ initialRole = null }) => {
             response.message ||
               "You're already subscribed with this email address!"
           );
+          setSubmitted(true);
+          setSubmittedRole(currentRole);
+          setIsAlreadySubscribed(true);
           reset({ name: "", email: "", company: "", role: currentRole });
           resetRecaptcha();
           return;
@@ -110,6 +115,7 @@ const WaitlistForm: React.FC<WaitlistFormProps> = ({ initialRole = null }) => {
         company: "",
         role: currentRole,
       });
+      setIsAlreadySubscribed(false);
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
     } catch (error: any) {
       console.error("Waitlist Error:", error);
@@ -117,6 +123,7 @@ const WaitlistForm: React.FC<WaitlistFormProps> = ({ initialRole = null }) => {
         error.response?.data?.message || "Failed to join the waitlist."
       );
     }
+
   };
 
   const resetRecaptcha = () => {
@@ -131,7 +138,9 @@ const WaitlistForm: React.FC<WaitlistFormProps> = ({ initialRole = null }) => {
     "Sign up now to get exclusive early-bird access to our upcoming Pilot Job Fair and Beta features of the platform for FREE.";
 
   const recruiterSuccessTitle = "You're on the list!";
+  const recruiterSuccessTitleAlreadySubscribed = "You're already on the list!";
   const candidateSuccessTitle = "Welcome to the TechSmartHire Insider List!";
+  const candidateSuccessTitleAlreadySubscribed = "You're already on the list!";
 
   if (submitted) {
     return (
@@ -158,53 +167,87 @@ const WaitlistForm: React.FC<WaitlistFormProps> = ({ initialRole = null }) => {
 
               <h3 className="text-2xl font-bold mb-4">
                 {submittedRole === "recruiter"
-                  ? recruiterSuccessTitle
-                  : candidateSuccessTitle}
+                  ? isAlreadySubscribed ? recruiterSuccessTitleAlreadySubscribed : recruiterSuccessTitle
+                  : isAlreadySubscribed ? candidateSuccessTitleAlreadySubscribed : candidateSuccessTitle}
               </h3>
 
               {submittedRole === "recruiter" ? (
-                <div className="space-y-4 text-left">
-                  <p className="text-subtle">
-                    We'll keep you posted on our Beta progress. Need to hire QA
-                    talent this month? Send a brief note to{" "}
-                    <a
-                      href="mailto:info@techsmarthire.com?subject=Pilot Program"
-                      className="text-primary hover:underline font-medium"
-                    >
-                      info@techsmarthire.com
-                    </a>{" "}
-                    with the subject line 'Pilot Program' and our team will get
-                    back to you within 24 hours to discuss your hiring needs.
+                <div className="space-y-6 text-left">
+                  <p className="text-subtle text-center">
+                    We'll keep you posted on our Beta progress.
                   </p>
+
+                  {/* Divider */}
+                  <div className="flex items-center gap-3">
+                    <div className="flex-1 h-px bg-border" />
+                    <span className="text-xs font-semibold text-subtle">Need QA Talent Now?</span>
+                    <div className="flex-1 h-px bg-border" />
+                  </div>
+
+                  {/* February Job Fair CTA */}
+                  <div className="p-5 rounded-xl bg-linear-to-br from-primary/5 to-primary/10 border-2 border-primary/20">
+                    <h4 className="text-base font-bold text-foreground mb-2">
+                      Join February QA Job Fair 🎯
+                    </h4>
+                    <p className="text-sm text-subtle mb-3">
+                      Access <strong>pre-vetted QA candidates</strong> with verified skills through our AI-proctored assessments.
+                    </p>
+                    <p className="text-xs text-subtle mb-4">
+                      Skill-first hiring • No resume screening • Feb 5-27
+                    </p>
+                    <Link 
+                      href="/qa-job-fair-feb"
+                      className="inline-flex items-center gap-2 px-6 py-3 rounded-lg bg-primary text-primary-foreground font-bold hover:bg-primary/90 transition-all w-full justify-center"
+                    >
+                      <span>Explore Job Fair for Recruiters</span>
+                      <ArrowRight className="w-4 h-4" />
+                    </Link>
+                  </div>
+
+                  {/* Contact Option */}
+                  <div className="p-4 rounded-lg bg-muted/50 text-center">
+                    <p className="text-xs text-subtle">
+                      Need immediate hiring support?{" "}
+                      <a
+                        href="mailto:info@techsmarthire.com?subject=Pilot Program"
+                        className="text-primary hover:underline font-medium"
+                      >
+                        Contact us
+                      </a>
+                    </p>
+                  </div>
                 </div>
               ) : (
-                <div className="space-y-4 text-left">
-                  <p className="text-subtle">
-                    You're now in line for early access. While we prepare the
-                    platform, here is the list of the top 4 skills our
-                    recruiters are looking for in the{" "}
-                    <b>upcoming Pilot Job fair program</b>.
+                <div className="space-y-6 text-left">
+                  <p className="text-subtle text-center">
+                    You're in line for early platform access. We'll notify you when we launch!
                   </p>
-                  <div className="bg-muted/50 rounded-xl p-4 space-y-2">
-                    <p className="font-semibold text-sm text-subtle uppercase tracking-wide">
-                      Top Skills in Demand
+
+                  {/* Divider */}
+                  <div className="flex items-center gap-3">
+                    <div className="flex-1 h-px bg-border" />
+                    <span className="text-xs font-semibold text-subtle">Don't Wait</span>
+                    <div className="flex-1 h-px bg-border" />
+                  </div>
+
+                  {/* CTA Box */}
+                  <div className="p-5 rounded-xl bg-linear-to-br from-primary/5 to-primary/10 border-2 border-primary/20">
+                    <h4 className="text-base font-bold text-foreground mb-2">
+                      Get Hired in February! 🚀
+                    </h4>
+                    <p className="text-sm text-subtle mb-3">
+                      Join our <strong>QA Job Fair</strong> — get shortlisted by top companies based on skills, not resumes.
                     </p>
-                    <ul className="space-y-1">
-                      {[
-                        "Selenium Java",
-                        "Playwright Javascript",
-                        "Playwright Java",
-                        "API Testing",
-                      ].map((skill, i) => (
-                        <li
-                          key={i}
-                          className="flex items-center gap-2 text-foreground font-medium"
-                        >
-                          <CheckCircle2 className="w-4 h-4 text-primary" />
-                          {skill}
-                        </li>
-                      ))}
-                    </ul>
+                    <p className="text-xs text-subtle mb-4">
+                      22 Positions • 7 Companies • Feb 5-27
+                    </p>
+                    <Link 
+                      href="/qa-job-fair-feb"
+                      className="inline-flex items-center gap-2 px-6 py-3 rounded-lg bg-primary text-primary-foreground font-bold hover:bg-primary/90 transition-all w-full justify-center"
+                    >
+                      <span>View Job Fair Details</span>
+                      <ArrowRight className="w-4 h-4" />
+                    </Link>
                   </div>
                 </div>
               )}
@@ -212,6 +255,7 @@ const WaitlistForm: React.FC<WaitlistFormProps> = ({ initialRole = null }) => {
               <Button
                 onClick={() => {
                   setSubmitted(false);
+                  setIsAlreadySubscribed(false);
                   resetRecaptcha();
                 }}
                 variant="outline"

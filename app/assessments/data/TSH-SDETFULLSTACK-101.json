@@ -1,0 +1,16 @@
+{
+  "title": "FullStack QA Lead/Test Architect",
+  "description": "Demonstrate your comprehensive expertise across automation frameworks, test architecture, CI/CD, AI Skills, Debugging, and team leadership through our advanced AI-proctored assessment.",
+  "questions": 30,
+  "minutes": 40,
+  "level": "Intermediate",
+  "sampleQuestionsHref": "/assessments/TSH-SDETFULLSTACK-101.pdf",
+  "skills": [
+    { "name": "Test Architecture & Strategy", "level": "Advanced" },
+    { "name": "Multiple Automation Frameworks", "level": "Intermediate" },
+    { "name": "CI/CD & OOPS Concepts", "level": "Intermediate" },
+    { "name": "Web/API/Performance - Testing", "level": "Advanced" },
+    { "name": "Team Leadership & Mentoring", "level": "Advanced" },
+    { "name": "Relevant QA-AI Skills", "level": "Intermediate" }
+  ]
+}

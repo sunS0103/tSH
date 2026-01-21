@@ -23,7 +23,11 @@ const Header = () => {
   }, []);
 
   const scrollToForm = () => {
-    document.getElementById("waitlist")?.scrollIntoView({ behavior: "smooth" });
+    if (pathname !== "/") {
+      router.push("/#who-is-it-for");
+    } else {
+      document.getElementById("who-is-it-for")?.scrollIntoView({ behavior: "smooth" });
+    }
     setIsMobileMenuOpen(false);
   };
 
@@ -99,8 +103,8 @@ const Header = () => {
 
           {/* Desktop CTA */}
           <div className="flex items-center gap-4">
-            <Button variant="default" size="sm" onClick={scrollToForm}>
-              Join Waitlist
+            <Button className="cursor-pointer" variant="default" size="sm" onClick={scrollToForm}>
+              Product Vision
             </Button>
           </div>
 

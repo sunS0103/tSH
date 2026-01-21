@@ -1,12 +1,19 @@
 "use client";
 
 import { motion } from "framer-motion";
-import { ArrowDown, Sparkles } from "lucide-react";
+import { ArrowDown, ArrowRight, Sparkles } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { useRouter } from "next/navigation";
 
 const HeroSection = () => {
+  const router = useRouter();
+  
   const scrollToForm = () => {
     document.getElementById("waitlist")?.scrollIntoView({ behavior: "smooth" });
+  };
+  
+  const handleJoinJobFair = () => {
+    router.push("/qa-job-fair-feb");
   };
 
   return (
@@ -76,14 +83,18 @@ const HeroSection = () => {
             transition={{ delay: 0.5, duration: 0.6 }}
             className="mt-10 flex flex-col items-center gap-4"
           >
-            <Button
-              size="lg"
-              onClick={scrollToForm}
-              className="text-lg px-8 py-6 rounded-xl shadow-glow hover:shadow-glow-lg transition-all duration-300 group"
+            <button 
+              onClick={handleJoinJobFair}
+              className="inline-flex items-center gap-2 px-8 py-4 rounded-xl bg-gradient-to-r from-blue-600 to-emerald-600 text-white font-bold text-lg hover:shadow-2xl transition-all hover:scale-105"
             >
-              Join the Early Access List
-              <ArrowDown className="ml-2 w-5 h-5 group-hover:translate-y-1 transition-transform" />
-            </Button>
+              <span>Join February QA Job Fair</span>
+              <ArrowRight className="w-5 h-5" />
+            </button>
+
+<p className="text-sm text-slate-600 mt-3">
+  Feb 5-27, 2026 • 22 QA Positions • 7 Companies
+</p>
+
             <p className="text-sm text-subtle">
               No spam. Early users get priority access.
             </p>

@@ -1,0 +1,14 @@
+{
+  "title": "JS/TS SDET Engineer - Playwright & API Testing",
+  "description": "Prove your expertise in Playwright, API Testing, JavaScript, and Testing Fundamentals through our comprehensive, AI-proctored assessment.",
+  "questions": 20,
+  "minutes": 25,
+  "level": "Intermediate",
+  "sampleQuestionsHref": "/assessments/TSH-SDETJS-101.pdf",
+  "skills": [
+    { "name": "Playwright", "level": "Advanced" },
+    { "name": "API Testing", "level": "Intermediate" },
+    { "name": "Core Java", "level": "Intermediate" },
+    { "name": "Testing Fundamentals", "level": "Intermediate" }
+  ]
+}
