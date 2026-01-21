@@ -458,7 +458,7 @@ export default function DynamicAssessmentPageClient({ config }: DynamicAssessmen
         }
       }
 
-      toast.success("Sample questions sent to your email!");
+     // toast.success("Sample questions sent to your email!");
 
       // Proceed to download step
       setSampleStep('download');
@@ -1113,16 +1113,7 @@ export default function DynamicAssessmentPageClient({ config }: DynamicAssessmen
                       Download Sample Questions PDF
                     </button>
 
-                    <button
-                      onClick={() => {
-                        setSampleStep('form');
-                        resetForm();
-                      }}
-                      className="w-full cursor-pointer py-3 rounded-lg border-2 border-slate-200 text-slate-700 font-bold hover:border-blue-400 hover:text-blue-600 transition-all flex items-center justify-center gap-2"
-                    >
-                      <ArrowRight className="w-5 h-5 rotate-180" />
-                      Download for Another Email
-                    </button>
+      
                   </div>
                 </>
               )}

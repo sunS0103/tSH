@@ -113,7 +113,7 @@
   "recruiterSection": {
     "badge": "For Hiring Managers",
     "title": "Join the February Job Fair",
-    "description": "Get exclusive access to pre-vetted QA talent. Limited to 10 companies for this pilot program.",
+    "description": "Get exclusive access to pre-vetted QA talent. Limited to 10 more companies for this pilot program.",
     "benefits": [
       {
         "title": "Skill-Verified Candidates",
@@ -137,7 +137,7 @@
   "footer": {
     "builtBy": "Built by an expert team led by Rahul Shetty",
     "instructorDescription": "Global Instructor empowering 1M+ tech professionals worldwide",
-    "linkedinUrl": "https://www.linkedin.com/in/rahul-shetty-qa/",
+    "linkedinUrl": "https://www.linkedin.com/in/rahul-shetty-venkatesh/",
     "linkedinText": "Connect on LinkedIn"
   }
 }

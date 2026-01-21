@@ -486,15 +486,7 @@ export default function TechSmartHireLanding() {
                     </ul>
                   </div>
 
-                  <p className="mt-4 mb-6">
-                    <span className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-red-100 border-2 border-red-400 text-sm font-bold text-red-700">
-                      <span className="relative flex h-2 w-2">
-                        <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-red-500 opacity-75"></span>
-                        <span className="relative inline-flex rounded-full h-2 w-2 bg-red-600"></span>
-                      </span>
-                      {config.cta.pilotInfo}
-                    </span>
-                  </p>
+        
                 </div>
 
                 {/* Recruiter Form */}
