@@ -94,15 +94,15 @@ export default function NotificationPopover({
                           prev.map((notif) =>
                             notif.id === notification.id
                               ? { ...notif, is_read: true }
-                              : notif
-                          )
+                              : notif,
+                          ),
                         );
                         // Notify parent to refresh unread count
                         onNotificationRead?.();
                       } catch (error) {
                         console.error(
                           "Error marking notification as read:",
-                          error
+                          error,
                         );
                       }
                     }
@@ -129,7 +129,7 @@ export default function NotificationPopover({
                         </div>
                       </div>
                       <div
-                        className="text-xs text-gray-700 leading-normal"
+                        className={`text-xs text-gray-700 leading-normal ${notification.is_read ? "cursor-default" : "cursor-pointer"}`}
                         dangerouslySetInnerHTML={{
                           __html: sanitizeHtml(notification.description),
                         }}
@@ -146,7 +146,7 @@ export default function NotificationPopover({
         {/* {notifications.length > 0 && ( */}
         <div className="w-full ">
           <button
-            className="w-full rounded-b-2xl h-8 px-3 bg-primary-500 hover:bg-primary-600 text-white text-sm font-normal flex items-center justify-center transition-colors"
+            className="cursor-pointer w-full rounded-b-2xl h-8 px-3 bg-primary-500 hover:bg-primary-600 text-white text-sm font-normal flex items-center justify-center transition-colors"
             onClick={handleSeeAll}
           >
             See All Updates

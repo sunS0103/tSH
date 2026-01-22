@@ -53,8 +53,8 @@ export default function NotificationsPageWrapper() {
       await markNotificationAsRead(notificationId);
       setNotifications((prev) =>
         prev.map((notif) =>
-          notif.id === notificationId ? { ...notif, is_read: true } : notif
-        )
+          notif.id === notificationId ? { ...notif, is_read: true } : notif,
+        ),
       );
       // Refresh unread count
       const countResponse = await getUnreadCount();
@@ -70,7 +70,7 @@ export default function NotificationsPageWrapper() {
     try {
       await markAllNotificationsAsRead();
       setNotifications((prev) =>
-        prev.map((notif) => ({ ...notif, is_read: true }))
+        prev.map((notif) => ({ ...notif, is_read: true })),
       );
     } catch (error) {
       console.error("Error marking all notifications as read:", error);
@@ -145,11 +145,11 @@ export default function NotificationsPageWrapper() {
               {notifications.map((notification, index) => (
                 <div
                   key={notification.id}
-                  className={`px-4 py-3 hover:bg-gray-50 transition-colors cursor-pointer ${
+                  className={`px-4 py-3 hover:bg-gray-50 transition-colors ${
                     index < notifications.length - 1
                       ? "border-b border-gray-200"
                       : ""
-                  }`}
+                  } ${notification.is_read ? "cursor-default" : "cursor-pointer"}`}
                   onClick={() => {
                     if (!notification.is_read) {
                       handleMarkAsRead(notification.id);
