@@ -18,7 +18,13 @@ import {
 } from "@/components/ui/dropdown-menu";
 import { SortDropdown } from "@/components/ui/sort-dropdown";
 import InviteDialog, { InviteMode } from "./invite-dialog";
-import { getRecruiterTalentPool, getTalentPoolFilters, addFavoriteTalent, removeFavoriteTalent, type Candidate } from "@/api/recruiter/talent-pool";
+import {
+  getRecruiterTalentPool,
+  getTalentPoolFilters,
+  addFavoriteTalent,
+  removeFavoriteTalent,
+  type Candidate,
+} from "@/api/recruiter/talent-pool";
 import { toast } from "sonner";
 import { Loader } from "@/components/ui/loader";
 import { TalentCardProps } from "./talent-card";
@@ -27,11 +33,11 @@ import NoDataFound from "@/components/common/no-data-found";
 // Helper function to map API candidate to TalentCardProps
 const mapCandidateToTalentCard = (
   candidate: Candidate,
-  isFavorite: boolean
+  isFavorite: boolean,
 ): Omit<TalentCardProps, "isSelected" | "onSelect" | "onToggleFavorite"> => {
   // Format years of experience
-  const formatExperience = (years: number): string => {
-    if (years === 0) return "0-1 Years";
+  const formatExperience = (years: number | null): string => {
+    if (!years || years === 0) return "0-1 Years";
     if (years === 1) return "1-2 Years";
     if (years >= 2 && years < 4) return "2-3 Years";
     if (years >= 4 && years < 6) return "4-5 Years";
@@ -42,27 +48,27 @@ const mapCandidateToTalentCard = (
 
   // Extract skill names from skills_assessed
   const skillsAssessed = candidate.skills_assessed.map(
-    (skill) => skill.skill_name
+    (skill) => skill.skill_name,
   );
 
   // Extract assessment titles or IDs
   const assessmentTaken = candidate.assessments_taken.map(
-    (assessment) => assessment.assessment_title || assessment.assessment_id
+    (assessment) => assessment.assessment_title || assessment.assessment_id,
   );
 
   // Generate location_code (using first 2 letters of city + last 4 digits of candidate_id)
-  const locationCode = `${candidate.city.substring(0, 2).toUpperCase()} ${candidate.candidate_id.slice(-4)}`;
+  const locationCode = `${(candidate.city || "NA").substring(0, 2).toUpperCase()} ${candidate.candidate_id.slice(-4)}`;
 
   return {
     id: candidate.candidate_id,
-    role: candidate.expertise,
+    role: candidate.expertise || "",
     location_code: locationCode,
     totalScore: candidate.score,
     skillsAssessed,
     experience: formatExperience(candidate.years_of_experience),
-    company: candidate.company,
-    availability: candidate.availability || candidate.notice_period,
-    location: candidate.location,
+    company: candidate.company || "",
+    availability: candidate.availability || candidate.notice_period || "",
+    location: candidate.location || "",
     assessmentTaken,
     assessments: candidate.assessments_taken, // Pass full assessment details
     about: candidate.about || "",
@@ -77,7 +83,9 @@ export default function TalentPoolPage() {
   const [debouncedSearchQuery, setDebouncedSearchQuery] = useState("");
   const [selectedFilters, setSelectedFilters] = useState<string[]>([]);
   const [currentPage, setCurrentPage] = useState(1);
-  const [sortBy, setSortBy] = useState<"score" | "experience" | "recently_assessed">("score");
+  const [sortBy, setSortBy] = useState<
+    "score" | "experience" | "recently_assessed"
+  >("score");
   const [sortDirection, setSortDirection] = useState<"asc" | "desc">("desc");
   const [selectedTalents, setSelectedTalents] = useState<string[]>([]);
   const [favoriteTalents, setFavoriteTalents] = useState<string[]>([]);
@@ -95,27 +103,32 @@ export default function TalentPoolPage() {
   const [totalPages, setTotalPages] = useState(1);
   const [totalCount, setTotalCount] = useState(0);
   const [filterGroups, setFilterGroups] = useState<FilterGroup[]>([]);
-  const [locationIdToTitleMap, setLocationIdToTitleMap] = useState<Map<string, string>>(new Map());
+  const [locationIdToTitleMap, setLocationIdToTitleMap] = useState<
+    Map<string, string>
+  >(new Map());
   const debounceTimerRef = useRef<NodeJS.Timeout | null>(null);
   const isInitialMount = useRef(true);
 
   const ITEMS_PER_PAGE = 10;
 
   // Memoize the location data update callback to prevent infinite loops
-  const handleLocationDataUpdate = useCallback((locationMap: Map<string, string>) => {
-    setLocationIdToTitleMap((prev) => {
-      // Only update if the map actually changed
-      if (prev.size !== locationMap.size) {
-        return locationMap;
-      }
-      for (const [key, value] of locationMap) {
-        if (prev.get(key) !== value) {
+  const handleLocationDataUpdate = useCallback(
+    (locationMap: Map<string, string>) => {
+      setLocationIdToTitleMap((prev) => {
+        // Only update if the map actually changed
+        if (prev.size !== locationMap.size) {
           return locationMap;
         }
-      }
-      return prev; // No change, return previous map
-    });
-  }, []);
+        for (const [key, value] of locationMap) {
+          if (prev.get(key) !== value) {
+            return locationMap;
+          }
+        }
+        return prev; // No change, return previous map
+      });
+    },
+    [],
+  );
 
   // Fetch filter options from API
   useEffect(() => {
@@ -178,7 +191,9 @@ export default function TalentPoolPage() {
   }, []);
 
   // Helper function to parse experience filter ID to min/max years
-  const parseExperienceFilter = (filterId: string): { min?: number; max?: number } | null => {
+  const parseExperienceFilter = (
+    filterId: string,
+  ): { min?: number; max?: number } | null => {
     // Filter IDs are like "0-1", "1-3", "4-5", "6-10", "10+"
     if (filterId.includes("-")) {
       const [min, max] = filterId.split("-").map(Number);
@@ -226,9 +241,11 @@ export default function TalentPoolPage() {
       if (allMins.length > 0) {
         params.years_of_experience_min = Math.min(...allMins);
       }
-      
+
       // If any filter has no max (like "10+"), don't set max
-      const hasUnlimitedMax = experienceFilters.some((f) => f.max === undefined);
+      const hasUnlimitedMax = experienceFilters.some(
+        (f) => f.max === undefined,
+      );
       if (!hasUnlimitedMax && allMaxs.length > 0) {
         params.years_of_experience_max = Math.max(...allMaxs);
       }
@@ -240,22 +257,26 @@ export default function TalentPoolPage() {
     const locationFilterIds = selectedFilters.filter((filterId) => {
       // Check if it's a location ID (numeric string that could be a location)
       // or if it exists in the location group
-      return locationGroup?.items.some((item) => item.id === filterId) || 
-             locationIdToTitleMap.has(filterId);
+      return (
+        locationGroup?.items.some((item) => item.id === filterId) ||
+        locationIdToTitleMap.has(filterId)
+      );
     });
-    
+
     if (locationFilterIds.length > 0) {
       // Get location titles from filter group or from the mapping
       const locationTitles = locationFilterIds
         .map((id) => {
           // First try to get from filter group
-          const fromGroup = locationGroup?.items.find((item) => item.id === id)?.value;
+          const fromGroup = locationGroup?.items.find(
+            (item) => item.id === id,
+          )?.value;
           if (fromGroup) return fromGroup;
           // Otherwise get from mapping
           return locationIdToTitleMap.get(id);
         })
         .filter((title): title is string => !!title);
-      
+
       if (locationTitles.length === 1) {
         params.location = locationTitles[0];
       } else if (locationTitles.length > 1) {
@@ -267,14 +288,14 @@ export default function TalentPoolPage() {
     const technologyGroup = filterGroups.find((g) => g.title === "Technology");
     if (technologyGroup) {
       const technologyFilterIds = selectedFilters.filter((filterId) =>
-        technologyGroup.items.some((item) => item.id === filterId)
+        technologyGroup.items.some((item) => item.id === filterId),
       );
       if (technologyFilterIds.length > 0) {
         // Get technology values (IDs) from filter group
         const technologyValues = technologyFilterIds
           .map((id) => technologyGroup.items.find((item) => item.id === id)?.id)
           .filter((value): value is string => !!value);
-        
+
         if (technologyValues.length === 1) {
           params.technology = technologyValues[0];
         } else if (technologyValues.length > 1) {
@@ -315,7 +336,10 @@ export default function TalentPoolPage() {
         // Invalid filters in URL, ignore
       }
     }
-    if (sortByParam && ["score", "experience", "recently_assessed"].includes(sortByParam)) {
+    if (
+      sortByParam &&
+      ["score", "experience", "recently_assessed"].includes(sortByParam)
+    ) {
       setSortBy(sortByParam as "score" | "experience" | "recently_assessed");
     }
     if (sortDirectionParam && ["asc", "desc"].includes(sortDirectionParam)) {
@@ -333,7 +357,7 @@ export default function TalentPoolPage() {
     if (isInitialMount.current) return;
 
     const params = new URLSearchParams();
-    
+
     if (debouncedSearchQuery) {
       params.set("query", debouncedSearchQuery);
     }
@@ -341,19 +365,29 @@ export default function TalentPoolPage() {
       params.set("page", currentPage.toString());
     }
     if (selectedFilters.length > 0) {
-      params.set("filters", encodeURIComponent(JSON.stringify(selectedFilters)));
+      params.set(
+        "filters",
+        encodeURIComponent(JSON.stringify(selectedFilters)),
+      );
     }
     if (sortBy !== "score" || sortDirection !== "desc") {
       params.set("sortBy", sortBy);
       params.set("sortDirection", sortDirection);
     }
 
-    const newUrl = params.toString() 
+    const newUrl = params.toString()
       ? `${window.location.pathname}?${params.toString()}`
       : window.location.pathname;
-    
+
     router.replace(newUrl, { scroll: false });
-  }, [debouncedSearchQuery, currentPage, selectedFilters, sortBy, sortDirection, router]);
+  }, [
+    debouncedSearchQuery,
+    currentPage,
+    selectedFilters,
+    sortBy,
+    sortDirection,
+    router,
+  ]);
 
   // Debounce search query
   useEffect(() => {
@@ -397,40 +431,39 @@ export default function TalentPoolPage() {
 
         if (response.success && response.data) {
           // Update favorite talents from API response (merge with existing favorites)
-          const apiFavoriteIds = response.data.candidates
+          const apiFavoriteIds = response.data
             .filter((c) => c.is_favorite)
             .map((c) => c.candidate_id);
-          
+
           // Get current favorites and merge with API favorites
           setFavoriteTalents((prev) => {
             const combined = new Set([...prev, ...apiFavoriteIds]);
             const favoriteSet = Array.from(combined);
-            
+
             // Map candidates with favorite status
-            const mappedTalents = response.data.candidates.map((candidate) =>
+            const mappedTalents = response.data.map((candidate) =>
               mapCandidateToTalentCard(
                 candidate,
-                favoriteSet.includes(candidate.candidate_id) || candidate.is_favorite
-              )
+                favoriteSet.includes(candidate.candidate_id) ||
+                  candidate.is_favorite,
+              ),
             );
 
             setTalents(mappedTalents);
             return favoriteSet;
           });
 
-          setTotalCount(response.data.total_count);
+          setTotalCount(response.meta.pagination.totalItems);
 
           // Calculate total pages
-          const calculatedTotalPages = Math.ceil(
-            response.data.total_count / ITEMS_PER_PAGE
-          );
+          const calculatedTotalPages = response.meta.pagination.totalPages;
           setTotalPages(calculatedTotalPages);
         }
       } catch (error) {
         console.error("Error fetching talent pool:", error);
         toast.error(
           (error as { response?: { data?: { message?: string } } })?.response
-            ?.data?.message || "Failed to fetch talent pool"
+            ?.data?.message || "Failed to fetch talent pool",
         );
         setTalents([]);
         setTotalPages(1);
@@ -441,7 +474,13 @@ export default function TalentPoolPage() {
     };
 
     fetchTalentPool();
-  }, [currentPage, debouncedSearchQuery, selectedFilters, sortBy, sortDirection]);
+  }, [
+    currentPage,
+    debouncedSearchQuery,
+    selectedFilters,
+    sortBy,
+    sortDirection,
+  ]);
 
   // Update talents when favoriteTalents changes (without re-fetching)
   useEffect(() => {
@@ -449,7 +488,7 @@ export default function TalentPoolPage() {
       prevTalents.map((talent) => ({
         ...talent,
         isFavorite: favoriteTalents.includes(talent.id),
-      }))
+      })),
     );
   }, [favoriteTalents]);
 
@@ -459,14 +498,14 @@ export default function TalentPoolPage() {
     // Get filters that are NOT handled by the API (skills, etc.)
     const locationGroup = filterGroups.find((g) => g.title === "Location");
     const technologyGroup = filterGroups.find((g) => g.title === "Technology");
-    
+
     const clientSideFilters = selectedFilters.filter(
       (filterId) =>
         filterId !== "favorites" && // Handled by API (favorite_only)
         !filterId.match(/^\d+-\d+$|^\d+\+$/) && // Experience filters handled by API
         !locationGroup?.items.some((item) => item.id === filterId) && // Location handled by API (from filterGroups)
         !locationIdToTitleMap.has(filterId) && // Location handled by API (dynamically searched)
-        !technologyGroup?.items.some((item) => item.id === filterId) // Technology handled by API
+        !technologyGroup?.items.some((item) => item.id === filterId), // Technology handled by API
     );
 
     if (clientSideFilters.length === 0) return true;
@@ -503,7 +542,7 @@ export default function TalentPoolPage() {
 
   const toggleFavorite = async (id: string) => {
     const isCurrentlyFavorite = favoriteTalents.includes(id);
-    
+
     // Optimistic update - update UI immediately
     if (isCurrentlyFavorite) {
       setFavoriteTalents(favoriteTalents.filter((tid) => tid !== id));
@@ -516,8 +555,8 @@ export default function TalentPoolPage() {
       prevTalents.map((talent) =>
         talent.id === id
           ? { ...talent, isFavorite: !isCurrentlyFavorite }
-          : talent
-      )
+          : talent,
+      ),
     );
 
     try {
@@ -525,7 +564,7 @@ export default function TalentPoolPage() {
       const response = isCurrentlyFavorite
         ? await removeFavoriteTalent(id)
         : await addFavoriteTalent(id);
-      
+
       if (!response.success) {
         // Revert optimistic update on failure
         if (isCurrentlyFavorite) {
@@ -533,20 +572,22 @@ export default function TalentPoolPage() {
         } else {
           setFavoriteTalents(favoriteTalents.filter((tid) => tid !== id));
         }
-        
+
         // Revert talents list
         setTalents((prevTalents) =>
           prevTalents.map((talent) =>
             talent.id === id
               ? { ...talent, isFavorite: isCurrentlyFavorite }
-              : talent
-          )
+              : talent,
+          ),
         );
-        
+
         toast.error(response.message || "Failed to update favorite status");
       } else {
         // Use the message from API response
-        toast.success(response.message || "Favorite status updated successfully");
+        toast.success(
+          response.message || "Favorite status updated successfully",
+        );
       }
     } catch (error) {
       // Revert optimistic update on error
@@ -555,19 +596,19 @@ export default function TalentPoolPage() {
       } else {
         setFavoriteTalents(favoriteTalents.filter((tid) => tid !== id));
       }
-      
+
       // Revert talents list
       setTalents((prevTalents) =>
         prevTalents.map((talent) =>
           talent.id === id
             ? { ...talent, isFavorite: isCurrentlyFavorite }
-            : talent
-        )
+            : talent,
+        ),
       );
-      
+
       toast.error(
         (error as { response?: { data?: { message?: string } } })?.response
-          ?.data?.message || "Failed to update favorite status"
+          ?.data?.message || "Failed to update favorite status",
       );
     }
   };
@@ -576,161 +617,167 @@ export default function TalentPoolPage() {
     <>
       <Loader show={isLoading} />
       <div className="flex flex-col lg:flex-row gap-8 min-h-screen bg-gray-50/50">
-      {/* Sidebar */}
-      <div className="shrink-0 lg:w-72">
-        <TalentFilterSidebar
-          groups={filterGroups}
-          selectedFilters={selectedFilters}
-          onFilterChange={setSelectedFilters}
-          onRefresh={handleRefreshFilters}
-          onLocationDataUpdate={handleLocationDataUpdate}
-          locationIdToTitleMap={locationIdToTitleMap}
-        />
-      </div>
-
-      {/* Main Content */}
-      <div className="flex-1 min-w-0">
-        <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 mb-4">
-          <h1 className="text-2xl font-bold font-sans text-transparent bg-clip-text bg-linear-to-b from-primary to-secondary">
-            Talent Pool
-          </h1>
-
-          <div className="flex items-center gap-3 w-full md:w-auto">
-            {selectedTalents.length > 0 && (
-              <DropdownMenu>
-                <DropdownMenuTrigger asChild>
-                  <Button
-                    variant="outline"
-                    className="h-10 px-3 bg-white border-primary-500 text-primary-500 rounded-lg hover:bg-primary-50 flex items-center gap-2"
-                  >
-                    <span className="font-sans text-sm font-medium">
-                      Bulk Action
-                    </span>
-                    <Icon icon="mdi:chevron-down" className="size-5" />
-                  </Button>
-                </DropdownMenuTrigger>
-                <DropdownMenuContent align="end" className="w-48">
-                  <DropdownMenuItem
-                    className="flex items-center gap-2 cursor-pointer"
-                    onClick={() =>
-                      setBulkInviteDialog({ open: true, mode: "job" })
-                    }
-                  >
-                    <Icon
-                      icon="majesticons:briefcase-line"
-                      className="size-4 text-gray-600"
-                    />
-                    <span className="font-sans">Invite to Job</span>
-                  </DropdownMenuItem>
-                  <DropdownMenuItem
-                    className="flex items-center gap-2 cursor-pointer"
-                    onClick={() =>
-                      setBulkInviteDialog({ open: true, mode: "assessment" })
-                    }
-                  >
-                    <Icon
-                      icon="mdi:help-box-multiple-outline"
-                      className="size-4 text-gray-600"
-                    />
-                    <span className="font-sans">Request Assessment</span>
-                  </DropdownMenuItem>
-                </DropdownMenuContent>
-              </DropdownMenu>
-            )}
-
-            <div className="relative w-full md:w-80">
-              <Icon
-                icon="mdi:magnify"
-                className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400 size-5"
-              />
-              <Input
-                type="text"
-                placeholder="Search Here..."
-                className="pl-10 h-10 bg-white border-gray-200 rounded-lg w-full focus-visible:ring-1 focus-visible:ring-primary-500"
-                value={searchQuery}
-                onChange={(e) => setSearchQuery(e.target.value)}
-              />
-            </div>
-
-            <TalentFilterSheet
-              groups={filterGroups}
-              selectedFilters={selectedFilters}
-              onFilterChange={setSelectedFilters}
-              onRefresh={handleRefreshFilters}
-              onLocationDataUpdate={handleLocationDataUpdate}
-              locationIdToTitleMap={locationIdToTitleMap}
-            />
-
-            <SortDropdown
-              value={`${sortBy}-${sortDirection}`}
-              onValueChange={(value) => {
-                const [newSortBy, newSortDirection] = value.split("-") as [
-                  "score" | "experience" | "recently_assessed",
-                  "asc" | "desc"
-                ];
-                setSortBy(newSortBy);
-                setSortDirection(newSortDirection);
-                setCurrentPage(1);
-              }}
-              options={[
-                { value: "score-desc", label: "Score (High to Low)" },
-                { value: "score-asc", label: "Score (Low to High)" },
-                { value: "experience-desc", label: "Experience (High to Low)" },
-                { value: "recently_assessed-desc", label: "Recently Assessed" },
-              ]}
-            />
-          </div>
+        {/* Sidebar */}
+        <div className="shrink-0 lg:w-72">
+          <TalentFilterSidebar
+            groups={filterGroups}
+            selectedFilters={selectedFilters}
+            onFilterChange={setSelectedFilters}
+            onRefresh={handleRefreshFilters}
+            onLocationDataUpdate={handleLocationDataUpdate}
+            locationIdToTitleMap={locationIdToTitleMap}
+          />
         </div>
 
-        <div className="flex flex-col gap-5">
-          {filteredTalents.map((talent) => (
-            <TalentCard
-              key={talent.id}
-              {...talent}
-              isSelected={selectedTalents.includes(talent.id)}
-              onSelect={() => toggleTalentSelection(talent.id)}
-              isFavorite={favoriteTalents.includes(talent.id)}
-              onToggleFavorite={() => toggleFavorite(talent.id)}
-            />
-          ))}
+        {/* Main Content */}
+        <div className="flex-1 min-w-0">
+          <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 mb-4">
+            <h1 className="text-2xl font-bold font-sans text-transparent bg-clip-text bg-linear-to-b from-primary to-secondary">
+              Talent Pool
+            </h1>
 
-          {!isLoading && filteredTalents.length === 0 && (
-            <div className="w-full">
-              <NoDataFound
-                title="No talents found"
-                note="Try adjusting your search or filters"
-              />
-              <div className="flex justify-center mt-4">
-                <Button
-                  variant="link"
-                  onClick={handleRefreshFilters}
-                  className="text-primary-600"
-                >
-                  Clear all filters
-                </Button>
+            <div className="flex items-center gap-3 w-full md:w-auto">
+              {selectedTalents.length > 0 && (
+                <DropdownMenu>
+                  <DropdownMenuTrigger asChild>
+                    <Button
+                      variant="outline"
+                      className="h-10 px-3 bg-white border-primary-500 text-primary-500 rounded-lg hover:bg-primary-50 flex items-center gap-2"
+                    >
+                      <span className="font-sans text-sm font-medium">
+                        Bulk Action
+                      </span>
+                      <Icon icon="mdi:chevron-down" className="size-5" />
+                    </Button>
+                  </DropdownMenuTrigger>
+                  <DropdownMenuContent align="end" className="w-48">
+                    <DropdownMenuItem
+                      className="flex items-center gap-2 cursor-pointer"
+                      onClick={() =>
+                        setBulkInviteDialog({ open: true, mode: "job" })
+                      }
+                    >
+                      <Icon
+                        icon="majesticons:briefcase-line"
+                        className="size-4 text-gray-600"
+                      />
+                      <span className="font-sans">Invite to Job</span>
+                    </DropdownMenuItem>
+                    <DropdownMenuItem
+                      className="flex items-center gap-2 cursor-pointer"
+                      onClick={() =>
+                        setBulkInviteDialog({ open: true, mode: "assessment" })
+                      }
+                    >
+                      <Icon
+                        icon="mdi:help-box-multiple-outline"
+                        className="size-4 text-gray-600"
+                      />
+                      <span className="font-sans">Request Assessment</span>
+                    </DropdownMenuItem>
+                  </DropdownMenuContent>
+                </DropdownMenu>
+              )}
+
+              <div className="relative w-full md:w-80">
+                <Icon
+                  icon="mdi:magnify"
+                  className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400 size-5"
+                />
+                <Input
+                  type="text"
+                  placeholder="Search Here..."
+                  className="pl-10 h-10 bg-white border-gray-200 rounded-lg w-full focus-visible:ring-1 focus-visible:ring-primary-500"
+                  value={searchQuery}
+                  onChange={(e) => setSearchQuery(e.target.value)}
+                />
               </div>
+
+              <TalentFilterSheet
+                groups={filterGroups}
+                selectedFilters={selectedFilters}
+                onFilterChange={setSelectedFilters}
+                onRefresh={handleRefreshFilters}
+                onLocationDataUpdate={handleLocationDataUpdate}
+                locationIdToTitleMap={locationIdToTitleMap}
+              />
+
+              <SortDropdown
+                value={`${sortBy}-${sortDirection}`}
+                onValueChange={(value) => {
+                  const [newSortBy, newSortDirection] = value.split("-") as [
+                    "score" | "experience" | "recently_assessed",
+                    "asc" | "desc",
+                  ];
+                  setSortBy(newSortBy);
+                  setSortDirection(newSortDirection);
+                  setCurrentPage(1);
+                }}
+                options={[
+                  { value: "score-desc", label: "Score (High to Low)" },
+                  { value: "score-asc", label: "Score (Low to High)" },
+                  {
+                    value: "experience-desc",
+                    label: "Experience (High to Low)",
+                  },
+                  {
+                    value: "recently_assessed-desc",
+                    label: "Recently Assessed",
+                  },
+                ]}
+              />
+            </div>
+          </div>
+
+          <div className="flex flex-col gap-5">
+            {filteredTalents.map((talent) => (
+              <TalentCard
+                key={talent.id}
+                {...talent}
+                isSelected={selectedTalents.includes(talent.id)}
+                onSelect={() => toggleTalentSelection(talent.id)}
+                isFavorite={favoriteTalents.includes(talent.id)}
+                onToggleFavorite={() => toggleFavorite(talent.id)}
+              />
+            ))}
+
+            {!isLoading && filteredTalents.length === 0 && (
+              <div className="w-full">
+                <NoDataFound
+                  title="No talents found"
+                  note="Try adjusting your search or filters"
+                />
+                <div className="flex justify-center mt-4">
+                  <Button
+                    variant="link"
+                    onClick={handleRefreshFilters}
+                    className="text-primary-600"
+                  >
+                    Clear all filters
+                  </Button>
+                </div>
+              </div>
+            )}
+          </div>
+
+          {totalPages > 1 && (
+            <div className="mt-8">
+              <AssessmentPagination
+                currentPage={currentPage}
+                totalPages={totalPages}
+                onPageChange={setCurrentPage}
+              />
             </div>
           )}
         </div>
 
-        {totalPages > 1 && (
-          <div className="mt-8">
-            <AssessmentPagination
-              currentPage={currentPage}
-              totalPages={totalPages}
-              onPageChange={setCurrentPage}
-            />
-          </div>
-        )}
-      </div>
-
-      <InviteDialog
-        open={bulkInviteDialog.open}
-        onOpenChange={(open) =>
-          setBulkInviteDialog((prev) => ({ ...prev, open }))
-        }
-        mode={bulkInviteDialog.mode}
-      />
+        <InviteDialog
+          open={bulkInviteDialog.open}
+          onOpenChange={(open) =>
+            setBulkInviteDialog((prev) => ({ ...prev, open }))
+          }
+          mode={bulkInviteDialog.mode}
+        />
       </div>
     </>
   );
