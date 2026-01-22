@@ -6,7 +6,6 @@ import { Button } from "@/components/ui/button";
 import { Icon } from "@iconify/react";
 import CustomFormSheet from "./custom-form-sheet";
 import AdditionalDetailsDialog from "./additional-details-dialog";
-import { CustomField } from "@/types/job";
 import { changeRecruiterJobApplicantsByStatus } from "@/api/jobs/recruiter";
 import { toast } from "sonner";
 import {
@@ -14,10 +13,8 @@ import {
   DialogClose,
   DialogContent,
   DialogDescription,
-  DialogFooter,
   DialogHeader,
   DialogTitle,
-  DialogTrigger,
 } from "@/components/ui/dialog";
 import {
   DropdownMenu,

@@ -25,7 +25,7 @@ import { Dialog, DialogContent } from "./ui/dialog";
 import Image from "next/image";
 import NotificationPopover from "./notifications/notification-dialog";
 import { PopoverTrigger } from "./ui/popover";
-import { getUnreadCount } from "@/api/notifications";
+import { useNotification } from "./providers/notification-provider";
 
 interface NavItem {
   label: string;
@@ -39,7 +39,7 @@ function shouldHideHeader(pathname: string | null): boolean {
   if (!pathname) return false;
 
   return HIDE_HEADER_ROUTES.some(
-    (route) => pathname === route || pathname.startsWith(`${route}/`)
+    (route) => pathname === route || pathname.startsWith(`${route}/`),
   );
 }
 // Routes where bottom navigation should be visible
@@ -64,7 +64,7 @@ function shouldShowBottomNav(pathname: string | null, role?: string): boolean {
   if (!pathname || !role) return false;
 
   return BOTTOM_NAV_VISIBLE_ROUTES_BY_ROLE[role]?.some(
-    (route) => pathname === route || pathname.startsWith(`${route}/`)
+    (route) => pathname === route || pathname.startsWith(`${route}/`),
   );
 }
 
@@ -108,7 +108,7 @@ export default function Header() {
   // This is necessary because getCookie is client-only and causes SSR/client mismatch
   const [mounted, setMounted] = useState(false);
   const [notificationDialogOpen, setNotificationDialogOpen] = useState(false);
-  const [unreadCount, setUnreadCount] = useState(0);
+  const { unreadCount, refreshUnreadCount } = useNotification();
 
   // Initialize role and mounted state on client side only
   // This prevents hydration mismatch by ensuring server and client render the same initial state
@@ -139,27 +139,6 @@ export default function Header() {
     };
     if (role) {
       fetchUserDetails();
-    }
-  }, [role]);
-
-  useEffect(() => {
-    // Fetch unread notification count
-    const fetchUnreadCount = async () => {
-      try {
-        const response = await getUnreadCount();
-        if (response?.unread_count !== undefined) {
-          setUnreadCount(response.unread_count);
-        }
-      } catch (error) {
-        console.error("Error fetching unread count:", error);
-      }
-    };
-
-    if (role) {
-      fetchUnreadCount();
-      // Refresh unread count every 30 seconds
-      const interval = setInterval(fetchUnreadCount, 30000);
-      return () => clearInterval(interval);
     }
   }, [role]);
 
@@ -202,7 +181,7 @@ export default function Header() {
                   href={item.href}
                   className={cn(
                     "flex flex-col h-16 items-start justify-center relative",
-                    isActive && "border-b-2 border-primary-500"
+                    isActive && "border-b-2 border-primary-500",
                   )}
                 >
                   <span
@@ -210,7 +189,7 @@ export default function Header() {
                       "text-base text-center whitespace-nowrap",
                       isActive
                         ? "text-primary-500 font-semibold"
-                        : "text-gray-800 font-normal"
+                        : "text-gray-800 font-normal",
                     )}
                   >
                     {item.label}
@@ -245,15 +224,7 @@ export default function Header() {
               onOpenChange={setNotificationDialogOpen}
               onNotificationRead={() => {
                 // Refresh unread count when notification is read
-                getUnreadCount()
-                  .then((response) => {
-                    if (response?.unread_count !== undefined) {
-                      setUnreadCount(response.unread_count);
-                    }
-                  })
-                  .catch((error) => {
-                    console.error("Error fetching unread count:", error);
-                  });
+                refreshUnreadCount();
               }}
             >
               <PopoverTrigger asChild>
@@ -300,13 +271,13 @@ export default function Header() {
                   <div
                     className={cn(
                       "flex h-8 items-center justify-center rounded-full w-16 group-hover:bg-primary-50 transition-colors",
-                      isActive && "bg-primary-50"
+                      isActive && "bg-primary-50",
                     )}
                   >
                     <Icon
                       className={cn(
                         "size-6 group-hover:text-primary-500 transition-colors text-gray-400",
-                        isActive && "text-primary-500"
+                        isActive && "text-primary-500",
                       )}
                       icon={item.icon}
                     />
@@ -314,7 +285,7 @@ export default function Header() {
                   <span
                     className={cn(
                       "text-xs text-center whitespace-nowrap font-medium group-hover:text-black transition-colors",
-                      isActive ? "text-black" : "text-gray-400"
+                      isActive ? "text-black" : "text-gray-400",
                     )}
                   >
                     {item.label === "Assessment" ? "Assessments" : item.label}

@@ -22,16 +22,6 @@ import {
 import { getCookie } from "cookies-next/client";
 import { toast } from "sonner";
 import { useRouter } from "next/navigation";
-import { getCurrentEmploymentDetails } from "@/api/profile";
-
-type EmploymentDetails = {
-  company_name?: string | null;
-  designation?: string | null;
-  total_years_of_experience?: number | null;
-  current_ctc_amount?: number | null;
-  expected_ctc_amount?: number | null;
-  [key: string]: unknown;
-};
 
 export interface AdditionalDetails {
   title: string;

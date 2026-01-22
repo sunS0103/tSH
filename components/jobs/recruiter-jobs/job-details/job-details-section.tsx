@@ -48,8 +48,8 @@ export default async function JobDetailsSection({
     job.job_serving_location === "in-house project"
       ? "Inhouse Project"
       : job.job_serving_location === "client location"
-      ? "Client location"
-      : job.job_serving_location || null;
+        ? "Client location"
+        : job.job_serving_location || null;
 
   // Build array of detail fields
   const detailFields = [
