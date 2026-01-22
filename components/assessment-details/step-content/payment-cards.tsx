@@ -206,12 +206,11 @@ export default function PaymentCards({
       });
 
       if (packageType === "FREE") {
-        onUserAssessmentIdChange?.({
-          id: orderData?.data?.user_assessment_id,
-          payment: orderData?.data?.payment,
-          message: orderData?.message,
-        });
+
         toast.success(orderData?.response?.data?.message || orderData?.message);
+        if(orderData?.response?.data?.reload_page) {
+          window.location.reload();
+        }
         return;
       }
 
