@@ -22,9 +22,11 @@ import { useRouter } from "next/navigation";
 export default function AdditionalDetailsForm({
   additional_details,
   jobId,
+  additionalDetailsStatus,
 }: {
   additional_details: AdditionalDetails[];
   jobId: string;
+  additionalDetailsStatus: "NOT_REQUESTED" | "REQUESTED" | "SUBMITTED";
 }) {
   const [open, setOpen] = useState(false);
   const [formData, setFormData] = useState<Record<string, string>>({});
@@ -112,7 +114,7 @@ export default function AdditionalDetailsForm({
           <Button
             className="flex items-center gap-2 text-sm font-semibold"
             onClick={() => handleOpenChange(true)}
-            disabled={additional_details.some((detail) => detail.value)}
+            disabled={additionalDetailsStatus === "SUBMITTED"}
           >
             Additional Details
             <Icon icon="mdi:arrow-top-right" className="w-4.5 h-4.5" />
@@ -190,9 +192,10 @@ export default function AdditionalDetailsForm({
               const placeholder = `Enter ${field.title}`;
               const hasError = !!errors[field.title];
               const errorMessage = errors[field.title];
+              const charCount = formData[field.title]?.length || 0;
 
               return (
-                <div key={field.title} className="flex flex-col gap-2 w-full">
+                <div key={field.title} className="flex flex-col gap-2 w-full relative">
                   <Label className="text-sm font-medium text-gray-900">
                     {field.title}
                   </Label>
@@ -202,12 +205,16 @@ export default function AdditionalDetailsForm({
                     onChange={(e) =>
                       handleInputChange(field.title, e.target.value)
                     }
+                    maxLength={500}
                     className={`min-h-[99px] resize-none bg-white ${
                       hasError
                         ? "border-red-500 focus-visible:border-red-500 focus-visible:ring-red-500/50"
                         : "border-gray-200"
                     }`}
                   />
+                  <span className="absolute -bottom-5 right-0 text-xs text-gray-600">
+                    {charCount} / 500
+                  </span>
                   {hasError && (
                     <p className="text-sm text-red-500 mt-0.5">
                       {errorMessage}

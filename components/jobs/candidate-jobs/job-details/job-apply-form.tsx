@@ -43,10 +43,12 @@ export default function JobApplyForm({
   isAssessmentNotCompleted,
   customFields,
   jobId,
+  customFieldsStatus,
 }: {
   isAssessmentNotCompleted: boolean;
   customFields: CustomField[] | null;
   jobId: string;
+  customFieldsStatus: "NOT_REQUESTED" | "REQUESTED" | "SUBMITTED";
 }) {
   const [open, setOpen] = useState(false);
   const [formData, setFormData] = useState<Record<number, string>>({});
@@ -55,7 +57,6 @@ export default function JobApplyForm({
   // const [customFieldsDetailsValue, setCustomFieldsDetailsValue] =
   //   useState<EmploymentDetails | null>(null);
   const router = useRouter();
-
 
   const handleInputChange = (fieldId: number, value: string) => {
     setFormData((prev) => ({
@@ -115,8 +116,6 @@ export default function JobApplyForm({
         return;
       }
 
-
-
       const profile_fields = customFields.slice(0, 5).map((field) => {
         const fieldId =
           typeof field.id === "number" ? field.id : Number(field.id);
@@ -135,22 +134,24 @@ export default function JobApplyForm({
         };
       });
 
-      const updated_fields = profile_fields.map((field, index) => {
-        const updatedFields: { title: string; value: string }[] = [];
-        if (field.value !== customFields[index].value) {
-          updatedFields.push({
-            title: field.title,
-            value: field.value,
-          });
-        }
+      const updated_fields = profile_fields
+        .map((field, index) => {
+          const updatedFields: { title: string; value: string }[] = [];
+          if (field.value !== customFields[index].value) {
+            updatedFields.push({
+              title: field.title,
+              value: field.value,
+            });
+          }
 
-        return updatedFields;
-      })?.flat()
+          return updatedFields;
+        })
+        ?.flat();
 
       const payload = {
         profile_fields: updated_fields,
         custom_fields: custom_fields,
-      }
+      };
 
       const response = await applyToJob({
         jobId,
@@ -173,8 +174,8 @@ export default function JobApplyForm({
       };
       toast.error(
         axiosError.response?.data?.message ||
-        axiosError.message ||
-        "Failed to submit application"
+          axiosError.message ||
+          "Failed to submit application",
       );
     } finally {
       setIsSubmitting(false);
@@ -239,18 +240,18 @@ export default function JobApplyForm({
   useEffect(() => {
     if (!open || !customFields?.length) return;
 
-    const initialFormData: Record<number, string> = {};
+    const initialData: Record<number, string> = {};
 
     customFields.forEach((field) => {
       const fieldId =
         typeof field.id === "number" ? field.id : Number(field.id);
 
       if (field.value !== null && field.value !== undefined) {
-        initialFormData[fieldId] = String(field.value);
+        initialData[fieldId] = String(field.value);
       }
     });
 
-    setFormData(initialFormData);
+    setFormData(initialData);
   }, [open, customFields]);
 
   return (
@@ -259,7 +260,7 @@ export default function JobApplyForm({
         <DialogTrigger asChild>
           <Button
             className="text-sm flex items-center gap-2"
-            disabled={isAssessmentNotCompleted}
+            disabled={isAssessmentNotCompleted || customFieldsStatus === "SUBMITTED"}
             onClick={() => setOpen(true)}
           >
             Contact Recruiter
@@ -273,7 +274,7 @@ export default function JobApplyForm({
           <DialogHeader className="border-b border-gray-200 px-6 py-4">
             <div className="flex items-center justify-between">
               <DialogTitle className="text-lg font-semibold text-gray-950">
-                Fill Additional Details
+                Fill Details
               </DialogTitle>
               <DialogClose asChild>
                 <button
@@ -313,10 +314,11 @@ export default function JobApplyForm({
                         onChange={(e) =>
                           handleInputChange(fieldId, e.target.value)
                         }
-                        className={`h-8 bg-white border-gray-200 ${hasError
-                          ? "border-red-500 focus-visible:border-red-500 focus-visible:ring-red-500/50"
-                          : ""
-                          }`}
+                        className={`h-8 bg-white border-gray-200 ${
+                          hasError
+                            ? "border-red-500 focus-visible:border-red-500 focus-visible:ring-red-500/50"
+                            : ""
+                        }`}
                       />
                       {hasError && (
                         <p className="text-sm text-red-500 mt-0.5">
@@ -338,9 +340,10 @@ export default function JobApplyForm({
               const placeholder = `Enter ${field.title}`;
               const hasError = !!errors[fieldId];
               const errorMessage = errors[fieldId];
+              const charCount = formData[fieldId]?.length || 0;
 
               return (
-                <div key={fieldId} className="flex flex-col gap-2 w-full">
+                <div key={fieldId} className="flex flex-col gap-2 w-full relative">
                   <Label className="text-sm font-medium text-gray-900">
                     {field.title}
                   </Label>
@@ -348,11 +351,16 @@ export default function JobApplyForm({
                     placeholder={placeholder}
                     value={formData[fieldId] || ""}
                     onChange={(e) => handleInputChange(fieldId, e.target.value)}
-                    className={`min-h-[99px] resize-none ${hasError
-                      ? "border-red-500 focus-visible:border-red-500 focus-visible:ring-red-500/50"
-                      : "border-gray-200"
-                      }`}
+                    maxLength={500}
+                    className={`min-h-[99px] resize-none ${
+                      hasError
+                        ? "border-red-500 focus-visible:border-red-500 focus-visible:ring-red-500/50"
+                        : "border-gray-200"
+                    }`}
                   />
+                  <span className="absolute -bottom-5 right-0 text-xs text-gray-600">
+                    {charCount} / 500
+                  </span>
                   {hasError && (
                     <p className="text-sm text-red-500 mt-0.5">
                       {errorMessage}

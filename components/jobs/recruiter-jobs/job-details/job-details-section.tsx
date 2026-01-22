@@ -19,10 +19,10 @@ export default async function JobDetailsSection({
 
 
   // Format experience
-  const experienceText =
-    job.experience_min_years >= 0 && job.experience_max_years >= 0
-      ? `${job.experience_min_years} - ${job.experience_max_years} Years`
-      : "-";
+  const experienceText = job?.experience_range || null;
+    // job.experience_min_years >= 0 && job.experience_max_years >= 0
+    //   ? `${job.experience_min_years} - ${job.experience_max_years} Years`
+    //   : "-";
 
   // Format work modes
   const workModesText =

@@ -11,7 +11,6 @@ import {
   DialogTrigger,
 } from "@/components/ui/dialog";
 import { cn, sanitizeHtml } from "@/lib/utils";
-// import { initiatePurchase, openRazorpayCheckout } from "@/lib/razorpay";
 import { Icon } from "@iconify/react";
 import { getCookie } from "cookies-next/client";
 import { useState, useEffect } from "react";
@@ -236,7 +235,7 @@ export default function PaymentCards({
   return (
     <div>
       {is_free_plan_available && (
-        <div className="flex flex-col gap-4 mt-4   mb-6">
+        <div className="flex flex-col gap-4 mt-4 mb-6">
           {/* Banner */}
           <div className="bg-primary-50 border border-primary-200 rounded-xl p-4 flex items-start gap-3">
             <Icon

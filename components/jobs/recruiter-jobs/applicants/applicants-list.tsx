@@ -22,13 +22,13 @@ export default function ApplicantsList({
           mobile_number={applicant?.mobile_number || null}
           experience={applicant?.experience}
           current_company={applicant?.current_company}
-          time_in_current_company={applicant?.time_in_current_company}
           location={applicant?.location}
           current_ctc={applicant?.current_ctc}
           user_id={applicant?.user_id}
           application_id={applicant?.application_id}
           application_status={applicant?.application_status}
           additionalDetailsStatus={applicant?.additionalDetailsStatus}
+          notice_period={applicant?.notice_period}
         />
       ))}
     </div>
