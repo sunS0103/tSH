@@ -8,7 +8,7 @@
   "skills": [
     { "name": "Playwright", "level": "Advanced" },
     { "name": "API Testing", "level": "Intermediate" },
-    { "name": "Core Java", "level": "Intermediate" },
+    { "name": "JavaScript", "level": "Intermediate" },
     { "name": "Testing Fundamentals", "level": "Intermediate" }
   ]
 }

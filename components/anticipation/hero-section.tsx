@@ -92,7 +92,7 @@ const HeroSection = () => {
             </button>
 
 <p className="text-sm text-slate-600 mt-3">
-  Feb 5-27, 2026 • 22 QA Positions • 7 Companies
+  Feb 6-27, 2026 • 27 QA Positions • 15 Companies
 </p>
 
             <p className="text-sm text-subtle">
