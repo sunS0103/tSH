@@ -91,10 +91,10 @@ export default function RecruiterDashboard() {
               job.status === "published"
                 ? "Active"
                 : job.status === "in_review"
-                ? "In Review"
-                : job.status === "draft"
-                ? "Draft"
-                : job.status,
+                  ? "In Review"
+                  : job.status === "draft"
+                    ? "Draft"
+                    : job.status,
             minExperience: job.experience_min_years || 0,
             maxExperience: job.experience_max_years || 0,
             companyName: job.company_name,
@@ -112,9 +112,9 @@ export default function RecruiterDashboard() {
           pageSize: 2,
           favorite_only: true,
         });
-        if (talentsRes?.data?.candidates) {
-          const mappedTalents = talentsRes.data.candidates.map(
-            (candidate: Candidate) => mapCandidateToTalentCard(candidate)
+        if (talentsRes?.data) {
+          const mappedTalents = talentsRes.data.map((candidate: Candidate) =>
+            mapCandidateToTalentCard(candidate),
           );
           setFavoriteTalents(mappedTalents.slice(0, 2));
         }
