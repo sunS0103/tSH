@@ -22,6 +22,8 @@ interface CandidateJob
     is_assessment_complete: boolean;
   }>;
   custom_fields: CustomField[];
+  customFieldsStatus: "NOT_REQUESTED" | "REQUESTED" | "SUBMITTED";
+  additionalDetailsStatus: "NOT_REQUESTED" | "REQUESTED" | "SUBMITTED";
 }
 
 export default async function CandidateJobDetails({
@@ -72,12 +74,14 @@ export default async function CandidateJobDetails({
             <AdditionalDetailsForm
               additional_details={job.additional_details || []}
               jobId={job.slug}
+              additionalDetailsStatus={job.additionalDetailsStatus}
             />
           ) : (
             <JobApplyForm
               isAssessmentNotCompleted={isAssessmentNotCompleted}
               customFields={customFields}
               jobId={job.slug}
+              customFieldsStatus={job.customFieldsStatus}
             />
           )}
         </>

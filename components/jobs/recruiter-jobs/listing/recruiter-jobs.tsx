@@ -273,7 +273,7 @@ export default function RecruiterJobs() {
   };
 
   return (
-    <div className="flex flex-col lg:flex-row gap-8 h-full bg-gray-50/50">
+    <div className="flex flex-col lg:flex-row gap-8 h-full bg-gray-50/50 mb-4">
       {/* Sidebar */}
       <div className="shrink-0 lg:w-72 hidden lg:block">
         <JobFilterSidebar

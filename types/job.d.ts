@@ -46,6 +46,10 @@ export interface RecruiterJob {
   created_at: string;
   updated_at: string;
 
+  customFieldsStatus: "NOT_REQUESTED" | "REQUESTED" | "SUBMITTED";
+
+  additionalDetailsStatus: "NOT_REQUESTED" | "REQUESTED" | "SUBMITTED";
+
   additional_details?: {
     title: string;
     type: "text" | "textarea";

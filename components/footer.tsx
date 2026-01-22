@@ -42,7 +42,7 @@ export default function Footer({ className }: FooterProps) {
   ];
 
   return (
-    <footer className={cn("max-container mx-auto p-4", className)}>
+    <footer className={cn("max-container mx-auto", className)}>
       <div
         className={cn(
           "bg-gray-900 flex flex-col items-start rounded-3xl w-full pb-4 px-4 mb-24 md:mb-6",
@@ -128,7 +128,7 @@ export default function Footer({ className }: FooterProps) {
         <div className="bg-gray-800 flex flex-col md:flex-row md:items-center justify-between gap-4 py-3 px-4 rounded-xl w-full">
           {/* Copyright */}
           <p className="text-gray-400 text-xs sm:text-sm font-normal whitespace-nowrap">
-            ©techSmartHire 2025, All rights reserved.
+            ©techSmartHire {new Date().getFullYear()}, All rights reserved.
           </p>
 
           {/* Social Media Icons */}
