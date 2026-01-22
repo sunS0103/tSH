@@ -427,7 +427,7 @@ export default function RegisterForm({ role, email }: RegisterFormProps) {
         .catch((error) => {
           toast.error(
             error?.response?.data?.message ||
-              "An error occurred during registration. Please try again."
+            "An error occurred during registration. Please try again."
           );
         });
     } else {
@@ -469,7 +469,7 @@ export default function RegisterForm({ role, email }: RegisterFormProps) {
         .catch((error) => {
           toast.error(
             error?.response?.data?.message ||
-              "An error occurred during registration. Please try again."
+            "An error occurred during registration. Please try again."
           );
         });
     }

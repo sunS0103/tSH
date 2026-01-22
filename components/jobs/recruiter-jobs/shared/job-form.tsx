@@ -12,7 +12,7 @@ import {
 } from "@/api/jobs/recruiter";
 import Breadcrumbs from "@/components/common/breadcrumbs";
 import { type JobFormData } from "@/validation/job";
-import { Compensation, RecruiterJob } from "@/types/job";
+import { RecruiterJob } from "@/types/job";
 import { getCookie } from "cookies-next/client";
 
 interface JobFormProps {
@@ -172,12 +172,9 @@ function transformJobToFormData(job: RecruiterJob): Partial<JobFormData> {
       : "";
 
   // Parse salary from compensation object
-  const salaryMin = (job?.compensation as Compensation)?.min_amount || 0;
-  const salaryMax = (job?.compensation as Compensation)?.max_amount || 0;
-  const salaryStr =
-    salaryMin && salaryMax
-      ? `${salaryMin} to ${salaryMax} ${(job?.compensation as Compensation)?.period || "LPA"}`
-      : "";
+
+  const salaryStr = job?.compensation || "";
+
 
   // Map job_serving_location back to job_location_type
   const jobLocationType =
@@ -217,7 +214,7 @@ function transformJobToFormData(job: RecruiterJob): Partial<JobFormData> {
     job_location_type: jobLocationType,
     country_id: job.country.id || 0,
     city_id: job.city.id || 0,
-    salary_min: salaryStr,
+    salary_min: salaryStr as string,
     experience_min: experienceMin,
     notice_period: job.required_notice_period || "",
     work_mode: workMode,
@@ -282,14 +279,6 @@ function transformFormDataToPayload(data: JobFormData) {
     }))
     : [];
 
-  // Default apply form fields (always included)
-  const defaultFields = [
-    { title: "Current Company", type: "text" },
-    { title: "Notice Period", type: "text" },
-    { title: "Expected CTC", type: "text" },
-    { title: "Visa status", type: "text" },
-    { title: "About yourself", type: "textarea" },
-  ];
 
   // Transform custom fields (fields added by recruiter beyond the default 5)
   const customFields =

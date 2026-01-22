@@ -16,10 +16,7 @@ export default async function JobDetailsSection({
 
   // Format salary
   const salaryText = job?.compensation || null;
-  // job.compensation?.min_amount && job.compensation?.max_amount
-  //   ? `${job.compensation.min_amount} to ${job.compensation.max_amount} ${job.compensation.period || "Per annum"
-  //   }`
-  //   : null;
+
 
   // Format experience
   const experienceText = job.experience_range || "-";
