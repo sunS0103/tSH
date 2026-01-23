@@ -12,9 +12,9 @@ interface TalentScoreSheetProps {
   assessments: AssessmentTaken[];
 }
 
-export default function TalentScoreSheet({ 
-  children, 
-  assessments 
+export default function TalentScoreSheet({
+  children,
+  assessments,
 }: TalentScoreSheetProps) {
   // Transform assessment data to include skills
   const assessmentDetails = assessments.map((assessment) => {
@@ -58,7 +58,6 @@ export default function TalentScoreSheet({
                     {assessment.score}%
                   </span>
                 </div>
-
 
                 <div className="flex flex-col gap-2">
                   <span className="text-gray-900 text-sm font-medium font-sans">
