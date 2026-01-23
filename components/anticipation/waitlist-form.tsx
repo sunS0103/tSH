@@ -4,7 +4,14 @@ import { useState, useEffect, useRef } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { motion, AnimatePresence } from "framer-motion";
-import { Loader2, CheckCircle2, User, Briefcase, ArrowRight, Phone } from "lucide-react";
+import {
+  Loader2,
+  CheckCircle2,
+  User,
+  Briefcase,
+  ArrowRight,
+  Phone,
+} from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -21,7 +28,7 @@ interface WaitlistFormProps {
 const WaitlistForm: React.FC<WaitlistFormProps> = ({ initialRole = null }) => {
   const [submitted, setSubmitted] = useState(false);
   const [submittedRole, setSubmittedRole] = useState<"candidate" | "recruiter">(
-    "candidate"
+    "candidate",
   );
   const [isAlreadySubscribed, setIsAlreadySubscribed] = useState(false);
   const [recaptchaToken, setRecaptchaToken] = useState<string | null>(null);
@@ -75,12 +82,18 @@ const WaitlistForm: React.FC<WaitlistFormProps> = ({ initialRole = null }) => {
         ) {
           toast.info(
             response.message ||
-              "You're already subscribed with this email address!"
+              "You're already subscribed with this email address!",
           );
           setSubmitted(true);
           setSubmittedRole(currentRole);
           setIsAlreadySubscribed(true);
-          reset({ name: "", email: "", company: "", phone: "", role: currentRole });
+          reset({
+            name: "",
+            email: "",
+            company: "",
+            phone: "",
+            role: currentRole,
+          });
           resetRecaptcha();
           return;
         }
@@ -96,12 +109,12 @@ const WaitlistForm: React.FC<WaitlistFormProps> = ({ initialRole = null }) => {
         FIRSTNAME: values.name,
         COMPANY_NAME: listId === 23 ? "" : values.company,
       };
-      
+
       // Add phone number for recruiters only
       if (listId === 24 && values.phone) {
         attributes.SMS = values.phone.replace(/\D/g, ""); // Phone number without special characters
       }
-      
+
       const importBody = {
         jsonBody: [
           {
@@ -129,10 +142,9 @@ const WaitlistForm: React.FC<WaitlistFormProps> = ({ initialRole = null }) => {
     } catch (error: any) {
       console.error("Waitlist Error:", error);
       toast.error(
-        error.response?.data?.message || "Failed to join the waitlist."
+        error.response?.data?.message || "Failed to join the waitlist.",
       );
     }
-
   };
 
   const resetRecaptcha = () => {
@@ -176,8 +188,12 @@ const WaitlistForm: React.FC<WaitlistFormProps> = ({ initialRole = null }) => {
 
               <h3 className="text-2xl font-bold mb-4">
                 {submittedRole === "recruiter"
-                  ? isAlreadySubscribed ? recruiterSuccessTitleAlreadySubscribed : recruiterSuccessTitle
-                  : isAlreadySubscribed ? candidateSuccessTitleAlreadySubscribed : candidateSuccessTitle}
+                  ? isAlreadySubscribed
+                    ? recruiterSuccessTitleAlreadySubscribed
+                    : recruiterSuccessTitle
+                  : isAlreadySubscribed
+                    ? candidateSuccessTitleAlreadySubscribed
+                    : candidateSuccessTitle}
               </h3>
 
               {submittedRole === "recruiter" ? (
@@ -189,7 +205,9 @@ const WaitlistForm: React.FC<WaitlistFormProps> = ({ initialRole = null }) => {
                   {/* Divider */}
                   <div className="flex items-center gap-3">
                     <div className="flex-1 h-px bg-border" />
-                    <span className="text-xs font-semibold text-subtle">Need QA Talent Now?</span>
+                    <span className="text-xs font-semibold text-subtle">
+                      Need QA Talent Now?
+                    </span>
                     <div className="flex-1 h-px bg-border" />
                   </div>
 
@@ -199,12 +217,13 @@ const WaitlistForm: React.FC<WaitlistFormProps> = ({ initialRole = null }) => {
                       Join February QA Job Fair 🎯
                     </h4>
                     <p className="text-sm text-subtle mb-3">
-                      Access <strong>pre-vetted QA candidates</strong> with verified skills through our AI-proctored assessments.
+                      Access <strong>pre-vetted QA candidates</strong> with
+                      verified skills through our AI-proctored assessments.
                     </p>
                     <p className="text-xs text-subtle mb-4">
                       Skill-first hiring • No resume screening • Feb 5-27
                     </p>
-                    <Link 
+                    <Link
                       href="/qa-job-fair-feb"
                       className="inline-flex items-center gap-2 px-6 py-3 rounded-lg bg-primary text-primary-foreground font-bold hover:bg-primary/90 transition-all w-full justify-center"
                     >
@@ -229,13 +248,16 @@ const WaitlistForm: React.FC<WaitlistFormProps> = ({ initialRole = null }) => {
               ) : (
                 <div className="space-y-6 text-left">
                   <p className="text-subtle text-center">
-                    You're in line for early platform access. We'll notify you when we launch!
+                    You're in line for early platform access. We'll notify you
+                    when we launch!
                   </p>
 
                   {/* Divider */}
                   <div className="flex items-center gap-3">
                     <div className="flex-1 h-px bg-border" />
-                    <span className="text-xs font-semibold text-subtle">Don't Wait</span>
+                    <span className="text-xs font-semibold text-subtle">
+                      Don't Wait
+                    </span>
                     <div className="flex-1 h-px bg-border" />
                   </div>
 
@@ -245,12 +267,13 @@ const WaitlistForm: React.FC<WaitlistFormProps> = ({ initialRole = null }) => {
                       Get Hired in February! 🚀
                     </h4>
                     <p className="text-sm text-subtle mb-3">
-                      Join our <strong>QA Job Fair</strong> — get shortlisted by top companies based on skills, not resumes.
+                      Join our <strong>QA Job Fair</strong> — get shortlisted by
+                      top companies based on skills, not resumes.
                     </p>
                     <p className="text-xs text-subtle mb-4">
                       22 Positions • 7 Companies • Feb 5-27
                     </p>
-                    <Link 
+                    <Link
                       href="/qa-job-fair-feb"
                       className="inline-flex items-center gap-2 px-6 py-3 rounded-lg bg-primary text-primary-foreground font-bold hover:bg-primary/90 transition-all w-full justify-center"
                     >
@@ -464,7 +487,9 @@ const WaitlistForm: React.FC<WaitlistFormProps> = ({ initialRole = null }) => {
                         {errors.phone.message}
                       </p>
                     )}
-                    <p className="text-xs text-subtle">Enter digits only (e.g., 1234567890)</p>
+                    <p className="text-xs text-subtle">
+                      Enter digits only (e.g., 1234567890)
+                    </p>
                   </div>
                 </motion.div>
               )}
@@ -482,7 +507,7 @@ const WaitlistForm: React.FC<WaitlistFormProps> = ({ initialRole = null }) => {
                 onExpired={() => {
                   setRecaptchaToken(null);
                   setRecaptchaError(
-                    "reCAPTCHA expired. Please complete the challenge again."
+                    "reCAPTCHA expired. Please complete the challenge again.",
                   );
                 }}
                 onErrored={() => {

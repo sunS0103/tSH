@@ -26,7 +26,9 @@ const Header = () => {
     if (pathname !== "/") {
       router.push("/#who-is-it-for");
     } else {
-      document.getElementById("who-is-it-for")?.scrollIntoView({ behavior: "smooth" });
+      document
+        .getElementById("who-is-it-for")
+        ?.scrollIntoView({ behavior: "smooth" });
     }
     setIsMobileMenuOpen(false);
   };
@@ -103,7 +105,12 @@ const Header = () => {
 
           {/* Desktop CTA */}
           <div className="flex items-center gap-4">
-            <Button className="cursor-pointer" variant="default" size="sm" onClick={scrollToForm}>
+            <Button
+              className="cursor-pointer"
+              variant="default"
+              size="sm"
+              onClick={scrollToForm}
+            >
               Product Vision
             </Button>
           </div>

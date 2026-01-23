@@ -5,6 +5,8 @@ import Header from "@/components/landing/Header";
 import Footer from "@/components/landing/Footer";
 import { Toaster } from "sonner";
 import Script from "next/script";
+import { RouteLoader } from "@/components/route-loader";
+import NextAuthSessionProvider from "@/components/providers/session-provider";
 
 const plusJakartaSans = Plus_Jakarta_Sans({
   variable: "--font-plus-jakarta-sans",
@@ -57,7 +59,7 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
         </Script>
       )}
       <body className={`${plusJakartaSans.variable} antialiased`}>
-        {true && (
+        {process.env.NEXT_PUBLIC_ENV === "production" && (
           <noscript>
             <iframe
               src="https://www.googletagmanager.com/ns.html?id=GTM-WFZ9226R"
@@ -67,10 +69,17 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
             ></iframe>
           </noscript>
         )}
-        <Header />
-        <main>{children}</main>
-        <Footer />
-        <Toaster richColors position="bottom-right" />
+        <NextAuthSessionProvider>
+          <RouteLoader />
+          <Header />
+          <main>{children}</main>
+          <Footer />
+          <Toaster richColors position="bottom-right" />
+          <Script
+            src="https://checkout.razorpay.com/v1/checkout.js"
+            strategy="afterInteractive"
+          />
+        </NextAuthSessionProvider>
       </body>
     </html>
   );

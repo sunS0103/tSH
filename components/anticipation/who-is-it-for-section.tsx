@@ -47,7 +47,10 @@ const WhoIsItForSection: React.FC<WhoIsItForSectionProps> = ({
   ];
 
   return (
-    <section id="who-is-it-for" className="py-24 md:py-32 relative overflow-hidden">
+    <section
+      id="who-is-it-for"
+      className="py-24 md:py-32 relative overflow-hidden"
+    >
       {/* Background */}
       <div className="absolute inset-0 bg-linear-to-b from-background via-muted/30 to-background" />
 
