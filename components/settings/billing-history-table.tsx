@@ -1,37 +1,23 @@
+"use client";
+
 import { Icon } from "@iconify/react";
 import { Button } from "../ui/button";
+import { getCreditPurchaseHistory } from "@/api/payment";
+import { useEffect, useState } from "react";
+import { format } from "date-fns";
 
 export default function BillingHistoryTable() {
-  const billingHistory = [
-    {
-      id: 1,
-      date: "2026-01-21",
-      planName: "Free Plan",
-      amount: "₹0",
-      // action: "View"
-    },
-    {
-      id: 2,
-      date: "2026-01-21",
-      planName: "Free Plan",
-      amount: "₹0",
-      // action: "View"
-    },
-    {
-      id: 3,
-      date: "2026-01-21",
-      planName: "Free Plan",
-      amount: "₹0",
-      // action: "View"
-    },
-    {
-      id: 4,
-      date: "2026-01-21",
-      planName: "Free Plan",
-      amount: "₹0",
-      // action: "View"
-    },
-  ];
+
+const [billingHistory, setBillingHistory] = useState<[]>([]);
+
+useEffect(() => {
+  const fetchBillingHistory = async () => {
+    const response = await getCreditPurchaseHistory();
+    setBillingHistory(response.data.transactions || []);
+  };
+  fetchBillingHistory();
+}, []);
+  
   return (
     <div className="overflow-x-hidden bg-white border rounded-2xl mb-4">
       <h2 className="text-lg font-semibold mb-4 bg-primary-50 p-4">
@@ -48,14 +34,14 @@ export default function BillingHistoryTable() {
             </tr>
           </thead>
           <tbody>
-            {billingHistory.map((history) => (
+            {billingHistory.map((history: { created_at: string; plan_name: string; amount: string; },index: number) => (
               <tr
-                key={history.id}
+                key={index}
                 className="text-left border-b border-gray-200"
               >
-                <td className="py-2">{history.date}</td>
-                <td className="py-2">{history.planName}</td>
-                <td className="py-2">{history.amount}</td>
+                <td className="py-2">{format(new Date(history.created_at), "MM-dd-yyyy")}</td>
+                <td className="py-2">{history.plan_name}</td>
+                <td className="py-2">₹{history.amount}</td>
                 <td className="py-2 text-right">
                   <Button
                     type="button"
@@ -64,7 +50,7 @@ export default function BillingHistoryTable() {
                     onClick={() => {
                       /* handle download */
                     }}
-                    aria-label={`Download invoice for ${history.date}`}
+                    aria-label={`Download invoice for ${history.created_at}`}
                     className="cursor-pointer rounded-full p-0 bg-primary-50 hover:bg-primary-50 mx-3"
                   >
                     <Icon

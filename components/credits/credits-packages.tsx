@@ -44,63 +44,6 @@ export interface CurrentPlanResponse {
     }
 }
 
-const creditPackages: CreditPackage[] = [
-  {
-    tier: "Tier 1",
-    packageType: "TIER_1",
-    title: "Free / Pay-As-You-Go",
-    description: "Best for: Occasional hiring or trying the platform",
-    price: "<div>₹0</div>",
-    points: [
-      "10 free credits to unlock candidate profiles",
-      "₹399 per credit thereafter",
-      "7-day smart notifications on ideal candidates per job posting",
-    ],
-    buttonText: "Buy Now",
-  },
-  {
-    tier: "Tier 2",
-    packageType: "TIER_2",
-    title: "BodyShop Plan",
-    description: "Best for: Regular hiring teams and staffing agencies",
-    price:
-      "<div>₹4,500 <span class='text-xs text-gray-500'>/month</span></div>",
-    points: [
-      "12 free profile unlock credits every month",
-      "Unlimited smart candidate notifications",
-      "Unlimited smart candidate notifications",
-      "Marketing job postings across 200,000 engineers via social media channels",
-      "Strong assessment-based filtering",
-      "1 custom assessment per month, created specifically for your job description",
-    ],
-    buttonText: "Buy Now",
-  },
-  {
-    tier: "Tier 3",
-    packageType: "TIER_3",
-    title: "Vendor Hiring Model",
-    description:
-      "Best for: Bulk hiring, vendors, and long-term staffing partners",
-    price: "<div class='text-gray-500'>Custom Pricing</div>",
-    points: [
-      "Unlimited candidate profile access",
-      "Dedicated hiring manager assigned",
-      "Hiring manager responsibilities include:",
-    ],
-    benefits: [
-      "Understanding job requirements in detail",
-      "Creating and optimizing job postings",
-      "Designing custom assessments with hiring manager feedback",
-      "Inviting relevant candidates for assessments",
-      "Filtering candidates based on assessment results",
-      "One round of additional manual vetting",
-      "Supporting bulk and ongoing hiring needs",
-      "Handling contract payroll logistics if required",
-    ],
-    buttonText: "Contact Us",
-  },
-];
-
 const openRazorpayCheckout = ({
   orderData,
   user,
@@ -158,6 +101,7 @@ const marker = `<svg xmlns="http://www.w3.org/2000/svg" width="7" height="5" vie
 
 export default function CreditsPackages() {
   const [currentPlan, setCurrentPlan] = useState<CurrentPlanResponse | null>(null);
+  const [isFreePlanUsed, setIsFreePlanUsed] = useState(false);
 
   const profileCookie = getCookie("profile_data");
   const profileData = profileCookie
@@ -169,10 +113,68 @@ export default function CreditsPackages() {
     phone: profileData.mobile_details.mobile_number,
   };
 
+  const creditPackages: CreditPackage[] = [
+  {
+    tier: "Tier 1",
+    packageType: "TIER_1",
+    title: "Free / Pay-As-You-Go",
+    description: "Best for: Occasional hiring or trying the platform",
+    price: isFreePlanUsed ? "<div>₹399</div>" : "<div>₹0</div>",
+    points: [
+      "10 free credits to unlock candidate profiles",
+      "₹399 per credit thereafter",
+      "7-day smart notifications on ideal candidates per job posting",
+    ],
+    buttonText: "Buy Now",
+  },
+  {
+    tier: "Tier 2",
+    packageType: "TIER_2",
+    title: "BodyShop Plan",
+    description: "Best for: Regular hiring teams and staffing agencies",
+    price:
+      "<div>₹4,500 <span class='text-xs text-gray-500'>/month</span></div>",
+    points: [
+      "12 free profile unlock credits every month",
+      "Unlimited smart candidate notifications",
+      "Unlimited smart candidate notifications",
+      "Marketing job postings across 200,000 engineers via social media channels",
+      "Strong assessment-based filtering",
+      "1 custom assessment per month, created specifically for your job description",
+    ],
+    buttonText: "Buy Now",
+  },
+  {
+    tier: "Tier 3",
+    packageType: "TIER_3",
+    title: "Vendor Hiring Model",
+    description:
+      "Best for: Bulk hiring, vendors, and long-term staffing partners",
+    price: "<div class='text-gray-500'>Custom Pricing</div>",
+    points: [
+      "Unlimited candidate profile access",
+      "Dedicated hiring manager assigned",
+      "Hiring manager responsibilities include:",
+    ],
+    benefits: [
+      "Understanding job requirements in detail",
+      "Creating and optimizing job postings",
+      "Designing custom assessments with hiring manager feedback",
+      "Inviting relevant candidates for assessments",
+      "Filtering candidates based on assessment results",
+      "One round of additional manual vetting",
+      "Supporting bulk and ongoing hiring needs",
+      "Handling contract payroll logistics if required",
+    ],
+    buttonText: "Contact Us",
+  },
+];
+
   useEffect(() => {
     const fetchCurrentPlan = async () => {
       await getCurrentPlan().then((res) => {
         setCurrentPlan(res?.data?.plan_details || null);
+        setIsFreePlanUsed(res?.data?.free_credits_used || false);
       });
     };
     fetchCurrentPlan();
@@ -257,7 +259,7 @@ export default function CreditsPackages() {
           key={card.tier}
           className={cn(
             "min-w-80 max-w-80 border p-3 rounded-xl h-130 flex flex-col justify-between bg-white",
-            currentPlan?.plan_type === card.packageType && "border-primary-500",
+            currentPlan?.plan_type === "TIER_2" && "border-primary-500",
           )}
         >
           <div>
@@ -316,9 +318,9 @@ export default function CreditsPackages() {
           <Button
             variant="secondary"
             onClick={() => handlePurchase(card.packageType)}
-            disabled={currentPlan?.plan_type === card.packageType}
+            disabled={currentPlan?.plan_type === "TIER_2"}
           >
-            {currentPlan?.plan_type === card.packageType
+            {currentPlan?.plan_type === "TIER_2"
               ? "Current Plan"
               : card.buttonText}
           </Button>
