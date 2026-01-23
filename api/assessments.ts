@@ -198,3 +198,18 @@ export const createAssessmentRequest = async (data: {
   const response = await axios.post("/recruiter/assessment/request", data);
   return response.data;
 };
+
+export interface InviteCandidatesToAssessmentPayload {
+  user_ids: string[];
+  assessment_slugs: string[];
+}
+
+export const inviteCandidatesToAssessment = async (
+  data: InviteCandidatesToAssessmentPayload
+) => {
+  const response = await axios.post(
+    "/recruiter/assessment/invite-candidates",
+    data
+  );
+  return response.data;
+};
