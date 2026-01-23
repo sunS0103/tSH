@@ -71,7 +71,7 @@ interface FAQItem {
 }
 
 // FAQ Accordion Component
-function FAQAccordion() {
+function FAQAccordion({ onDownloadGuideClick }: { onDownloadGuideClick: () => void }) {
   const [openIndex, setOpenIndex] = useState<number | null>(null);
 
   const faqs: FAQItem[] = [
@@ -276,7 +276,22 @@ Also, what is considered a strong score can vary by:
             <div className="px-6 pb-6 pt-2 animate-fade-in">
               <div className="pl-14">
                 <div className="prose prose-sm text-slate-700 leading-relaxed whitespace-pre-line">
-                  {faq.answer}
+                  {faq.answer.split('Download the Exam Guide').map((part, i, arr) => (
+                    <React.Fragment key={i}>
+                      {part}
+                      {i < arr.length - 1 && (
+                        <button
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            onDownloadGuideClick();
+                          }}
+                          className="inline-flex items-center gap-1 text-blue-600 hover:text-blue-700 font-semibold hover:underline cursor-pointer"
+                        >
+                          Download the Exam Guide
+                        </button>
+                      )}
+                    </React.Fragment>
+                  ))}
                 </div>
               </div>
             </div>
@@ -833,7 +848,7 @@ export default function DynamicAssessmentPageClient({ config }: DynamicAssessmen
             </p>
           </div>
 
-          <FAQAccordion />
+          <FAQAccordion onDownloadGuideClick={() => setIsSampleModalOpen(true)} />
         </div>
       </section>
 
