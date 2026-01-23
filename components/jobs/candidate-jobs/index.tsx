@@ -70,7 +70,7 @@ export default async function CandidateJobDetails({
         </div>
 
         <>
-          {job?.additional_details ? (
+          {job?.additionalDetailsStatus !== "NOT_REQUESTED" ? (
             <AdditionalDetailsForm
               additional_details={job.additional_details || []}
               jobId={job.slug}
@@ -123,15 +123,14 @@ export default async function CandidateJobDetails({
         </div>
       </div>
 
-      {job.custom_fields && (
+      {job.customFieldsStatus === "SUBMITTED" && (
         <ContactRecruiterFormDetails customFields={customFields || []} />
       )}
-      {job?.additional_details &&
-        job.additional_details?.some((detail) => detail.value) && (
-          <AdditionalDetails
-            additional_details={job.additional_details || []}
-          />
-        )}
+      {job.additionalDetailsStatus === "SUBMITTED" &&
+        <AdditionalDetails
+          additional_details={job.additional_details || []}
+        />
+      }
     </div>
   );
 }
