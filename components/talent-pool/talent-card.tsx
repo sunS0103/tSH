@@ -83,7 +83,7 @@ export default function TalentCard({
               <h1 className="text-black text-xl font-bold font-sans">
                 {expertise}
               </h1>
-              <p className="text-left text-gray-600 text-xs font-normal font-sans capitalize">
+              <p className="text-left text-gray-600 text-xs font-normal font-sans uppercase">
                 ID: {id?.substring(0, 4)}
               </p>
             </div>

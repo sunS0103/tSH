@@ -155,7 +155,7 @@ export default function RecruiterDashboard() {
   // Helper function to map candidate to talent card format
   const mapCandidateToTalentCard = (candidate: Candidate) => {
     return {
-      id: candidate.candidate_id,
+      id: candidate.user_id,
       role: candidate.expertise || "N/A",
       expertise: candidate.expertise || "N/A",
       location_code: candidate.location || "N/A",
