@@ -45,7 +45,7 @@ const editProfileSchema = z.object({
   company_name: z.string().min(1, "Company name is required"),
   first_name: z.string().min(1, "First name is required"),
   last_name: z.string().min(1, "Last name is required"),
-  gender: z.enum(["Male", "Female",""]),
+  gender: z.enum(["Male", "Female"]),
   email: z.string().email("Invalid email address"),
   mobile_number: z
     .string()
@@ -96,7 +96,7 @@ export default function EditProfilePage() {
       company_name: profileData?.company_name || "",
       first_name: profileData?.first_name || "",
       last_name: profileData?.last_name || "",
-      gender: profileData?.gender === "Male" && "Male" || profileData?.gender === "Female" && "Female" || "",
+      gender: (profileData?.gender === "Male" && "Male") || (profileData?.gender === "Female" && "Female") || undefined,
       email: profileData?.email || "",
       mobile_number: profileData?.mobile_details?.mobile_number || "",
       country_code: profileData?.mobile_details?.dial_code || "+91",
@@ -246,7 +246,7 @@ export default function EditProfilePage() {
       const response = await updateRecruiterProfile({
         first_name: data.first_name,
         last_name: data.last_name,
-        gender: data.gender,
+        gender: data?.gender,
         email: data.email,
         mobile_number: data.mobile_number,
         country_code: data.country_code,
