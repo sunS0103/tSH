@@ -57,10 +57,10 @@ const mapCandidateToTalentCard = (
   );
 
   // Generate location_code (using first 2 letters of city + last 4 digits of candidate_id)
-  const locationCode = `${(candidate.city || "NA").substring(0, 2).toUpperCase()} ${candidate.candidate_id.slice(-4)}`;
+  const locationCode = `${(candidate.city || "NA").substring(0, 2).toUpperCase()} ${candidate.user_id.slice(-4)}`;
 
   return {
-    id: candidate.candidate_id,
+    id: candidate.user_id,
     role: candidate.expertise || "",
     location_code: locationCode,
     totalScore: candidate.score,
@@ -433,7 +433,7 @@ export default function TalentPoolPage() {
           // Update favorite talents from API response (merge with existing favorites)
           const apiFavoriteIds = response.data
             .filter((c) => c.is_favorite)
-            .map((c) => c.candidate_id);
+            .map((c) => c.user_id);
 
           // Get current favorites and merge with API favorites
           setFavoriteTalents((prev) => {
@@ -444,7 +444,7 @@ export default function TalentPoolPage() {
             const mappedTalents = response.data.map((candidate) =>
               mapCandidateToTalentCard(
                 candidate,
-                favoriteSet.includes(candidate.candidate_id) ||
+                favoriteSet.includes(candidate.user_id) ||
                   candidate.is_favorite,
               ),
             );
@@ -777,6 +777,8 @@ export default function TalentPoolPage() {
             setBulkInviteDialog((prev) => ({ ...prev, open }))
           }
           mode={bulkInviteDialog.mode}
+          candidateIds={selectedTalents}
+          onInviteSuccess={() => setSelectedTalents([])}
         />
       </div>
     </>

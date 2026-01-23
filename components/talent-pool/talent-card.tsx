@@ -99,6 +99,7 @@ export default function TalentCard({
             <Button
               variant="outline"
               className="w-8 h-8 rounded-lg border border-primary-500 p-0 flex items-center justify-center hover:bg-primary-50 bg-white"
+              onClick={() => onInviteToJob()}
             >
               <Icon
                 icon="majesticons:briefcase-line"
@@ -108,6 +109,7 @@ export default function TalentCard({
             <Button
               variant="outline"
               className="w-8 h-8 rounded-lg border border-primary-500 p-0 flex items-center justify-center hover:bg-primary-50 bg-white"
+              onClick={() => onRequestAssessment()}
             >
               <Icon
                 icon="mdi:help-box-multiple-outline"
@@ -166,7 +168,7 @@ export default function TalentCard({
       {/* Body */}
       <div className="w-full px-4 flex flex-col xl:flex-row items-start gap-6 xl:gap-8">
         {/* Left Column: Score & Skills */}
-        <div className="flex flex-col items-start gap-3 max-w-xs w-full shrink-0">
+        <div className="flex flex-col items-start gap-3 xl:max-w-xs w-full shrink-0">
           <div className="w-full flex flex-col items-start gap-2">
             <div className="flex flex-col items-start gap-2 ">
               <TalentScoreSheet assessments={assessments || []}>
@@ -293,6 +295,7 @@ export default function TalentCard({
         open={showInviteDialog}
         onOpenChange={setShowInviteDialog}
         mode={inviteMode}
+        candidateIds={[id]}
       />
     </div>
   );
