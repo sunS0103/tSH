@@ -74,7 +74,7 @@ export default function TalentCard({
             <div className="flex flex-col items-start gap-1">
               <h1 className="text-black text-xl font-bold font-sans">{role}</h1>
               <p className="text-left text-gray-600 text-xs font-normal font-sans capitalize">
-                ID: {id.substring(0, 4)}
+                ID: {id?.substring(0, 4)}
               </p>
             </div>
           </div>
@@ -92,7 +92,7 @@ export default function TalentCard({
                 }
                 className={cn(
                   "w-4.5 h-4.5",
-                  isFavorite ? "text-primary-500" : "text-primary-500",
+                  isFavorite ? "text-primary-500" : "text-primary-500"
                 )}
               />
             </Button>
@@ -130,7 +130,7 @@ export default function TalentCard({
               icon={isFavorite ? "mdi:cards-heart" : "mdi:cards-heart-outline"}
               className={cn(
                 "w-4.5 h-4.5",
-                isFavorite ? "text-primary-500" : "text-primary-500",
+                isFavorite ? "text-primary-500" : "text-primary-500"
               )}
             />
           </Button>

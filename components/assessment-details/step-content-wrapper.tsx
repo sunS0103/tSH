@@ -47,6 +47,7 @@ export interface Assessment {
     | "ENROLLED"
     | "PENDING";
   is_free_plan_available: boolean;
+  sample_question_pdf_link?: string;
 }
 
 interface StepContentProps {
@@ -87,6 +88,7 @@ export default function StepContent({
             isConfirmed={isCurrentStepConfirmed}
             onConfirmChange={onCurrentStepConfirmChange}
             topics={assessment.topics}
+            sample_question_pdf_link={assessment.sample_question_pdf_link}
           />
         )}
 

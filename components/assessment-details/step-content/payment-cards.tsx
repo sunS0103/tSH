@@ -1,5 +1,6 @@
 "use client";
 
+import { changeAssessmentStatus } from "@/api/assessments";
 import { initiatePurchase, verifyPayment } from "@/api/payment";
 import { Button } from "@/components/ui/button";
 import {
@@ -13,6 +14,7 @@ import {
 import { cn, sanitizeHtml } from "@/lib/utils";
 import { Icon } from "@iconify/react";
 import { getCookie } from "cookies-next/client";
+import { useRouter } from "next/navigation";
 import { useState, useEffect } from "react";
 import { toast } from "sonner";
 
@@ -47,6 +49,8 @@ export default function PaymentCards({
   const [paymentSuccessData, setPaymentSuccessData] = useState<Payment | null>(
     payment || null
   );
+
+  const router = useRouter();
 
   // Reset paymentSuccessData when payment prop becomes null (after proceed success)
   // This syncs the local state with parent state reset
@@ -98,7 +102,7 @@ export default function PaymentCards({
         }).then((res) => {
           if (res.success) {
             onUserAssessmentIdChange?.({
-              id: res.data.user_assessment_id,
+              id: orderData.data.user_assessment_id,
               payment: res.data.payment,
               message: res.message,
             });
@@ -153,7 +157,7 @@ export default function PaymentCards({
       title: "Basic Package",
       description:
         "<div>Get started at a minimal cost, pay the remaining when hiring interest is confirmed. <a href='#' class='text-black underline'>Learn More</a></div>",
-      price: "₹999",
+      price: "₹499",
       includedItems: basicPackageIncludedItems,
       topNotes: "Pay Only 10% Today",
       bottomNotes:
@@ -206,9 +210,19 @@ export default function PaymentCards({
       });
 
       if (packageType === "FREE") {
-
         toast.success(orderData?.response?.data?.message || orderData?.message);
-        if(orderData?.response?.data?.reload_page) {
+
+        await changeAssessmentStatus(orderData?.data?.id, "ON_GOING")
+          .then((res) => {
+            if (res.success) {
+              window.open(res.data.invite_link, "_blank");
+              router.push(`/assessments`);
+            }
+          })
+          .catch((err) => {
+            toast.error(err?.response?.data?.message);
+          });
+        if (orderData?.response?.data?.reload_page) {
           window.location.reload();
         }
         return;
@@ -351,7 +365,7 @@ export default function PaymentCards({
                       {currentPayment?.initial_payment_status === "PAID" &&
                       currentPayment?.package_type === card.packageType
                         ? "Activated"
-                        : card.buttonText}
+                        : "Activate"}
                     </Button>
                   </DialogTrigger>
                   <DialogContent className="py-4 px-0 md:max-w-100!">
@@ -421,7 +435,7 @@ export default function PaymentCards({
                   {currentPayment?.initial_payment_status === "PAID" &&
                   currentPayment?.package_type === card.packageType
                     ? "Activated"
-                    : card.buttonText}
+                    : "Activate"}
                 </Button>
               )}
             </div>

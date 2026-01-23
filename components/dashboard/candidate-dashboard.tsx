@@ -31,7 +31,7 @@ export default function CandidateDashboard() {
   const [isLoading, setIsLoading] = useState(true);
   const [takenAssessments, setTakenAssessments] = useState<any[]>([]);
   const [recommendedAssessments, setRecommendedAssessments] = useState<any[]>(
-    [],
+    []
   );
   const [appliedJobs, setAppliedJobs] = useState<any[]>([]);
   const [profileCompletion, setProfileCompletion] = useState<number>(0);
@@ -106,8 +106,6 @@ export default function CandidateDashboard() {
             pageSize: 2,
           });
           if (jobsRes?.data) {
-            console.log("jobsRes", jobsRes);
-
             setAppliedJobs(jobsRes.data);
           }
         } catch (error) {

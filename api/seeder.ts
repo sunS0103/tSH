@@ -39,3 +39,8 @@ export const getWorkModes = async () => {
   const response = await axios.get("/seeder/workmode");
   return response.data;
 };
+
+export const getSkills = async () => {
+  const response = await axios.get("/seeder/skills");
+  return response.data;
+};

@@ -241,10 +241,10 @@ export default function AssessmentWrapper({
   const firstTwoSteps = currentStep === 1 || currentStep === 2;
 
   const handleStartAssessmentNow = () => {
-    if (!assessmentPayment?.initial_paid) {
-      toast.error("Please purchase the assessment to start.");
-      return;
-    }
+    // if (!assessmentPayment?.initial_paid) {
+    //   toast.error("Please purchase the assessment to start.");
+    //   return;
+    // }
     if (!userAssessmentId) {
       toast.error("User assessment ID is missing.");
       return;

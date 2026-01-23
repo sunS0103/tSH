@@ -33,6 +33,7 @@ import { Icon } from "@iconify/react";
 import { cn } from "@/lib/utils";
 import { getCookie } from "cookies-next/client";
 import { useEffect, useState } from "react";
+import { getSkills } from "@/api/seeder";
 
 const skillCategoryOptions = [
   // { label: "Software Development", value: 1 },
@@ -94,6 +95,7 @@ const getCategoryName = (value: number): string => {
 };
 
 export default function EditSkills() {
+  const [skills, setSkills] = useState<any>([]);
   const router = useRouter();
 
   const cookieValue = getCookie("skills_data");
@@ -170,6 +172,14 @@ export default function EditSkills() {
   const filteredPrimarySkills = primarySkillsData.filter(
     (skill) => skill.category_name === getCategoryName(selectedCategory)
   );
+
+  useEffect(() => {
+    const fetchSkills = async () => {
+      const response = await getSkills();
+      setSkills(response.data);
+    };
+    fetchSkills();
+  }, []);
 
   // Update primary skills when category changes - filter existing selections
   useEffect(() => {
