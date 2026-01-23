@@ -109,8 +109,8 @@ export default function CreditsPackages() {
     : null;
 
   const user = {
-    email: profileData.email,
-    phone: profileData.mobile_details.mobile_number,
+    email: profileData?.email,
+    phone: profileData?.mobile_details?.mobile_number,
   };
 
   const creditPackages: CreditPackage[] = [
