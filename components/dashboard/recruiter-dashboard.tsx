@@ -157,6 +157,7 @@ export default function RecruiterDashboard() {
     return {
       id: candidate.candidate_id,
       role: candidate.expertise || "N/A",
+      expertise: candidate.expertise || "N/A",
       location_code: candidate.location || "N/A",
       totalScore: candidate.score || 0,
       skillsAssessed: candidate.skills_assessed?.map((s) => s.skill_name) || [],
@@ -427,11 +428,23 @@ export default function RecruiterDashboard() {
                 </Button>
               </div>
             ) : (
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <div className="grid grid-cols-1 gap-4">
                 {favoriteTalents.map((talent) => (
                   <TalentCard
                     key={talent.id}
-                    {...talent}
+                    id={talent.id}
+                    role={talent.role}
+                    expertise={talent.expertise}
+                    location_code={talent.location_code}
+                    totalScore={talent.totalScore}
+                    skillsAssessed={talent.skillsAssessed}
+                    experience={talent.experience}
+                    company={talent.company}
+                    availability={talent.availability}
+                    location={talent.location}
+                    assessmentTaken={talent.assessmentTaken}
+                    assessments={talent.assessments}
+                    about={talent.about}
                     isFavorite={talent.isFavorite}
                     onToggleFavorite={() => {}}
                   />
