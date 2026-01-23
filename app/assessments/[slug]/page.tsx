@@ -1,5 +1,6 @@
 import { NextPage } from 'next';
 import { notFound } from 'next/navigation';
+import { Metadata } from 'next';
 import fs from 'fs';
 import path from 'path';
 import DynamicAssessmentPageClient, { AssessmentConfig } from './DynamicAssessmentPageClient';
@@ -26,6 +27,62 @@ async function loadAssessmentConfig(slug: string): Promise<AssessmentConfig | nu
     console.error(`Error loading assessment config for slug "${slug}":`, error);
     return null;
   }
+}
+
+// Generate metadata for SEO
+export async function generateMetadata({ params }: PageProps): Promise<Metadata> {
+  const { slug } = await params;
+  const config = await loadAssessmentConfig(slug);
+  
+  if (!config) {
+    return {
+      title: 'Assessment Not Found',
+      description: 'The requested assessment could not be found.'
+    };
+  }
+
+  const seoTitle = (config as any).seoTitle || config.title;
+  const seoDescription = (config as any).seoDescription || config.description;
+  const url = `${process.env.NEXT_PUBLIC_APP_URL}/assessments/${slug}`;
+  
+  return {
+    title: seoTitle,
+    description: seoDescription,
+    openGraph: {
+      title: seoTitle,
+      description: seoDescription,
+      url: url,
+      siteName: 'TechSmartHire',
+      locale: 'en_US',
+      type: 'website',
+      images: [
+        {
+          url: '/og-image.png',
+          width: 1200,
+          height: 630,
+          alt: seoTitle,
+        },
+      ],
+    },
+    twitter: {
+      card: 'summary_large_image',
+      title: seoTitle,
+      description: seoDescription,
+      images: ['/og-image.png'],
+    },
+    alternates: {
+      canonical: url,
+    },
+    keywords: [
+      'QA assessment',
+      'SDET test',
+      'skill assessment',
+      'technical assessment',
+      'automation testing',
+      'software testing',
+      ...(config.skills?.map(s => s.name) || [])
+    ],
+  };
 }
 
 const Page: NextPage<PageProps> = async ({ params }) => {

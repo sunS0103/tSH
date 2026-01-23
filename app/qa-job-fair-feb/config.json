@@ -12,7 +12,7 @@
   "stats": {
     "companiesParticipating":15,
     "positionsOpen": 27,
-    "jobLocations": "India, Dubai, USA"
+    "jobLocations": "India, Dubai, USA, UK"
   },
   "hero": {
     "title": {
@@ -27,8 +27,8 @@
       "jobId": "TSH-JOB-001",
       "title": "Java SDET Automation Engineer - Selenium & API Testing",
       "companies": ["Cognizant", "Innocito", "Capgemini", "+ 4 More Companies"],
-      "experience": ["2-5 Years", "5-17 Years"],
-      "location": ["Multiple Indian Cities"],
+      "experience": ["2-5 Years", "6-20 Years"],
+      "location": ["Multiple Indian Cities", "USA", "UK"],
       "examId": "TSH-SDETJAVA-101",
       "route": "/assessments/TSH-SDETJAVA-101"
     },
@@ -36,7 +36,7 @@
       "jobId": "TSH-JOB-002",
       "title": "JS/TS SDET Engineer - Playwright & API Testing",
       "companies": ["TCS", "JP Morgan", "Optimworks", "+ 5 More Companies"],
-      "experience": ["3-17 Years"],
+      "experience": ["3-20 Years"],
       "location": ["Multiple Indian Cities", "Dubai", "USA"],
       "examId": "TSH-SDETJS-101",
       "route": "/assessments/TSH-SDETJS-101"

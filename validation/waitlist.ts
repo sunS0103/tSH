@@ -8,6 +8,7 @@ export const waitlistSchema = z
     name: z.string().min(2, "Enter at least 2 characters"),
     email: z.string().email("Enter a valid email"),
     company: z.string().optional(),
+    phone: z.string().optional(),
   })
   .superRefine((data, ctx) => {
     // 1. If role is recruiter, company name becomes mandatory
@@ -21,6 +22,30 @@ export const waitlistSchema = z
         path: ["company"],
       });
     }
+    // 2. If role is recruiter, phone number becomes mandatory
+    if (
+      data.role === "recruiter" &&
+      (!data.phone || data.phone.trim().length < 10)
+    ) {
+      ctx.addIssue({
+        code: z.ZodIssueCode.custom,
+        message: "Phone number is required for recruiters (min 10 digits)",
+        path: ["phone"],
+      });
+    }
+    // 3. Validate phone number format (only digits)
+    if (data.role === "recruiter" && data.phone) {
+      const digitsOnly = data.phone.replace(/\D/g, "");
+      if (digitsOnly.length < 10) {
+        ctx.addIssue({
+          code: z.ZodIssueCode.custom,
+          message: "Phone number must be at least 10 digits",
+          path: ["phone"],
+        });
+      }
+    }
+    // 4. Company email validation
+    // 4. Company email validation
     if (data.role === "recruiter" && data.email) {
       const publicDomains = [
         "gmail.com",

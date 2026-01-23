@@ -4,7 +4,7 @@ import { useState, useRef } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
-import { Loader2, CheckCircle2, Building2, User, Mail, ArrowRight } from "lucide-react";
+import { Loader2, CheckCircle2, Building2, User, Mail, Phone, ArrowRight } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -41,6 +41,9 @@ const recruiterSchema = z.object({
             return !FREE_EMAIL_DOMAINS.includes(domain);
         }, "Please use your company email address (no gmail, yahoo, etc.)"),
     company: z.string().min(2, "Company name must be at least 2 characters"),
+    phone: z.string()
+        .min(10, "Phone number must be at least 10 digits")
+        .regex(/^[0-9]+$/, "Phone number should contain only digits"),
 });
 
 type RecruiterFormValues = z.infer<typeof recruiterSchema>;
@@ -64,6 +67,7 @@ const RecruiterForm: React.FC<RecruiterFormProps> = () => {
             name: "",
             email: "",
             company: "",
+            phone: "",
         },
     });
 
@@ -81,7 +85,7 @@ const RecruiterForm: React.FC<RecruiterFormProps> = () => {
                 const listIds = response.listIds || [];
                 if (listIds.includes(24)) {
                     toast.info("You're already subscribed with this email address!");
-                    reset({ name: "", email: "", company: "" });
+                    reset({ name: "", email: "", company: "", phone: "" });
                     resetRecaptcha();
                     return;
                 }
@@ -96,6 +100,7 @@ const RecruiterForm: React.FC<RecruiterFormProps> = () => {
                     {
                         email: values.email,
                         attributes: {
+                            SMS: values.phone.replace(/\D/g, ""), // Phone number without special characters
                             FIRSTNAME: values.name,
                             COMPANY_NAME: values.company,
                         },
@@ -112,6 +117,7 @@ const RecruiterForm: React.FC<RecruiterFormProps> = () => {
                 name: "",
                 email: "",
                 company: "",
+                phone: "",
             });
         } catch (error: any) {
             console.error("Recruiter Registration Error:", error);
@@ -258,6 +264,30 @@ const RecruiterForm: React.FC<RecruiterFormProps> = () => {
                 {errors.company && (
                     <p className="text-xs text-red-500">{errors.company.message}</p>
                 )}
+            </div>
+
+            {/* PHONE FIELD */}
+            <div className="space-y-2">
+                <Label htmlFor="recruiter-phone" className="text-slate-700 font-semibold">
+                    Phone Number *
+                </Label>
+                <div className="relative">
+                    <Phone className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-slate-400" />
+                    <Input
+                        {...register("phone")}
+                        id="recruiter-phone"
+                        type="tel"
+                        placeholder="1234567890"
+                        className={`h-12 pl-12 rounded-xl ${errors.phone
+                                ? "border-red-400 focus-visible:ring-red-400"
+                                : "border-slate-300 focus-visible:ring-emerald-500"
+                            }`}
+                    />
+                </div>
+                {errors.phone && (
+                    <p className="text-xs text-red-500">{errors.phone.message}</p>
+                )}
+                <p className="text-xs text-slate-500">Enter digits only (e.g., 1234567890)</p>
             </div>
 
             {/* reCAPTCHA */}

@@ -4,7 +4,7 @@ import { useState, useEffect, useRef } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { motion, AnimatePresence } from "framer-motion";
-import { Loader2, CheckCircle2, User, Briefcase, ArrowRight } from "lucide-react";
+import { Loader2, CheckCircle2, User, Briefcase, ArrowRight, Phone } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -41,6 +41,7 @@ const WaitlistForm: React.FC<WaitlistFormProps> = ({ initialRole = null }) => {
       name: "",
       email: "",
       company: "",
+      phone: "",
       role: initialRole || "candidate",
     },
   });
@@ -79,7 +80,7 @@ const WaitlistForm: React.FC<WaitlistFormProps> = ({ initialRole = null }) => {
           setSubmitted(true);
           setSubmittedRole(currentRole);
           setIsAlreadySubscribed(true);
-          reset({ name: "", email: "", company: "", role: currentRole });
+          reset({ name: "", email: "", company: "", phone: "", role: currentRole });
           resetRecaptcha();
           return;
         }
@@ -91,14 +92,21 @@ const WaitlistForm: React.FC<WaitlistFormProps> = ({ initialRole = null }) => {
       }
 
       const listId = values.role === "candidate" ? 23 : 24;
+      const attributes: any = {
+        FIRSTNAME: values.name,
+        COMPANY_NAME: listId === 23 ? "" : values.company,
+      };
+      
+      // Add phone number for recruiters only
+      if (listId === 24 && values.phone) {
+        attributes.SMS = values.phone.replace(/\D/g, ""); // Phone number without special characters
+      }
+      
       const importBody = {
         jsonBody: [
           {
             email: values.email,
-            attributes: {
-              FIRSTNAME: values.name,
-              COMPANY_NAME: listId === 23 ? "" : values.company,
-            },
+            attributes: attributes,
           },
         ],
         listIds: [listId],
@@ -113,6 +121,7 @@ const WaitlistForm: React.FC<WaitlistFormProps> = ({ initialRole = null }) => {
         name: "",
         email: "",
         company: "",
+        phone: "",
         role: currentRole,
       });
       setIsAlreadySubscribed(false);
@@ -416,24 +425,47 @@ const WaitlistForm: React.FC<WaitlistFormProps> = ({ initialRole = null }) => {
                   initial={{ opacity: 0, height: 0 }}
                   animate={{ opacity: 1, height: "auto" }}
                   exit={{ opacity: 0, height: 0 }}
-                  className="space-y-2 overflow-hidden"
+                  className="space-y-6 overflow-hidden"
                 >
-                  <Label htmlFor="company">Company Name *</Label>
-                  <Input
-                    {...register("company")}
-                    id="company"
-                    placeholder="Your company"
-                    className={`h-12 rounded-xl ${
-                      errors.company
-                        ? "border-destructive focus-visible:ring-destructive"
-                        : ""
-                    }`}
-                  />
-                  {errors.company && (
-                    <p className="text-xs text-destructive">
-                      {errors.company.message}
-                    </p>
-                  )}
+                  <div className="space-y-2">
+                    <Label htmlFor="company">Company Name *</Label>
+                    <Input
+                      {...register("company")}
+                      id="company"
+                      placeholder="Your company"
+                      className={`h-12 rounded-xl ${
+                        errors.company
+                          ? "border-destructive focus-visible:ring-destructive"
+                          : ""
+                      }`}
+                    />
+                    {errors.company && (
+                      <p className="text-xs text-destructive">
+                        {errors.company.message}
+                      </p>
+                    )}
+                  </div>
+
+                  <div className="space-y-2">
+                    <Label htmlFor="phone">Phone Number *</Label>
+                    <Input
+                      {...register("phone")}
+                      id="phone"
+                      type="tel"
+                      placeholder="1234567890"
+                      className={`h-12 rounded-xl ${
+                        errors.phone
+                          ? "border-destructive focus-visible:ring-destructive"
+                          : ""
+                      }`}
+                    />
+                    {errors.phone && (
+                      <p className="text-xs text-destructive">
+                        {errors.phone.message}
+                      </p>
+                    )}
+                    <p className="text-xs text-subtle">Enter digits only (e.g., 1234567890)</p>
+                  </div>
                 </motion.div>
               )}
             </AnimatePresence>
