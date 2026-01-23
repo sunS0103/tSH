@@ -6,7 +6,7 @@
   "questions": 30,
   "minutes": 40,
   "level": "Intermediate",
-  "sampleQuestionsHref": "/assessments/TSH-SDETFULLSTACK-101.pdf",
+  "sampleQuestionsHref": "/assessment/TSH-SDETFULLSTACK-101.pdf",
   "skills": [
     { "name": "Test Architecture & Strategy", "level": "Advanced" },
     { "name": "Multiple Aucatomation Frameworks", "level": "Intermediate" },

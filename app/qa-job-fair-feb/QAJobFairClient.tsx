@@ -63,7 +63,7 @@ export default function QAJobFairClient() {
     seconds: 0,
   });
   const [countdownLabel, setCountdownLabel] = useState(
-    config.countdownLabels.beforeStart
+    config.countdownLabels.beforeStart,
   );
 
   const startDate = new Date(config.event.startDate).getTime();
@@ -81,7 +81,7 @@ export default function QAJobFairClient() {
         setTimeLeft({
           days: Math.floor(distance / (1000 * 60 * 60 * 24)),
           hours: Math.floor(
-            (distance % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60)
+            (distance % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60),
           ),
           minutes: Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60)),
           seconds: Math.floor((distance % (1000 * 60)) / 1000),
@@ -94,7 +94,7 @@ export default function QAJobFairClient() {
         setTimeLeft({
           days: Math.floor(distance / (1000 * 60 * 60 * 24)),
           hours: Math.floor(
-            (distance % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60)
+            (distance % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60),
           ),
           minutes: Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60)),
           seconds: Math.floor((distance % (1000 * 60)) / 1000),
@@ -485,8 +485,6 @@ export default function QAJobFairClient() {
                       ))}
                     </ul>
                   </div>
-
-        
                 </div>
 
                 {/* Recruiter Form */}
@@ -521,7 +519,7 @@ export default function QAJobFairClient() {
                   <p className="text-lg text-slate-700 leading-relaxed max-w-2xl">
                     {
                       config.cta.recruiterDescription.split(
-                        "pre-vetted, skill-verified QA talent"
+                        "pre-vetted, skill-verified QA talent",
                       )[0]
                     }
                     <span className="font-bold text-blue-700">
@@ -559,9 +557,7 @@ export default function QAJobFairClient() {
         <div className="max-w-7xl mx-auto px-6">
           <div className="flex flex-col md:flex-row items-center justify-between gap-6">
             <div className="text-center md:text-left">
-              <p className="text-slate-700 mb-2">
-                {config.footer.builtBy}
-              </p>
+              <p className="text-slate-700 mb-2">{config.footer.builtBy}</p>
               <p className="text-sm text-slate-600">
                 {config.footer.instructorDescription}
               </p>

@@ -21,7 +21,7 @@ export const metadata: Metadata = {
   },
   description:
     "techSmartHire is a skill-first hiring platform for QA roles. Get early access to role-based assessments, pre-vetted candidates, and faster hiring through our beta program",
-  metadataBase: new URL(process.env.NEXT_PUBLIC_APP_URL as string),
+  // metadataBase: new URL(process.env.NEXT_PUBLIC_APP_URL as string),
   keywords: [
     "QA Hiring",
     "Quality Assurance Jobs",

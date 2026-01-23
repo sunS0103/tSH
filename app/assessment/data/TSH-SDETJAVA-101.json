@@ -6,7 +6,7 @@
   "questions": 20,
   "minutes": 25,
   "level": "Intermediate",
-  "sampleQuestionsHref": "/assessments/TSH-SDETJAVA-101.pdf",
+  "sampleQuestionsHref": "/assessment/TSH-SDETJAVA-101.pdf",
   "skills": [
     { "name": "Selenium WebDriver", "level": "Advanced" },
     { "name": "API Testing", "level": "Intermediate" },
