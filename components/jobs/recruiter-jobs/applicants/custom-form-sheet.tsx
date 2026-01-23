@@ -90,8 +90,14 @@ export default function CustomFormSheet({
       title: "Mobile Number",
       value: applicantData?.mobile_number,
       type: "text",
+      showSkeleton: !applicantData?.mobile_number,
     },
-    { title: "Email ID", value: applicantData?.email, type: "text" },
+    {
+      title: "Email ID",
+      value: applicantData?.email,
+      type: "text",
+      showSkeleton: !applicantData?.email,
+    },
     { title: "Current CTC", value: applicantData?.current_ctc, type: "text" },
     {
       title: "Years of Experience",
@@ -143,7 +149,7 @@ export default function CustomFormSheet({
         )}
         <SheetHeader className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 p-0">
           <SheetTitle className="text-2xl font-bold text-black">
-            Custom form
+            Custom Form
           </SheetTitle>
           <div className="flex items-center gap-2 flex-wrap">
             <Button

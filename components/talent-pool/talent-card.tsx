@@ -92,13 +92,14 @@ export default function TalentCard({
                 }
                 className={cn(
                   "w-4.5 h-4.5",
-                  isFavorite ? "text-primary-500" : "text-primary-500"
+                  isFavorite ? "text-primary-500" : "text-primary-500",
                 )}
               />
             </Button>
             <Button
               variant="outline"
               className="w-8 h-8 rounded-lg border border-primary-500 p-0 flex items-center justify-center hover:bg-primary-50 bg-white"
+              onClick={() => onInviteToJob()}
             >
               <Icon
                 icon="majesticons:briefcase-line"
@@ -108,6 +109,7 @@ export default function TalentCard({
             <Button
               variant="outline"
               className="w-8 h-8 rounded-lg border border-primary-500 p-0 flex items-center justify-center hover:bg-primary-50 bg-white"
+              onClick={() => onRequestAssessment()}
             >
               <Icon
                 icon="mdi:help-box-multiple-outline"
@@ -128,7 +130,7 @@ export default function TalentCard({
               icon={isFavorite ? "mdi:cards-heart" : "mdi:cards-heart-outline"}
               className={cn(
                 "w-4.5 h-4.5",
-                isFavorite ? "text-primary-500" : "text-primary-500"
+                isFavorite ? "text-primary-500" : "text-primary-500",
               )}
             />
           </Button>
@@ -166,7 +168,7 @@ export default function TalentCard({
       {/* Body */}
       <div className="w-full px-4 flex flex-col xl:flex-row items-start gap-6 xl:gap-8">
         {/* Left Column: Score & Skills */}
-        <div className="flex flex-col items-start gap-3 max-w-xs w-full shrink-0">
+        <div className="flex flex-col items-start gap-3 xl:max-w-xs w-full shrink-0">
           <div className="w-full flex flex-col items-start gap-2">
             <div className="flex flex-col items-start gap-2 ">
               <TalentScoreSheet assessments={assessments || []}>
@@ -201,42 +203,50 @@ export default function TalentCard({
 
         {/* Middle Column: Details (Responsive Grid on Mobile, Column on Desktop) */}
         <div className="w-full xl:w-52 grid grid-cols-2 xl:flex xl:flex-col xl:justify-center items-start gap-x-4 gap-y-4 shrink-0">
-          <div className="flex justify-start items-center gap-2">
-            <Icon
-              icon="mdi:card-account-details-outline"
-              className="w-4.5 h-4.5 text-gray-900"
-            />
-            <span className="text-center text-gray-900 text-base font-normal font-sans">
-              {experience}
-            </span>
-          </div>
-          <div className="flex justify-start items-center gap-2">
-            <Icon
-              icon="mdi:office-building-outline"
-              className="w-4.5 h-4.5 text-gray-900"
-            />
-            <span className="text-center text-gray-900 text-base font-normal font-sans">
-              {company}
-            </span>
-          </div>
-          <div className="flex justify-start items-center gap-2">
-            <Icon
-              icon="mdi:timer-outline"
-              className="w-4.5 h-4.5 text-gray-900"
-            />
-            <span className="text-center text-gray-900 text-base font-normal font-sans">
-              {availability}
-            </span>
-          </div>
-          <div className="flex justify-start items-center gap-2">
-            <Icon
-              icon="mdi:map-marker-outline"
-              className="w-4.5 h-4.5 text-gray-900"
-            />
-            <span className="text-center text-gray-900 text-base font-normal font-sans">
-              {location}
-            </span>
-          </div>
+          {experience && (
+            <div className="flex justify-start items-center gap-2">
+              <Icon
+                icon="mdi:card-account-details-outline"
+                className="w-4.5 h-4.5 text-gray-900"
+              />
+              <span className="text-center text-gray-900 text-base font-normal font-sans">
+                {experience}
+              </span>
+            </div>
+          )}
+          {company && (
+            <div className="flex justify-start items-center gap-2">
+              <Icon
+                icon="mdi:office-building-outline"
+                className="w-4.5 h-4.5 text-gray-900"
+              />
+              <span className="text-center text-gray-900 text-base font-normal font-sans">
+                {company}
+              </span>
+            </div>
+          )}
+          {availability && (
+            <div className="flex justify-start items-center gap-2">
+              <Icon
+                icon="mdi:timer-outline"
+                className="w-4.5 h-4.5 text-gray-900"
+              />
+              <span className="text-center text-gray-900 text-base font-normal font-sans">
+                {availability}
+              </span>
+            </div>
+          )}
+          {location && (
+            <div className="flex justify-start items-center gap-2">
+              <Icon
+                icon="mdi:map-marker-outline"
+                className="w-4.5 h-4.5 text-gray-900"
+              />
+              <span className="text-center text-gray-900 text-base font-normal font-sans">
+                {location}
+              </span>
+            </div>
+          )}
         </div>
 
         {/* Right Column: Assessments & About */}
@@ -285,6 +295,7 @@ export default function TalentCard({
         open={showInviteDialog}
         onOpenChange={setShowInviteDialog}
         mode={inviteMode}
+        candidateIds={[id]}
       />
     </div>
   );

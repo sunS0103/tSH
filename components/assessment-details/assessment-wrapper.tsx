@@ -6,7 +6,6 @@ import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 import AssessmentStepper from "./assessment-stepper";
 import StepContent, { type Assessment } from "./step-content-wrapper";
-import AssessmentHelpVideo from "./assessment-help-video";
 import FluidLayout from "../layouts/fluid";
 import { Icon } from "@iconify/react";
 import {
@@ -330,9 +329,6 @@ export default function AssessmentWrapper({
             assessmentPayment={assessmentPayment}
           />
         </div>
-
-        {/* Right Sidebar */}
-        <AssessmentHelpVideo />
       </div>
       {/* Navigation Buttons - Fixed at Bottom */}
       <div className="fixed bottom-0 left-0 right-0 z-50">

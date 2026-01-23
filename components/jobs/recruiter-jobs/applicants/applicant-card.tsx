@@ -6,7 +6,6 @@ import { Button } from "@/components/ui/button";
 import { Icon } from "@iconify/react";
 import CustomFormSheet from "./custom-form-sheet";
 import AdditionalDetailsDialog from "./additional-details-dialog";
-import { CustomField } from "@/types/job";
 import { changeRecruiterJobApplicantsByStatus } from "@/api/jobs/recruiter";
 import { toast } from "sonner";
 import {
@@ -14,10 +13,8 @@ import {
   DialogClose,
   DialogContent,
   DialogDescription,
-  DialogFooter,
   DialogHeader,
   DialogTitle,
-  DialogTrigger,
 } from "@/components/ui/dialog";
 import {
   DropdownMenu,
@@ -54,6 +51,7 @@ export interface ApplicantCardProps {
   onDownload?: () => void;
   onAdditionalDetails?: () => void;
   onViewCustomForm?: () => void;
+  notice_period?: string;
   // onThumbUp?: () => void;
   // onHandshake?: () => void;
   // onThumbDown?: () => void;
@@ -71,7 +69,6 @@ export default function ApplicantCard({
   mobile_number,
   experience,
   current_company,
-  time_in_current_company,
   location,
   current_ctc,
   // customFields,
@@ -82,6 +79,7 @@ export default function ApplicantCard({
   onDownload,
   onAdditionalDetails,
   onViewCustomForm,
+  notice_period,
 }: ApplicantCardProps) {
   const [isCustomFormOpen, setIsCustomFormOpen] = useState(false);
   const [isAdditionalDetailsOpen, setIsAdditionalDetailsOpen] = useState(false);
@@ -116,6 +114,7 @@ export default function ApplicantCard({
             response.message || "Applicant thumbs down successfully"
           );
         }
+        window.location.reload();
       })
       .catch((error) => {
         toast.error(
@@ -134,6 +133,7 @@ export default function ApplicantCard({
           toast.success(
             response.message || "Applicant thumbs down successfully"
           );
+          window.location.reload();
         }
       })
       .catch((error) => {
@@ -156,6 +156,7 @@ export default function ApplicantCard({
         if (response.success) {
           toast.success(response.message || "Applicant handshake successfully");
         }
+        window.location.reload();
       })
       .catch((error) => {
         toast.error(
@@ -287,7 +288,7 @@ export default function ApplicantCard({
             current_ctc,
             experience,
             current_company,
-            notice_period: time_in_current_company,
+            notice_period,
             total_score: score !== undefined ? `${score}%` : undefined,
             application_id: application_id,
             application_status: application_status,
@@ -416,7 +417,7 @@ export default function ApplicantCard({
                   className="w-4 h-4 text-gray-900 shrink-0"
                 />
                 <span className="text-base font-normal text-gray-900">
-                  {time_in_current_company ?? "-"}
+                  {notice_period ?? "-"}
                 </span>
               </div>
               <div className="flex items-center gap-2">

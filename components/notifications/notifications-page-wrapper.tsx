@@ -8,10 +8,10 @@ import {
   getNotifications,
   markAllNotificationsAsRead,
   markNotificationAsRead,
-  getUnreadCount,
 } from "@/api/notifications";
 import type { Notification } from "@/api/notifications";
 import { Loader } from "@/components/ui/loader";
+import { useNotification } from "@/components/providers/notification-provider";
 import Link from "next/link";
 import { sanitizeHtml } from "@/lib/utils";
 
@@ -21,7 +21,7 @@ export default function NotificationsPageWrapper() {
   const [isLoading, setIsLoading] = useState(true);
   const [currentPage, setCurrentPage] = useState(1);
   const [totalPages, setTotalPages] = useState(1);
-  const [unreadCount, setUnreadCount] = useState(0);
+  const { refreshUnreadCount } = useNotification();
   const pageSize = 20;
 
   useEffect(() => {
@@ -53,14 +53,11 @@ export default function NotificationsPageWrapper() {
       await markNotificationAsRead(notificationId);
       setNotifications((prev) =>
         prev.map((notif) =>
-          notif.id === notificationId ? { ...notif, is_read: true } : notif
-        )
+          notif.id === notificationId ? { ...notif, is_read: true } : notif,
+        ),
       );
       // Refresh unread count
-      const countResponse = await getUnreadCount();
-      if (countResponse?.unread_count !== undefined) {
-        setUnreadCount(countResponse.unread_count);
-      }
+      refreshUnreadCount();
     } catch (error) {
       console.error("Error marking notification as read:", error);
     }
@@ -70,8 +67,10 @@ export default function NotificationsPageWrapper() {
     try {
       await markAllNotificationsAsRead();
       setNotifications((prev) =>
-        prev.map((notif) => ({ ...notif, is_read: true }))
+        prev.map((notif) => ({ ...notif, is_read: true })),
       );
+      // Refresh unread count
+      refreshUnreadCount();
     } catch (error) {
       console.error("Error marking all notifications as read:", error);
     }
@@ -115,11 +114,15 @@ export default function NotificationsPageWrapper() {
             Dashboard
           </Link>
           <span className="text-sm text-gray-700">/</span>
-          <span className="text-sm text-black font-medium">Notifications</span>
+          <span className="text-sm text-black font-medium tracking-tight">
+            Notifications
+          </span>
         </div>
 
         {/* Page Title */}
-        <h1 className="text-2xl font-bold text-black mb-6">Notifications</h1>
+        <h1 className="text-2xl font-bold text-black mb-6 tracking-tight">
+          Notifications
+        </h1>
 
         {/* Notifications List */}
         <div className="w-full max-w-2xl ">
@@ -145,11 +148,11 @@ export default function NotificationsPageWrapper() {
               {notifications.map((notification, index) => (
                 <div
                   key={notification.id}
-                  className={`px-4 py-3 hover:bg-gray-50 transition-colors cursor-pointer ${
+                  className={`px-4 py-3 hover:bg-gray-50 transition-colors ${
                     index < notifications.length - 1
                       ? "border-b border-gray-200"
                       : ""
-                  }`}
+                  } ${notification.is_read ? "cursor-default" : "cursor-pointer"}`}
                   onClick={() => {
                     if (!notification.is_read) {
                       handleMarkAsRead(notification.id);

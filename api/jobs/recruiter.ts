@@ -119,12 +119,16 @@ export const getRecruiterJobApplicants = async ({
   pageSize = 10,
   query,
   status,
+  sortBy,
+  sortDirection,
 }: {
   jobId: string;
   page?: number;
   pageSize?: number;
   query?: string;
   status?: string[];
+  sortBy?: string;
+  sortDirection?: "asc" | "desc";
 }) => {
   const params: Record<string, unknown> = {
     page,
@@ -133,6 +137,14 @@ export const getRecruiterJobApplicants = async ({
 
   if (query) {
     params.query = query;
+  }
+
+  if (sortBy) {
+    params.sortBy = sortBy;
+  }
+
+  if (sortDirection) {
+    params.sortDirection = sortDirection;
   }
 
   if (status && status.length > 0) {
@@ -228,3 +240,4 @@ export const getRecruiterJobApplicantsCustomFields = async ({
   );
   return response.data;
 };
+

@@ -22,6 +22,8 @@ interface CandidateJob
     is_assessment_complete: boolean;
   }>;
   custom_fields: CustomField[];
+  customFieldsStatus: "NOT_REQUESTED" | "REQUESTED" | "SUBMITTED";
+  additionalDetailsStatus: "NOT_REQUESTED" | "REQUESTED" | "SUBMITTED";
 }
 
 export default async function CandidateJobDetails({
@@ -68,16 +70,18 @@ export default async function CandidateJobDetails({
         </div>
 
         <>
-          {job?.additional_details ? (
+          {job?.additionalDetailsStatus !== "NOT_REQUESTED" ? (
             <AdditionalDetailsForm
               additional_details={job.additional_details || []}
               jobId={job.slug}
+              additionalDetailsStatus={job.additionalDetailsStatus}
             />
           ) : (
             <JobApplyForm
               isAssessmentNotCompleted={isAssessmentNotCompleted}
               customFields={customFields}
               jobId={job.slug}
+              customFieldsStatus={job.customFieldsStatus}
             />
           )}
         </>
@@ -119,15 +123,14 @@ export default async function CandidateJobDetails({
         </div>
       </div>
 
-      {job.custom_fields && (
+      {job.customFieldsStatus === "SUBMITTED" && (
         <ContactRecruiterFormDetails customFields={customFields || []} />
       )}
-      {job?.additional_details &&
-        job.additional_details?.some((detail) => detail.value) && (
-          <AdditionalDetails
-            additional_details={job.additional_details || []}
-          />
-        )}
+      {job.additionalDetailsStatus === "SUBMITTED" &&
+        <AdditionalDetails
+          additional_details={job.additional_details || []}
+        />
+      }
     </div>
   );
 }
