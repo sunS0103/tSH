@@ -10,10 +10,7 @@ import {
   getCandidateAppliedJobs,
 } from "@/api/candidate/dashboard";
 import { getCandidateProfile } from "@/api/profile";
-import {
-  getTakenAssessmentsList,
-  getAssessmentList,
-} from "@/api/assessments";
+import { getTakenAssessmentsList, getAssessmentList } from "@/api/assessments";
 import AssessmentCard from "@/components/assessments/assessment-card";
 
 interface CandidateDashboardStats {
@@ -32,7 +29,9 @@ export default function CandidateDashboard() {
   const [userName, setUserName] = useState<string>("");
   const [isLoading, setIsLoading] = useState(true);
   const [takenAssessments, setTakenAssessments] = useState<any[]>([]);
-  const [recommendedAssessments, setRecommendedAssessments] = useState<any[]>([]);
+  const [recommendedAssessments, setRecommendedAssessments] = useState<any[]>(
+    [],
+  );
   const [appliedJobs, setAppliedJobs] = useState<any[]>([]);
   const [profileCompletion, setProfileCompletion] = useState<number>(0);
 
@@ -49,7 +48,7 @@ export default function CandidateDashboard() {
             const nameMatch = statsRes.greeting.match(/Hello,?\s*(\w+)/i);
             setUserName(nameMatch ? nameMatch[1] : "");
           }
-          
+
           // Set statistics from API response
           setStats({
             applied_jobs: statsRes.applied_jobs || 0,
@@ -161,7 +160,7 @@ export default function CandidateDashboard() {
             </p>
           </div>
         </div>
-        <div className="flex flex-col sm:flex-row gap-3">
+        <div className="flex flex-col sm:flex-row gap-3 flex-wrap">
           <Button
             variant="outline"
             className="border-primary-500 text-primary-500 hover:bg-primary-100 flex-1 text-sm"
@@ -508,14 +507,16 @@ export default function CandidateDashboard() {
                             Relevant Assessments
                           </p>
                           <div className="flex gap-2 flex-wrap">
-                            {job.relevant_assessments.map((assessment: string, idx: number) => (
-                              <span
-                                key={idx}
-                                className="bg-gray-100 text-gray-700 text-xs px-3 py-1 rounded-full italic underline"
-                              >
-                                {assessment}
-                              </span>
-                            ))}
+                            {job.relevant_assessments.map(
+                              (assessment: string, idx: number) => (
+                                <span
+                                  key={idx}
+                                  className="bg-gray-100 text-gray-700 text-xs px-3 py-1 rounded-full italic underline"
+                                >
+                                  {assessment}
+                                </span>
+                              ),
+                            )}
                           </div>
                         </div>
                       )}
