@@ -18,7 +18,7 @@ const Footer = () => {
           <div className="flex items-center gap-2">
             <Image
               src="/Logo.svg"
-              alt="TechSmartHire Logo"
+              alt="techSmartHire Logo"
               width={150}
               height={150}
             />
@@ -27,12 +27,14 @@ const Footer = () => {
           {/* Status */}
           <div className="flex items-center gap-2">
             <div className="w-2 h-2 rounded-full bg-accent animate-pulse" />
-            <span className="text-sm text-subtle">Launching Soon</span>
+            <span className="text-sm text-subtle">
+              Beta Version • Full Platform Launches March 2026
+            </span>
           </div>
 
           {/* Copyright */}
           <p className="text-sm text-subtle">
-            © {new Date().getFullYear()} TechSmartHire. All rights reserved.
+            © {new Date().getFullYear()} techSmartHire. All rights reserved.
           </p>
         </motion.div>
       </div>

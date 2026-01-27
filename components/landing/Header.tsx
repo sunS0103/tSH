@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import { motion, AnimatePresence } from "framer-motion";
+import { motion } from "framer-motion";
 import { Menu, X, Users, Briefcase, Rocket } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import Link from "next/link";
@@ -23,12 +23,12 @@ const Header = () => {
   }, []);
 
   const scrollToForm = () => {
-    if (pathname === "/anticipation") {
-      document
-        .getElementById("waitlist")
-        ?.scrollIntoView({ behavior: "smooth" });
+    if (pathname !== "/") {
+      router.push("/#who-is-it-for");
     } else {
-      router.push("/anticipation#waitlist");
+      document
+        .getElementById("who-is-it-for")
+        ?.scrollIntoView({ behavior: "smooth" });
     }
     setIsMobileMenuOpen(false);
   };
@@ -39,7 +39,7 @@ const Header = () => {
       animate={{ y: 0 }}
       transition={{ duration: 0.5 }}
       className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 ${
-        isScrolled || isMobileMenuOpen
+        isScrolled
           ? "bg-card/80 backdrop-blur-xl border-b border-border/50 shadow-sm"
           : "bg-transparent"
       }`}
@@ -50,76 +50,74 @@ const Header = () => {
           <Link href="/" className="flex items-center gap-2">
             <Image
               src="/Logo.svg"
-              alt="TechSmartHire Logo"
+              alt="techSmartHire Logo"
               width={150}
               height={150}
             />
           </Link>
 
           {/* Desktop Navigation */}
-          <div className="hidden lg:flex items-center gap-8">
+          {/* <div className="hidden md:flex items-center gap-8">
             <Link
               href="/"
               className={`text-sm font-medium transition-colors ${
                 pathname === "/"
                   ? "text-primary"
-                  : "text-subtle hover:text-foreground"
+                  : "text-muted-foreground hover:text-foreground"
               }`}
             >
               Home
             </Link>
             <Link
-              href="/for-candidates"
+              href="/"
               className={`text-sm font-medium transition-colors flex items-center gap-1.5 ${
                 pathname === "/for-candidates"
                   ? "text-primary"
-                  : "text-subtle hover:text-foreground"
+                  : "text-muted-foreground hover:text-foreground"
               }`}
             >
               <Users className="w-4 h-4" />
               For Candidates
             </Link>
             <Link
-              href="/for-recruiters"
+              href="/"
               className={`text-sm font-medium transition-colors flex items-center gap-1.5 ${
                 pathname === "/for-recruiters"
                   ? "text-primary"
-                  : "text-subtle hover:text-foreground"
+                  : "text-muted-foreground hover:text-foreground"
               }`}
             >
               <Briefcase className="w-4 h-4" />
               For Recruiters
             </Link>
             <Link
-              href="/anticipation"
+              href="/"
               className={`text-sm font-medium transition-colors flex items-center gap-1.5 ${
                 pathname === "/anticipation"
                   ? "text-primary"
-                  : "text-subtle hover:text-foreground"
+                  : "text-muted-foreground hover:text-foreground"
               }`}
             >
               <Rocket className="w-4 h-4" />
               Anticipation
             </Link>
-          </div>
+          </div> */}
 
           {/* Desktop CTA */}
-          <div className="hidden lg:flex items-center gap-4">
+          <div className="flex items-center gap-4">
             <Button
-              variant="outline"
-              onClick={() => router.push("/authentication")}
+              className="cursor-pointer"
+              variant="default"
+              size="sm"
+              onClick={scrollToForm}
             >
-              Login
-            </Button>
-
-            <Button variant="default" size="sm" onClick={scrollToForm}>
-              Join Waitlist
+              Product Vision
             </Button>
           </div>
 
           {/* Mobile Menu Button */}
-          <button
-            className="lg:hidden p-2"
+          {/* <button
+            className="md:hidden p-2"
             onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
           >
             {isMobileMenuOpen ? (
@@ -127,90 +125,25 @@ const Header = () => {
             ) : (
               <Menu className="w-6 h-6" />
             )}
-          </button>
+          </button> */}
         </div>
       </div>
 
       {/* Mobile Menu */}
-      <AnimatePresence>
-        {isMobileMenuOpen && (
-          <motion.div
-            initial={{ opacity: 0, height: 0 }}
-            animate={{ opacity: 1, height: "auto" }}
-            exit={{ opacity: 0, height: 0 }}
-            className="lg:hidden bg-card border-b border-border overflow-hidden"
-          >
-            <div className="container px-4 py-4 space-y-4">
-              <Link
-                href="/"
-                className={`flex items-center gap-2 transition-colors py-2 ${
-                  pathname === "/"
-                    ? "text-primary"
-                    : "text-subtle hover:text-foreground"
-                }`}
-                onClick={() => setIsMobileMenuOpen(false)}
-              >
-                Home
-              </Link>
-              <Link
-                href="/for-candidates"
-                className={`flex items-center gap-2 transition-colors py-2 ${
-                  pathname === "/for-candidates"
-                    ? "text-primary"
-                    : "text-subtle hover:text-foreground"
-                }`}
-                onClick={() => setIsMobileMenuOpen(false)}
-              >
-                <Users className="w-4 h-4" />
-                For Candidates
-              </Link>
-              <Link
-                href="/for-recruiters"
-                className={`flex items-center gap-2 transition-colors py-2 ${
-                  pathname === "/for-recruiters"
-                    ? "text-primary"
-                    : "text-subtle hover:text-foreground"
-                }`}
-                onClick={() => setIsMobileMenuOpen(false)}
-              >
-                <Briefcase className="w-4 h-4" />
-                For Recruiters
-              </Link>
-              <Link
-                href="/anticipation"
-                className={`flex items-center gap-2 transition-colors py-2 ${
-                  pathname === "/anticipation"
-                    ? "text-primary"
-                    : "text-subtle hover:text-foreground"
-                }`}
-                onClick={() => setIsMobileMenuOpen(false)}
-              >
-                <Rocket className="w-4 h-4" />
-                Anticipation
-              </Link>
-              <div className="pt-4 border-t border-border flex flex-col gap-3">
-                <Button
-                  variant="outline"
-                  className="w-full"
-                  onClick={() => {
-                    router.push("/authentication");
-                    setIsMobileMenuOpen(false);
-                  }}
-                >
-                  Login
-                </Button>
-                <Button
-                  variant="default"
-                  className="w-full"
-                  onClick={scrollToForm}
-                >
-                  Join Waitlist
-                </Button>
-              </div>
-            </div>
-          </motion.div>
-        )}
-      </AnimatePresence>
+      {/* {isMobileMenuOpen && (
+        <motion.div
+          initial={{ opacity: 0, y: -10 }}
+          animate={{ opacity: 1, y: 0 }}
+          exit={{ opacity: 0, y: -10 }}
+          className="md:hidden bg-card border-b border-border"
+        >
+          <div className="pt-4 border-t border-border">
+            <Button variant="default" className="w-full" onClick={scrollToForm}>
+              Join Waitlist
+            </Button>
+          </div>
+        </motion.div>
+      )} */}
     </motion.nav>
   );
 };
