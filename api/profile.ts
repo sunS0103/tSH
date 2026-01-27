@@ -199,3 +199,20 @@ export const getProfileCompletionPercentage = async () => {
   const response = await axios.get("/candidate/dashboard/profile-completion");
   return response.data;
 };
+
+// Server-side version for use in server components
+export const getProfileCompletionPercentageServer = async (token?: string) => {
+  const config = token
+    ? {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      }
+    : {};
+
+  const response = await axios.get(
+    "/candidate/dashboard/profile-completion",
+    config
+  );
+  return response.data;
+};
