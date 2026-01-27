@@ -34,14 +34,14 @@ export default function ProfileSection({
     data.length > 0 &&
     data.some(
       (field) =>
-        field.value !== null && field.value !== undefined && field.value !== ""
+        field.value !== null && field.value !== undefined && field.value !== "",
     );
 
   return (
     <div
       className={cn(
         "bg-white border border-gray-200 rounded-2xl flex flex-col gap-5 overflow-hidden",
-        className
+        className,
       )}
     >
       {/* Header Section */}
@@ -73,7 +73,7 @@ export default function ProfileSection({
             <p className="font-medium text-base text-gray-900">
               {nullStateTitle}
             </p>
-            <p className="font-normal text-xs text-gray-600">
+            <p className="font-normal text-xs text-slate-700">
               {nullStateDescription}
             </p>
           </div>
