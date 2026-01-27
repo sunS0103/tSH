@@ -47,7 +47,7 @@ export default function PaymentCards({
   }) => void;
 }) {
   const [paymentSuccessData, setPaymentSuccessData] = useState<Payment | null>(
-    payment || null
+    payment || null,
   );
 
   const router = useRouter();
@@ -196,7 +196,7 @@ export default function PaymentCards({
   };
 
   const handlePurchase = async (
-    packageType: "FREE" | "BASIC" | "PREMIUM" | "PLATINUM"
+    packageType: "FREE" | "BASIC" | "PREMIUM" | "PLATINUM",
   ) => {
     try {
       // 1️⃣ Create Order
@@ -231,6 +231,7 @@ export default function PaymentCards({
         assessment_id: assessment_id,
         token,
         onSuccess: () => {
+          router.refresh();
           toast.success("Assessment purchased successfully 🎉");
         },
       });
@@ -289,7 +290,7 @@ export default function PaymentCards({
               "border border-gray-200 rounded-lg p-2 md:p-3 flex flex-col gap-10 justify-between min-w-64",
               currentPayment?.initial_payment_status === "PAID" &&
                 currentPayment?.package_type === card.packageType &&
-                "border-primary-500"
+                "border-primary-500",
             )}
           >
             <div>
@@ -335,7 +336,7 @@ export default function PaymentCards({
                               | "FREE"
                               | "BASIC"
                               | "PREMIUM"
-                              | "PLATINUM"
+                              | "PLATINUM",
                           );
                         }
                       }}
@@ -387,7 +388,7 @@ export default function PaymentCards({
                               | "FREE"
                               | "BASIC"
                               | "PREMIUM"
-                              | "PLATINUM"
+                              | "PLATINUM",
                           )
                         }
                       >
@@ -406,7 +407,7 @@ export default function PaymentCards({
                         | "FREE"
                         | "BASIC"
                         | "PREMIUM"
-                        | "PLATINUM"
+                        | "PLATINUM",
                     )
                   }
                   disabled={
