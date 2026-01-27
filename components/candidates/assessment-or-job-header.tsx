@@ -15,7 +15,7 @@ export default function AssessmentOrJobHeader() {
           Better Opportunities.
         </span>
       </h2>
-      <p className="text-gray-700 text-xs my-1 md:text-sm">
+      <p className="text-slate-700 text-xs my-1 md:text-sm">
         Get your capabilities scored and make <br />
         your profile shine in front of leading recruiters.
       </p>

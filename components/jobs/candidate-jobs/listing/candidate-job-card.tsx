@@ -33,10 +33,10 @@ export default function CandidateJobCard({
     city && country
       ? `${city.name}, ${country.name}`
       : city
-      ? city.name
-      : country
-      ? country.name
-      : "-";
+        ? city.name
+        : country
+          ? country.name
+          : "-";
 
   const assessments = relevant_assessments || [];
 
@@ -67,11 +67,11 @@ export default function CandidateJobCard({
           <div className="flex justify-between items-start w-full gap-2">
             {/* Company Name */}
             <div className="flex-1 flex flex-col items-start gap-1">
-              <span className="text-[10px] uppercase text-gray-900 font-normal font-sans">
+              <span className="text-[10px] uppercase text-slate-900 font-normal font-sans">
                 Company Name
               </span>
               <span
-                className="text-xs font-normal font-sans text-gray-950 truncate w-full"
+                className="text-xs  font-sans text-gray-900 font-medium truncate w-full"
                 title={company_name || ""}
               >
                 {company_name || "N/A"}
@@ -113,7 +113,7 @@ export default function CandidateJobCard({
                       key={assessment.id || index}
                       variant="outline"
                       className={cn(
-                        "text-[10px] font-normal italic px-3 py-1 rounded-full border-none underline bg-gray-100 text-gray-700 hover:bg-primary-50 hover:text-primary-500 transition-all duration-300"
+                        "text-[10px] font-normal italic px-3 py-1 rounded-full border-none underline bg-gray-100 text-gray-700 hover:bg-primary-50 hover:text-primary-500 transition-all duration-300",
                       )}
                     >
                       {assessment.title || `EXAM-${assessment.id}`}

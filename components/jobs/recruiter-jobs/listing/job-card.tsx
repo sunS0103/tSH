@@ -20,8 +20,6 @@ export default function JobCard({
   slug,
   title,
   status,
-  minExperience,
-  maxExperience,
   companyName,
   skills,
   location,
@@ -59,13 +57,7 @@ export default function JobCard({
     }
   };
 
-  let experienceRange;
-
-  if (minExperience && maxExperience) {
-    experienceRange = `${minExperience}-${maxExperience} Years`;
-  } else if (experience_range) {
-    experienceRange = experience_range;
-  }
+  const experienceRange = experience_range || "N/A";
 
   const visibleSkills = skills.slice(0, 2);
   const remainingSkills = skills.length - 2;
@@ -90,10 +82,10 @@ export default function JobCard({
           <div
             className={cn(
               "px-2 py-0.5 rounded-full flex justify-center items-center",
-              getStatusColor(status)
+              getStatusColor(status),
             )}
           >
-            <span className="text-[10px] italic font-normal font-sans text-center">
+            <span className="text-xs italic font-normal font-sans text-center">
               {formattedStatus()}
             </span>
           </div>
@@ -104,7 +96,7 @@ export default function JobCard({
           {/* Row 1: Exp + Company */}
           <div className="flex justify-between items-start w-full">
             <div className="flex-1 flex flex-col items-start gap-1">
-              <span className="text-[10px] uppercase text-gray-900 font-normal font-sans">
+              <span className="text-xs uppercase text-slate-900 font-medium font-sans">
                 Years of Experience
               </span>
               <span className="text-xs font-normal font-sans text-gray-950">
@@ -112,7 +104,7 @@ export default function JobCard({
               </span>
             </div>
             <div className="flex-1 flex flex-col items-start gap-1">
-              <span className="text-[10px] uppercase text-gray-900 font-normal font-sans">
+              <span className="text-xs uppercase text-slate-900 font-medium font-sans">
                 Company Name
               </span>
               <span
@@ -126,7 +118,7 @@ export default function JobCard({
 
           {/* Row 2: Skills */}
           <div className="flex flex-col items-start gap-2 w-full">
-            <span className="text-[10px] uppercase text-gray-900 font-normal font-sans">
+            <span className="text-xs uppercase text-slate-900 font-medium font-sans">
               Primary Skills
             </span>
             <div className="flex items-center gap-1 flex-wrap">

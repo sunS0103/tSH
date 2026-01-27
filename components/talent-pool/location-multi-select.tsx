@@ -12,7 +12,10 @@ import { Icon } from "@iconify/react";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Label } from "@/components/ui/label";
 import { useEffect, useRef, useState } from "react";
-import { searchTalentPoolLocations, type FilterLocation } from "@/api/recruiter/talent-pool";
+import {
+  searchTalentPoolLocations,
+  type FilterLocation,
+} from "@/api/recruiter/talent-pool";
 
 interface Location {
   id: string;
@@ -42,7 +45,9 @@ export function LocationMultiSelect({
   const [debouncedSearchQuery, setDebouncedSearchQuery] = useState("");
   const [locations, setLocations] = useState<Location[]>([]);
   const [loading, setLoading] = useState(false);
-  const [selectedLocationsCache, setSelectedLocationsCache] = useState<Location[]>([]);
+  const [selectedLocationsCache, setSelectedLocationsCache] = useState<
+    Location[]
+  >([]);
   const searchInputRef = useRef<HTMLInputElement>(null);
   const debounceTimerRef = useRef<NodeJS.Timeout | null>(null);
 
@@ -73,13 +78,17 @@ export function LocationMultiSelect({
 
       setLoading(true);
       try {
-        const locationsData = await searchTalentPoolLocations(debouncedSearchQuery.trim());
+        const locationsData = await searchTalentPoolLocations(
+          debouncedSearchQuery.trim(),
+        );
         if (locationsData && locationsData.length > 0) {
-          const mappedLocations: Location[] = locationsData.map((loc: FilterLocation) => ({
-            id: loc.value.toString(),
-            value: loc.value.toString(),
-            title: loc.title,
-          }));
+          const mappedLocations: Location[] = locationsData.map(
+            (loc: FilterLocation) => ({
+              id: loc.value.toString(),
+              value: loc.value.toString(),
+              title: loc.title,
+            }),
+          );
           setLocations(mappedLocations);
         } else {
           setLocations([]);
@@ -134,7 +143,9 @@ export function LocationMultiSelect({
   // Combine search results with cached selected locations
   const allLocations = [
     ...selectedLocationsCache.filter((cached) => value.includes(cached.id)),
-    ...locations.filter((loc) => !selectedLocationsCache.find((c) => c.id === loc.id)),
+    ...locations.filter(
+      (loc) => !selectedLocationsCache.find((c) => c.id === loc.id),
+    ),
   ];
 
   const handleToggle = (locationId: string) => {
@@ -150,8 +161,9 @@ export function LocationMultiSelect({
       return <span className="text-gray-500">{placeholder}</span>;
     }
     if (value.length === 1) {
-      const selected = allLocations.find((loc) => loc.id === value[0]) || 
-                       selectedLocationsCache.find((loc) => loc.id === value[0]);
+      const selected =
+        allLocations.find((loc) => loc.id === value[0]) ||
+        selectedLocationsCache.find((loc) => loc.id === value[0]);
       return selected?.title || placeholder;
     }
     return `${value.length} locations selected`;
@@ -180,7 +192,7 @@ export function LocationMultiSelect({
           className={cn(
             "w-full h-9 px-3 py-2 border border-gray-200 rounded-lg bg-white flex items-center justify-between cursor-pointer hover:border-gray-300 transition-colors",
             disabled && "opacity-50 cursor-not-allowed",
-            className
+            className,
           )}
           onClick={() => !disabled && setOpen(true)}
         >
@@ -231,7 +243,7 @@ export function LocationMultiSelect({
                   onCheckedChange={() => handleToggle(location.id)}
                   className="border-gray-300 data-[state=checked]:bg-primary-600 data-[state=checked]:border-primary-600"
                 />
-                <Label className="text-sm font-medium text-gray-700 leading-none cursor-pointer flex-1">
+                <Label className="text-sm font-medium text-slate-700 leading-none cursor-pointer flex-1">
                   {location.title}
                 </Label>
               </div>
@@ -250,4 +262,3 @@ export function LocationMultiSelect({
     </Popover>
   );
 }
-

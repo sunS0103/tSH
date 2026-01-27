@@ -51,7 +51,7 @@ export default function JobFilterSheet({
         title: key,
         items: Array.isArray(items) ? (items as OptionItem[]) : [],
       };
-    }
+    },
   );
 
   return (
@@ -114,7 +114,7 @@ export default function JobFilterSheet({
                     <div className="flex flex-col gap-3 mt-2">
                       {group.items.map((option) => {
                         const isSelected = selectedFilters.includes(
-                          option.value
+                          option.value,
                         );
                         return (
                           <div
@@ -127,14 +127,14 @@ export default function JobFilterSheet({
                               onCheckedChange={(checked) =>
                                 handleCheckboxChange(
                                   option.value,
-                                  checked as boolean
+                                  checked as boolean,
                                 )
                               }
                               className="border-gray-300 data-[state=checked]:bg-primary-600 data-[state=checked]:border-primary-600"
                             />
                             <Label
                               htmlFor={option.value}
-                              className="text-sm font-medium text-gray-700 leading-none cursor-pointer"
+                              className="text-sm font-medium text-slate-700 leading-none cursor-pointer"
                             >
                               {option.title}
                             </Label>

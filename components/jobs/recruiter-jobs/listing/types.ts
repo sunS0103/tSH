@@ -5,8 +5,6 @@ export interface Job {
   slug: string;
   title: string;
   status: string;
-  minExperience: number;
-  maxExperience: number;
   companyName: string;
   skills: string[];
   location: string;

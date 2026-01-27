@@ -22,8 +22,7 @@ interface Job {
   slug: string;
   title: string;
   status: string;
-  minExperience?: number;
-  maxExperience?: number;
+
   skills: string[];
   primary_skills: string[];
   location: string;
@@ -99,7 +98,7 @@ export default function RecruiterJobs() {
 
   // Helper function to parse experience range (e.g., "6-10 Years" -> { min: 6, max: 10 })
   const parseExperienceRange = (
-    experienceRange: string | null | undefined
+    experienceRange: string | null | undefined,
   ): { min: number; max: number } => {
     if (!experienceRange) return { min: 0, max: 0 };
 
@@ -142,7 +141,7 @@ export default function RecruiterJobs() {
 
   const getFilterType = useCallback(
     (
-      filterId: string
+      filterId: string,
     ):
       | "work_mode"
       | "status"
@@ -175,23 +174,23 @@ export default function RecruiterJobs() {
       }
       return null;
     },
-    [filterItems]
+    [filterItems],
   );
 
   useEffect(() => {
     const fetchJobs = async () => {
       try {
         const workModeFilters = selectedFilters.filter(
-          (filterId) => getFilterType(filterId) === "work_mode"
+          (filterId) => getFilterType(filterId) === "work_mode",
         );
         const primarySkillsFilters = selectedFilters.filter(
-          (filterId) => getFilterType(filterId) === "primary_skills"
+          (filterId) => getFilterType(filterId) === "primary_skills",
         );
         const statusFilters = selectedFilters.filter(
-          (filterId) => getFilterType(filterId) === "status"
+          (filterId) => getFilterType(filterId) === "status",
         );
         const yearsOfExperienceFilters = selectedFilters.filter(
-          (filterId) => getFilterType(filterId) === "years_of_experience"
+          (filterId) => getFilterType(filterId) === "years_of_experience",
         );
 
         setIsLoading(true);
@@ -331,8 +330,6 @@ export default function RecruiterJobs() {
                     id={job.id}
                     title={job.title}
                     status={job.status}
-                    minExperience={job.minExperience || 0}
-                    maxExperience={job.maxExperience || 0}
                     companyName={job.company_name}
                     skills={job.skills || job.primary_skills}
                     location={job.location}

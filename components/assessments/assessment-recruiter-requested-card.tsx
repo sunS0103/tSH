@@ -36,7 +36,7 @@ export default function AssessmentRecruiterRequestedCard({
         onClick={() => setIsDialogOpen(true)}
         className={cn(
           "bg-white border border-gray-200 flex flex-col items-start overflow-hidden rounded-2xl w-full min-h-60 cursor-pointer hover:shadow-lg transition-shadow",
-          className
+          className,
         )}
       >
         {/* Header with Assessment Name */}
@@ -51,7 +51,7 @@ export default function AssessmentRecruiterRequestedCard({
           {/* Row 1: Name and Company Email */}
           <div className="flex items-center relative shrink-0 w-full">
             <div className="flex flex-col gap-1 items-start relative shrink-0 w-1/2 pr-2">
-              <p className="text-gray-900 text-xs font-normal text-center">
+              <p className="text-gray-900 text-xs font-medium text-center">
                 Name
               </p>
               <p className="text-black text-xs font-normal w-full">{name}</p>

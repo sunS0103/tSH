@@ -136,7 +136,7 @@ export default function CandidateDashboard() {
           <h3 className="font-semibold text-base md:text-lg text-black">
             Did You Know?
           </h3>
-          <p className="text-sm font-medium text-gray-700">
+          <p className="text-sm font-medium text-slate-700">
             Rotating tips/messages such as:
           </p>
         </div>
