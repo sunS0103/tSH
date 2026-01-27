@@ -32,7 +32,7 @@ export default function CandidateDashboard() {
   const [isLoading, setIsLoading] = useState(true);
   const [takenAssessments, setTakenAssessments] = useState<any[]>([]);
   const [recommendedAssessments, setRecommendedAssessments] = useState<any[]>(
-    []
+    [],
   );
   const [appliedJobs, setAppliedJobs] = useState<any[]>([]);
   const [profileCompletionPercentage, setProfileCompletionPercentage] =
@@ -180,7 +180,7 @@ export default function CandidateDashboard() {
                       {sectionName}
                     </span>
                   </div>
-                )
+                ),
               )}
             </div>
             {profileCompletionPercentage.total_percentage < 100 && (

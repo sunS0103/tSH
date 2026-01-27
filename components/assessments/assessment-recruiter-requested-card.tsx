@@ -36,7 +36,7 @@ export default function AssessmentRecruiterRequestedCard({
         onClick={() => setIsDialogOpen(true)}
         className={cn(
           "bg-white border border-gray-200 flex flex-col items-start overflow-hidden rounded-2xl w-full min-h-60 cursor-pointer hover:shadow-lg transition-shadow",
-          className
+          className,
         )}
       >
         {/* Header with Assessment Name */}
@@ -93,7 +93,11 @@ export default function AssessmentRecruiterRequestedCard({
                 Assessment Creation Preference
               </p>
               <p className="text-black text-xs font-normal w-full">
-                {assessmentCreationPreference === "Recruiter Create" && "Recruiter will create their own questions" || assessmentCreationPreference === "Collaborate" && "Collaborate with TechSmartHire for creation" || "-"}
+                {(assessmentCreationPreference === "Recruiter Create" &&
+                  "Recruiter will create their own questions") ||
+                  (assessmentCreationPreference === "Collaborate" &&
+                    "Collaborate with TechSmartHire for creation") ||
+                  "-"}
               </p>
             </div>
           </div>

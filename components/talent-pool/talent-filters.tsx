@@ -64,19 +64,22 @@ export default function TalentFilters({
               {group.title === "Location" ? (
                 <div className="mt-2">
                   <LocationMultiSelect
-                    value={selectedFilters.filter((filterId) =>
-                      group.items.some((item) => item.id === filterId) ||
-                      locationIdToTitleMap?.has(filterId)
+                    value={selectedFilters.filter(
+                      (filterId) =>
+                        group.items.some((item) => item.id === filterId) ||
+                        locationIdToTitleMap?.has(filterId),
                     )}
                     onValueChange={(locationIds) => {
                       // Remove all location filters first (both from group.items and dynamically searched)
                       const otherFilters = selectedFilters.filter(
-                        (filterId) => 
+                        (filterId) =>
                           !group.items.some((item) => item.id === filterId) &&
-                          !locationIdToTitleMap?.has(filterId)
+                          !locationIdToTitleMap?.has(filterId),
                       );
                       // Add selected location filters (deduplicate)
-                      const uniqueLocationIds = Array.from(new Set(locationIds));
+                      const uniqueLocationIds = Array.from(
+                        new Set(locationIds),
+                      );
                       onFilterChange([...otherFilters, ...uniqueLocationIds]);
                     }}
                     onLocationDataUpdate={onLocationDataUpdate}
@@ -97,7 +100,7 @@ export default function TalentFilters({
                       />
                       <Label
                         htmlFor={item.id}
-                        className="text-sm font-medium text-gray-700 leading-none cursor-pointer"
+                        className="text-sm font-medium text-slate-700 leading-none cursor-pointer"
                       >
                         {item.value}
                       </Label>

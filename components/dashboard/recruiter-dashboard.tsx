@@ -95,8 +95,7 @@ export default function RecruiterDashboard() {
                   : job.status === "draft"
                     ? "Draft"
                     : job.status,
-            minExperience: job.experience_min_years || 0,
-            maxExperience: job.experience_max_years || 0,
+            experience_range: job.experience_range || "",
             companyName: job.company_name,
             skills: skillsArray,
             location: job.job_serving_location || job.city?.name || "",
@@ -194,7 +193,7 @@ export default function RecruiterDashboard() {
             You are on Free Plan
           </h3>
         </div>
-        <p className="text-sm font-medium text-gray-700">
+        <p className="text-sm font-medium text-slate-700">
           Unlock up to 3 candidate profiles and discover amazing talent waiting
           for opportunities.
         </p>

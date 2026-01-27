@@ -68,7 +68,7 @@ export default function AssessmentRecruiterCard({
         {/* Topics Section */}
         {topics.length > 0 && (
           <div className="flex flex-col gap-2 items-start w-full">
-            <span className="text-black text-[10px] uppercase font-normal tracking-normal">
+            <span className="text-slate-700 text-xs uppercase font-normal tracking-normal">
               Topics
             </span>
             <div className="flex gap-1 items-center flex-wrap">
@@ -163,7 +163,7 @@ export default function AssessmentRecruiterCard({
       aria-label="View assessment"
       className={cn(
         "bg-white border border-gray-200 flex flex-col items-start justify-between rounded-2xl w-full group hover:shadow-lg duration-500",
-        className
+        className,
       )}
     >
       {cardContent}
