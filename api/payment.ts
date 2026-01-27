@@ -55,8 +55,19 @@ export const verifyCreditPurchase = async (payload: {
   return res.data;
 };
 
-export const getCreditPurchaseHistory = async () => {
-  const res = await axios.get(`/recruiter/credits/transactions`);
+export const getCreditPurchaseHistory = async ({
+  page,
+  pageSize,
+}: {
+  page: number;
+  pageSize: number;
+}) => {
+  const res = await axios.get(`/recruiter/credits/transactions`, {
+    params: {
+      page,
+      pageSize,
+    },
+  });
   return res.data;
 };
 

@@ -1,6 +1,6 @@
 "use client";
 
-import { getCountryById, getWorkModes } from "@/api/seeder";
+import { getCountryById, getSkills, getWorkModes } from "@/api/seeder";
 import { Button } from "@/components/ui/button";
 import {
   Form,
@@ -32,6 +32,7 @@ import AssessmentAccordion from "./assessment-accordion";
 import SkillsSelect from "./skills-select";
 import { CountryDropdown } from "@/components/ui/country-dropdown";
 import { CityDropdown } from "@/components/ui/city-dropdown";
+import { Skill } from "@/types/job";
 
 interface JobFormBaseProps {
   defaultValues?: Partial<JobFormData>;
@@ -87,6 +88,7 @@ export default function JobFormBase({
   >([]);
 
   const [countryName, setCountryName] = useState<string>("");
+  const [skills, setSkills] = useState<Skill[]>([]);
 
   // Note: `as any` is used here due to a type incompatibility between
   // react-hook-form's resolver types and zodResolver. This is a known issue
@@ -100,7 +102,23 @@ export default function JobFormBase({
       job_location_type: defaultValues?.job_location_type || "inhouse_project",
       country_id: defaultValues?.country_id || 0,
       city_id: defaultValues?.city_id || 0,
-      salary_min: defaultValues?.salary_min || "",
+      compensation: defaultValues?.compensation
+        ? {
+            min_amount:
+              typeof defaultValues.compensation.min_amount === "string"
+                ? Number(defaultValues.compensation.min_amount)
+                : defaultValues.compensation.min_amount || 0,
+            max_amount:
+              typeof defaultValues.compensation.max_amount === "string"
+                ? Number(defaultValues.compensation.max_amount)
+                : defaultValues.compensation.max_amount || 0,
+            currency: defaultValues.compensation.currency || "INR",
+          }
+        : {
+            min_amount: 0,
+            max_amount: 0,
+            currency: "INR",
+          },
       experience_min: defaultValues?.experience_min || "",
       notice_period: defaultValues?.notice_period || "",
       work_mode: defaultValues?.work_mode || [],
@@ -119,6 +137,16 @@ export default function JobFormBase({
 
   const contractToHire = form.watch("contract_to_hire");
 
+  const fetchSkills = async () => {
+    try {
+      const response = await getSkills();
+      setSkills(response.data || []);
+    } catch (error) {
+      console.error("Error fetching skills:", error);
+      setSkills([]);
+    }
+  };
+
   // Fetch work modes
   useEffect(() => {
     getWorkModes()
@@ -135,6 +163,8 @@ export default function JobFormBase({
       .catch((error) => {
         console.error("Error fetching work modes:", error);
       });
+
+    fetchSkills();
   }, []);
 
   const handleSubmit = async (data: JobFormData) => {
@@ -407,22 +437,91 @@ export default function JobFormBase({
             </div>
 
             {/* Salary Range and Years of Experience */}
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+            <FormLabel>Salary Range (in CTC)</FormLabel>
+
+            <div className="flex flex-col md:flex-row items-start gap-2 md:gap-4">
               {/* Salary Range */}
               <FormField
                 control={form.control}
-                name="salary_min"
+                name="compensation.min_amount"
                 render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>Salary Range (in CTC)</FormLabel>
+                  <FormItem className="w-full">
                     <FormControl>
-                      <Input {...field} placeholder="Enter Salary Range" />
+                      <Input
+                        placeholder="Enter Minimum Salary"
+                        type="number"
+                        value={field.value?.toString() || ""}
+                        onChange={(e) => {
+                          const value = e.target.value;
+                          field.onChange(
+                            value === "" ? 0 : Number(value)
+                          );
+                        }}
+                        onBlur={field.onBlur}
+                        name={field.name}
+                        ref={field.ref}
+                      />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+              <div className="text-sm my-2">-</div>
+              <FormField
+                control={form.control}
+                name="compensation.max_amount"
+                render={({ field }) => (
+                  <FormItem className="w-full">
+                    <FormControl>
+                      <Input
+                        placeholder="Enter Maximum Salary"
+                        type="number"
+                        value={field.value?.toString() || ""}
+                        onChange={(e) => {
+                          const value = e.target.value;
+                          field.onChange(
+                            value === "" ? 0 : Number(value)
+                          );
+                        }}
+                        onBlur={field.onBlur}
+                        name={field.name}
+                        ref={field.ref}
+                      />
                     </FormControl>
                     <FormMessage />
                   </FormItem>
                 )}
               />
 
+              <FormField
+                control={form.control}
+                name="compensation.currency"
+                render={({ field }) => (
+                  <FormItem className="w-full md:w-fit">
+                    <FormControl>
+                      <Select
+                        onValueChange={field.onChange}
+                        value={field.value}
+                      >
+                        <SelectTrigger className="w-full">
+                          <SelectValue placeholder="Select currency" />
+                        </SelectTrigger>
+                        <SelectContent className="w-full">
+                          <SelectItem value="INR">INR</SelectItem>
+                          <SelectItem value="USD">USD</SelectItem>
+                          <SelectItem value="CAD">CAD</SelectItem>
+                          <SelectItem value="AED">AED</SelectItem>
+                          <SelectItem value="GBP">GBP</SelectItem>
+                        </SelectContent>
+                      </Select>
+                    </FormControl>
+                  </FormItem>
+                )}
+              />
+            </div>
+
+            {/* Notice Period and Work Mode */}
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
               {/* Years of Experience */}
               <FormField
                 control={form.control}
@@ -448,10 +547,7 @@ export default function JobFormBase({
                   </FormItem>
                 )}
               />
-            </div>
 
-            {/* Notice Period and Work Mode */}
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
               <FormField
                 control={form.control}
                 name="notice_period"
@@ -486,20 +582,20 @@ export default function JobFormBase({
                       <WorkModeMultiSelect
                         value={
                           Array.isArray(field.value) &&
-                            workModeOptions.length > 0
+                          workModeOptions.length > 0
                             ? field.value
-                              .map((v) => {
-                                // If value is a string, find the matching ID
-                                if (typeof v === "string") {
-                                  const mode = workModeOptions.find(
-                                    (m) =>
-                                      m.name.toLowerCase() === v.toLowerCase()
-                                  );
-                                  return mode?.id;
-                                }
-                                return typeof v === "number" ? v : null;
-                              })
-                              .filter((id): id is number => id !== null)
+                                .map((v) => {
+                                  // If value is a string, find the matching ID
+                                  if (typeof v === "string") {
+                                    const mode = workModeOptions.find(
+                                      (m) =>
+                                        m.name.toLowerCase() === v.toLowerCase()
+                                    );
+                                    return mode?.id;
+                                  }
+                                  return typeof v === "number" ? v : null;
+                                })
+                                .filter((id): id is number => id !== null)
                             : []
                         }
                         onValueChange={(modeIds: number[]) => {
@@ -525,7 +621,7 @@ export default function JobFormBase({
 
             {/* Primary Skill Set */}
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-              <SkillsSelect form={form} skills={primarySkillsOptions} />
+              <SkillsSelect form={form} skills={skills} />
             </div>
 
             {/* Job Description */}

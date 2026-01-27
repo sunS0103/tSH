@@ -33,7 +33,7 @@ import NoDataFound from "@/components/common/no-data-found";
 // Helper function to map API candidate to TalentCardProps
 const mapCandidateToTalentCard = (
   candidate: Candidate,
-  isFavorite: boolean,
+  isFavorite: boolean
 ): Omit<TalentCardProps, "isSelected" | "onSelect" | "onToggleFavorite"> => {
   // Format years of experience
   const formatExperience = (years: number | null): string => {
@@ -48,16 +48,18 @@ const mapCandidateToTalentCard = (
 
   // Extract skill names from skills_assessed
   const skillsAssessed = candidate.skills_assessed.map(
-    (skill) => skill.skill_name,
+    (skill) => skill.skill_name
   );
 
   // Extract assessment titles or IDs
   const assessmentTaken = candidate.assessments_taken.map(
-    (assessment) => assessment.assessment_title || assessment.assessment_id,
+    (assessment) => assessment.assessment_title || assessment.assessment_id
   );
 
   // Generate location_code (using first 2 letters of city + last 4 digits of candidate_id)
-  const locationCode = `${(candidate.city || "NA").substring(0, 2).toUpperCase()} ${candidate.user_id.slice(-4)}`;
+  const locationCode = `${(candidate.city || "NA")
+    .substring(0, 2)
+    .toUpperCase()} ${candidate.user_id.slice(-4)}`;
 
   return {
     id: candidate.user_id,
@@ -128,7 +130,7 @@ export default function TalentPoolPage() {
         return prev; // No change, return previous map
       });
     },
-    [],
+    []
   );
 
   // Fetch filter options from API
@@ -193,7 +195,7 @@ export default function TalentPoolPage() {
 
   // Helper function to parse experience filter ID to min/max years
   const parseExperienceFilter = (
-    filterId: string,
+    filterId: string
   ): { min?: number; max?: number } | null => {
     // Filter IDs are like "0-1", "1-3", "4-5", "6-10", "10+"
     if (filterId.includes("-")) {
@@ -245,7 +247,7 @@ export default function TalentPoolPage() {
 
       // If any filter has no max (like "10+"), don't set max
       const hasUnlimitedMax = experienceFilters.some(
-        (f) => f.max === undefined,
+        (f) => f.max === undefined
       );
       if (!hasUnlimitedMax && allMaxs.length > 0) {
         params.years_of_experience_max = Math.max(...allMaxs);
@@ -270,7 +272,7 @@ export default function TalentPoolPage() {
         .map((id) => {
           // First try to get from filter group
           const fromGroup = locationGroup?.items.find(
-            (item) => item.id === id,
+            (item) => item.id === id
           )?.value;
           if (fromGroup) return fromGroup;
           // Otherwise get from mapping
@@ -289,7 +291,7 @@ export default function TalentPoolPage() {
     const technologyGroup = filterGroups.find((g) => g.title === "Technology");
     if (technologyGroup) {
       const technologyFilterIds = selectedFilters.filter((filterId) =>
-        technologyGroup.items.some((item) => item.id === filterId),
+        technologyGroup.items.some((item) => item.id === filterId)
       );
       if (technologyFilterIds.length > 0) {
         // Get technology values (IDs) from filter group
@@ -368,7 +370,7 @@ export default function TalentPoolPage() {
     if (selectedFilters.length > 0) {
       params.set(
         "filters",
-        encodeURIComponent(JSON.stringify(selectedFilters)),
+        encodeURIComponent(JSON.stringify(selectedFilters))
       );
     }
     if (sortBy !== "score" || sortDirection !== "desc") {
@@ -445,9 +447,8 @@ export default function TalentPoolPage() {
             const mappedTalents = response.data.map((candidate) =>
               mapCandidateToTalentCard(
                 candidate,
-                favoriteSet.includes(candidate.user_id) ||
-                  candidate.is_favorite,
-              ),
+                favoriteSet.includes(candidate.user_id) || candidate.is_favorite
+              )
             );
 
             setTalents(mappedTalents);
@@ -464,7 +465,7 @@ export default function TalentPoolPage() {
         console.error("Error fetching talent pool:", error);
         toast.error(
           (error as { response?: { data?: { message?: string } } })?.response
-            ?.data?.message || "Failed to fetch talent pool",
+            ?.data?.message || "Failed to fetch talent pool"
         );
         setTalents([]);
         setTotalPages(1);
@@ -489,7 +490,7 @@ export default function TalentPoolPage() {
       prevTalents.map((talent) => ({
         ...talent,
         isFavorite: favoriteTalents.includes(talent.id),
-      })),
+      }))
     );
   }, [favoriteTalents]);
 
@@ -506,7 +507,7 @@ export default function TalentPoolPage() {
         !filterId.match(/^\d+-\d+$|^\d+\+$/) && // Experience filters handled by API
         !locationGroup?.items.some((item) => item.id === filterId) && // Location handled by API (from filterGroups)
         !locationIdToTitleMap.has(filterId) && // Location handled by API (dynamically searched)
-        !technologyGroup?.items.some((item) => item.id === filterId), // Technology handled by API
+        !technologyGroup?.items.some((item) => item.id === filterId) // Technology handled by API
     );
 
     if (clientSideFilters.length === 0) return true;
@@ -556,8 +557,8 @@ export default function TalentPoolPage() {
       prevTalents.map((talent) =>
         talent.id === id
           ? { ...talent, isFavorite: !isCurrentlyFavorite }
-          : talent,
-      ),
+          : talent
+      )
     );
 
     try {
@@ -579,15 +580,15 @@ export default function TalentPoolPage() {
           prevTalents.map((talent) =>
             talent.id === id
               ? { ...talent, isFavorite: isCurrentlyFavorite }
-              : talent,
-          ),
+              : talent
+          )
         );
 
         toast.error(response.message || "Failed to update favorite status");
       } else {
         // Use the message from API response
         toast.success(
-          response.message || "Favorite status updated successfully",
+          response.message || "Favorite status updated successfully"
         );
       }
     } catch (error) {
@@ -603,13 +604,13 @@ export default function TalentPoolPage() {
         prevTalents.map((talent) =>
           talent.id === id
             ? { ...talent, isFavorite: isCurrentlyFavorite }
-            : talent,
-        ),
+            : talent
+        )
       );
 
       toast.error(
         (error as { response?: { data?: { message?: string } } })?.response
-          ?.data?.message || "Failed to update favorite status",
+          ?.data?.message || "Failed to update favorite status"
       );
     }
   };
@@ -708,7 +709,7 @@ export default function TalentPoolPage() {
                 onValueChange={(value) => {
                   const [newSortBy, newSortDirection] = value.split("-") as [
                     "score" | "experience" | "recently_assessed",
-                    "asc" | "desc",
+                    "asc" | "desc"
                   ];
                   setSortBy(newSortBy);
                   setSortDirection(newSortDirection);

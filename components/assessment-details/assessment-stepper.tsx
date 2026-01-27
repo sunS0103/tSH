@@ -70,7 +70,7 @@ export default function AssessmentStepper({
           <div
             className="absolute top-3 left-0 h-0.5 z-0 pointer-events-none"
             style={{
-              width: "calc(25% - 0.75rem)",
+              width: `calc(${currentStep === 5 ? "50%" : "25%"} - 0.75rem)`,
               ...(stepBefore.status === "completed"
                 ? {
                     backgroundImage:
@@ -175,7 +175,7 @@ export default function AssessmentStepper({
           <div
             className="absolute top-3 right-0 h-0.5 z-0 pointer-events-none"
             style={{
-              width: "calc(25% - 0.75rem)",
+              width: `calc(25% - 0.75rem)`,
               ...(lastVisibleStep?.status === "completed"
                 ? {
                     backgroundImage:

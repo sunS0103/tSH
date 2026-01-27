@@ -22,10 +22,11 @@ import { useState, useRef } from "react";
 import { Search } from "lucide-react";
 import { Icon } from "@iconify/react";
 import { cn } from "@/lib/utils";
+import { Skill } from "@/types/job";
 
 interface SkillsSelectProps {
   form: UseFormReturn<JobFormData>;
-  skills: { label: string; value: number }[];
+  skills: Skill[];
 }
 
 export default function SkillsSelect({ form, skills }: SkillsSelectProps) {
@@ -35,7 +36,7 @@ export default function SkillsSelect({ form, skills }: SkillsSelectProps) {
 
   // Filter skills based on search query
   const filteredSkills = skills.filter((skill) =>
-    skill.label.toLowerCase().includes(searchQuery.toLowerCase())
+    skill.name.toLowerCase().includes(searchQuery.toLowerCase())
   );
 
   return (
@@ -130,27 +131,25 @@ export default function SkillsSelect({ form, skills }: SkillsSelectProps) {
                         {filteredSkills.map((skill, index) => {
                           // Match by skill label/name, not by value/ID
                           const isSelected = selectedSkills.includes(
-                            skill.label
+                            skill.name
                           );
                           return (
                             <div
-                              key={skill.value}
+                              key={skill.id}
                               className={cn(
                                 "flex items-center gap-4 px-6 py-4 border-b border-gray-200 last:border-b-0 cursor-pointer hover:bg-gray-50",
                                 isSelected && "bg-gray-50",
                                 index === 0 && "rounded-t-2xl"
                               )}
-                              onClick={() => handleToggle(skill.label)}
+                              onClick={() => handleToggle(skill.name)}
                             >
                               <Checkbox
                                 checked={isSelected}
-                                onCheckedChange={() =>
-                                  handleToggle(skill.label)
-                                }
+                                onCheckedChange={() => handleToggle(skill.name)}
                                 className="size-5"
                               />
                               <Label className="text-base font-normal text-black cursor-pointer flex-1">
-                                {skill.label}
+                                {skill.name}
                               </Label>
                             </div>
                           );
