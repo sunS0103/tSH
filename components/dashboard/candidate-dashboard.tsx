@@ -4,12 +4,13 @@ import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import { Icon } from "@iconify/react";
 import { Button } from "@/components/ui/button";
+import { Progress } from "@/components/ui/progress";
 import Link from "next/link";
 import {
   getCandidateDashboardStatistics,
   getCandidateAppliedJobs,
 } from "@/api/candidate/dashboard";
-import { getCandidateProfile } from "@/api/profile";
+import { getProfileCompletionPercentage } from "@/api/profile";
 import { getTakenAssessmentsList, getAssessmentList } from "@/api/assessments";
 import AssessmentCard from "@/components/assessments/assessment-card";
 import CandidateJobCard from "@/components/jobs/candidate-jobs/listing/candidate-job-card";
@@ -34,7 +35,13 @@ export default function CandidateDashboard() {
     []
   );
   const [appliedJobs, setAppliedJobs] = useState<any[]>([]);
-  const [profileCompletion, setProfileCompletion] = useState<number>(0);
+  const [profileCompletionPercentage, setProfileCompletionPercentage] =
+    useState<{
+      success: boolean;
+      message: string;
+      total_percentage: number;
+      sections: Record<string, boolean>;
+    } | null>(null);
 
   useEffect(() => {
     const fetchDashboardData = async () => {
@@ -56,17 +63,6 @@ export default function CandidateDashboard() {
             average_score: statsRes.average_score || 0,
             recruiter_shortlisted_you: statsRes.recruiter_shortlisted_you || 0,
           });
-        }
-
-        // Fetch user profile for completion percentage
-        try {
-          const profileRes = await getCandidateProfile();
-          if (profileRes?.data) {
-            // Calculate profile completion (this might need to come from API)
-            setProfileCompletion(profileRes.data.profile_completion || 0);
-          }
-        } catch (error) {
-          console.error("Error fetching profile:", error);
         }
 
         // Fetch taken assessments (limit to 3)
@@ -111,6 +107,17 @@ export default function CandidateDashboard() {
         } catch (error) {
           console.error("Error fetching applied jobs:", error);
         }
+
+        // Fetch profile completion percentage
+        try {
+          const profileCompletionPercentageRes =
+            await getProfileCompletionPercentage();
+          if (profileCompletionPercentageRes) {
+            setProfileCompletionPercentage(profileCompletionPercentageRes);
+          }
+        } catch (error) {
+          console.error("Error fetching profile completion percentage:", error);
+        }
       } catch (error) {
         console.error("Error fetching dashboard data:", error);
       } finally {
@@ -131,51 +138,109 @@ export default function CandidateDashboard() {
 
   return (
     <div className="flex flex-col lg:grid lg:grid-cols-4 gap-4 md:gap-6">
-      {/* Left Sidebar - Did You Know Card */}
-      <div className="w-full lg:col-span-1 h-fit bg-primary-50 border border-primary-500 rounded-2xl p-4 flex flex-col gap-4">
-        <div className="flex flex-col gap-2">
-          <h3 className="font-semibold text-base md:text-lg text-black">
-            Did You Know?
-          </h3>
-          <p className="text-sm font-medium text-gray-700">
-            Rotating tips/messages such as:
-          </p>
-        </div>
-        <div className="flex flex-col gap-2">
-          <div className="flex gap-2 items-start">
-            <div className="size-1.5 bg-primary-500 rounded-full mt-1.5 shrink-0" />
-            <p className="text-sm font-medium text-gray-800">
-              Candidates with 2+ assessments get 3x more recruiter views.
+      {/* Left Sidebar */}
+      <div className="w-full lg:col-span-1 flex flex-col gap-4">
+        {/* Profile Completion Card */}
+        {profileCompletionPercentage && (
+          <div className="bg-warning-50 border border-warning-500 rounded-2xl p-4 flex flex-col gap-4">
+            <div className="flex flex-col gap-2">
+              <h3 className="font-semibold text-base md:text-lg text-black">
+                Complete your profile
+              </h3>
+              <p className="text-xs font-medium text-gray-700">
+                Complete your profile to get more relevant job matches.
+              </p>
+            </div>
+            <div className="flex items-center gap-2">
+              <Progress
+                value={profileCompletionPercentage.total_percentage}
+                className="flex-1"
+              />
+              <span className="text-xs font-medium text-gray-900">
+                {profileCompletionPercentage.total_percentage}%
+              </span>
+            </div>
+            <div className="flex flex-col gap-2">
+              {Object.entries(profileCompletionPercentage.sections).map(
+                ([sectionName, isCompleted]) => (
+                  <div key={sectionName} className="flex items-center gap-2">
+                    {isCompleted ? (
+                      <Icon
+                        icon="mdi:check-circle"
+                        className="size-5 text-success-500 shrink-0"
+                      />
+                    ) : (
+                      <div className="size-5 rounded-full border-2 border-gray-300 shrink-0" />
+                    )}
+                    <span
+                      className={`text-sm font-medium ${
+                        isCompleted ? "text-success-600" : "text-gray-500"
+                      }`}
+                    >
+                      {sectionName}
+                    </span>
+                  </div>
+                )
+              )}
+            </div>
+            {profileCompletionPercentage.total_percentage < 100 && (
+              <Button
+                className="bg-primary-500 text-white hover:bg-primary-600 w-full text-sm"
+                onClick={() => router.push("/profile")}
+              >
+                Complete Your Profile
+                <Icon icon="mdi:arrow-top-right" className="ml-2 size-4" />
+              </Button>
+            )}
+          </div>
+        )}
+
+        {/* Did You Know Card */}
+        <div className="w-full h-fit bg-primary-50 border border-primary-500 rounded-2xl p-4 flex flex-col gap-4">
+          <div className="flex flex-col gap-2">
+            <h3 className="font-semibold text-base md:text-lg text-black">
+              Did You Know?
+            </h3>
+            <p className="text-sm font-medium text-gray-700">
+              Rotating tips/messages such as:
             </p>
           </div>
-          <div className="flex gap-2 items-start">
-            <div className="size-1.5 bg-primary-500 rounded-full mt-1.5 shrink-0" />
-            <p className="text-sm font-medium text-gray-800">
-              Profiles with 80%+ completion are shortlisted faster.
-            </p>
+          <div className="flex flex-col gap-2">
+            <div className="flex gap-2 items-start">
+              <div className="size-1.5 bg-primary-500 rounded-full mt-1.5 shrink-0" />
+              <p className="text-sm font-medium text-gray-800">
+                Candidates with 2+ assessments get 3x more recruiter views.
+              </p>
+            </div>
+            <div className="flex gap-2 items-start">
+              <div className="size-1.5 bg-primary-500 rounded-full mt-1.5 shrink-0" />
+              <p className="text-sm font-medium text-gray-800">
+                Profiles with 80%+ completion are shortlisted faster.
+              </p>
+            </div>
+            <div className="flex gap-2 items-start">
+              <div className="size-1.5 bg-primary-500 rounded-full mt-1.5 shrink-0" />
+              <p className="text-sm font-medium text-gray-800">
+                Retaking assessments can improve your visibility.
+              </p>
+            </div>
           </div>
-          <div className="flex gap-2 items-start">
-            <div className="size-1.5 bg-primary-500 rounded-full mt-1.5 shrink-0" />
-            <p className="text-sm font-medium text-gray-800">
-              Retaking assessments can improve your visibility.
-            </p>
+          <div className="flex flex-col sm:flex-row gap-3">
+            <Button
+              variant="outline"
+              className="border-primary-500 text-primary-500 hover:bg-primary-100 flex-1 text-sm"
+              onClick={() => router.push("/assessments")}
+            >
+              Take Assessment
+            </Button>
+            <Button
+              variant="outline"
+              className="border-primary-500 text-primary-500 hover:bg-primary-100 flex-1 text-sm"
+              onClick={() => router.push("/jobs")}
+            >
+              Explore Jobs
+            </Button>
           </div>
-        </div>
-        <div className="flex flex-col sm:flex-row gap-3">
-          <Button
-            variant="outline"
-            className="border-primary-500 text-primary-500 hover:bg-primary-100 flex-1 text-sm"
-            onClick={() => router.push("/assessments")}
-          >
-            Take Assessment
-          </Button>
-          <Button
-            variant="outline"
-            className="border-primary-500 text-primary-500 hover:bg-primary-100 flex-1 text-sm"
-            onClick={() => router.push("/jobs")}
-          >
-            Explore Jobs
-          </Button>
         </div>
       </div>
 

@@ -44,20 +44,27 @@ function shouldHideHeader(pathname: string | null): boolean {
 }
 // Routes where bottom navigation should be visible
 // Supports exact routes (e.g., "/") and route patterns (e.g., "/assessments/*")
-const BOTTOM_NAV_VISIBLE_ROUTES: string[] = [
-  "/",
-  "/talent-pool",
-  "/assessments",
-  "/jobs",
-];
+// const BOTTOM_NAV_VISIBLE_ROUTES: string[] = [
+//   "/",
+//   "/talent-pool",
+//   "/assessments",
+//   "/jobs",
+// ];
 
 /**
  * Checks if the current pathname matches any route in the visible routes array
  * Supports exact matches and wildcard patterns (e.g., "/route/*")
  */
 const BOTTOM_NAV_VISIBLE_ROUTES_BY_ROLE: Record<string, string[]> = {
-  RECRUITER: ["/dashboard", "/talent-pool", "/assessments", "/jobs", "/jobs/*"],
-  CANDIDATE: ["/dashboard", "/assessments", "/jobs", "/jobs/*"],
+  RECRUITER: [
+    "/dashboard",
+    "/talent-pool",
+    "/assessments",
+    "/jobs",
+    "/jobs/*",
+    "/profile",
+  ],
+  CANDIDATE: ["/dashboard", "/assessments", "/jobs", "/jobs/*", "/profile"],
 };
 
 function shouldShowBottomNav(pathname: string | null, role?: string): boolean {
@@ -103,7 +110,7 @@ export default function Header() {
   const pathname = usePathname();
   const router = useRouter();
   const [role, setRole] = useState<string | undefined>(undefined);
-  const [userDetails, setUserDetails] = useState();
+  const [userDetails, setUserDetails] = useState<any>(null);
   // Track mounted state to prevent hydration mismatch
   // This is necessary because getCookie is client-only and causes SSR/client mismatch
   const [mounted, setMounted] = useState(false);
