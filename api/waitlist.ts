@@ -1,7 +1,7 @@
 import axios from "./axios";
 
 export const getContact = async (email: string) => {
-  const response = await axios.get(`/brevo/contacts/${encodeURIComponent(email)}`);
+  const response = await axios.get(`/brevo/contacts/${email}`);
   return response.data;
 };
 

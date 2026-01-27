@@ -1,12 +1,19 @@
 "use client";
 
 import { motion } from "framer-motion";
-import { ArrowDown, Sparkles } from "lucide-react";
+import { ArrowDown, ArrowRight, Sparkles } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { useRouter } from "next/navigation";
 
 const HeroSection = () => {
+  const router = useRouter();
+
   const scrollToForm = () => {
     document.getElementById("waitlist")?.scrollIntoView({ behavior: "smooth" });
+  };
+
+  const handleJoinJobFair = () => {
+    router.push("/qa-job-fair-feb");
   };
 
   return (
@@ -19,7 +26,7 @@ const HeroSection = () => {
       {/* Grid Pattern */}
       <div className="absolute inset-0 bg-[linear-gradient(to_right,hsl(var(--border)/0.1)_1px,transparent_1px),linear-gradient(to_bottom,hsl(var(--border)/0.1)_1px,transparent_1px)] bg-[size:4rem_4rem]" />
 
-      <div className="container mx-auto relative z-10 px-4 md:px-6 pt-24">
+      <div className="container mx-auto relative z-10 px-4 md:px-6">
         <motion.div
           initial={{ opacity: 0, y: 30 }}
           animate={{ opacity: 1, y: 0 }}
@@ -31,7 +38,7 @@ const HeroSection = () => {
             initial={{ opacity: 0, scale: 0.9 }}
             animate={{ opacity: 1, scale: 1 }}
             transition={{ delay: 0.2, duration: 0.5 }}
-            className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-primary/10 border border-primary/20 mb-8"
+            className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-primary/10 border border-primary/20 mb-8 md:mb-6"
           >
             <Sparkles className="w-4 h-4 text-primary" />
             <span className="text-sm font-medium text-primary">
@@ -46,7 +53,8 @@ const HeroSection = () => {
             transition={{ delay: 0.3, duration: 0.6 }}
             className="text-4xl md:text-6xl lg:text-7xl font-bold mb-6 leading-tight"
           >
-            Hire by Real Skills,{" "}
+            Hire by Real Skills,
+            <br />
             <span className="gradient-text">Not Resumes</span>
           </motion.h1>
 
@@ -58,7 +66,7 @@ const HeroSection = () => {
             className="text-lg md:text-xl text-subtle font-medium max-w-3xl mx-auto mb-4 leading-relaxed"
           >
             <p className="mb-4">
-              TechSmartHire is a new hiring platform that connects candidates
+              techSmartHire is a new hiring platform that connects candidates
               and recruiters based on{" "}
               <span className="text-foreground font-medium">real skills</span>,
               not keyword-stuffed resumes.
@@ -76,14 +84,18 @@ const HeroSection = () => {
             transition={{ delay: 0.5, duration: 0.6 }}
             className="mt-10 flex flex-col items-center gap-4"
           >
-            <Button
-              size="lg"
-              onClick={scrollToForm}
-              className="text-lg px-8 py-6 rounded-xl shadow-glow hover:shadow-glow-lg transition-all duration-300 group"
+            <button
+              onClick={handleJoinJobFair}
+              className="inline-flex cursor-pointer items-center gap-2 px-8 py-4 rounded-xl bg-gradient-to-r from-blue-600 to-emerald-600 text-white font-bold text-lg hover:shadow-2xl transition-all hover:scale-105"
             >
-              Join the Early Access List
-              <ArrowDown className="ml-2 w-5 h-5 group-hover:translate-y-1 transition-transform" />
-            </Button>
+              <span>Join February QA Job Fair</span>
+              <ArrowRight className="w-5 h-5" />
+            </button>
+
+            <p className="text-sm text-slate-600 mt-3">
+              Feb 6-27, 2026 • 27 QA Positions • 15 Companies
+            </p>
+
             <p className="text-sm text-subtle">
               No spam. Early users get priority access.
             </p>

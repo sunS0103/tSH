@@ -1,0 +1,143 @@
+{
+  "event": {
+    "name": "February QA Job Fair",
+    "startDate": "2026-02-05T00:00:00",
+    "endDate": "2026-02-27T23:59:59"
+  },
+  "countdownLabels": {
+    "beforeStart": "Job Fair Opens In",
+    "during": "Job Fair Closes In",
+    "ended": "Job Fair Has Ended"
+  },
+  "stats": {
+    "companiesParticipating": 15,
+    "positionsOpen": 27,
+    "jobLocations": "India, Dubai, USA, UK"
+  },
+  "hero": {
+    "title": {
+      "primary": "Stop Applying.",
+      "secondary": "Start Qualifying."
+    },
+    "description": "Skip the resume screening. Take skill-based assessments and get shortlisted by top engineering teams instantly.",
+    "assessmentPeriod": "Feb 6 – Feb 27, 2026"
+  },
+  "jobs": [
+    {
+      "jobId": "TSH-JOB-001",
+      "title": "Java SDET Automation Engineer - Selenium & API Testing",
+      "companies": ["Cognizant", "Innocito", "Capgemini", "+ 4 More Companies"],
+      "experience": ["2-5 Years", "6-20 Years"],
+      "location": ["Multiple Indian Cities", "USA", "UK"],
+      "examId": "TSH-SDETJAVA-101",
+      "route": "/assessment/TSH-SDETJAVA-101"
+    },
+    {
+      "jobId": "TSH-JOB-002",
+      "title": "JS/TS SDET Engineer - Playwright & API Testing",
+      "companies": ["TCS", "JP Morgan", "Optimworks", "+ 5 More Companies"],
+      "experience": ["3-20 Years"],
+      "location": ["Multiple Indian Cities", "Dubai", "USA"],
+      "examId": "TSH-SDETJS-101",
+      "route": "/assessment/TSH-SDETJS-101"
+    },
+    {
+      "jobId": "TSH-JOB-003",
+      "title": "FullStack QA Lead/Test Architect",
+      "companies": ["Cognizant", "Deloitte", "Innocito", "+ 5 More Companies"],
+      "experience": ["10+ Years"],
+      "location": ["Multiple Indian Cities", "Dubai", "USA"],
+      "examId": "TSH-SDETFULLSTACK-101",
+      "route": "/assessment/TSH-SDETFULLSTACK-101"
+    }
+  ],
+  "selectionSteps": [
+    {
+      "number": 1,
+      "title": "Online Proctored Assessment",
+      "description": "Take a specialized anti-cheat assessment mapped directly to the JD skills.",
+      "icon": "Shield"
+    },
+    {
+      "number": 2,
+      "title": "Instant Reporting",
+      "description": "Your comprehensive exam report is generated immediately upon completion.",
+      "icon": "Zap"
+    },
+    {
+      "number": 3,
+      "title": "Daily Score Notifications",
+      "description": "Recruiters are notified of candidate scores on a daily basis; however, your contact details stay masked to ensure skill-first hiring.",
+      "icon": "Users"
+    },
+    {
+      "number": 4,
+      "title": "The Handshake Request",
+      "description": "Recruiters filter by score, location, experience, and CTC. They send a \"Handshake Request\" to candidates they wish to unmask.",
+      "icon": "TrendingUp"
+    },
+    {
+      "number": 5,
+      "title": "Candidate Approval",
+      "description": "You review the request. Once you accept, your details are unblocked for that specific recruiter only.",
+      "icon": "CheckCircle"
+    },
+    {
+      "number": 6,
+      "title": "Direct Interaction",
+      "description": "Candidate and Recruiter interact directly for the final interview stages.",
+      "icon": "Award"
+    }
+  ],
+  "labels": {
+    "assessmentPeriod": "Assessment Period",
+    "companiesParticipating": "Companies Participating",
+    "positionsOpen": "QA Positions Open",
+    "jobLocations": "Job Locations",
+    "requiredAssessment": "Required Assessment",
+    "examId": "Exam ID",
+    "examName": "Exam Name",
+    "hiringCompanies": "Hiring Companies"
+  },
+  "cta": {
+    "recruiterBadge": "For Hiring Managers",
+    "recruiterTitle": "Have Open Positions to Fill?",
+    "recruiterDescription": "Join the February Job Fair and access pre-vetted, skill-verified QA talent. Skip weeks of resume screening and interview only candidates who've already proven their expertise.",
+    "recruiterButton": "Join as Recruiter",
+    "recruiterSlots": "Only 10 slots available",
+    "viewDetailsButton": "View Details & Signup for Exam",
+    "signupButton": "Signup for This Exam",
+    "claimDashboard": "Claim Your Dashboard",
+    "pilotInfo": "Only 10 companies for this pilot • First come, first served"
+  },
+  "recruiterSection": {
+    "badge": "For Hiring Managers",
+    "title": "Join the February Job Fair",
+    "description": "Get exclusive access to pre-vetted QA talent. Limited to 10 more companies for this pilot program.",
+    "benefits": [
+      {
+        "title": "Skill-Verified Candidates",
+        "description": "View detailed assessment reports and leaderboards"
+      },
+      {
+        "title": "Privacy-First System",
+        "description": "Candidates' contact details remain masked until mutual interest"
+      },
+      {
+        "title": "Instant Access",
+        "description": "Interview-ready candidates who've already proven their skills"
+      },
+      {
+        "title": "Zero Screening Time",
+        "description": "Skip resume reviews and go straight to qualified interviews"
+      }
+    ],
+    "submitText": "Recruiter registration submitted! Our team will contact you shortly."
+  },
+  "footer": {
+    "builtBy": "Built by an expert team led by Rahul Shetty",
+    "instructorDescription": "Global Instructor empowering 1M+ tech professionals worldwide",
+    "linkedinUrl": "https://www.linkedin.com/in/rahul-shetty-venkatesh/",
+    "linkedinText": "Connect on LinkedIn"
+  }
+}
