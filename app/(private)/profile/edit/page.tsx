@@ -96,10 +96,10 @@ export default function EditProfilePage() {
       company_name: profileData?.company_name || "",
       first_name: profileData?.first_name || "",
       last_name: profileData?.last_name || "",
-      gender: profileData?.gender === "Male" ? "Male" : "Female",
+      gender: (profileData?.gender === "Male" && "Male") || (profileData?.gender === "Female" && "Female") || undefined,
       email: profileData?.email || "",
       mobile_number: profileData?.mobile_details?.mobile_number || "",
-      country_code: profileData?.mobile_details?.dial_code || "",
+      country_code: profileData?.mobile_details?.dial_code || "+91",
       country_id: (() => {
         // Handle country_id - could be number, string, or object
         let countryId: number | string | object | undefined;
@@ -246,7 +246,7 @@ export default function EditProfilePage() {
       const response = await updateRecruiterProfile({
         first_name: data.first_name,
         last_name: data.last_name,
-        gender: data.gender,
+        gender: data?.gender,
         email: data.email,
         mobile_number: data.mobile_number,
         country_code: data.country_code,

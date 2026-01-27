@@ -115,22 +115,59 @@ export const getRecruiterJobsFilters = async () => {
 
 export const getRecruiterJobApplicants = async ({
   jobId,
-  token,
+  page = 1,
+  pageSize = 10,
+  query,
+  status,
+  sortBy,
+  sortDirection,
 }: {
   jobId: string;
-  token?: string;
+  page?: number;
+  pageSize?: number;
+  query?: string;
+  status?: string[];
+  sortBy?: string;
+  sortDirection?: "asc" | "desc";
 }) => {
-  const config = token
-    ? {
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
-      }
-    : {};
-  const response = await axios.get(
-    `/recruiter/jobs/${jobId}/applicants`,
-    config
-  );
+  const params: Record<string, unknown> = {
+    page,
+    pageSize,
+  };
+
+  if (query) {
+    params.query = query;
+  }
+
+  if (sortBy) {
+    params.sortBy = sortBy;
+  }
+
+  if (sortDirection) {
+    params.sortDirection = sortDirection;
+  }
+
+  if (status && status.length > 0) {
+    params.status = status;
+  }
+
+  const response = await axios.get(`/recruiter/jobs/${jobId}/applicants`, {
+    params,
+    paramsSerializer: (params) => {
+      const searchParams = new URLSearchParams();
+      Object.keys(params).forEach((key) => {
+        const value = params[key];
+        if (Array.isArray(value)) {
+          value.forEach((item) => {
+            searchParams.append(key, item);
+          });
+        } else if (value !== undefined && value !== null && value !== "") {
+          searchParams.append(key, value);
+        }
+      });
+      return searchParams.toString();
+    },
+  });
   return response.data;
 };
 
@@ -150,3 +187,57 @@ export const sendAdditionalDetails = async (
   );
   return response.data;
 };
+
+// /recruiter/bjos / infosys - general - 2 / applicants / additional - details;
+
+export const getRecruiterJobApplicantsAdditionalDetails = async ({
+  jobId,
+  userId,
+}: {
+  jobId: string;
+  userId: string;
+}) => {
+  const response = await axios.get(
+    `/recruiter/jobs/${jobId}/applicants/additional-details`,
+    {
+      params: {
+        user_id: userId,
+      },
+    }
+  );
+  return response.data;
+};
+
+export const changeRecruiterJobApplicantsByStatus = async ({
+  applicationId,
+  status,
+}: {
+  applicationId: string;
+  status: "THUMBS_UP" | "THUMBS_DOWN" | "HANDSHAKE";
+}) => {
+  const response = await axios.put(
+    `/recruiter/jobs/applications/${applicationId}?status=${status}`
+  );
+  return response.data;
+};
+
+// /recruiter/jobs/infosys-general-2/applicants/custom-fields?user_id=11e5efe8-0685-459c-8215-6d9c6cfcb95e
+
+export const getRecruiterJobApplicantsCustomFields = async ({
+  jobId,
+  userId,
+}: {
+  jobId: string;
+  userId: string;
+}) => {
+  const response = await axios.get(
+    `/recruiter/jobs/${jobId}/applicants/custom-fields`,
+    {
+      params: {
+        user_id: userId,
+      },
+    }
+  );
+  return response.data;
+};
+

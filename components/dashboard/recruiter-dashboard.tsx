@@ -84,6 +84,7 @@ export default function RecruiterDashboard() {
             .filter((skill: string) => skill !== "");
 
           return {
+            slug: job.slug,
             id: job.id,
             title: job.title,
             status:
@@ -110,9 +111,9 @@ export default function RecruiterDashboard() {
           pageSize: 2,
           favorite_only: true,
         });
-        if (talentsRes?.data?.candidates) {
-          const mappedTalents = talentsRes.data.candidates.map(
-            (candidate: Candidate) => mapCandidateToTalentCard(candidate),
+        if (talentsRes?.data) {
+          const mappedTalents = talentsRes.data.map((candidate: Candidate) =>
+            mapCandidateToTalentCard(candidate),
           );
           setFavoriteTalents(mappedTalents.slice(0, 2));
         }
@@ -153,8 +154,9 @@ export default function RecruiterDashboard() {
   // Helper function to map candidate to talent card format
   const mapCandidateToTalentCard = (candidate: Candidate) => {
     return {
-      id: candidate.candidate_id,
+      id: candidate.user_id,
       role: candidate.expertise || "N/A",
+      expertise: candidate.expertise || "N/A",
       location_code: candidate.location || "N/A",
       totalScore: candidate.score || 0,
       skillsAssessed: candidate.skills_assessed?.map((s) => s.skill_name) || [],
@@ -374,8 +376,8 @@ export default function RecruiterDashboard() {
               </div>
             ) : (
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                {jobs.map((job) => (
-                  <JobCard key={job.id} {...job} id={job.id} />
+                {jobs.map((job, index) => (
+                  <JobCard key={`${index}`} {...job} id={job.id} />
                 ))}
               </div>
             )}
@@ -425,11 +427,23 @@ export default function RecruiterDashboard() {
                 </Button>
               </div>
             ) : (
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <div className="grid grid-cols-1 gap-4">
                 {favoriteTalents.map((talent) => (
                   <TalentCard
                     key={talent.id}
-                    {...talent}
+                    id={talent.id}
+                    role={talent.role}
+                    expertise={talent.expertise}
+                    location_code={talent.location_code}
+                    totalScore={talent.totalScore}
+                    skillsAssessed={talent.skillsAssessed}
+                    experience={talent.experience}
+                    company={talent.company}
+                    availability={talent.availability}
+                    location={talent.location}
+                    assessmentTaken={talent.assessmentTaken}
+                    assessments={talent.assessments}
+                    about={talent.about}
                     isFavorite={talent.isFavorite}
                     onToggleFavorite={() => {}}
                   />
@@ -470,7 +484,7 @@ export default function RecruiterDashboard() {
                 {assessments.map((assessment) => (
                   <AssessmentCard
                     key={assessment.id || assessment.slug}
-                    slug={assessment.slug}
+                    slug={"#"}
                     category={assessment.category || "Technology"}
                     title={assessment.title}
                     topics={

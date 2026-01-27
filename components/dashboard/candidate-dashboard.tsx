@@ -12,6 +12,7 @@ import {
 import { getCandidateProfile } from "@/api/profile";
 import { getTakenAssessmentsList, getAssessmentList } from "@/api/assessments";
 import AssessmentCard from "@/components/assessments/assessment-card";
+import CandidateJobCard from "@/components/jobs/candidate-jobs/listing/candidate-job-card";
 
 interface CandidateDashboardStats {
   applied_jobs: number;
@@ -332,7 +333,7 @@ export default function CandidateDashboard() {
                 </div>
                 <div className="text-center">
                   <p className="font-semibold text-base text-black mb-1">
-                    You haven't taken any assessments yet.
+                    You haven&apos;t taken any assessments yet.
                   </p>
                   <p className="font-semibold text-base text-black">
                     Assessments help recruiters discover and shortlist your
@@ -430,7 +431,7 @@ export default function CandidateDashboard() {
         <div className="bg-white border border-gray-200 rounded-2xl overflow-hidden">
           <div className="bg-primary-50 px-4 py-3 border-b border-gray-200 flex items-center justify-between">
             <h2 className="font-semibold text-base md:text-lg text-black">
-              Jobs You've Applied For
+              Jobs You&apos;ve Applied For
             </h2>
             {appliedJobs.length > 0 && (
               <Link
@@ -452,7 +453,7 @@ export default function CandidateDashboard() {
                 </div>
                 <div className="text-center">
                   <p className="font-semibold text-base text-black mb-1">
-                    You haven't applied to any jobs yet.
+                    You haven&apos;t applied to any jobs yet.
                   </p>
                   <p className="font-semibold text-base text-black">
                     Start exploring opportunities that match your skills.
@@ -470,72 +471,17 @@ export default function CandidateDashboard() {
             ) : (
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 {appliedJobs.map((job) => (
-                  <div
+                  <CandidateJobCard
                     key={job.id}
-                    className="bg-white border border-gray-200 rounded-2xl p-3 flex flex-col gap-4"
-                  >
-                    <h3 className="font-semibold text-base md:text-lg text-black">
-                      {job.title}
-                    </h3>
-                    <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 text-sm">
-                      <div>
-                        <p className="text-xs text-gray-900 uppercase mb-1">
-                          Company Name
-                        </p>
-                        <p className="text-gray-900">{job.company_name}</p>
-                      </div>
-                      <div>
-                        <p className="text-xs text-gray-900 uppercase mb-1">
-                          Years of Experience
-                        </p>
-                        <p className="text-gray-900">
-                          {job.experience_min_years} -{" "}
-                          {job.experience_max_years} Years
-                        </p>
-                      </div>
-                      <div>
-                        <p className="text-xs text-gray-900 uppercase mb-1">
-                          Work Mode
-                        </p>
-                        <p className="text-gray-900">{job.work_mode}</p>
-                      </div>
-                    </div>
-                    {job.relevant_assessments &&
-                      job.relevant_assessments.length > 0 && (
-                        <div>
-                          <p className="text-xs text-gray-900 uppercase mb-2">
-                            Relevant Assessments
-                          </p>
-                          <div className="flex gap-2 flex-wrap">
-                            {job.relevant_assessments.map(
-                              (assessment: string, idx: number) => (
-                                <span
-                                  key={idx}
-                                  className="bg-gray-100 text-gray-700 text-xs px-3 py-1 rounded-full italic underline"
-                                >
-                                  {assessment}
-                                </span>
-                              ),
-                            )}
-                          </div>
-                        </div>
-                      )}
-                    <div className="bg-primary-50 px-2 py-2 rounded-xl flex items-center justify-between">
-                      <div className="flex items-center gap-1">
-                        <Icon
-                          icon="mdi:map-marker-outline"
-                          className="size-3.5 text-primary-700"
-                        />
-                        <span className="text-xs text-primary-700">
-                          {job.location}
-                        </span>
-                      </div>
-                      <Icon
-                        icon="mdi:arrow-top-right"
-                        className="size-8 text-primary-500 border border-primary-500 rounded-lg"
-                      />
-                    </div>
-                  </div>
+                    title={job.title}
+                    company_name={job.company_name}
+                    experience_range={job.experience_range}
+                    work_mode={job.work_mode}
+                    city={job.city}
+                    country={job.country}
+                    slug={job.slug}
+                    relevant_assessments={job.relevant_assessments}
+                  />
                 ))}
               </div>
             )}

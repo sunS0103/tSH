@@ -5,6 +5,7 @@ import { Icon } from "@iconify/react";
 import { cn } from "@/lib/utils";
 import { RecruiterJob } from "@/types/job";
 import { useRouter } from "next/navigation";
+import Link from "next/link";
 
 interface CandidateJobCardProps extends Partial<RecruiterJob> {
   slug: string;
@@ -109,15 +110,24 @@ export default function CandidateJobCard({
                 {assessments.map((assessment, index) => {
                   // First assessment gets primary styling, others get gray
                   return (
-                    <Badge
+                    <Link
+                      href={`/assessments/${assessment.slug}`}
                       key={assessment.id || index}
-                      variant="outline"
                       className={cn(
                         "text-[10px] font-normal italic px-3 py-1 rounded-full border-none underline bg-gray-100 text-gray-700 hover:bg-primary-50 hover:text-primary-500 transition-all duration-300",
                       )}
+                      onClick={(e) => e.stopPropagation()}
                     >
-                      {assessment.title || `EXAM-${assessment.id}`}
-                    </Badge>
+                      <Badge
+                        key={assessment.id || index}
+                        variant="outline"
+                        className={cn(
+                          "text-[10px] font-normal italic px-3 py-1 rounded-full border-none underline bg-gray-100 text-gray-700 hover:bg-primary-50 hover:text-primary-500 transition-all duration-300",
+                        )}
+                      >
+                        {assessment.title || `EXAM-${assessment.id}`}
+                      </Badge>
+                    </Link>
                   );
                 })}
               </div>

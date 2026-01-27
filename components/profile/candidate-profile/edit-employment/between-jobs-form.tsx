@@ -11,15 +11,7 @@ import {
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
 import { Textarea } from "@/components/ui/textarea";
-import { cn } from "@/lib/utils";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useRouter } from "next/navigation";
 import { useForm } from "react-hook-form";
@@ -63,11 +55,6 @@ interface BetweenJobsFormProps {
   defaultValues?: Partial<BetweenJobsFormData>;
   onCancel: () => void;
 }
-
-const ctcPeriodOptions = [
-  { label: "Per annum", value: "LPA" },
-  { label: "Per month", value: "LPM" },
-];
 
 export default function BetweenJobsForm({
   defaultValues,
@@ -214,8 +201,6 @@ export default function BetweenJobsForm({
                     <Input
                       type="number"
                       placeholder="Months (0-11)"
-                      min={0}
-                      max={11}
                       className="h-8 border-gray-900 w-full"
                       value={field.value ?? ""}
                       onChange={(e) => {
@@ -225,12 +210,14 @@ export default function BetweenJobsForm({
                         } else {
                           const numValue = parseFloat(value);
                           if (!isNaN(numValue)) {
-                            // Clamp value between 0 and 11
-                            const clampedValue = Math.max(
-                              0,
-                              Math.min(11, numValue)
-                            );
-                            field.onChange(clampedValue);
+                            // Allow any number, including > 11; show error in FormMessage if over 11
+                            if (numValue > 11) {
+                              form.setError("duration_months", {
+                                message: "Duration months must be less than 12",
+                                type:"onChange"
+                              });
+                            }
+                            field.onChange(numValue);
                           }
                         }
                       }}

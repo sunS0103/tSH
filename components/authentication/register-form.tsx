@@ -417,7 +417,7 @@ export default function RegisterForm({ role, email }: RegisterFormProps) {
             setCookie("token", response.token);
             setCookie("user_email", email);
             setCookie("user_role", role);
-            router.push("/profile");
+            router.push("/dashboard");
           } else {
             toast.error(
               response.message || "Registration failed. Please try again."
@@ -427,7 +427,7 @@ export default function RegisterForm({ role, email }: RegisterFormProps) {
         .catch((error) => {
           toast.error(
             error?.response?.data?.message ||
-              "An error occurred during registration. Please try again."
+            "An error occurred during registration. Please try again."
           );
         });
     } else {
@@ -459,7 +459,7 @@ export default function RegisterForm({ role, email }: RegisterFormProps) {
             setCookie("token", response.token);
             setCookie("user_email", email);
             setCookie("user_role", role);
-            router.push("/profile");
+            router.push("/dashboard");
           } else {
             toast.error(
               response.message || "Registration failed. Please try again."
@@ -469,7 +469,7 @@ export default function RegisterForm({ role, email }: RegisterFormProps) {
         .catch((error) => {
           toast.error(
             error?.response?.data?.message ||
-              "An error occurred during registration. Please try again."
+            "An error occurred during registration. Please try again."
           );
         });
     }

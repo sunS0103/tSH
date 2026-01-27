@@ -6,6 +6,8 @@ import { cookies } from "next/headers";
 import { CustomField, RecruiterJob } from "@/types/job";
 import JobApplyForm from "./job-details/job-apply-form";
 import ContactRecruiterFormDetails from "./job-details/contact-recruiter-form-details";
+import AdditionalDetailsForm from "./job-details/additional-details-form";
+import AdditionalDetails from "./job-details/additional-details";
 
 interface CandidateJob
   extends Omit<Partial<RecruiterJob>, "mandate_assessment" | "custom_fields"> {
@@ -20,6 +22,8 @@ interface CandidateJob
     is_assessment_complete: boolean;
   }>;
   custom_fields: CustomField[];
+  customFieldsStatus: "NOT_REQUESTED" | "REQUESTED" | "SUBMITTED";
+  additionalDetailsStatus: "NOT_REQUESTED" | "REQUESTED" | "SUBMITTED";
 }
 
 export default async function CandidateJobDetails({
@@ -65,30 +69,42 @@ export default async function CandidateJobDetails({
           <div className="text-sm text-gray-500">{job.company_name}</div>
         </div>
 
-        <div>
-          <JobApplyForm
-            isAssessmentNotCompleted={isAssessmentNotCompleted}
-            customFields={customFields}
-            jobId={job.slug}
-          />
-        </div>
+        <>
+          {job?.additionalDetailsStatus !== "NOT_REQUESTED" ? (
+            <AdditionalDetailsForm
+              additional_details={job.additional_details || []}
+              jobId={job.slug}
+              additionalDetailsStatus={job.additionalDetailsStatus}
+            />
+          ) : (
+            <JobApplyForm
+              isAssessmentNotCompleted={isAssessmentNotCompleted}
+              customFields={customFields}
+              jobId={job.slug}
+              customFieldsStatus={job.customFieldsStatus}
+            />
+          )}
+        </>
       </div>
       <div className="bg-white border border-gray-200 rounded-2xl p-4 flex flex-col gap-3 w-full mt-4">
         <JobDetailsSection job={job as RecruiterJob} />
 
-        <hr className="border-gray-200" />
+        {job.mandate_assessment.length > 0 && (
+          <>
+            <hr className="border-gray-200" />
 
-        {isAssessmentNotCompleted ? (
-          <p className="text-info-500 text-base md:text-lg font-semibold">
-            “Taking this assessment will increase your chances of being
-            shortlisted.”
-          </p>
-        ) : (
-          <p className="text-success-600 text-base md:text-lg font-semibold">
-            “ 🎉 Congratulations! 🎉 You’ve already completed this assessment —
-            you have a high chance of being shortlisted. Apply now!”
-          </p>
-        )}
+            {isAssessmentNotCompleted ? (
+              <p className="text-info-500 text-base md:text-lg font-semibold">
+                “Taking this assessment will increase your chances of being
+                shortlisted.”
+              </p>
+            ) : (
+              <p className="text-success-600 text-base md:text-lg font-semibold">
+                “ 🎉 Congratulations! 🎉 You’ve already completed this assessment —
+                you have a high chance of being shortlisted. Apply now!”
+              </p>
+            )}
+          </>)}
 
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-2 xl:grid-cols-3 gap-4 mt-3">
           {job.mandate_assessment.map((assessment) => (
@@ -107,9 +123,14 @@ export default async function CandidateJobDetails({
         </div>
       </div>
 
-      {job.custom_fields && (
+      {job.customFieldsStatus === "SUBMITTED" && (
         <ContactRecruiterFormDetails customFields={customFields || []} />
       )}
+      {job.additionalDetailsStatus === "SUBMITTED" &&
+        <AdditionalDetails
+          additional_details={job.additional_details || []}
+        />
+      }
     </div>
   );
 }

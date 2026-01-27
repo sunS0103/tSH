@@ -168,7 +168,7 @@ export default function EmailForm({ role }: EmailFormProps) {
           setCookie("user_role", role);
 
           if (response.is_registered) {
-            router.push("/profile");
+            router.push("/dashboard");
           } else {
             // Use replace to avoid preserving query parameters and ensure clean redirect
             router.replace("/authentication/register");
@@ -213,7 +213,7 @@ export default function EmailForm({ role }: EmailFormProps) {
 
       // Create NextAuth session with Firebase user data
       await signIn("credentials", {
-        callbackUrl: "/profile",
+        callbackUrl: "/dashboard",
         idToken: idToken,
         email: user.email,
         name: user.displayName,
@@ -225,29 +225,23 @@ export default function EmailForm({ role }: EmailFormProps) {
       // Handle redirect based on registration status
       if (response?.token) {
         if (role === "CANDIDATE") {
-          router.replace("/profile");
+          router.replace("/dashboard");
         } else if (role === "RECRUITER") {
-          router.replace("/profile");
+          router.replace("/dashboard");
         } else {
           router.replace("/");
         }
       }
-    } catch (error: unknown) {
+    } catch (error) {
       console.error("Google sign-in error:", error);
       let errorMessage = "Failed to sign in with Google";
 
-      if (error && typeof error === "object") {
-        if (
-          "response" in error &&
-          error.response &&
-          typeof error.response === "object" &&
-          "data" in error.response
-        ) {
-          const responseData = error.response.data as { message?: string };
-          errorMessage = responseData?.message || errorMessage;
-        } else if ("message" in error && typeof error.message === "string") {
-          errorMessage = error.message;
-        }
+      if (
+        (error as { code?: string })?.code === "auth/popup-closed-by-user"
+      ) {
+        errorMessage = "Google sign-in popup window closed by user";
+      } else if ((error as unknown as { message?: string })?.message) {
+        errorMessage = (error as unknown as { message?: string })?.message || "Failed to sign in with Google";
       }
 
       toast.error(errorMessage);
@@ -355,7 +349,7 @@ export default function EmailForm({ role }: EmailFormProps) {
                 {timer > 0 && (
                   <div className="flex items-center gap-1 text-xs text-gray-900">
                     <Icon
-                      icon="material-symbols:location-on-outline-rounded"
+                      icon="icon-park-outline:stopwatch"
                       className="size-3.5"
                     />
                     <span>{formatTime(timer)}</span>

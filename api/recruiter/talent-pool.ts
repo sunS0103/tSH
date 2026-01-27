@@ -35,40 +35,45 @@ export interface AssessmentTaken {
 export interface Candidate {
   candidate_id: string;
   user_id: string;
-  expertise: string;
-  years_of_experience: number;
-  city: string;
-  location: string;
+  expertise: string | null;
+  years_of_experience: number | null;
+  city: string | null;
+  location: string | null;
   skills_assessed: SkillAssessed[];
   talent_report_url: string | null;
   score: number;
-  notice_period: string;
+  notice_period: string | null;
   is_favorite: boolean;
   is_top_pick: boolean;
   assessments_taken: AssessmentTaken[];
   candidate_name: string;
   candidate_email: string;
-  company: string;
-  availability: string;
-  about: string;
+  company: string | null;
+  availability: string | null;
+  about: string | null;
 }
 
 export interface TalentPoolPagination {
-  page: number;
   pageSize: number;
-  sortBy: string;
-  sortDirection: "asc" | "desc";
+  page: number;
+  totalPages: number;
+  totalItems: number;
+}
+
+export interface TalentPoolMeta {
   query: string;
+  pagination: TalentPoolPagination;
+  sorting: {
+    sortBy: string;
+    sortDirection: "asc" | "desc";
+  };
 }
 
 export interface TalentPoolResponse {
   success: boolean;
   message: string;
-  data: {
-    candidates: Candidate[];
-    pagination: TalentPoolPagination;
-    total_count: number;
-  };
+  data: Candidate[];
+  meta: TalentPoolMeta;
 }
 
 export const getRecruiterTalentPool = async (

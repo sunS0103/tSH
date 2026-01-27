@@ -147,14 +147,17 @@ export const getCandidateJobFields = async ({
 
 export const applyToJob = async ({
   jobId,
-  customFields,
+  payload,
 }: {
   jobId: string;
-  customFields: Array<{ job_custom_field_id: number; value: string }>;
-  token?: string;
+  payload: {
+    profile_fields: Array<{ title: string; value: string }>;
+    custom_fields: Array<{ job_custom_field_id: number; value: string }>;
+  };
 }) => {
   const response = await axios.post(`/candidate/jobs/${jobId}/custom-fields`, {
-    custom_fields: customFields,
+    custom_fields: payload?.custom_fields,
+    profile_fields: payload?.profile_fields,
   });
   return response.data;
 };
@@ -166,11 +169,22 @@ export const getCandidateJobAdditionalDetails = async ({
   token?: string;
 }) => {
   const response = await axios.get(
+    `/candidate/jobs/${jobId}/additional-details`
+  );
+  return response.data;
+};
+
+export const sendCandidateJobAdditionalDetails = async ({
+  jobId,
+  additionalDetails,
+}: {
+  jobId: string;
+  additionalDetails: Array<{ title: string; value: string }>;
+}) => {
+  const response = await axios.post(
     `/candidate/jobs/${jobId}/additional-details`,
     {
-      params: {
-        job_id: jobId,
-      },
+      additional_details: additionalDetails,
     }
   );
   return response.data;

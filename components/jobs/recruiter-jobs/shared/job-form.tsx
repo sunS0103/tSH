@@ -85,7 +85,7 @@ export default function JobForm({ jobId }: JobFormProps) {
       toast.error(
         (error as { response?: { data?: { message?: string } } })?.response
           ?.data?.message ||
-          (isEditMode ? "Failed to update job" : "Failed to create job")
+        (isEditMode ? "Failed to update job" : "Failed to create job")
       );
     }
   };
@@ -172,31 +172,28 @@ function transformJobToFormData(job: RecruiterJob): Partial<JobFormData> {
       : "";
 
   // Parse salary from compensation object
-  const salaryMin = job.compensation?.min_amount || 0;
-  const salaryMax = job.compensation?.max_amount || 0;
-  const salaryStr =
-    salaryMin && salaryMax
-      ? `${salaryMin} to ${salaryMax} ${job.compensation?.period || "LPA"}`
-      : "";
+
+  const salaryStr = job?.compensation || "";
+
 
   // Map job_serving_location back to job_location_type
   const jobLocationType =
     job.job_serving_location === "in-house project"
       ? "inhouse_project"
       : job.job_serving_location === "client location"
-      ? "client_location"
-      : "inhouse_project";
+        ? "client_location"
+        : "inhouse_project";
 
   // Get primary skills from skills array - convert all skills to array of skill names
   const primarySkills = job.skills
     ? job.skills
-        .map((skill: { skill_id?: number }) => {
-          const skillName = skill.skill_id
-            ? skillIdToNameMap[skill.skill_id] || ""
-            : "";
-          return skillName;
-        })
-        .filter((name: string) => name !== "")
+      .map((skill: { skill_id?: number }) => {
+        const skillName = skill.skill_id
+          ? skillIdToNameMap[skill.skill_id] || ""
+          : "";
+        return skillName;
+      })
+      .filter((name: string) => name !== "")
     : [];
 
   // Transform work_mode back to lowercase array
@@ -217,7 +214,7 @@ function transformJobToFormData(job: RecruiterJob): Partial<JobFormData> {
     job_location_type: jobLocationType,
     country_id: job.country.id || 0,
     city_id: job.city.id || 0,
-    salary_min: salaryStr,
+    salary_min: salaryStr as string,
     experience_min: experienceMin,
     notice_period: job.required_notice_period || "",
     work_mode: workMode,
@@ -229,12 +226,12 @@ function transformJobToFormData(job: RecruiterJob): Partial<JobFormData> {
     conversion_time: job.conversion_time || "",
     mandate_assessment: Array.isArray(job.mandate_assessment)
       ? job.mandate_assessment.map((item) => {
-          // Handle both object format {id, title} and string format
-          if (typeof item === "string") {
-            return { id: item, title: "" };
-          }
-          return { id: item.id, title: item.title };
-        })
+        // Handle both object format {id, title} and string format
+        if (typeof item === "string") {
+          return { id: item, title: "" };
+        }
+        return { id: item.id, title: item.title };
+      })
       : [],
     assessment_id: job.id || "",
     require_apply_form: applyFormFields.length > 0,
@@ -277,35 +274,27 @@ function transformFormDataToPayload(data: JobFormData) {
   // Transform skills to array with skill_id and is_required
   const skills = Array.isArray(data.skills)
     ? data.skills.map((skillName: string) => ({
-        skill_id: skillNameToIdMap[skillName] || 1,
-        is_required: true,
-      }))
+      skill_id: skillNameToIdMap[skillName] || 1,
+      is_required: true,
+    }))
     : [];
 
-  // Default apply form fields (always included)
-  const defaultFields = [
-    { title: "Current Company", type: "text" },
-    { title: "Notice Period", type: "text" },
-    { title: "Expected CTC", type: "text" },
-    { title: "Visa status", type: "text" },
-    { title: "About yourself", type: "textarea" },
-  ];
 
   // Transform custom fields (fields added by recruiter beyond the default 5)
   const customFields =
     data.apply_form_fields &&
-    Array.isArray(data.apply_form_fields) &&
-    data.apply_form_fields.length > 0
+      Array.isArray(data.apply_form_fields) &&
+      data.apply_form_fields.length > 0
       ? data.apply_form_fields.map(
-          (field: { title?: string; label?: string; type?: string }) => ({
-            title: field.title || field.label || "",
-            type: field.type || "text",
-          })
-        )
+        (field: { title?: string; label?: string; type?: string }) => ({
+          title: field.title || field.label || "",
+          type: field.type || "text",
+        })
+      )
       : [];
 
   // Combine default fields with custom fields
-  const allCustomFields = [...defaultFields, ...customFields];
+  const allCustomFields = [...customFields];
 
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const payload: any = {
@@ -331,12 +320,12 @@ function transformFormDataToPayload(data: JobFormData) {
     skills: skills,
     mandate_assessment: Array.isArray(data.mandate_assessment)
       ? data.mandate_assessment.map((item) => {
-          // Extract only the ID (string) for the payload
-          if (typeof item === "string") {
-            return item;
-          }
-          return item.id;
-        })
+        // Extract only the ID (string) for the payload
+        if (typeof item === "string") {
+          return item;
+        }
+        return item.id;
+      })
       : [],
   };
 

@@ -23,13 +23,30 @@ export const getCandidateDashboardStatistics =
 
 export interface CandidateAppliedJob {
   id: string;
+  slug: string;
   title: string;
   company_name: string;
-  experience_min_years: number;
-  experience_max_years: number;
-  work_mode: string;
+  experience_range: string;
+  work_mode: string[];
   location: string;
-  relevant_assessments: string[];
+  city?: {
+    id: number;
+    name: string;
+  };
+  country?: {
+    id: number;
+    name: string;
+  };
+  relevant_assessments: {
+    id: string;
+    assessment_id?: string;
+    title: string;
+    slug: string;
+  }[];
+  compensation: string;
+  is_applied: boolean;
+  created_at: string;
+  updated_at: string;
 }
 
 export interface CandidateAppliedJobsResponse {
@@ -51,7 +68,7 @@ export const getCandidateAppliedJobs = async ({
   page?: number;
   pageSize?: number;
 }): Promise<CandidateAppliedJobsResponse> => {
-  const response = await axios.get("/candidate/jobs/applied", {
+  const response = await axios.get("/candidate/jobs?applied_only=true", {
     params: {
       page,
       pageSize,

@@ -7,7 +7,7 @@ import {
 import { Button } from "@/components/ui/button";
 import { Icon } from "@iconify/react";
 import { useEffect, useState, useRef } from "react";
-import { getRecruiterJobs } from "@/api/jobs/recruiter";
+import { getRecruiterJobs, inviteCandidatesToJob } from "@/api/recruiter/jobs";
 import {
   Select,
   SelectContent,
@@ -17,7 +17,19 @@ import {
 } from "@/components/ui/select";
 import { Loader2 } from "lucide-react";
 import Link from "next/link";
-import { getAssessmentList } from "@/api/assessments";
+import {
+  getAssessmentList,
+  inviteCandidatesToAssessment,
+} from "@/api/assessments";
+import { toast } from "sonner";
+import {
+  Popover,
+  PopoverContent,
+  PopoverTrigger,
+} from "@/components/ui/popover";
+import { Checkbox } from "@/components/ui/checkbox";
+import { Label } from "@/components/ui/label";
+import { cn } from "@/lib/utils";
 
 export type InviteMode = "job" | "assessment";
 
@@ -25,6 +37,8 @@ interface InviteDialogProps {
   open: boolean;
   onOpenChange: (open: boolean) => void;
   mode: InviteMode;
+  candidateIds?: string[];
+  onInviteSuccess?: () => void;
 }
 
 interface Item {
@@ -37,10 +51,14 @@ export default function InviteDialog({
   open,
   onOpenChange,
   mode,
+  candidateIds = [],
+  onInviteSuccess,
 }: InviteDialogProps) {
   const [loading, setLoading] = useState(false);
+  const [isSubmitting, setIsSubmitting] = useState(false);
   const [items, setItems] = useState<Item[]>([]);
-  const [selectedItem, setSelectedItem] = useState<string>("");
+  const [selectedItem, setSelectedItem] = useState<string>(""); // For Job (Single Select)
+  const [selectedItems, setSelectedItems] = useState<string[]>([]); // For Assessment (Multi Select)
   const [currentPage, setCurrentPage] = useState(1);
   const [hasMore, setHasMore] = useState(true);
   const [loadingMore, setLoadingMore] = useState(false);
@@ -49,7 +67,7 @@ export default function InviteDialog({
   const isJob = mode === "job";
   const title = isJob ? "Invite for Job" : "Request Assessment";
   const label = isJob ? "Job" : "Assessment";
-  const selectPlaceholder = isJob ? "Select Active Job" : "Select Assessment";
+  const selectPlaceholder = isJob ? "Select Active Job" : "Select Assessments";
   const noDataTitle = isJob ? "No Job Found" : "No Assessment Found";
   const noDataDesc = isJob
     ? "There are no Jobs at the moment. Please Create Job First."
@@ -59,15 +77,16 @@ export default function InviteDialog({
 
   useEffect(() => {
     if (open) {
-      setSelectedItem(""); // Reset selection when dialog opens or mode changes
+      setSelectedItem("");
+      setSelectedItems([]);
       loadedPagesRef.current.clear();
       setCurrentPage(1);
       setHasMore(true);
       setItems([]);
       fetchData(1, true);
     } else {
-      // Reset selection when dialog closes
       setSelectedItem("");
+      setSelectedItems([]);
       setItems([]);
       setCurrentPage(1);
       setHasMore(true);
@@ -132,29 +151,99 @@ export default function InviteDialog({
     }
   };
 
+  const handleSubmit = async () => {
+    if (isJob && !selectedItem) {
+      toast.error(`Please select a ${label}`);
+      return;
+    }
+
+    if (!isJob && selectedItems.length === 0) {
+      toast.error(`Please select at least one ${label}`);
+      return;
+    }
+
+    if (!candidateIds || candidateIds.length === 0) {
+      toast.error("No candidates selected");
+      return;
+    }
+
+    setIsSubmitting(true);
+    try {
+      if (isJob) {
+        const response = await inviteCandidatesToJob(selectedItem, {
+          user_ids: candidateIds,
+        });
+        if (response.success) {
+          toast.success(response.message || "Candidates invited successfully");
+          setSelectedItem("");
+          onOpenChange(false);
+          onInviteSuccess?.();
+        } else {
+          toast.error(response.message || "Failed to invite candidates");
+        }
+      } else {
+        const response = await inviteCandidatesToAssessment({
+          user_ids: candidateIds,
+          assessment_slugs: selectedItems,
+        });
+        if (response.success) {
+          toast.success("Assessment invite sent successfully");
+          setSelectedItems([]);
+          onOpenChange(false);
+          onInviteSuccess?.();
+        } else {
+          toast.error(response.message || "Failed to send assessment invite");
+        }
+      }
+    } catch (error: any) {
+      console.error("Error submitting:", error);
+      toast.error(
+        error?.response?.data?.message || "An error occurred while submitting",
+      );
+    } finally {
+      setIsSubmitting(false);
+    }
+  };
+
+  // Handle toggle for multi-select
+  const handleToggle = (slug: string) => {
+    setSelectedItems((prev) => {
+      if (prev.includes(slug)) {
+        return prev.filter((s) => s !== slug);
+      } else {
+        return [...prev, slug];
+      }
+    });
+  };
+
+  const getSelectedLabel = () => {
+    if (selectedItems.length === 0) return selectPlaceholder;
+    if (selectedItems.length === 1) {
+      const item = items.find((i) => (i.slug || i.id) === selectedItems[0]);
+      return item?.title || selectedItems[0];
+    }
+    return `${selectedItems.length} Assessments Selected`;
+  };
+
   // Handle scroll for infinite loading (only for assessments)
   useEffect(() => {
     if (isJob || !open) return;
 
     let cleanup: (() => void) | undefined;
 
-    // Small delay to ensure the SelectContent is rendered
+    // Small delay to ensure the content is rendered
     const timeoutId = setTimeout(() => {
-      // Find the scrollable element - try SelectContent first, then viewport
-      const selectContent = document.querySelector(
-        '[data-slot="select-content"]'
-      ) as HTMLElement;
-      if (!selectContent) return;
+      // For assessments, we now use a custom scroll container in PopoverContent
+      const scrollContainer = document.getElementById(
+        "assessment-scroll-container",
+      );
 
-      // The SelectContent itself might be scrollable, or the viewport inside
-      const viewport =
-        (selectContent.querySelector('div[class*="p-1"]') as HTMLElement) ||
-        selectContent;
+      if (!scrollContainer) return;
 
       const handleScroll = () => {
         if (loadingMore || !hasMore) return;
 
-        const { scrollTop, scrollHeight, clientHeight } = viewport;
+        const { scrollTop, scrollHeight, clientHeight } = scrollContainer;
 
         // Load more when user scrolls to 80% of the container
         if (scrollTop + clientHeight >= scrollHeight * 0.8) {
@@ -167,10 +256,10 @@ export default function InviteDialog({
         }
       };
 
-      viewport.addEventListener("scroll", handleScroll);
+      scrollContainer.addEventListener("scroll", handleScroll);
 
       cleanup = () => {
-        viewport.removeEventListener("scroll", handleScroll);
+        scrollContainer.removeEventListener("scroll", handleScroll);
       };
     }, 100);
 
@@ -179,7 +268,7 @@ export default function InviteDialog({
       if (cleanup) cleanup();
     };
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [open, isJob, currentPage, loadingMore, hasMore, mode]);
+  }, [open, isJob, currentPage, loadingMore, hasMore, mode, items]);
 
   const hasItems = items.length > 0;
 
@@ -240,26 +329,84 @@ export default function InviteDialog({
                 <label className="text-sm font-medium text-black font-sans">
                   {label}
                 </label>
-                <Select value={selectedItem} onValueChange={setSelectedItem}>
-                  <SelectTrigger className="w-full h-8 px-3 border-gray-200 rounded-lg text-gray-600 text-sm font-normal font-sans bg-white focus:ring-0 focus:ring-offset-0">
-                    <SelectValue placeholder={selectPlaceholder} />
-                  </SelectTrigger>
-                  <SelectContent className="max-h-[300px]">
-                    {items.map((item) => (
-                      <SelectItem
-                        key={item.slug || item.id}
-                        value={item.slug || item.id}
+                {isJob ? (
+                  <Select value={selectedItem} onValueChange={setSelectedItem}>
+                    <SelectTrigger className="w-full h-8 px-3 border-gray-200 rounded-lg text-gray-600 text-sm font-normal font-sans bg-white focus:ring-0 focus:ring-offset-0">
+                      <SelectValue placeholder={selectPlaceholder} />
+                    </SelectTrigger>
+                    <SelectContent
+                      className="max-h-[300px]"
+                      data-slot="select-content"
+                    >
+                      {items.map((item) => (
+                        <SelectItem
+                          key={item.slug || item.id}
+                          value={item.slug || item.id}
+                        >
+                          {item.title}
+                        </SelectItem>
+                      ))}
+                      {loadingMore && (
+                        <div className="flex items-center justify-center py-2">
+                          <Loader2 className="h-4 w-4 animate-spin text-primary-500" />
+                        </div>
+                      )}
+                    </SelectContent>
+                  </Select>
+                ) : (
+                  <Popover>
+                    <PopoverTrigger asChild>
+                      <Button
+                        variant="outline"
+                        role="combobox"
+                        className="w-full h-8 px-3 justify-between border-gray-200 rounded-lg text-gray-600 text-sm font-normal font-sans bg-white hover:bg-white"
                       >
-                        {item.title}
-                      </SelectItem>
-                    ))}
-                    {loadingMore && (
-                      <div className="flex items-center justify-center py-2">
-                        <Loader2 className="h-4 w-4 animate-spin text-primary-500" />
+                        <span className="truncate">{getSelectedLabel()}</span>
+                        <Icon
+                          icon="lucide:chevrons-up-down"
+                          className="ml-2 h-4 w-4 shrink-0 opacity-50"
+                        />
+                      </Button>
+                    </PopoverTrigger>
+                    <PopoverContent
+                      className="w-[var(--radix-popover-trigger-width)] p-0 bg-white"
+                      align="start"
+                    >
+                      <div
+                        id="assessment-scroll-container"
+                        className="max-h-[300px] overflow-y-auto"
+                      >
+                        {items.map((item) => {
+                          const value = item.slug || item.id;
+                          const isSelected = selectedItems.includes(value);
+                          return (
+                            <div
+                              key={value}
+                              className={cn(
+                                "flex items-center gap-3 px-4 py-2 hover:bg-gray-50 cursor-pointer border-b border-gray-100 last:border-0",
+                                isSelected && "bg-primary-50/50",
+                              )}
+                              onClick={() => handleToggle(value)}
+                            >
+                              <Checkbox
+                                checked={isSelected}
+                                className="border-gray-300 pointer-events-none"
+                              />
+                              <span className="text-sm text-gray-900 font-sans flex-1">
+                                {item.title}
+                              </span>
+                            </div>
+                          );
+                        })}
+                        {loadingMore && (
+                          <div className="flex items-center justify-center py-2">
+                            <Loader2 className="h-4 w-4 animate-spin text-primary-500" />
+                          </div>
+                        )}
                       </div>
-                    )}
-                  </SelectContent>
-                </Select>
+                    </PopoverContent>
+                  </Popover>
+                )}
               </div>
             </div>
 
@@ -268,17 +415,27 @@ export default function InviteDialog({
                 variant="outline"
                 className="h-8 px-4 border-primary-500 text-primary-500 hover:bg-primary-50 rounded-lg text-sm font-normal font-sans"
                 onClick={() => onOpenChange(false)}
+                disabled={isSubmitting}
               >
                 Cancel
               </Button>
               <Button
                 className="h-8 px-4 bg-primary-500 hover:bg-primary-600 text-white rounded-lg text-sm font-normal font-sans"
-                onClick={() => {
-                  onOpenChange(false);
-                }}
-                disabled={!selectedItem}
+                onClick={handleSubmit}
+                disabled={
+                  isJob
+                    ? !selectedItem || isSubmitting
+                    : selectedItems.length === 0 || isSubmitting
+                }
               >
-                Submit
+                {isSubmitting ? (
+                  <>
+                    <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                    Submitting...
+                  </>
+                ) : (
+                  "Submit"
+                )}
               </Button>
             </div>
           </>

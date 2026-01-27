@@ -22,7 +22,8 @@ export interface RecruiterJob {
   experience_max_years: number;
   experience_range?: string;
 
-  compensation: Compensation;
+  compensation: Compensation | string;
+  
 
   work_mode: WorkMode[];
   work_mode?: WorkMode[];
@@ -44,6 +45,16 @@ export interface RecruiterJob {
   published_at: string | null;
   created_at: string;
   updated_at: string;
+
+  customFieldsStatus: "NOT_REQUESTED" | "REQUESTED" | "SUBMITTED";
+
+  additionalDetailsStatus: "NOT_REQUESTED" | "REQUESTED" | "SUBMITTED";
+
+  additional_details?: {
+    title: string;
+    type: "text" | "textarea";
+    value: string;
+  }[];
 }
 
 /* ---------- Nested Types ---------- */
@@ -89,7 +100,7 @@ export interface SkillCategory {
 export interface CustomField {
   id?: string | number;
   title: string;
-  type: "text" | "number" | "select" | string;
+  type: "text" | "textarea" | string;
   value?: string;
 }
 

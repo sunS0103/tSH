@@ -85,21 +85,21 @@ export default function EditIdentityAndAccount() {
       mobile_number: profileData?.mobile_details?.mobile_number || "",
       date_of_birth: profileData?.date_of_birth
         ? (() => {
-            try {
-              // Handle both timestamp (number) and date string
-              const dateValue = profileData.date_of_birth;
-              const date =
-                typeof dateValue === "number"
-                  ? new Date(dateValue)
-                  : new Date(dateValue);
-              if (!isNaN(date.getTime())) {
-                return format(date, "MM-dd-yyyy");
-              }
-            } catch {
-              // Invalid date, return empty string
+          try {
+            // Handle both timestamp (number) and date string
+            const dateValue = profileData.date_of_birth;
+            const date =
+              typeof dateValue === "number"
+                ? new Date(dateValue)
+                : new Date(dateValue);
+            if (!isNaN(date.getTime())) {
+              return format(date, "MM-dd-yyyy");
             }
-            return "";
-          })()
+          } catch {
+            // Invalid date, return empty string
+          }
+          return "";
+        })()
         : "",
       account_type: profileData?.account_type,
       country_code: profileData?.mobile_details?.dial_code || "+91",
@@ -408,9 +408,8 @@ export default function EditIdentityAndAccount() {
                       <PopoverContent className="w-auto p-0" align="start">
                         <Calendar
                           mode="single"
-                          selected={
-                            field.value ? new Date(field.value) : undefined
-                          }
+                          selected={field.value ? new Date(field.value) : undefined}
+                          defaultMonth={field.value ? new Date(field.value) : undefined}
                           onSelect={(date) => {
                             if (date) {
                               // Format as MM-dd-yyyy string for consistency

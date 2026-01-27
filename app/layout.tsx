@@ -1,6 +1,8 @@
 import type { Metadata } from "next";
 import { Plus_Jakarta_Sans } from "next/font/google";
 import "./globals.css";
+import Header from "@/components/landing/Header";
+import Footer from "@/components/landing/Footer";
 import { Toaster } from "sonner";
 import Script from "next/script";
 import { RouteLoader } from "@/components/route-loader";
@@ -13,8 +15,31 @@ const plusJakartaSans = Plus_Jakarta_Sans({
 });
 
 export const metadata: Metadata = {
-  title: "Tech Smart Hire",
-  description: "Tech Smart Hire",
+  title: {
+    default: "techSmartHire – Skill-Based QA Hiring Platform",
+    template: "%s | techSmartHire",
+  },
+  description:
+    "techSmartHire is a skill-first hiring platform for QA roles. Get early access to role-based assessments, pre-vetted candidates, and faster hiring through our beta program",
+  metadataBase: new URL(process.env.NEXT_PUBLIC_APP_URL as string),
+  keywords: [
+    "QA Hiring",
+    "Quality Assurance Jobs",
+    "Skill-based Hiring",
+    "Tech Recruitment",
+    "QA Assessment",
+    "Beta Access",
+  ],
+  authors: [{ name: "techSmartHire Team" }],
+  creator: "techSmartHire",
+  publisher: "techSmartHire",
+  robots: {
+    index: true,
+    follow: true,
+  },
+  alternates: {
+    canonical: "/",
+  },
 };
 
 export default function RootLayout({
@@ -24,10 +49,31 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en">
+      {process.env.NEXT_PUBLIC_ENV === "production" && (
+        <Script id="google-tag-manager" strategy="afterInteractive">
+          {`(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
+new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],
+j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
+'https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);
+})(window,document,'script','dataLayer','GTM-WFZ9226R');`}
+        </Script>
+      )}
       <body className={`${plusJakartaSans.variable} antialiased`}>
+        {process.env.NEXT_PUBLIC_ENV === "production" && (
+          <noscript>
+            <iframe
+              src="https://www.googletagmanager.com/ns.html?id=GTM-WFZ9226R"
+              height="0"
+              width="0"
+              style={{ display: "none", visibility: "hidden" }}
+            ></iframe>
+          </noscript>
+        )}
         <NextAuthSessionProvider>
           <RouteLoader />
+          {/* <Header /> */}
           <main>{children}</main>
+          {/* <Footer /> */}
           <Toaster richColors position="bottom-right" />
           <Script
             src="https://checkout.razorpay.com/v1/checkout.js"

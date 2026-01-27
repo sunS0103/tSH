@@ -7,10 +7,17 @@ import { Button } from "@/components/ui/button";
 import { Checkbox } from "@/components/ui/checkbox";
 import { useState } from "react";
 import { type AssessmentTaken } from "@/api/recruiter/talent-pool";
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipProvider,
+  TooltipTrigger,
+} from "@/components/ui/tooltip";
 
 export interface TalentCardProps {
   id: string;
   role: string;
+  expertise: string;
   location_code: string; // e.g. D.C 8852
   totalScore: number;
   skillsAssessed: string[];
@@ -30,6 +37,7 @@ export interface TalentCardProps {
 export default function TalentCard({
   id,
   role,
+  expertise,
   location_code,
   totalScore,
   skillsAssessed,
@@ -72,9 +80,11 @@ export default function TalentCard({
               />
             </div>
             <div className="flex flex-col items-start gap-1">
-              <h1 className="text-black text-xl font-bold font-sans">{role}</h1>
-              <p className="text-left text-gray-600 text-xs font-normal font-sans capitalize">
-                ID: {id.substring(0, 4)}
+              <h1 className="text-black text-xl font-bold font-sans">
+                {expertise}
+              </h1>
+              <p className="text-left text-gray-600 text-xs font-normal font-sans uppercase">
+                ID: {id?.substring(0, 4)}
               </p>
             </div>
           </div>
@@ -92,13 +102,14 @@ export default function TalentCard({
                 }
                 className={cn(
                   "w-4.5 h-4.5",
-                  isFavorite ? "text-primary-500" : "text-primary-500"
+                  isFavorite ? "text-primary-500" : "text-primary-500",
                 )}
               />
             </Button>
             <Button
               variant="outline"
               className="w-8 h-8 rounded-lg border border-primary-500 p-0 flex items-center justify-center hover:bg-primary-50 bg-white"
+              onClick={() => onInviteToJob()}
             >
               <Icon
                 icon="majesticons:briefcase-line"
@@ -108,6 +119,7 @@ export default function TalentCard({
             <Button
               variant="outline"
               className="w-8 h-8 rounded-lg border border-primary-500 p-0 flex items-center justify-center hover:bg-primary-50 bg-white"
+              onClick={() => onRequestAssessment()}
             >
               <Icon
                 icon="mdi:help-box-multiple-outline"
@@ -128,7 +140,7 @@ export default function TalentCard({
               icon={isFavorite ? "mdi:cards-heart" : "mdi:cards-heart-outline"}
               className={cn(
                 "w-4.5 h-4.5",
-                isFavorite ? "text-primary-500" : "text-primary-500"
+                isFavorite ? "text-primary-500" : "text-primary-500",
               )}
             />
           </Button>
@@ -166,7 +178,7 @@ export default function TalentCard({
       {/* Body */}
       <div className="w-full px-4 flex flex-col xl:flex-row items-start gap-6 xl:gap-8">
         {/* Left Column: Score & Skills */}
-        <div className="flex flex-col items-start gap-3 max-w-xs w-full shrink-0">
+        <div className="flex flex-col items-start gap-3 xl:max-w-xs w-full shrink-0">
           <div className="w-full flex flex-col items-start gap-2">
             <div className="flex flex-col items-start gap-2 ">
               <TalentScoreSheet assessments={assessments || []}>
@@ -185,7 +197,7 @@ export default function TalentCard({
               Skill Assessed
             </span>
             <div className="flex w-full flex-wrap gap-2 content-center items-center">
-              {skillsAssessed.map((skill, index) => (
+              {skillsAssessed.slice(0, 3).map((skill, index) => (
                 <div
                   key={index}
                   className="px-2 py-1 rounded-full border border-gray-600 flex justify-center items-center gap-2"
@@ -195,48 +207,81 @@ export default function TalentCard({
                   </span>
                 </div>
               ))}
+              {skillsAssessed.length > 3 && (
+                <TooltipProvider>
+                  <Tooltip>
+                    <TooltipTrigger asChild>
+                      <div className="px-2 py-1 rounded-full border border-gray-600 flex justify-center items-center gap-2 cursor-pointer hover:bg-gray-100 transition-colors">
+                        <span className="text-center text-black text-xs font-normal font-sans capitalize">
+                          +{skillsAssessed.length - 3}
+                        </span>
+                      </div>
+                    </TooltipTrigger>
+                    <TooltipContent className="bg-white border">
+                      <div className="flex flex-col gap-1 p-1">
+                        {skillsAssessed.slice(3).map((skill, index) => (
+                          <span
+                            key={index}
+                            className="text-xs text-gray-700 capitalize"
+                          >
+                            {skill}
+                          </span>
+                        ))}
+                      </div>
+                    </TooltipContent>
+                  </Tooltip>
+                </TooltipProvider>
+              )}
             </div>
           </div>
         </div>
 
         {/* Middle Column: Details (Responsive Grid on Mobile, Column on Desktop) */}
         <div className="w-full xl:w-52 grid grid-cols-2 xl:flex xl:flex-col xl:justify-center items-start gap-x-4 gap-y-4 shrink-0">
-          <div className="flex justify-start items-center gap-2">
-            <Icon
-              icon="mdi:card-account-details-outline"
-              className="w-4.5 h-4.5 text-gray-900"
-            />
-            <span className="text-center text-gray-900 text-base font-normal font-sans">
-              {experience}
-            </span>
-          </div>
-          <div className="flex justify-start items-center gap-2">
-            <Icon
-              icon="mdi:office-building-outline"
-              className="w-4.5 h-4.5 text-gray-900"
-            />
-            <span className="text-center text-gray-900 text-base font-normal font-sans">
-              {company}
-            </span>
-          </div>
-          <div className="flex justify-start items-center gap-2">
-            <Icon
-              icon="mdi:timer-outline"
-              className="w-4.5 h-4.5 text-gray-900"
-            />
-            <span className="text-center text-gray-900 text-base font-normal font-sans">
-              {availability}
-            </span>
-          </div>
-          <div className="flex justify-start items-center gap-2">
-            <Icon
-              icon="mdi:map-marker-outline"
-              className="w-4.5 h-4.5 text-gray-900"
-            />
-            <span className="text-center text-gray-900 text-base font-normal font-sans">
-              {location}
-            </span>
-          </div>
+          {experience && (
+            <div className="flex justify-start items-center gap-2">
+              <Icon
+                icon="mdi:card-account-details-outline"
+                className="w-4.5 h-4.5 text-gray-900"
+              />
+              <span className="text-center text-gray-900 text-base font-normal font-sans">
+                {experience}
+              </span>
+            </div>
+          )}
+          {company && (
+            <div className="flex justify-start items-center gap-2">
+              <Icon
+                icon="mdi:office-building-outline"
+                className="w-4.5 h-4.5 text-gray-900"
+              />
+              <span className="text-center text-gray-900 text-base font-normal font-sans">
+                {company}
+              </span>
+            </div>
+          )}
+          {availability && (
+            <div className="flex justify-start items-center gap-2">
+              <Icon
+                icon="mdi:timer-outline"
+                className="w-4.5 h-4.5 text-gray-900"
+              />
+              <span className="text-center text-gray-900 text-base font-normal font-sans">
+                {availability}
+              </span>
+            </div>
+          )}
+          {location && (
+            <div className="flex justify-start items-center gap-2">
+              <Icon
+                icon="mdi:map-marker-outline"
+                className="w-4.5 h-4.5 text-gray-900"
+              />
+              <span className="text-center text-gray-900 text-base font-normal font-sans">
+                {location}
+              </span>
+            </div>
+          )}
         </div>
 
         {/* Right Column: Assessments & About */}
@@ -285,6 +330,7 @@ export default function TalentCard({
         open={showInviteDialog}
         onOpenChange={setShowInviteDialog}
         mode={inviteMode}
+        candidateIds={[id]}
       />
     </div>
   );
