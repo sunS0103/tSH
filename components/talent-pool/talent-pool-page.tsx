@@ -64,6 +64,7 @@ const mapCandidateToTalentCard = (
   return {
     id: candidate.user_id,
     role: candidate.expertise || "",
+    expertise: candidate.expertise || "",
     location_code: locationCode,
     totalScore: candidate.score,
     skillsAssessed,
@@ -734,7 +735,19 @@ export default function TalentPoolPage() {
             {filteredTalents.map((talent) => (
               <TalentCard
                 key={talent.id}
-                {...talent}
+                id={talent.id}
+                role={talent.role}
+                expertise={talent.expertise}
+                location_code={talent.location_code}
+                totalScore={talent.totalScore}
+                skillsAssessed={talent.skillsAssessed}
+                experience={talent.experience}
+                company={talent.company}
+                availability={talent.availability}
+                location={talent.location}
+                assessmentTaken={talent.assessmentTaken}
+                assessments={talent.assessments}
+                about={talent.about}
                 isSelected={selectedTalents.includes(talent.id)}
                 onSelect={() => toggleTalentSelection(talent.id)}
                 isFavorite={favoriteTalents.includes(talent.id)}

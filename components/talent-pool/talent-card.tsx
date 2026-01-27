@@ -7,10 +7,17 @@ import { Button } from "@/components/ui/button";
 import { Checkbox } from "@/components/ui/checkbox";
 import { useState } from "react";
 import { type AssessmentTaken } from "@/api/recruiter/talent-pool";
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipProvider,
+  TooltipTrigger,
+} from "@/components/ui/tooltip";
 
 export interface TalentCardProps {
   id: string;
   role: string;
+  expertise: string;
   location_code: string; // e.g. D.C 8852
   totalScore: number;
   skillsAssessed: string[];
@@ -30,6 +37,7 @@ export interface TalentCardProps {
 export default function TalentCard({
   id,
   role,
+  expertise,
   location_code,
   totalScore,
   skillsAssessed,
@@ -72,8 +80,10 @@ export default function TalentCard({
               />
             </div>
             <div className="flex flex-col items-start gap-1">
-              <h1 className="text-black text-xl font-bold font-sans">{role}</h1>
-              <p className="text-left text-gray-600 text-xs font-normal font-sans capitalize">
+              <h1 className="text-black text-xl font-bold font-sans">
+                {expertise}
+              </h1>
+              <p className="text-left text-gray-600 text-xs font-normal font-sans uppercase">
                 ID: {id?.substring(0, 4)}
               </p>
             </div>
@@ -187,7 +197,7 @@ export default function TalentCard({
               Skill Assessed
             </span>
             <div className="flex w-full flex-wrap gap-2 content-center items-center">
-              {skillsAssessed.map((skill, index) => (
+              {skillsAssessed.slice(0, 3).map((skill, index) => (
                 <div
                   key={index}
                   className="px-2 py-1 rounded-full border border-gray-600 flex justify-center items-center gap-2"
@@ -197,6 +207,31 @@ export default function TalentCard({
                   </span>
                 </div>
               ))}
+              {skillsAssessed.length > 3 && (
+                <TooltipProvider>
+                  <Tooltip>
+                    <TooltipTrigger asChild>
+                      <div className="px-2 py-1 rounded-full border border-gray-600 flex justify-center items-center gap-2 cursor-pointer hover:bg-gray-100 transition-colors">
+                        <span className="text-center text-black text-xs font-normal font-sans capitalize">
+                          +{skillsAssessed.length - 3}
+                        </span>
+                      </div>
+                    </TooltipTrigger>
+                    <TooltipContent className="bg-white border">
+                      <div className="flex flex-col gap-1 p-1">
+                        {skillsAssessed.slice(3).map((skill, index) => (
+                          <span
+                            key={index}
+                            className="text-xs text-gray-700 capitalize"
+                          >
+                            {skill}
+                          </span>
+                        ))}
+                      </div>
+                    </TooltipContent>
+                  </Tooltip>
+                </TooltipProvider>
+              )}
             </div>
           </div>
         </div>
