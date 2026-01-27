@@ -21,29 +21,29 @@ import { toast } from "sonner";
 import { Payment } from "./step-content/payment-cards";
 
 const STEPS = [
-  { number: 1, label: "Introduction", status: "active" as const },
+  { number: 1, label: "Introduction & Syllabus", status: "active" as const },
+  // {
+  //   number: 2,
+  //   label: "Syllabus & Topics Covered",
+  //   status: "upcoming" as const,
+  // },
   {
     number: 2,
-    label: "Syllabus & Topics Covered",
-    status: "upcoming" as const,
-  },
-  {
-    number: 3,
     label: "Exam Process / How It Works",
     status: "upcoming" as const,
   },
   {
-    number: 4,
+    number: 3,
     label: "Score Visibility & Privacy",
     status: "upcoming" as const,
   },
   {
-    number: 5,
+    number: 4,
     label: "Integrity & Code of Conduct",
     status: "upcoming" as const,
   },
   {
-    number: 6,
+    number: 5,
     label: "Final Start Section",
     status: "upcoming" as const,
   },
@@ -73,12 +73,13 @@ export default function AssessmentWrapper({
   const [stepConfirmations, setStepConfirmations] = useState<
     Record<number, boolean>
   >({
+    1: false,
     2: false,
     3: false,
     4: false,
     5: false,
-    6: false,
   });
+  const [stepErrors, setStepErrors] = useState<Record<number, boolean>>({});
   const [isHydrated, setIsHydrated] = useState(false);
   const previousPathnameRef = useRef<string | null>(null);
   const [userAssessmentId, setUserAssessmentId] = useState<string | null>(
@@ -136,11 +137,11 @@ export default function AssessmentWrapper({
       // Batch state updates to avoid cascading renders
       let savedStep = 1;
       let savedConfirmations: Record<number, boolean> = {
+        1: false,
         2: false,
         3: false,
         4: false,
         5: false,
-        6: false,
       };
 
       const stepValue = localStorage.getItem(STORAGE_KEY_STEP);
@@ -206,6 +207,25 @@ export default function AssessmentWrapper({
   }, [currentStep, isHydrated]);
 
   const handleNext = () => {
+    // Check if current step requires confirmation and if it's confirmed
+    const isStepWithConfirmation = currentStep >= 1 && currentStep <= 4;
+    if (isStepWithConfirmation && !stepConfirmations[currentStep]) {
+      setStepErrors((prev) => ({
+        ...prev,
+        [currentStep]: true,
+      }));
+      return;
+    }
+    
+    // Clear error for current step if proceeding
+    if (stepErrors[currentStep]) {
+      setStepErrors((prev) => {
+        const updated = { ...prev };
+        delete updated[currentStep];
+        return updated;
+      });
+    }
+    
     if (currentStep < totalSteps) {
       setCurrentStep(currentStep + 1);
     }
@@ -218,7 +238,7 @@ export default function AssessmentWrapper({
   };
 
   const handleCurrentStepConfirmChange = (isConfirmed: boolean) => {
-    if (currentStep < 2 || currentStep > 6) {
+    if (currentStep < 1 || currentStep > 6) {
       return;
     }
 
@@ -226,15 +246,22 @@ export default function AssessmentWrapper({
       ...previousConfirmations,
       [currentStep]: isConfirmed,
     }));
+
+    // Clear error when checkbox is checked
+    if (isConfirmed && stepErrors[currentStep]) {
+      setStepErrors((prev) => {
+        const updated = { ...prev };
+        delete updated[currentStep];
+        return updated;
+      });
+    }
   };
 
-  const isStepWithConfirmation = currentStep >= 2 && currentStep <= 6;
+  const isStepWithConfirmation = currentStep >= 1 && currentStep <= 6;
 
   const isCurrentStepConfirmed = isStepWithConfirmation
     ? Boolean(stepConfirmations[currentStep])
     : true;
-
-  const isNextDisabled = isStepWithConfirmation && !isCurrentStepConfirmed;
 
   const lastTwoSteps =
     currentStep === totalSteps || currentStep === totalSteps - 1;
@@ -327,6 +354,7 @@ export default function AssessmentWrapper({
             assessment={assessment}
             onUserAssessmentIdChange={handleUserAssessmentIdChange}
             assessmentPayment={assessmentPayment}
+            hasError={Boolean(stepErrors[currentStep])}
           />
         </div>
       </div>
@@ -457,7 +485,6 @@ export default function AssessmentWrapper({
               <Button
                 className="bg-primary text-white hover:bg-primary/90"
                 onClick={handleNext}
-                disabled={isNextDisabled}
               >
                 Next
               </Button>

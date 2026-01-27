@@ -32,19 +32,8 @@ import z from "zod";
 import { Icon } from "@iconify/react";
 import { cn } from "@/lib/utils";
 import { getCookie } from "cookies-next/client";
-import { useEffect, useState } from "react";
-import { getSkills } from "@/api/seeder";
-
-const skillCategoryOptions = [
-  // { label: "Software Development", value: 1 },
-  { label: "Software Testing", value: 2 },
-  { label: "DevOps", value: 3 },
-  { label: "GenAI & Agents", value: 4 },
-  { label: "Programming Skills", value: 5 },
-  { label: "Frontend", value: 6 },
-  { label: "Backend", value: 7 },
-  { label: "Databases", value: 8 },
-];
+import { useEffect, useState, useRef } from "react";
+import { getSkillCategories, getSkills } from "@/api/seeder";
 
 const editSkillsSchema = z.object({
   primary_skill_category: z
@@ -65,7 +54,12 @@ type EditSkillsFormData = z.infer<typeof editSkillsSchema>;
 interface SkillOption {
   id: number;
   name: string;
-  category_name: string;
+  category_name?: string;
+  category_id?: number;
+  category?: {
+    id: number;
+    name: string;
+  };
 }
 
 interface RoleOption {
@@ -73,30 +67,16 @@ interface RoleOption {
   name: string;
 }
 
-// Primary skills data with IDs and category names
-const primarySkillsData: SkillOption[] = [
-  { id: 1, name: "Selenium Java", category_name: "Software Testing" },
-  { id: 2, name: "Playwright JS/TS", category_name: "Software Testing" },
-  { id: 3, name: "Appium", category_name: "Software Testing" },
-  { id: 4, name: "Core Java", category_name: "Programming Skills" },
-  { id: 5, name: "Python", category_name: "Programming Skills" },
-  { id: 6, name: "React", category_name: "Frontend" },
-  { id: 7, name: "Node.js", category_name: "Backend" },
-  { id: 8, name: "AWS", category_name: "DevOps" },
-  { id: 9, name: "LangChain", category_name: "GenAI & Agents" },
-  { id: 10, name: "PostgreSQL", category_name: "Databases" },
-  { id: 11, name: "MongoDB", category_name: "Databases" },
-];
-
-// Map category value to category name
-const getCategoryName = (value: number): string => {
-  const category = skillCategoryOptions.find((opt) => opt.value === value);
-  return category?.label || "";
-};
+interface CategoryOption {
+  id: number;
+  name: string;
+}
 
 export default function EditSkills() {
-  const [skills, setSkills] = useState<any>([]);
+  const [skills, setSkills] = useState<SkillOption[]>([]);
+  const [categories, setCategories] = useState<CategoryOption[]>([]);
   const router = useRouter();
+  const isFormInitialized = useRef(false);
 
   const cookieValue = getCookie("skills_data");
   const skillsData = cookieValue ? JSON.parse(cookieValue as string) : null;
@@ -110,37 +90,34 @@ export default function EditSkills() {
     return ids.filter((id) => validIds.includes(id));
   };
 
+  // Map category ID to category name
+  const getCategoryName = (categoryId: number): string => {
+    const category = categories.find((cat) => cat.id === categoryId);
+    return category?.name || "";
+  };
+
+  // Get category ID from skill (handles different API response structures)
+  const getSkillCategoryId = (skill: SkillOption): number | null => {
+    if (skill.category_id) return skill.category_id;
+    if (skill.category?.id) return skill.category.id;
+    // If only category_name is available, find matching category
+    if (skill.category_name) {
+      const category = categories.find((cat) => cat.name === skill.category_name);
+      return category?.id || null;
+    }
+    return null;
+  };
+
   // Get valid IDs from cookie data
   const getValidPrimarySkillCategory = (): number => {
     const categoryId = skillsData?.primary_skill_category?.id;
-    const validCategoryIds = skillCategoryOptions.map((opt) => opt.value);
+    const validCategoryIds = categories.map((cat) => cat.id);
     return validCategoryIds.includes(categoryId) ? categoryId : 0;
   };
 
-  const getValidPrimarySkills = (categoryId: number): number[] => {
-    const categoryName = getCategoryName(categoryId);
-    const validSkillIds = primarySkillsData
-      .filter((skill) => skill.category_name === categoryName)
-      .map((skill) => skill.id);
-    return validateIds(
-      skillsData?.primary_skills.map((skill: { id: number }) => skill.id),
-      validSkillIds
-    );
-  };
-
-  const getValidSecondarySkills = (categoryId: number): number[] => {
-    const categoryName = getCategoryName(categoryId);
-    const validSkillIds = primarySkillsData
-      .filter((skill) => skill.category_name === categoryName)
-      .map((skill) => skill.id);
-    return validateIds(
-      skillsData?.secondary_skills?.map((skill: { id: number }) => skill.id),
-      validSkillIds
-    );
-  };
 
   const getValidPreferredRoles = (): number[] => {
-    const validCategoryIds = skillCategoryOptions.map((opt) => opt.value);
+    const validCategoryIds = categories.map((cat) => cat.id);
     return validateIds(
       skillsData?.preferred_roles?.map((role: { id: number }) => role.id),
       validCategoryIds
@@ -148,18 +125,13 @@ export default function EditSkills() {
   };
 
   // Initialize form with validated cookie data
-  const initialPrimarySkillCategory = getValidPrimarySkillCategory();
-  const initialPrimarySkills = getValidPrimarySkills(
-    initialPrimarySkillCategory
-  );
-
   const form = useForm<EditSkillsFormData>({
     resolver: zodResolver(editSkillsSchema),
     defaultValues: {
-      primary_skill_category: initialPrimarySkillCategory || 0,
-      primary_skills: initialPrimarySkills,
-      secondary_skills: getValidSecondarySkills(initialPrimarySkillCategory),
-      preferred_roles: getValidPreferredRoles(),
+      primary_skill_category: 0,
+      primary_skills: [],
+      secondary_skills: [],
+      preferred_roles: [],
       certifications: skillsData?.certifications || "",
     },
   });
@@ -169,24 +141,91 @@ export default function EditSkills() {
   const [secondaryPopoverOpen, setSecondaryPopoverOpen] = useState(false);
 
   // Filter primary skills based on selected category
-  const filteredPrimarySkills = primarySkillsData.filter(
-    (skill) => skill.category_name === getCategoryName(selectedCategory)
-  );
+  const filteredPrimarySkills = skills.filter((skill) => {
+    const skillCategoryId = getSkillCategoryId(skill);
+    return skillCategoryId === selectedCategory;
+  });
 
-  useEffect(() => {
-    const fetchSkills = async () => {
+  const fetchSkills = async () => {
+    try {
       const response = await getSkills();
-      setSkills(response.data);
-    };
+      setSkills(response.data || []);
+    } catch (error) {
+      console.error("Error fetching skills:", error);
+      setSkills([]);
+    }
+  };
+
+  const fetchCategories = async () => {
+    try {
+      const response = await getSkillCategories();
+      setCategories(response.data || []);
+    } catch (error) {
+      console.error("Error fetching categories:", error);
+      setCategories([]);
+    }
+  };
+
+  // Fetch data on component mount
+  useEffect(() => {
     fetchSkills();
+    fetchCategories();
   }, []);
+
+  // Initialize form values after categories and skills are loaded
+  useEffect(() => {
+    if (
+      categories.length > 0 &&
+      skills.length > 0 &&
+      !isFormInitialized.current &&
+      skillsData
+    ) {
+      const initialPrimarySkillCategory = getValidPrimarySkillCategory();
+      
+      // Get all valid skill IDs from cookie (not filtered by category yet)
+      const allValidSkillIds = skills.map((skill) => skill.id);
+      const cookiePrimarySkillIds = skillsData?.primary_skills?.map(
+        (skill: { id: number }) => skill.id
+      ) || [];
+      const cookieSecondarySkillIds = skillsData?.secondary_skills?.map(
+        (skill: { id: number }) => skill.id
+      ) || [];
+      
+      const validPrimarySkills = validateIds(cookiePrimarySkillIds, allValidSkillIds);
+      const validSecondarySkills = validateIds(cookieSecondarySkillIds, allValidSkillIds);
+
+      form.reset({
+        primary_skill_category: initialPrimarySkillCategory || 0,
+        primary_skills: validPrimarySkills,
+        secondary_skills: validSecondarySkills,
+        preferred_roles: getValidPreferredRoles(),
+        certifications: skillsData?.certifications || "",
+      });
+
+      isFormInitialized.current = true;
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [categories, skills, skillsData]);
 
   // Update primary skills when category changes - filter existing selections
   useEffect(() => {
+    // Don't filter on initial load - wait for form to be initialized
+    if (
+      categories.length === 0 ||
+      skills.length === 0 ||
+      !isFormInitialized.current
+    )
+      return;
+
+    // Only filter if category is actually selected (not 0)
+    if (selectedCategory === 0) return;
+
     const currentPrimarySkills = form.getValues("primary_skills");
-    const categoryName = getCategoryName(selectedCategory);
-    const validSkillIds = primarySkillsData
-      .filter((skill) => skill.category_name === categoryName)
+    const validSkillIds = skills
+      .filter((skill) => {
+        const skillCategoryId = getSkillCategoryId(skill);
+        return skillCategoryId === selectedCategory;
+      })
       .map((skill) => skill.id);
 
     // Filter out skills that don't belong to the new category
@@ -212,7 +251,8 @@ export default function EditSkills() {
     if (finalSecondarySkills.length !== currentSecondarySkills.length) {
       form.setValue("secondary_skills", finalSecondarySkills);
     }
-  }, [selectedCategory, form]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [selectedCategory, form, categories, skills]);
 
   // Remove secondary skills that are in primary skills when popover opens or primary skills change
   useEffect(() => {
@@ -271,21 +311,11 @@ export default function EditSkills() {
 
   const getSelectedSkillsLabel = (
     selectedIds: number[],
-    options: SkillOption[] | RoleOption[] | typeof skillCategoryOptions
+    options: SkillOption[] | RoleOption[] | CategoryOption[]
   ) => {
     if (selectedIds.length === 0) return "Select options";
-    const selected = options.filter((opt) => {
-      if ("value" in opt) {
-        // For skillCategoryOptions format (has value and label)
-        return selectedIds.includes(opt.value);
-      } else {
-        // For SkillOption or RoleOption format (has id and name)
-        return selectedIds.includes(opt.id);
-      }
-    });
-    return selected
-      .map((opt) => ("label" in opt ? opt.label : opt.name))
-      .join(", ");
+    const selected = options.filter((opt) => selectedIds.includes(opt.id));
+    return selected.map((opt) => opt.name).join(", ");
   };
 
   return (
@@ -329,12 +359,12 @@ export default function EditSkills() {
                         <SelectValue placeholder="Select category" />
                       </SelectTrigger>
                       <SelectContent>
-                        {skillCategoryOptions.map((option) => (
+                        {categories.map((category) => (
                           <SelectItem
-                            key={option.value}
-                            value={option.value.toString()}
+                            key={category.id}
+                            value={category.id.toString()}
                           >
-                            {option.label}
+                            {category.name}
                           </SelectItem>
                         ))}
                       </SelectContent>
@@ -373,7 +403,7 @@ export default function EditSkills() {
                         >
                           {getSelectedSkillsLabel(
                             field.value || [],
-                            filteredPrimarySkills
+                            skills
                           )}
                         </span>
                         <Icon
@@ -494,7 +524,7 @@ export default function EditSkills() {
                           >
                             {getSelectedSkillsLabel(
                               field.value || [],
-                              availableSecondarySkills
+                              skills
                             )}
                           </span>
                           <Icon
@@ -606,7 +636,7 @@ export default function EditSkills() {
                         >
                           {getSelectedSkillsLabel(
                             field.value || [],
-                            skillCategoryOptions
+                            categories
                           )}
                         </span>
                         <Icon
@@ -620,46 +650,46 @@ export default function EditSkills() {
                       align="start"
                     >
                       <div className="flex flex-col h-[40vh] overflow-y-auto">
-                        {skillCategoryOptions.map((option, index) => (
+                        {categories.map((category, index) => (
                           <div
-                            key={option.value}
+                            key={category.id}
                             className={cn(
                               "flex items-center gap-4 px-6 py-4 border-b border-gray-200 last:border-b-0 cursor-pointer hover:bg-gray-50",
                               index === 0 && "rounded-t-2xl",
-                              index === skillCategoryOptions.length - 1 &&
+                              index === categories.length - 1 &&
                                 "rounded-b-2xl"
                             )}
                             onClick={() => {
                               const currentValue = field.value || [];
                               const isSelected = currentValue.includes(
-                                option.value
+                                category.id
                               );
                               if (isSelected) {
                                 field.onChange(
                                   currentValue.filter(
-                                    (id) => id !== option.value
+                                    (id) => id !== category.id
                                   )
                                 );
                               } else {
-                                field.onChange([...currentValue, option.value]);
+                                field.onChange([...currentValue, category.id]);
                               }
                             }}
                           >
                             <Checkbox
                               checked={(field.value || []).includes(
-                                option.value
+                                category.id
                               )}
                               onCheckedChange={(checked) => {
                                 const currentValue = field.value || [];
                                 if (checked) {
                                   field.onChange([
                                     ...currentValue,
-                                    option.value,
+                                    category.id,
                                   ]);
                                 } else {
                                   field.onChange(
                                     currentValue.filter(
-                                      (id) => id !== option.value
+                                      (id) => id !== category.id
                                     )
                                   );
                                 }
@@ -667,7 +697,7 @@ export default function EditSkills() {
                               className="size-5"
                             />
                             <Label className="text-base font-normal text-black cursor-pointer flex-1">
-                              {option.label}
+                              {category.name}
                             </Label>
                           </div>
                         ))}

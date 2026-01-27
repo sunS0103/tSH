@@ -156,12 +156,9 @@ export default function PaymentCards({
       packageType: "BASIC",
       title: "Basic Package",
       description:
-        "<div>Get started at a minimal cost, pay the remaining when hiring interest is confirmed. <a href='#' class='text-black underline'>Learn More</a></div>",
+        "Get started at a minimal cost, pay the remaining when hiring interest is confirmed.",
       price: "₹499",
       includedItems: basicPackageIncludedItems,
-      topNotes: "Pay Only 10% Today",
-      bottomNotes:
-        "₹900 later — only if you and a recruiter mutually connect (handshake)",
       buttonText: "Activate for ₹99",
       icon: "material-symbols:star-shine-outline-rounded",
     },
@@ -169,7 +166,7 @@ export default function PaymentCards({
       packageType: "PREMIUM",
       title: "Premium Package",
       description:
-        "<div>Best value for professionals who want certification + improvement feedback</div>",
+        "Best value for professionals who want certification + improvement feedback",
       price: "₹1299",
       includedItems: premiumPackageIncludedItems,
       buttonText: "Upgrade to Premium",
@@ -178,8 +175,7 @@ export default function PaymentCards({
     {
       packageType: "PLATINUM",
       title: "Platinum Package",
-      description:
-        "<div>Complete coaching + exam strategy to level up fast</div>",
+      description: "Complete coaching + exam strategy to level up fast",
       price: "₹7999",
       includedItems: platinumPackageIncludedItems,
       buttonText: "Upgrade to Platinum",
@@ -301,20 +297,13 @@ export default function PaymentCards({
                 <div className="bg-gray-50 flex items-center justify-center rounded-lg size-8">
                   <Icon icon={card.icon} className="size-5 text-primary-500" />
                 </div>
-                <span className="text-xs italic underline text-primary-500">
-                  {card.topNotes}
-                </span>
               </div>
               <div className="font-semibold text-xs md:text-sm mb-1">
                 {card.title}
               </div>
-              <div
-                dangerouslySetInnerHTML={{
-                  __html: sanitizeHtml(card.description),
-                }}
-                className="text-xs text-gray-500 mb-2"
-              />
-
+              <div className="text-xs text-gray-500 mb-2">
+                {card.description}
+              </div>
               <h2 className="text-lg md:text-xl font-bold">{card.price}</h2>
 
               <hr className="my-4 border-gray-200" />
@@ -333,13 +322,6 @@ export default function PaymentCards({
             </div>
 
             <div>
-              {/* Notes */}
-              {card.bottomNotes && (
-                <p className="text-xs text-gray-700 text-center mt-2">
-                  {card.bottomNotes}
-                </p>
-              )}
-
               {card.title === "Platinum Package" ? (
                 <Dialog>
                   <DialogTrigger asChild>

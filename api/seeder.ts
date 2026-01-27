@@ -44,3 +44,8 @@ export const getSkills = async () => {
   const response = await axios.get("/seeder/skills");
   return response.data;
 };
+
+export const getSkillCategories = async () => {
+  const response = await axios.get("/seeder/category");
+  return response.data;
+};

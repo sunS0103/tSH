@@ -1,3 +1,6 @@
+"use client";
+
+import { useEffect, useRef } from "react";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Label } from "@/components/ui/label";
 import { Icon } from "@iconify/react";
@@ -6,12 +9,25 @@ import Link from "next/link";
 interface ExamProcessProps {
   isConfirmed: boolean;
   onConfirmChange: (isConfirmed: boolean) => void;
+  hasError?: boolean;
 }
 
 export default function ExamProcess({
   isConfirmed,
   onConfirmChange,
+  hasError,
 }: ExamProcessProps) {
+  const checkboxRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    if (hasError && checkboxRef.current) {
+      checkboxRef.current.scrollIntoView({
+        behavior: "smooth",
+        block: "center",
+      });
+    }
+  }, [hasError]);
+
   return (
     <div>
       <div className="flex items-center gap-2 mb-1">
@@ -46,38 +62,22 @@ export default function ExamProcess({
 
       <hr className="border-gray-200 my-4" />
 
-      <>
+      <div ref={checkboxRef} className="flex flex-col gap-2">
         <div className="flex items-center gap-2">
-          <Icon
-            icon="famicons:compass-outline"
-            className="text-primary-500 size-4.5"
+          <Checkbox
+            id="exam-process"
+            checked={isConfirmed}
+            onCheckedChange={(checked) => onConfirmChange(Boolean(checked))}
           />
-          <h3 className="text-sm md:text-base font-semibold text-primary-500">
-            Try Before You Start
-          </h3>
+          <Label htmlFor="exam-process" className="inline cursor-pointer">
+            I understand the exam flow and its requirements.
+          </Label>
         </div>
-        <p className="text-gray-700 font-medium text-xs mb-2">
-          Preview the exam interface beforehand.
-        </p>
-        <p className="text-gray-700 font-medium text-xs md:text-sm">
-          <Link href="#" className="text-primary-500 underline">
-            Check out our Sample Exam
-          </Link>{" "}
-          to explore the platform look & feel.
-        </p>
-      </>
-
-      <hr className="border-gray-200 my-4" />
-
-      <div className="flex items-center gap-2">
-        <Checkbox
-          id="exam-process"
-          checked={isConfirmed}
-          onCheckedChange={(checked) => onConfirmChange(Boolean(checked))}
-        />
-        <Label htmlFor="exam-process" className="inline font-normal">
-          I understand the exam flow and its requirements.
-        </Label>
+        {hasError && (
+          <p className="text-sm text-red-500 ml-7">
+            Please mark this checkbox to proceed to the next step
+          </p>
+        )}
       </div>
     </div>
   );
@@ -89,7 +89,6 @@ const questionTypes = [
   "Multi-select questions",
   "Coding exercises",
   "Video Interview Round (candidate speaks answers on camera)",
-  "AI Interview Round (interactive conversation with an AI interviewer)",
 ];
 
 const systemRequirements = [

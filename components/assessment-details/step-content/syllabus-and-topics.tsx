@@ -8,6 +8,7 @@ interface SyllabusAndTopicsProps {
   onConfirmChange: (isConfirmed: boolean) => void;
   topics: { id: string; value: string }[];
   sample_question_pdf_link?: string;
+  hasError?: boolean;
 }
 
 export default function SyllabusAndTopics({
@@ -15,6 +16,7 @@ export default function SyllabusAndTopics({
   onConfirmChange,
   topics,
   sample_question_pdf_link,
+  hasError,
 }: SyllabusAndTopicsProps) {
   return (
     <div className="flex flex-col justify-between h-full">
@@ -127,15 +129,25 @@ export default function SyllabusAndTopics({
           </Button>
         )}
       </div>
-      <div className="flex items-center gap-2 mt-10">
-        <Checkbox
-          id="syllabus-and-topics"
-          checked={isConfirmed}
-          onCheckedChange={(checked) => onConfirmChange(Boolean(checked))}
-        />
-        <Label htmlFor="syllabus-and-topics" className="inline">
-          I have reviewed and understood the syllabus.
-        </Label>
+      <div className="flex flex-col gap-2 mt-10">
+        <div className="flex items-center gap-2">
+          <Checkbox
+            id="syllabus-and-topics"
+            checked={isConfirmed}
+            onCheckedChange={(checked) => onConfirmChange(Boolean(checked))}
+          />
+          <Label
+            htmlFor="syllabus-and-topics"
+            className="inline font-normal cursor-pointer"
+          >
+            I have reviewed and understood the syllabus.
+          </Label>
+        </div>
+        {hasError && (
+          <p className="text-sm text-red-500 ml-7">
+            Please mark this checkbox to proceed to the next step
+          </p>
+        )}
       </div>
     </div>
   );

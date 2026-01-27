@@ -64,6 +64,7 @@ interface StepContentProps {
     payment: Payment;
   }) => void;
   assessmentPayment?: Payment | null;
+  hasError?: boolean;
 }
 
 export default function StepContent({
@@ -74,46 +75,48 @@ export default function StepContent({
   assessment,
   onUserAssessmentIdChange,
   assessmentPayment,
+  hasError,
 }: StepContentProps) {
   return (
     <div className={cn("flex flex-col gap-6", className)}>
       {/* Main Content */}
-      <div className="bg-white border border-gray-200 rounded-2xl p-3 md:p-4 lg:min-h-96 mb-4">
+      <div className="bg-white border border-gray-200 rounded-2xl p-3 md:p-4 mb-4">
         {currentStep === 1 && (
-          <AssessmentIntroduction assessment={assessment} />
-        )}
-
-        {currentStep === 2 && (
-          <SyllabusAndTopics
+          <AssessmentIntroduction
+            assessment={assessment}
             isConfirmed={isCurrentStepConfirmed}
             onConfirmChange={onCurrentStepConfirmChange}
             topics={assessment.topics}
             sample_question_pdf_link={assessment.sample_question_pdf_link}
+            hasError={hasError}
+          />
+        )}
+
+        {currentStep === 2 && (
+          <ExamProcess
+            isConfirmed={isCurrentStepConfirmed}
+            onConfirmChange={onCurrentStepConfirmChange}
+            hasError={hasError}
           />
         )}
 
         {currentStep === 3 && (
-          <ExamProcess
+          <ScoreVisibilityAndPrivacy
             isConfirmed={isCurrentStepConfirmed}
             onConfirmChange={onCurrentStepConfirmChange}
+            hasError={hasError}
           />
         )}
 
         {currentStep === 4 && (
-          <ScoreVisibilityAndPrivacy
+          <IntegrityAndCodeConduct
             isConfirmed={isCurrentStepConfirmed}
             onConfirmChange={onCurrentStepConfirmChange}
+            hasError={hasError}
           />
         )}
 
         {currentStep === 5 && (
-          <IntegrityAndCodeConduct
-            isConfirmed={isCurrentStepConfirmed}
-            onConfirmChange={onCurrentStepConfirmChange}
-          />
-        )}
-
-        {currentStep === 6 && (
           <FinalStartSection
             assessment_id={assessment.assessment_id}
             payment={assessmentPayment || assessment.payment}
