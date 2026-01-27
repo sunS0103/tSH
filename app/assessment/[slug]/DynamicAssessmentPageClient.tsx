@@ -558,10 +558,6 @@ export default function DynamicAssessmentPageClient({
   };
 
   const handleDownload = () => {
-    console.log(
-      "Downloading sample questions from:",
-      assessmentConfig.sampleQuestionsHref,
-    );
     // In production, trigger actual download
     window.open(assessmentConfig.sampleQuestionsHref, "_blank");
   };

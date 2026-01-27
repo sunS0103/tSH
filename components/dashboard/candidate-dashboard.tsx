@@ -106,8 +106,6 @@ export default function CandidateDashboard() {
             pageSize: 2,
           });
           if (jobsRes?.data) {
-            console.log("jobsRes", jobsRes);
-
             setAppliedJobs(jobsRes.data);
           }
         } catch (error) {

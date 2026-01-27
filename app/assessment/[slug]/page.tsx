@@ -32,8 +32,6 @@ async function loadAssessmentConfig(
     const fileContent = fs.readFileSync(dataPath, "utf-8");
     const config = JSON.parse(fileContent) as AssessmentConfig;
 
-    console.log({ config });
-
     return config;
   } catch (error) {
     console.error(`Error loading assessment config for slug "${slug}":`, error);
