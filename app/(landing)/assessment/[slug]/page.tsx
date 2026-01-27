@@ -19,6 +19,7 @@ async function loadAssessmentConfig(
     const dataPath = path.join(
       process.cwd(),
       "app",
+      "(landing)",
       "assessment",
       "data",
       `${slug}.json`,
