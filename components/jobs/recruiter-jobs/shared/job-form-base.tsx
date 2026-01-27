@@ -439,7 +439,7 @@ export default function JobFormBase({
             {/* Salary Range and Years of Experience */}
             <FormLabel>Salary Range (in CTC)</FormLabel>
 
-            <div className="flex flex-row items-center gap-4">
+            <div className="flex flex-col md:flex-row items-start gap-2 md:gap-4">
               {/* Salary Range */}
               <FormField
                 control={form.control}
@@ -448,23 +448,25 @@ export default function JobFormBase({
                   <FormItem className="w-full">
                     <FormControl>
                       <Input
-                        {...field}
                         placeholder="Enter Minimum Salary"
                         type="number"
                         value={field.value?.toString() || ""}
                         onChange={(e) => {
                           const value = e.target.value;
                           field.onChange(
-                            value === "" ? undefined : Number(value)
+                            value === "" ? 0 : Number(value)
                           );
                         }}
+                        onBlur={field.onBlur}
+                        name={field.name}
+                        ref={field.ref}
                       />
                     </FormControl>
                     <FormMessage />
                   </FormItem>
                 )}
               />
-              <FormLabel>to</FormLabel>
+              <div className="text-sm my-2">-</div>
               <FormField
                 control={form.control}
                 name="compensation.max_amount"
@@ -472,16 +474,18 @@ export default function JobFormBase({
                   <FormItem className="w-full">
                     <FormControl>
                       <Input
-                        {...field}
                         placeholder="Enter Maximum Salary"
                         type="number"
                         value={field.value?.toString() || ""}
                         onChange={(e) => {
                           const value = e.target.value;
                           field.onChange(
-                            value === "" ? undefined : Number(value)
+                            value === "" ? 0 : Number(value)
                           );
                         }}
+                        onBlur={field.onBlur}
+                        name={field.name}
+                        ref={field.ref}
                       />
                     </FormControl>
                     <FormMessage />
@@ -493,7 +497,7 @@ export default function JobFormBase({
                 control={form.control}
                 name="compensation.currency"
                 render={({ field }) => (
-                  <FormItem>
+                  <FormItem className="w-full md:w-fit">
                     <FormControl>
                       <Select
                         onValueChange={field.onChange}
