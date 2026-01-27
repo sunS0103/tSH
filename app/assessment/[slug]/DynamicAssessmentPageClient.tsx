@@ -1,6 +1,6 @@
-'use client';
+"use client";
 
-import React, { useState, useRef, useEffect } from 'react';
+import React, { useState, useRef, useEffect } from "react";
 import {
   CheckCircle,
   Clock,
@@ -27,17 +27,17 @@ import {
   X,
   Calendar,
   Loader2,
-  FileDown
-} from 'lucide-react';
-import { useRouter } from 'next/navigation';
-import ReCAPTCHA from 'react-google-recaptcha';
-import { toast } from 'sonner';
-import { getContact, getImports } from '@/api/waitlist';
+  FileDown,
+} from "lucide-react";
+import { useRouter } from "next/navigation";
+import ReCAPTCHA from "react-google-recaptcha";
+import { toast } from "sonner";
+import { getContact, getImports } from "@/api/waitlist";
 
 // TypeScript interfaces for the assessment configuration
 export interface Skill {
   name: string;
-  level: 'Foundation' | 'Intermediate' | 'Advanced';
+  level: "Foundation" | "Intermediate" | "Advanced";
 }
 
 export interface AssessmentConfig {
@@ -45,7 +45,7 @@ export interface AssessmentConfig {
   description: string;
   questions: number;
   minutes: number;
-  level: 'Foundation' | 'Intermediate' | 'Advanced';
+  level: "Foundation" | "Intermediate" | "Advanced";
   sampleQuestionsHref: string;
   skills: Skill[];
 }
@@ -61,7 +61,7 @@ interface ProctorRule {
   icon: React.ElementType;
   title: string;
   description: string;
-  severity: 'critical' | 'high' | 'medium';
+  severity: "critical" | "high" | "medium";
 }
 
 interface FAQItem {
@@ -71,7 +71,11 @@ interface FAQItem {
 }
 
 // FAQ Accordion Component
-function FAQAccordion({ onDownloadGuideClick }: { onDownloadGuideClick: () => void }) {
+function FAQAccordion({
+  onDownloadGuideClick,
+}: {
+  onDownloadGuideClick: () => void;
+}) {
   const [openIndex, setOpenIndex] = useState<number | null>(null);
 
   const faqs: FAQItem[] = [
@@ -84,7 +88,7 @@ Your identity and contact details are revealed only when:
 • A recruiter shows interest in your profile, and
 • You explicitly accept to share your details with that recruiter.
 
-Even then, your details are shared only with that specific recruiter, not publicly. Your privacy is fully in your control.`
+Even then, your details are shared only with that specific recruiter, not publicly. Your privacy is fully in your control.`,
     },
     {
       icon: Users,
@@ -96,7 +100,7 @@ They can log in anytime to:
 • Shortlist profiles that match their job requirements
 • Send interview requests to selected candidates
 
-Once you accept, your profile is unlocked only for that recruiter.`
+Once you accept, your profile is unlocked only for that recruiter.`,
     },
     {
       icon: Globe,
@@ -107,7 +111,7 @@ UAE Exception:
 Dubai/UAE companies actively recruit from India for exceptional profiles and do not require prior work authorization. Indian candidates can apply directly.
 
 Other Countries:
-You must hold a valid work visa or permit for that specific country before applying.`
+You must hold a valid work visa or permit for that specific country before applying.`,
     },
     {
       icon: Award,
@@ -121,7 +125,7 @@ But to keep this accessible for everyone, we charge only ₹100 / $1 to write th
 
 👉 The remaining amount is paid only if a recruiter contacts you and invites you for a job process.
 
-So you invest very little upfront — and pay more only when there is real hiring interest. This keeps the system fair, serious, and focused on genuine job seekers.`
+So you invest very little upfront — and pay more only when there is real hiring interest. This keeps the system fair, serious, and focused on genuine job seekers.`,
     },
     {
       icon: FileText,
@@ -131,7 +135,7 @@ So you invest very little upfront — and pay more only when there is real hirin
 • Sample questions
 • Preparation tips
 
-👉 Download the Exam Guide to know exactly what to expect before taking the test. No surprises. Full transparency.`
+👉 Download the Exam Guide to know exactly what to expect before taking the test. No surprises. Full transparency.`,
     },
     {
       icon: CheckSquare,
@@ -151,7 +155,7 @@ This ensures:
 • Fair evaluation for all candidates
 • Strong protection of exam integrity
 
-While the topics and difficulty level remain consistent, the exact questions differ for each candidate.`
+While the topics and difficulty level remain consistent, the exact questions differ for each candidate.`,
     },
     {
       icon: Shield,
@@ -171,7 +175,7 @@ All violations are marked with red flags in your score report.
 • Your exam will be terminated immediately
 • You may be blocked from taking future assessments
 
-This protects honest candidates and keeps scores credible.`
+This protects honest candidates and keeps scores credible.`,
     },
     {
       icon: Camera,
@@ -185,7 +189,7 @@ This helps prevent:
 • Fake profiles
 • Multiple attempts using different emails
 
-Our goal is simple: one real person = one real score.`
+Our goal is simple: one real person = one real score.`,
     },
     {
       icon: Clock,
@@ -194,7 +198,7 @@ Our goal is simple: one real person = one real score.`
 
 This prevents trial-and-error attempts and ensures scores reflect real skill readiness.
 
-We strongly recommend using the Exam Guide and preparing well before attempting.`
+We strongly recommend using the Exam Guide and preparing well before attempting.`,
     },
     {
       icon: BarChart3,
@@ -216,8 +220,8 @@ Also, what is considered a strong score can vary by:
 • Skill demand vs supply
 • Role complexity
 
-👉 Your score is a signal of skill — not a judgment of your career.`
-    }
+👉 Your score is a signal of skill — not a judgment of your career.`,
+    },
   ];
 
   const toggleFAQ = (index: number) => {
@@ -229,45 +233,49 @@ Also, what is considered a strong score can vary by:
       {faqs.map((faq, index) => (
         <div
           key={index}
-          className={`rounded-xl border-2 transition-all ${openIndex === index
-            ? 'border-blue-400 bg-blue-50 shadow-lg'
-            : 'border-slate-200 bg-white hover:border-slate-300'
-            }`}
+          className={`rounded-xl border-2 transition-all ${
+            openIndex === index
+              ? "border-blue-400 bg-blue-50 shadow-lg"
+              : "border-slate-200 bg-white hover:border-slate-300"
+          }`}
         >
           <button
             onClick={() => toggleFAQ(index)}
             className="w-full px-6 py-5 flex items-start gap-4 text-left cursor-pointer"
           >
             <div
-              className={`p-2 rounded-lg shrink-0 transition-colors ${openIndex === index
-                ? 'bg-blue-100 border-2 border-blue-300'
-                : 'bg-slate-100 border-2 border-slate-200'
-                }`}
+              className={`p-2 rounded-lg shrink-0 transition-colors ${
+                openIndex === index
+                  ? "bg-blue-100 border-2 border-blue-300"
+                  : "bg-slate-100 border-2 border-slate-200"
+              }`}
             >
               <faq.icon
-                className={`w-5 h-5 transition-colors ${openIndex === index ? 'text-blue-600' : 'text-slate-600'
-                  }`}
+                className={`w-5 h-5 transition-colors ${
+                  openIndex === index ? "text-blue-600" : "text-slate-600"
+                }`}
               />
             </div>
 
             <div className="flex-1">
               <h3
-                className={`font-bold text-lg leading-tight transition-colors ${openIndex === index ? 'text-blue-900' : 'text-slate-900'
-                  }`}
+                className={`font-bold text-lg leading-tight transition-colors ${
+                  openIndex === index ? "text-blue-900" : "text-slate-900"
+                }`}
               >
                 {faq.question}
               </h3>
             </div>
 
             <div
-              className={`p-2 rounded-full shrink-0 transition-all ${openIndex === index
-                ? 'bg-blue-200 rotate-180'
-                : 'bg-slate-100'
-                }`}
+              className={`p-2 rounded-full shrink-0 transition-all ${
+                openIndex === index ? "bg-blue-200 rotate-180" : "bg-slate-100"
+              }`}
             >
               <ArrowRight
-                className={`w-5 h-5 transition-colors transform rotate-90 ${openIndex === index ? 'text-blue-700' : 'text-slate-600'
-                  }`}
+                className={`w-5 h-5 transition-colors transform rotate-90 ${
+                  openIndex === index ? "text-blue-700" : "text-slate-600"
+                }`}
               />
             </div>
           </button>
@@ -276,22 +284,24 @@ Also, what is considered a strong score can vary by:
             <div className="px-6 pb-6 pt-2 animate-fade-in">
               <div className="pl-14">
                 <div className="prose prose-sm text-slate-700 leading-relaxed whitespace-pre-line">
-                  {faq.answer.split('Download the Exam Guide').map((part, i, arr) => (
-                    <React.Fragment key={i}>
-                      {part}
-                      {i < arr.length - 1 && (
-                        <button
-                          onClick={(e) => {
-                            e.stopPropagation();
-                            onDownloadGuideClick();
-                          }}
-                          className="inline-flex items-center gap-1 text-blue-600 hover:text-blue-700 font-semibold hover:underline cursor-pointer"
-                        >
-                          Download the Exam Guide
-                        </button>
-                      )}
-                    </React.Fragment>
-                  ))}
+                  {faq.answer
+                    .split("Download the Exam Guide")
+                    .map((part, i, arr) => (
+                      <React.Fragment key={i}>
+                        {part}
+                        {i < arr.length - 1 && (
+                          <button
+                            onClick={(e) => {
+                              e.stopPropagation();
+                              onDownloadGuideClick();
+                            }}
+                            className="inline-flex items-center gap-1 text-blue-600 hover:text-blue-700 font-semibold hover:underline cursor-pointer"
+                          >
+                            Download the Exam Guide
+                          </button>
+                        )}
+                      </React.Fragment>
+                    ))}
                 </div>
               </div>
             </div>
@@ -307,21 +317,43 @@ interface DynamicAssessmentPageClientProps {
   config: AssessmentConfig;
 }
 
-export default function DynamicAssessmentPageClient({ config }: DynamicAssessmentPageClientProps) {
+export default function DynamicAssessmentPageClient({
+  config,
+}: DynamicAssessmentPageClientProps) {
   const router = useRouter();
   const [isSampleModalOpen, setIsSampleModalOpen] = useState(false);
-  const [sampleStep, setSampleStep] = useState<'form' | 'download'>('form');
-  const [name, setName] = useState('');
-  const [email, setEmail] = useState('');
+  const [sampleStep, setSampleStep] = useState<"form" | "download">("form");
+  const [name, setName] = useState("");
+  const [email, setEmail] = useState("");
   const [recaptchaToken, setRecaptchaToken] = useState<string | null>(null);
   const [recaptchaError, setRecaptchaError] = useState<string | null>(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const recaptchaRef = useRef<ReCAPTCHA>(null);
 
   const [timeLeft, setTimeLeft] = useState({ days: 0, hours: 0, minutes: 0 });
+  const [isLive, setIsLive] = useState(false);
+  const [launchDateDisplay, setLaunchDateDisplay] = useState("February 6");
 
   useEffect(() => {
-    const launchDate = new Date('2026-02-05T00:00:00').getTime();
+    const env = process.env.NEXT_PUBLIC_ENV;
+    let launchDateStr = "2026-02-05T00:00:00"; // Production default
+
+    if (env === "staging") {
+      launchDateStr = "2026-01-28T00:00:00";
+    } else if (env === "development") {
+      launchDateStr = "2024-01-01T00:00:00"; // Creating a past date to open immediately
+    }
+
+    const launchDate = new Date(launchDateStr).getTime();
+
+    // Format display date (e.g., "February 6" or "January 28")
+    const dateObj = new Date(launchDateStr);
+    const month = dateObj.toLocaleString("default", { month: "long" });
+    const day = dateObj.getDate();
+    setLaunchDateDisplay(`${month} ${day}`);
+
+    // Check immediately to avoid delay
+    setIsLive(new Date().getTime() >= launchDate);
 
     const timer = setInterval(() => {
       const now = new Date().getTime();
@@ -330,10 +362,13 @@ export default function DynamicAssessmentPageClient({ config }: DynamicAssessmen
       if (distance > 0) {
         setTimeLeft({
           days: Math.floor(distance / (1000 * 60 * 60 * 24)),
-          hours: Math.floor((distance % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60)),
-          minutes: Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60))
+          hours: Math.floor(
+            (distance % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60),
+          ),
+          minutes: Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60)),
         });
       }
+      setIsLive(now >= launchDate);
     }, 1000);
 
     return () => clearInterval(timer);
@@ -342,7 +377,8 @@ export default function DynamicAssessmentPageClient({ config }: DynamicAssessmen
   // Use provided config or fallback to default
   const assessmentConfig: AssessmentConfig = config || {
     title: "SDET Java Automation Profile – Level 1",
-    description: "Prove your expertise in Selenium WebDriver, API Testing, Core Java, and Testing Fundamentals through our comprehensive, AI-proctored assessment.",
+    description:
+      "Prove your expertise in Selenium WebDriver, API Testing, Core Java, and Testing Fundamentals through our comprehensive, AI-proctored assessment.",
     questions: 20,
     minutes: 25,
     level: "Intermediate",
@@ -351,76 +387,98 @@ export default function DynamicAssessmentPageClient({ config }: DynamicAssessmen
       { name: "Selenium WebDriver", level: "Advanced" },
       { name: "API Testing", level: "Intermediate" },
       { name: "Core Java", level: "Intermediate" },
-      { name: "Testing Fundamentals", level: "Foundation" }
-    ]
+      { name: "Testing Fundamentals", level: "Foundation" },
+    ],
   };
 
   // Calculate question type percentages (static for all assessments)
   const questionTypes: QuestionType[] = [
-    { type: 'Single Choice', count: '55%', icon: CheckCircle, color: 'emerald' },
-    { type: 'Multi-Select & Fill in the Blanks', count: '35%', icon: CheckSquare, color: 'blue' },
-    { type: 'Coding Challenge', count: '5%', icon: Code, color: 'purple' },
-    { type: 'Video Interview', count: '5%', icon: Camera, color: 'orange' }
+    {
+      type: "Single Choice",
+      count: "55%",
+      icon: CheckCircle,
+      color: "emerald",
+    },
+    {
+      type: "Multi-Select & Fill in the Blanks",
+      count: "35%",
+      icon: CheckSquare,
+      color: "blue",
+    },
+    { type: "Coding Challenge", count: "5%", icon: Code, color: "purple" },
+    { type: "Video Interview", count: "5%", icon: Camera, color: "orange" },
   ];
 
   // Static proctoring rules (same for all assessments)
   const proctorRules: ProctorRule[] = [
     {
       icon: Monitor,
-      title: 'Full-Screen Mode Required',
-      description: 'Maintain full-screen throughout the exam. Exiting triggers an automatic violation.',
-      severity: 'critical'
+      title: "Full-Screen Mode Required",
+      description:
+        "Maintain full-screen throughout the exam. Exiting triggers an automatic violation.",
+      severity: "critical",
     },
     {
       icon: Mouse,
-      title: 'No Tab Switching',
-      description: 'Switching tabs or windows is strictly prohibited and monitored.',
-      severity: 'critical'
+      title: "No Tab Switching",
+      description:
+        "Switching tabs or windows is strictly prohibited and monitored.",
+      severity: "critical",
     },
     {
       icon: FileText,
-      title: 'No Copy/Paste or Screenshots',
-      description: 'All clipboard and screenshot activities are blocked and flagged.',
-      severity: 'critical'
+      title: "No Copy/Paste or Screenshots",
+      description:
+        "All clipboard and screenshot activities are blocked and flagged.",
+      severity: "critical",
     },
     {
       icon: Eye,
-      title: 'Maintain Eye Contact',
-      description: 'AI monitors your gaze. Looking away frequently will raise red flags.',
-      severity: 'high'
+      title: "Maintain Eye Contact",
+      description:
+        "AI monitors your gaze. Looking away frequently will raise red flags.",
+      severity: "high",
     },
     {
       icon: MessageSquare,
-      title: 'No Background Conversations',
-      description: 'Audio monitoring detects conversations. Ensure a quiet environment.',
-      severity: 'high'
+      title: "No Background Conversations",
+      description:
+        "Audio monitoring detects conversations. Ensure a quiet environment.",
+      severity: "high",
     },
     {
       icon: Wifi,
-      title: 'Single Device Only',
-      description: 'No additional devices (phones, tablets, laptops) allowed in proximity.',
-      severity: 'high'
+      title: "Single Device Only",
+      description:
+        "No additional devices (phones, tablets, laptops) allowed in proximity.",
+      severity: "high",
     },
     {
       icon: Zap,
-      title: 'No AI Plugins',
-      description: 'Browser extensions and AI tools are automatically detected, flagged, and shown in report as violation.',
-      severity: 'critical'
+      title: "No AI Plugins",
+      description:
+        "Browser extensions and AI tools are automatically detected, flagged, and shown in report as violation.",
+      severity: "critical",
     },
     {
       icon: Camera,
-      title: 'Stay in Camera Frame',
-      description: 'Leaving the camera view for extended periods triggers violations.',
-      severity: 'medium'
-    }
+      title: "Stay in Camera Frame",
+      description:
+        "Leaving the camera view for extended periods triggers violations.",
+      severity: "medium",
+    },
   ];
 
   const getSeverityColor = (severity: string): string => {
     switch (severity) {
-      case 'critical': return 'red';
-      case 'high': return 'orange';
-      case 'medium': return 'yellow';
-      default: return 'slate';
+      case "critical":
+        return "red";
+      case "high":
+        return "orange";
+      case "medium":
+        return "yellow";
+      default:
+        return "slate";
     }
   };
 
@@ -448,8 +506,7 @@ export default function DynamicAssessmentPageClient({ config }: DynamicAssessmen
         try {
           const response = await getContact(email);
           listIds = response.listIds || [];
-        } catch (error) {
-        }
+        } catch (error) {}
         if (!listIds.includes(23)) {
           // Import contact to waitlist
           const importBody = {
@@ -473,10 +530,10 @@ export default function DynamicAssessmentPageClient({ config }: DynamicAssessmen
         }
       }
 
-     // toast.success("Sample questions sent to your email!");
+      // toast.success("Sample questions sent to your email!");
 
       // Proceed to download step
-      setSampleStep('download');
+      setSampleStep("download");
 
       // Trigger PDF download
       handleDownload();
@@ -485,22 +542,28 @@ export default function DynamicAssessmentPageClient({ config }: DynamicAssessmen
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
     } catch (error: any) {
       console.error("Sample Questions Error:", error);
-      toast.error(error.response?.data?.message || "Failed to process your request. Please try again.");
+      toast.error(
+        error.response?.data?.message ||
+          "Failed to process your request. Please try again.",
+      );
     } finally {
       setIsSubmitting(false);
     }
   };
 
   const resetForm = () => {
-    setName('');
-    setEmail('');
+    setName("");
+    setEmail("");
     resetRecaptcha();
   };
 
   const handleDownload = () => {
-    console.log('Downloading sample questions from:', assessmentConfig.sampleQuestionsHref);
+    console.log(
+      "Downloading sample questions from:",
+      assessmentConfig.sampleQuestionsHref,
+    );
     // In production, trigger actual download
-    window.open(assessmentConfig.sampleQuestionsHref, '_blank');
+    window.open(assessmentConfig.sampleQuestionsHref, "_blank");
   };
 
   const handleNotifyMe = () => {
@@ -509,7 +572,7 @@ export default function DynamicAssessmentPageClient({ config }: DynamicAssessmen
 
   const closeSampleModal = () => {
     setIsSampleModalOpen(false);
-    setSampleStep('form');
+    setSampleStep("form");
     resetForm();
   };
 
@@ -537,11 +600,15 @@ export default function DynamicAssessmentPageClient({ config }: DynamicAssessmen
             <div className="flex flex-wrap gap-4 mb-8">
               <div className="flex items-center gap-2 px-4 py-2 rounded-lg bg-white/10 backdrop-blur-sm border border-white/20">
                 <FileText className="w-5 h-5" />
-                <span className="font-semibold">{assessmentConfig.questions} Questions</span>
+                <span className="font-semibold">
+                  {assessmentConfig.questions} Questions
+                </span>
               </div>
               <div className="flex items-center gap-2 px-4 py-2 rounded-lg bg-white/10 backdrop-blur-sm border border-white/20">
                 <Clock className="w-5 h-5" />
-                <span className="font-semibold">{assessmentConfig.minutes} Minutes</span>
+                <span className="font-semibold">
+                  {assessmentConfig.minutes} Minutes
+                </span>
               </div>
               <div className="flex items-center gap-2 px-4 py-2 rounded-lg bg-white/10 backdrop-blur-sm border border-white/20">
                 <BarChart3 className="w-5 h-5" />
@@ -565,8 +632,12 @@ export default function DynamicAssessmentPageClient({ config }: DynamicAssessmen
       <section className="py-10 bg-white">
         <div className="max-w-7xl mx-auto px-6">
           <div className="text-center mb-6">
-            <h2 className="text-3xl font-bold text-slate-900 mb-2">Skills Assessed</h2>
-            <p className="text-sm text-slate-600">Critical areas evaluated in this assessment</p>
+            <h2 className="text-3xl font-bold text-slate-900 mb-2">
+              Skills Assessed
+            </h2>
+            <p className="text-sm text-slate-600">
+              Critical areas evaluated in this assessment
+            </p>
           </div>
 
           <div className="grid md:grid-cols-2 gap-4 max-w-4xl mx-auto">
@@ -575,11 +646,18 @@ export default function DynamicAssessmentPageClient({ config }: DynamicAssessmen
                 key={idx}
                 className="flex items-center justify-between p-4 rounded-xl bg-white border-2 border-slate-200 hover:border-blue-400 hover:shadow-lg transition-all"
               >
-                <h3 className="text-base font-bold text-slate-900">{skill.name}</h3>
-                <span className={`px-3 py-1 rounded-full text-xs font-bold ${skill.level === 'Advanced' ? 'bg-purple-100 text-purple-700 border border-purple-300' :
-                  skill.level === 'Intermediate' ? 'bg-blue-100 text-blue-700 border border-blue-300' :
-                    'bg-emerald-100 text-emerald-700 border border-emerald-300'
-                  }`}>
+                <h3 className="text-base font-bold text-slate-900">
+                  {skill.name}
+                </h3>
+                <span
+                  className={`px-3 py-1 rounded-full text-xs font-bold ${
+                    skill.level === "Advanced"
+                      ? "bg-purple-100 text-purple-700 border border-purple-300"
+                      : skill.level === "Intermediate"
+                        ? "bg-blue-100 text-blue-700 border border-blue-300"
+                        : "bg-emerald-100 text-emerald-700 border border-emerald-300"
+                  }`}
+                >
                   {skill.level}
                 </span>
               </div>
@@ -592,7 +670,9 @@ export default function DynamicAssessmentPageClient({ config }: DynamicAssessmen
       <section className="py-10 bg-slate-50">
         <div className="max-w-7xl mx-auto px-6">
           <div className="text-center mb-6">
-            <h2 className="text-3xl font-bold text-slate-900 mb-2">Assessment Overview</h2>
+            <h2 className="text-3xl font-bold text-slate-900 mb-2">
+              Assessment Overview
+            </h2>
             <p className="text-sm text-slate-600">Key exam details</p>
           </div>
 
@@ -602,7 +682,9 @@ export default function DynamicAssessmentPageClient({ config }: DynamicAssessmen
                 <FileText className="w-6 h-6 text-blue-600" />
               </div>
               <div>
-                <p className="text-3xl font-bold text-blue-600">{assessmentConfig.questions}</p>
+                <p className="text-3xl font-bold text-blue-600">
+                  {assessmentConfig.questions}
+                </p>
                 <p className="text-sm text-slate-600">Questions</p>
               </div>
             </div>
@@ -612,7 +694,9 @@ export default function DynamicAssessmentPageClient({ config }: DynamicAssessmen
                 <Clock className="w-6 h-6 text-emerald-600" />
               </div>
               <div>
-                <p className="text-3xl font-bold text-emerald-600">{assessmentConfig.minutes}</p>
+                <p className="text-3xl font-bold text-emerald-600">
+                  {assessmentConfig.minutes}
+                </p>
                 <p className="text-sm text-slate-600">Minutes</p>
               </div>
             </div>
@@ -622,7 +706,9 @@ export default function DynamicAssessmentPageClient({ config }: DynamicAssessmen
                 <BarChart3 className="w-6 h-6 text-purple-600" />
               </div>
               <div>
-                <p className="text-lg font-bold text-purple-600">{assessmentConfig.level}</p>
+                <p className="text-lg font-bold text-purple-600">
+                  {assessmentConfig.level}
+                </p>
                 <p className="text-sm text-slate-600">Difficulty</p>
               </div>
             </div>
@@ -644,7 +730,9 @@ export default function DynamicAssessmentPageClient({ config }: DynamicAssessmen
       <section className="py-10 bg-white">
         <div className="max-w-7xl mx-auto px-6">
           <div className="text-center mb-6">
-            <h2 className="text-3xl font-bold text-slate-900 mb-2">Question Format Breakdown</h2>
+            <h2 className="text-3xl font-bold text-slate-900 mb-2">
+              Question Format Breakdown
+            </h2>
             <p className="text-sm text-slate-600">Diverse question types</p>
           </div>
 
@@ -658,21 +746,31 @@ export default function DynamicAssessmentPageClient({ config }: DynamicAssessmen
 
                 <div className="relative">
                   <div className="flex items-center gap-3 mb-3">
-                    <div className={`p-3 rounded-lg bg-${type.color}-100 border border-${type.color}-300`}>
+                    <div
+                      className={`p-3 rounded-lg bg-${type.color}-100 border border-${type.color}-300`}
+                    >
                       <type.icon className={`w-6 h-6 text-${type.color}-600`} />
                     </div>
                     <div>
-                      <h3 className="text-2xl font-bold text-slate-900">{type.count}</h3>
+                      <h3 className="text-2xl font-bold text-slate-900">
+                        {type.count}
+                      </h3>
                       <p className="text-xs text-slate-600">of exam</p>
                     </div>
                   </div>
 
-                  <h4 className="text-base font-bold text-slate-900 mb-2">{type.type}</h4>
+                  <h4 className="text-base font-bold text-slate-900 mb-2">
+                    {type.type}
+                  </h4>
                   <p className="text-sm text-slate-600 leading-relaxed">
-                    {type.type === 'Single Choice' && 'Choose correct answer from options. Tests fundamental knowledge.'}
-                    {type.type === 'Multi-Select & Fill in the Blanks' && 'Select multiple answers or complete code. Evaluates comprehension.'}
-                    {type.type === 'Coding Challenge' && 'Write functional code for real-world problems. Tests coding ability.'}
-                    {type.type === 'Video Interview' && 'Record video response to testing scenario. Assesses communication.'}
+                    {type.type === "Single Choice" &&
+                      "Choose correct answer from options. Tests fundamental knowledge."}
+                    {type.type === "Multi-Select & Fill in the Blanks" &&
+                      "Select multiple answers or complete code. Evaluates comprehension."}
+                    {type.type === "Coding Challenge" &&
+                      "Write functional code for real-world problems. Tests coding ability."}
+                    {type.type === "Video Interview" &&
+                      "Record video response to testing scenario. Assesses communication."}
                   </p>
                 </div>
               </div>
@@ -686,8 +784,12 @@ export default function DynamicAssessmentPageClient({ config }: DynamicAssessmen
         <div className="max-w-6xl mx-auto px-6">
           <div className="text-center mb-6">
             <Lock className="w-10 h-10 text-blue-600 mx-auto mb-2" />
-            <h2 className="text-3xl font-bold text-slate-900 mb-2">Candidate Validation</h2>
-            <p className="text-sm text-slate-600">Identity verification for assessment integrity</p>
+            <h2 className="text-3xl font-bold text-slate-900 mb-2">
+              Candidate Validation
+            </h2>
+            <p className="text-sm text-slate-600">
+              Identity verification for assessment integrity
+            </p>
           </div>
 
           <div className="space-y-6">
@@ -697,9 +799,13 @@ export default function DynamicAssessmentPageClient({ config }: DynamicAssessmen
                   <Camera className="w-7 h-7 text-blue-600" />
                 </div>
                 <div className="flex-1">
-                  <h3 className="text-xl font-bold text-slate-900 mb-2">Photo ID Verification</h3>
+                  <h3 className="text-xl font-bold text-slate-900 mb-2">
+                    Photo ID Verification
+                  </h3>
                   <p className="text-sm text-slate-700 leading-relaxed">
-                    Upload <strong>government-issued photo ID</strong>. AI compares ID photo & name with live camera to verify identity match.
+                    Upload <strong>government-issued photo ID</strong>. AI
+                    compares ID photo & name with live camera to verify identity
+                    match.
                   </p>
                 </div>
               </div>
@@ -711,9 +817,12 @@ export default function DynamicAssessmentPageClient({ config }: DynamicAssessmen
                   <Eye className="w-7 h-7 text-emerald-600" />
                 </div>
                 <div className="flex-1">
-                  <h3 className="text-xl font-bold text-slate-900 mb-2">Continuous Live Monitoring</h3>
+                  <h3 className="text-xl font-bold text-slate-900 mb-2">
+                    Continuous Live Monitoring
+                  </h3>
                   <p className="text-sm text-slate-700 mb-3 leading-relaxed">
-                    You authorize monitoring via webcam and screen recording throughout exam.
+                    You authorize monitoring via webcam and screen recording
+                    throughout exam.
                   </p>
                   <div className="grid grid-cols-2 gap-2 text-xs text-slate-700">
                     <div className="flex items-center gap-2">
@@ -748,7 +857,9 @@ export default function DynamicAssessmentPageClient({ config }: DynamicAssessmen
               <AlertTriangle className="w-4 h-4" />
               Strict Enforcement
             </div>
-            <h2 className="text-3xl font-bold text-slate-900 mb-2">Proctoring Standards</h2>
+            <h2 className="text-3xl font-bold text-slate-900 mb-2">
+              Proctoring Standards
+            </h2>
             <p className="text-sm text-slate-600 max-w-3xl mx-auto">
               AI-powered monitoring ensures fair environment
             </p>
@@ -763,19 +874,25 @@ export default function DynamicAssessmentPageClient({ config }: DynamicAssessmen
                   className={`p-4 rounded-lg bg-white border-2 border-${color}-300 hover:shadow-lg transition-all`}
                 >
                   <div className="flex items-start gap-3">
-                    <div className={`p-2 rounded-lg bg-${color}-100 border border-${color}-300 shrink-0`}>
+                    <div
+                      className={`p-2 rounded-lg bg-${color}-100 border border-${color}-300 shrink-0`}
+                    >
                       <rule.icon className={`w-5 h-5 text-${color}-600`} />
                     </div>
                     <div>
                       <div className="flex items-center gap-2 mb-1">
-                        <h3 className="font-bold text-slate-900 text-sm">{rule.title}</h3>
-                        {rule.severity === 'critical' && (
+                        <h3 className="font-bold text-slate-900 text-sm">
+                          {rule.title}
+                        </h3>
+                        {rule.severity === "critical" && (
                           <span className="px-1.5 py-0.5 rounded-full bg-red-100 text-red-700 text-xs font-bold">
                             !
                           </span>
                         )}
                       </div>
-                      <p className="text-xs text-slate-600 leading-relaxed">{rule.description}</p>
+                      <p className="text-xs text-slate-600 leading-relaxed">
+                        {rule.description}
+                      </p>
                     </div>
                   </div>
                 </div>
@@ -787,9 +904,12 @@ export default function DynamicAssessmentPageClient({ config }: DynamicAssessmen
             <div className="flex items-start gap-3">
               <XCircle className="w-8 h-8 text-red-600 shrink-0" />
               <div>
-                <h3 className="text-lg font-bold text-red-900 mb-2">Violation Consequences</h3>
+                <h3 className="text-lg font-bold text-red-900 mb-2">
+                  Violation Consequences
+                </h3>
                 <p className="text-sm text-slate-800 mb-3">
-                  Violations are <strong>automatically flagged</strong> in your assessment report.
+                  Violations are <strong>automatically flagged</strong> in your
+                  assessment report.
                 </p>
                 <div className="grid md:grid-cols-2 gap-2 text-xs text-red-700">
                   <div className="flex items-start gap-2">
@@ -822,9 +942,12 @@ export default function DynamicAssessmentPageClient({ config }: DynamicAssessmen
             <div className="flex items-start gap-3">
               <Shield className="w-7 h-7 text-purple-600 shrink-0" />
               <div>
-                <h3 className="text-base font-bold text-slate-900 mb-1.5">Our Commitment to Fairness</h3>
+                <h3 className="text-base font-bold text-slate-900 mb-1.5">
+                  Our Commitment to Fairness
+                </h3>
                 <p className="text-xs text-slate-700 leading-relaxed">
-                  These measures prevent cheating and maintain integrity. Recordings are securely stored and deleted after 90 days.
+                  These measures prevent cheating and maintain integrity.
+                  Recordings are securely stored and deleted after 90 days.
                 </p>
               </div>
             </div>
@@ -841,14 +964,19 @@ export default function DynamicAssessmentPageClient({ config }: DynamicAssessmen
               Candidate FAQs
             </div>
             <h2 className="text-4xl md:text-5xl font-bold text-slate-900 mb-4">
-              Your Questions <span className="bg-linear-to-r from-blue-600 to-emerald-600 bg-clip-text text-transparent">Answered</span>
+              Your Questions{" "}
+              <span className="bg-linear-to-r from-blue-600 to-emerald-600 bg-clip-text text-transparent">
+                Answered
+              </span>
             </h2>
             <p className="text-lg text-slate-600">
               Everything you need to know about the assessment process
             </p>
           </div>
 
-          <FAQAccordion onDownloadGuideClick={() => setIsSampleModalOpen(true)} />
+          <FAQAccordion
+            onDownloadGuideClick={() => setIsSampleModalOpen(true)}
+          />
         </div>
       </section>
 
@@ -857,7 +985,7 @@ export default function DynamicAssessmentPageClient({ config }: DynamicAssessmen
         <div className="absolute inset-0 bg-[linear-gradient(to_right,#ffffff10_1px,transparent_1px),linear-gradient(to_bottom,#ffffff10_1px,transparent_1px)] bg-size-[64px_64px]"></div>
 
         <div className="relative max-w-4xl mx-auto px-6 text-center">
-          {new Date() >= new Date('2026-02-05T00:00:00') ? (
+          {isLive ? (
             // PHASE 2: Assessments Are Open - UNLOCKED
             <>
               <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-white/20 border border-white/30 text-sm font-semibold mb-4 animate-pulse">
@@ -870,13 +998,17 @@ export default function DynamicAssessmentPageClient({ config }: DynamicAssessmen
               </h2>
 
               <p className="text-xl text-emerald-100 mb-8 max-w-3xl mx-auto">
-                Prove your QA skills through our skill-based assessments and get shortlisted by leading companies.
+                Prove your QA skills through our skill-based assessments and get
+                shortlisted by leading companies.
               </p>
 
               {/* UNLOCKED BUTTON */}
               <div className="mb-8">
                 <div className="relative inline-block">
-                  <button className="cursor-pointer px-12 py-5 rounded-xl bg-white text-emerald-600 font-black text-xl hover:shadow-2xl hover:scale-105 transition-all flex items-center gap-3">
+                  <button
+                    onClick={() => router.push("/authentication")}
+                    className="cursor-pointer px-12 py-5 rounded-xl bg-white text-emerald-600 font-black text-xl hover:shadow-2xl hover:scale-105 transition-all flex items-center gap-3"
+                  >
                     <CheckCircle className="w-6 h-6" />
                     <span>Signup & Begin Assessment</span>
                     <ArrowRight className="w-6 h-6" />
@@ -913,7 +1045,7 @@ export default function DynamicAssessmentPageClient({ config }: DynamicAssessmen
             <>
               <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-yellow-400/20 border border-yellow-400/50 text-yellow-100 text-sm font-semibold mb-4">
                 <Calendar className="w-4 h-4" />
-                Open Window: Feb 6–27, 2026
+                Open Window: {launchDateDisplay}–27, 2026
               </div>
 
               <h2 className="text-4xl md:text-5xl font-bold mb-4">
@@ -922,7 +1054,8 @@ export default function DynamicAssessmentPageClient({ config }: DynamicAssessmen
 
               {/* Dynamic Countdown */}
               <p className="text-xl text-emerald-100 mb-8 max-w-3xl mx-auto">
-                Registration opens in <strong className="text-yellow-300">
+                Registration opens in{" "}
+                <strong className="text-yellow-300">
                   {timeLeft.days} days, {timeLeft.hours} hours
                 </strong>
               </p>
@@ -935,7 +1068,7 @@ export default function DynamicAssessmentPageClient({ config }: DynamicAssessmen
                     className="px-12 py-5 rounded-xl bg-slate-700/50 text-slate-300 font-bold text-xl cursor-not-allowed border-2 border-slate-600 backdrop-blur-sm flex items-center gap-3"
                   >
                     <Lock className="w-6 h-6" />
-                    <span>Signup Opens February 6</span>
+                    <span>Signup Opens {launchDateDisplay}</span>
                   </button>
 
                   {/* Lock Badge */}
@@ -945,14 +1078,17 @@ export default function DynamicAssessmentPageClient({ config }: DynamicAssessmen
                 </div>
 
                 <p className="text-sm text-emerald-200 mt-3">
-                  Button will unlock automatically on Feb 6 at 12:00 AM
+                  Button will unlock automatically on {launchDateDisplay} at
+                  12:00 AM
                 </p>
               </div>
 
               {/* Divider */}
               <div className="flex items-center gap-4 max-w-md mx-auto mb-8">
                 <div className="flex-1 h-px bg-white/20"></div>
-                <span className="text-sm font-semibold text-emerald-200">Meanwhile</span>
+                <span className="text-sm font-semibold text-emerald-200">
+                  Meanwhile
+                </span>
                 <div className="flex-1 h-px bg-white/20"></div>
               </div>
 
@@ -962,16 +1098,18 @@ export default function DynamicAssessmentPageClient({ config }: DynamicAssessmen
                   onClick={handleNotifyMe}
                   className="group cursor-pointer inline-flex items-center justify-center gap-3 px-8 py-4 rounded-xl bg-yellow-400 text-slate-900 font-bold text-lg hover:bg-yellow-300 hover:shadow-2xl transition-all hover:scale-105 whitespace-nowrap"
                 >
-                  <span className='text-wrap'>🔔 Join the List to Get Notified When It's Live!</span>
+                  <span className="text-wrap">
+                    🔔 Join the List to Get Notified When It's Live!
+                  </span>
                   <ArrowRight className="w-5 h-5 group-hover:translate-x-1 transition-transform" />
                 </button>
               </div>
 
               {/* Trust Indicators */}
 
-
               <p className="text-sm text-emerald-200">
-                Take the assessment anytime between Feb 6-27, 2026 • Be first in line when it opens
+                Take the assessment anytime between {launchDateDisplay}-27, 2026
+                • Be first in line when it opens
               </p>
             </>
           )}
@@ -984,7 +1122,10 @@ export default function DynamicAssessmentPageClient({ config }: DynamicAssessmen
           <p className="text-slate-400 mb-2">
             Questions about the assessment process? Contact us at
           </p>
-          <a href="mailto:info@techsmarthire.com" className="text-blue-400 hover:text-blue-300 font-semibold">
+          <a
+            href="mailto:info@techsmarthire.com"
+            className="text-blue-400 hover:text-blue-300 font-semibold"
+          >
             info@techsmarthire.com
           </a>
         </div>
@@ -992,7 +1133,10 @@ export default function DynamicAssessmentPageClient({ config }: DynamicAssessmen
 
       {/* Sample Questions Modal */}
       {isSampleModalOpen && (
-        <div className="fixed inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-start z-50" onClick={closeSampleModal}>
+        <div
+          className="fixed inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-start z-50"
+          onClick={closeSampleModal}
+        >
           <div
             className="bg-white w-full max-w-md h-full shadow-2xl overflow-y-auto animate-slide-in-left"
             onClick={(e) => e.stopPropagation()}
@@ -1000,7 +1144,9 @@ export default function DynamicAssessmentPageClient({ config }: DynamicAssessmen
             <div className="sticky top-0 bg-linear-to-r from-blue-600 to-emerald-600 text-white p-6 flex items-center justify-between">
               <div>
                 <h3 className="text-2xl font-bold">Sample Questions</h3>
-                <p className="text-sm text-blue-100">Get a preview of the assessment</p>
+                <p className="text-sm text-blue-100">
+                  Get a preview of the assessment
+                </p>
               </div>
               <button
                 onClick={closeSampleModal}
@@ -1011,14 +1157,18 @@ export default function DynamicAssessmentPageClient({ config }: DynamicAssessmen
             </div>
 
             <div className="p-6">
-              {sampleStep === 'form' && (
+              {sampleStep === "form" && (
                 <div className="space-y-6">
                   <div className="text-center">
                     <div className="w-16 h-16 rounded-full bg-blue-100 flex items-center justify-center mx-auto mb-4">
                       <FileText className="w-8 h-8 text-blue-600" />
                     </div>
-                    <h4 className="text-xl font-bold text-slate-900 mb-2">Enter Your Details</h4>
-                    <p className="text-sm text-slate-600">Get sample questions to your email and get started</p>
+                    <h4 className="text-xl font-bold text-slate-900 mb-2">
+                      Enter Your Details
+                    </h4>
+                    <p className="text-sm text-slate-600">
+                      Get sample questions to your email and get started
+                    </p>
                   </div>
 
                   <form onSubmit={handleFormSubmit} className="space-y-4">
@@ -1054,18 +1204,24 @@ export default function DynamicAssessmentPageClient({ config }: DynamicAssessmen
                     <div className="flex justify-start">
                       <ReCAPTCHA
                         ref={recaptchaRef}
-                        sitekey={process.env.NEXT_PUBLIC_RECAPTCHA_SITE_KEY || ""}
+                        sitekey={
+                          process.env.NEXT_PUBLIC_RECAPTCHA_SITE_KEY || ""
+                        }
                         onChange={(token: string | null) => {
                           setRecaptchaToken(token);
                           setRecaptchaError(null);
                         }}
                         onExpired={() => {
                           setRecaptchaToken(null);
-                          setRecaptchaError("reCAPTCHA expired. Please complete the challenge again.");
+                          setRecaptchaError(
+                            "reCAPTCHA expired. Please complete the challenge again.",
+                          );
                         }}
                         onErrored={() => {
                           setRecaptchaToken(null);
-                          setRecaptchaError("reCAPTCHA error. Please try again.");
+                          setRecaptchaError(
+                            "reCAPTCHA error. Please try again.",
+                          );
                         }}
                         theme="light"
                         size="normal"
@@ -1098,20 +1254,23 @@ export default function DynamicAssessmentPageClient({ config }: DynamicAssessmen
 
                   <div className="pt-4 border-t border-slate-200">
                     <p className="text-xs text-slate-500 text-center">
-                      By continuing, you agree to receive assessment-related communications
+                      By continuing, you agree to receive assessment-related
+                      communications
                     </p>
                   </div>
                 </div>
               )}
 
-              {sampleStep === 'download' && (
+              {sampleStep === "download" && (
                 <>
                   <div className="space-y-6">
                     <div className="text-center">
                       <div className="w-16 h-16 rounded-full bg-green-100 flex items-center justify-center mx-auto mb-4">
                         <CheckCircle className="w-8 h-8 text-green-600" />
                       </div>
-                      <h4 className="text-xl font-bold text-slate-900 mb-1">Success!</h4>
+                      <h4 className="text-xl font-bold text-slate-900 mb-1">
+                        Success!
+                      </h4>
                       <h6 className="text-md font-semibold text-slate-900 mb-4">
                         Your Sample Questions Are Ready.
                       </h6>
@@ -1127,8 +1286,6 @@ export default function DynamicAssessmentPageClient({ config }: DynamicAssessmen
                       <FileDown className="w-5 h-5" />
                       Download Sample Questions PDF
                     </button>
-
-      
                   </div>
                 </>
               )}
