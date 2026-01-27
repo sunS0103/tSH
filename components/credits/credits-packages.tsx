@@ -259,7 +259,7 @@ export default function CreditsPackages() {
           key={card.tier}
           className={cn(
             "min-w-80 max-w-80 border p-3 rounded-xl h-130 flex flex-col justify-between bg-white",
-            currentPlan?.plan_type === card?.packageType && "border-primary-500",
+            currentPlan?.plan_type === card?.packageType && card.packageType !== "TIER_1" &&  "border-primary-500",
           )}
         >
           <div>
@@ -318,7 +318,7 @@ export default function CreditsPackages() {
           <Button
             variant="secondary"
             onClick={() => handlePurchase(card.packageType)}
-            disabled={currentPlan?.plan_type === card?.packageType}
+            disabled={currentPlan?.plan_type === card?.packageType && card.packageType !== "TIER_1"}
           >
             {currentPlan?.plan_type === card?.packageType
               ? "Current Plan"

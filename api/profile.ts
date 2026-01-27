@@ -194,3 +194,8 @@ export const updateSkills = async (data: {
   const response = await axios.put("/candidate/profile/skills", data);
   return response.data;
 };
+
+export const getProfileCompletionPercentage = async () => {
+  const response = await axios.get("/candidate/dashboard/profile-completion");
+  return response.data;
+};

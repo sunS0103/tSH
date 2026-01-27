@@ -1,4 +1,4 @@
-import { RecruiterJob } from "@/types/job";
+import { Compensation, RecruiterJob } from "@/types/job";
 import { sanitizeHtml } from "@/lib/utils";
 import { cookies } from "next/headers";
 
@@ -15,14 +15,18 @@ export default async function JobDetailsSection({
   const role = cookieStore.get("user_role")?.value;
 
   // Format salary
-  const salaryText = job?.compensation || null;
-
+  const salaryText = (job?.compensation as Compensation)
+    ? `${(job?.compensation as Compensation)?.min_amount} - ${
+        (job?.compensation as Compensation)?.max_amount
+      } ${(job?.compensation as Compensation)?.currency}`
+    : "-";
+  // const salaryText = job?.compensation || null;
 
   // Format experience
   const experienceText = job?.experience_range || null;
-    // job.experience_min_years >= 0 && job.experience_max_years >= 0
-    //   ? `${job.experience_min_years} - ${job.experience_max_years} Years`
-    //   : "-";
+  // job.experience_min_years >= 0 && job.experience_max_years >= 0
+  //   ? `${job.experience_min_years} - ${job.experience_max_years} Years`
+  //   : "-";
 
   // Format work modes
   const workModesText =
@@ -48,8 +52,8 @@ export default async function JobDetailsSection({
     job.job_serving_location === "in-house project"
       ? "Inhouse Project"
       : job.job_serving_location === "client location"
-        ? "Client location"
-        : job.job_serving_location || null;
+      ? "Client location"
+      : job.job_serving_location || null;
 
   // Build array of detail fields
   const detailFields = [

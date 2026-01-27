@@ -102,7 +102,7 @@ export default function TalentCard({
                 }
                 className={cn(
                   "w-4.5 h-4.5",
-                  isFavorite ? "text-primary-500" : "text-primary-500",
+                  isFavorite ? "text-primary-500" : "text-primary-500"
                 )}
               />
             </Button>
@@ -140,7 +140,7 @@ export default function TalentCard({
               icon={isFavorite ? "mdi:cards-heart" : "mdi:cards-heart-outline"}
               className={cn(
                 "w-4.5 h-4.5",
-                isFavorite ? "text-primary-500" : "text-primary-500",
+                isFavorite ? "text-primary-500" : "text-primary-500"
               )}
             />
           </Button>
