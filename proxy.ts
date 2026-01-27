@@ -9,6 +9,9 @@ const publicRoutes = [
   "/anticipation",
   "/for-candidates",
   "/for-recruiters",
+  "/qa-job-fair-feb",
+  "/assessment",
+  "/assessment/*"
 ];
 
 const ROLE_ONLY_ROUTES = {

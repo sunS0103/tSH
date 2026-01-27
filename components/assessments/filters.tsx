@@ -65,7 +65,7 @@ export default function Filters({
         title: key,
         items,
       };
-    }
+    },
   );
 
   return (
@@ -85,7 +85,7 @@ export default function Filters({
               {group.title}
             </AccordionTrigger>
 
-            <AccordionContent className="px-4 text-sm text-gray-700">
+            <AccordionContent className="px-4 text-sm text-slate-700 tra ">
               <div className="flex flex-col gap-2">
                 {group?.items.map((item: { id: string; value: string }) => (
                   <div key={item?.id} className="flex items-center gap-2">
@@ -100,7 +100,7 @@ export default function Filters({
                     />
                     <label
                       htmlFor={item?.id}
-                      className="cursor-pointer max-w-48"
+                      className="cursor-pointer max-w-48 text-slate-700"
                     >
                       {item?.value}
                     </label>

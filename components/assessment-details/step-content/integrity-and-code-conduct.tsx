@@ -1,3 +1,6 @@
+"use client";
+
+import { useEffect, useRef } from "react";
 import { Icon } from "@iconify/react";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Label } from "@/components/ui/label";
@@ -5,12 +8,25 @@ import { Label } from "@/components/ui/label";
 interface IntegrityAndCodeConductProps {
   isConfirmed: boolean;
   onConfirmChange: (isConfirmed: boolean) => void;
+  hasError?: boolean;
 }
 
 export default function IntegrityAndCodeConduct({
   isConfirmed,
   onConfirmChange,
+  hasError,
 }: IntegrityAndCodeConductProps) {
+  const checkboxRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    if (hasError && checkboxRef.current) {
+      checkboxRef.current.scrollIntoView({
+        behavior: "smooth",
+        block: "center",
+      });
+    }
+  }, [hasError]);
+
   return (
     <div>
       <div className="flex items-center gap-2 mb-1">
@@ -76,18 +92,25 @@ export default function IntegrityAndCodeConduct({
 
       <hr className="border-gray-200 my-4" />
 
-      <div className="flex items-center gap-2">
-        <Checkbox
-          id="integrity-and-code-conduct"
-          checked={isConfirmed}
-          onCheckedChange={(checked) => onConfirmChange(Boolean(checked))}
-        />
-        <Label
-          htmlFor="integrity-and-code-conduct"
-          className="inline font-normal"
-        >
-          I agree to follow the integrity policy during assessment.
-        </Label>
+      <div ref={checkboxRef} className="flex flex-col gap-2">
+        <div className="flex items-center gap-2">
+          <Checkbox
+            id="integrity-and-code-conduct"
+            checked={isConfirmed}
+            onCheckedChange={(checked) => onConfirmChange(Boolean(checked))}
+          />
+          <Label
+            htmlFor="integrity-and-code-conduct"
+            className="inline font-normal cursor-pointer"
+          >
+            I agree to follow the integrity policy during assessment.
+          </Label>
+        </div>
+        {hasError && (
+          <p className="text-sm text-red-500 ml-7">
+            Please mark this checkbox to proceed to the next step
+          </p>
+        )}
       </div>
     </div>
   );

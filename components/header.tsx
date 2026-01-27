@@ -44,20 +44,27 @@ function shouldHideHeader(pathname: string | null): boolean {
 }
 // Routes where bottom navigation should be visible
 // Supports exact routes (e.g., "/") and route patterns (e.g., "/assessments/*")
-const BOTTOM_NAV_VISIBLE_ROUTES: string[] = [
-  "/",
-  "/talent-pool",
-  "/assessments",
-  "/jobs",
-];
+// const BOTTOM_NAV_VISIBLE_ROUTES: string[] = [
+//   "/",
+//   "/talent-pool",
+//   "/assessments",
+//   "/jobs",
+// ];
 
 /**
  * Checks if the current pathname matches any route in the visible routes array
  * Supports exact matches and wildcard patterns (e.g., "/route/*")
  */
 const BOTTOM_NAV_VISIBLE_ROUTES_BY_ROLE: Record<string, string[]> = {
-  RECRUITER: ["/dashboard", "/talent-pool", "/assessments", "/jobs", "/jobs/*"],
-  CANDIDATE: ["/dashboard", "/assessments", "/jobs", "/jobs/*"],
+  RECRUITER: [
+    "/dashboard",
+    "/talent-pool",
+    "/assessments",
+    "/jobs",
+    "/jobs/*",
+    "/profile",
+  ],
+  CANDIDATE: ["/dashboard", "/assessments", "/jobs", "/jobs/*", "/profile"],
 };
 
 function shouldShowBottomNav(pathname: string | null, role?: string): boolean {
@@ -103,7 +110,7 @@ export default function Header() {
   const pathname = usePathname();
   const router = useRouter();
   const [role, setRole] = useState<string | undefined>(undefined);
-  const [userDetails, setUserDetails] = useState();
+  const [userDetails, setUserDetails] = useState<any>(null);
   // Track mounted state to prevent hydration mismatch
   // This is necessary because getCookie is client-only and causes SSR/client mismatch
   const [mounted, setMounted] = useState(false);
@@ -189,7 +196,7 @@ export default function Header() {
                       "text-base text-center whitespace-nowrap",
                       isActive
                         ? "text-primary-500 font-semibold"
-                        : "text-gray-800 font-normal",
+                        : "text-slate-700 font-normal",
                     )}
                   >
                     {item.label}
@@ -202,6 +209,9 @@ export default function Header() {
           <div className="flex items-center gap-3">
             {role === "RECRUITER" && (
               <>
+                <div className="text-sm text-gray-900 font-semibold">
+                  Credits: {userDetails?.available_credits}
+                </div>
                 <Button
                   variant="outline"
                   className="md:hidden bg-primary-50 border border-primary-500 flex items-center justify-center rounded-full size-8 hover:bg-primary-100 transition-colors p-0"

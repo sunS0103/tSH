@@ -7,7 +7,11 @@ export const jobFormSchema = z.object({
 
   country_id: z.number().min(1, "Country is required"),
   city_id: z.number().min(1, "City is required"),
-  salary_min: z.string().trim().min(1, "Salary is required"),
+  compensation: z.object({
+    min_amount: z.number().min(1, "Minimum amount is required"),
+    max_amount: z.number().min(1, "Maximum amount is required"),
+    currency: z.string().trim().min(1, "Currency is required"),
+  }),
   experience_min: z.string().min(1, "Minimum experience is required"),
   notice_period: z.string().min(1, "Notice period is required"),
   work_mode: z.array(z.string()).min(1, "Work mode is required"),

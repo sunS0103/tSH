@@ -57,11 +57,14 @@ const mapCandidateToTalentCard = (
   );
 
   // Generate location_code (using first 2 letters of city + last 4 digits of candidate_id)
-  const locationCode = `${(candidate.city || "NA").substring(0, 2).toUpperCase()} ${candidate.user_id.slice(-4)}`;
+  const locationCode = `${(candidate.city || "NA")
+    .substring(0, 2)
+    .toUpperCase()} ${candidate.user_id.slice(-4)}`;
 
   return {
     id: candidate.user_id,
     role: candidate.expertise || "",
+    expertise: candidate.expertise || "",
     location_code: locationCode,
     totalScore: candidate.score,
     skillsAssessed,
@@ -616,7 +619,7 @@ export default function TalentPoolPage() {
   return (
     <>
       <Loader show={isLoading} />
-      <div className="flex flex-col lg:flex-row gap-8 min-h-screen bg-gray-50/50">
+      <div className="flex flex-col lg:flex-row gap-8 min-h-screen bg-gray-50/50 mb-4">
         {/* Sidebar */}
         <div className="shrink-0 lg:w-72">
           <TalentFilterSidebar
@@ -733,7 +736,19 @@ export default function TalentPoolPage() {
             {filteredTalents.map((talent) => (
               <TalentCard
                 key={talent.id}
-                {...talent}
+                id={talent.id}
+                role={talent.role}
+                expertise={talent.expertise}
+                location_code={talent.location_code}
+                totalScore={talent.totalScore}
+                skillsAssessed={talent.skillsAssessed}
+                experience={talent.experience}
+                company={talent.company}
+                availability={talent.availability}
+                location={talent.location}
+                assessmentTaken={talent.assessmentTaken}
+                assessments={talent.assessments}
+                about={talent.about}
                 isSelected={selectedTalents.includes(talent.id)}
                 onSelect={() => toggleTalentSelection(talent.id)}
                 isFavorite={favoriteTalents.includes(talent.id)}

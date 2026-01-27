@@ -1,0 +1,14 @@
+{
+  "title": "Java SDET Automation Engineer - Playwright & API Testing",
+  "description": "Prove your expertise in Playwright, API Testing, Core Java, and Testing Fundamentals through our comprehensive, AI-proctored assessment.",
+  "questions": 20,
+  "minutes": 25,
+  "level": "Intermediate",
+  "sampleQuestionsHref": "/assessment/TSH-SDETJAVA-201.pdf",
+  "skills": [
+    { "name": "Playwright", "level": "Advanced" },
+    { "name": "API Testing", "level": "Intermediate" },
+    { "name": "Core Java", "level": "Intermediate" },
+    { "name": "Testing Fundamentals", "level": "Intermediate" }
+  ]
+}

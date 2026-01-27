@@ -40,11 +40,11 @@ export default function AssessmentStepper({
     mobileSteps = updatedSteps.filter((step) => step.number <= 2);
   } else if (currentStep <= 4) {
     mobileSteps = updatedSteps.filter(
-      (step) => step.number >= 3 && step.number <= 4
+      (step) => step.number >= 3 && step.number <= 4,
     );
   } else {
     mobileSteps = updatedSteps.filter(
-      (step) => step.number >= 5 && step.number <= 6
+      (step) => step.number >= 5 && step.number <= 6,
     );
   }
 
@@ -70,7 +70,7 @@ export default function AssessmentStepper({
           <div
             className="absolute top-3 left-0 h-0.5 z-0 pointer-events-none"
             style={{
-              width: "calc(25% - 0.75rem)",
+              width: `calc(${currentStep === 5 ? "50%" : "25%"} - 0.75rem)`,
               ...(stepBefore.status === "completed"
                 ? {
                     backgroundImage:
@@ -108,8 +108,8 @@ export default function AssessmentStepper({
                     isActive
                       ? "bg-primary border-primary"
                       : isCompleted
-                      ? "bg-success-500 border-success-500"
-                      : "bg-white border-gray-300"
+                        ? "bg-success-500 border-success-500"
+                        : "bg-white border-gray-300",
                   )}
                 >
                   {isCompleted ? (
@@ -130,8 +130,8 @@ export default function AssessmentStepper({
                     isActive
                       ? "text-primary font-semibold"
                       : isCompleted
-                      ? "text-success-600"
-                      : "text-gray-400"
+                        ? "text-success-600"
+                        : "text-gray-400",
                   )}
                 >
                   {step.label}
@@ -152,16 +152,16 @@ export default function AssessmentStepper({
                           backgroundSize: "8px 1px",
                         }
                       : isActive || nextStepActive
-                      ? {
-                          backgroundImage:
-                            "repeating-linear-gradient(to right, #5245e5, #5245e5 4px, transparent 4px, transparent 8px)",
-                          backgroundSize: "8px 1px",
-                        }
-                      : {
-                          backgroundImage:
-                            "repeating-linear-gradient(to right, #D0D5DD, #D0D5DD 4px, transparent 4px, transparent 8px)",
-                          backgroundSize: "8px 1px",
-                        }),
+                        ? {
+                            backgroundImage:
+                              "repeating-linear-gradient(to right, #5245e5, #5245e5 4px, transparent 4px, transparent 8px)",
+                            backgroundSize: "8px 1px",
+                          }
+                        : {
+                            backgroundImage:
+                              "repeating-linear-gradient(to right, #D0D5DD, #D0D5DD 4px, transparent 4px, transparent 8px)",
+                            backgroundSize: "8px 1px",
+                          }),
                   }}
                   aria-hidden="true"
                 />
@@ -175,7 +175,7 @@ export default function AssessmentStepper({
           <div
             className="absolute top-3 right-0 h-0.5 z-0 pointer-events-none"
             style={{
-              width: "calc(25% - 0.75rem)",
+              width: `calc(25% - 0.75rem)`,
               ...(lastVisibleStep?.status === "completed"
                 ? {
                     backgroundImage:
@@ -183,16 +183,16 @@ export default function AssessmentStepper({
                     backgroundSize: "8px 1px",
                   }
                 : lastVisibleStep?.status === "active"
-                ? {
-                    backgroundImage:
-                      "repeating-linear-gradient(to right, #5245e5, #5245e5 4px, transparent 4px, transparent 8px)",
-                    backgroundSize: "8px 1px",
-                  }
-                : {
-                    backgroundImage:
-                      "repeating-linear-gradient(to right, #D0D5DD, #D0D5DD 4px, transparent 4px, transparent 8px)",
-                    backgroundSize: "8px 1px",
-                  }),
+                  ? {
+                      backgroundImage:
+                        "repeating-linear-gradient(to right, #5245e5, #5245e5 4px, transparent 4px, transparent 8px)",
+                      backgroundSize: "8px 1px",
+                    }
+                  : {
+                      backgroundImage:
+                        "repeating-linear-gradient(to right, #D0D5DD, #D0D5DD 4px, transparent 4px, transparent 8px)",
+                      backgroundSize: "8px 1px",
+                    }),
             }}
             aria-hidden="true"
           />
@@ -217,8 +217,8 @@ export default function AssessmentStepper({
                     isActive
                       ? "bg-primary border-primary"
                       : isCompleted
-                      ? "bg-success-500 border-success-500"
-                      : "bg-white border-gray-300"
+                        ? "bg-success-500 border-success-500"
+                        : "bg-white border-gray-300",
                   )}
                 >
                   {isCompleted ? (
@@ -244,16 +244,16 @@ export default function AssessmentStepper({
                             backgroundSize: "1px 8px",
                           }
                         : isActive
-                        ? {
-                            backgroundImage:
-                              "repeating-linear-gradient(to bottom, #5245e5, #5245e5 4px, transparent 4px, transparent 8px)",
-                            backgroundSize: "1px 8px",
-                          }
-                        : {
-                            backgroundImage:
-                              "repeating-linear-gradient(to bottom, #D0D5DD, #D0D5DD 4px, transparent 4px, transparent 8px)",
-                            backgroundSize: "1px 8px",
-                          }
+                          ? {
+                              backgroundImage:
+                                "repeating-linear-gradient(to bottom, #5245e5, #5245e5 4px, transparent 4px, transparent 8px)",
+                              backgroundSize: "1px 8px",
+                            }
+                          : {
+                              backgroundImage:
+                                "repeating-linear-gradient(to bottom, #D0D5DD, #D0D5DD 4px, transparent 4px, transparent 8px)",
+                              backgroundSize: "1px 8px",
+                            }
                     }
                     aria-hidden="true"
                   />
@@ -268,10 +268,10 @@ export default function AssessmentStepper({
                     isCompleted
                       ? "text-success-500"
                       : isActive
-                      ? "text-primary font-semibold"
-                      : isCompleted
-                      ? "text-gray-900"
-                      : "text-gray-400"
+                        ? "text-primary font-semibold"
+                        : isCompleted
+                          ? "text-gray-900"
+                          : "text-slate-700",
                   )}
                 >
                   {step.label}

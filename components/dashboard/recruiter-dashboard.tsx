@@ -95,8 +95,7 @@ export default function RecruiterDashboard() {
                   : job.status === "draft"
                     ? "Draft"
                     : job.status,
-            minExperience: job.experience_min_years || 0,
-            maxExperience: job.experience_max_years || 0,
+            experience_range: job.experience_range || "",
             companyName: job.company_name,
             skills: skillsArray,
             location: job.job_serving_location || job.city?.name || "",
@@ -155,8 +154,9 @@ export default function RecruiterDashboard() {
   // Helper function to map candidate to talent card format
   const mapCandidateToTalentCard = (candidate: Candidate) => {
     return {
-      id: candidate.candidate_id,
+      id: candidate.user_id,
       role: candidate.expertise || "N/A",
+      expertise: candidate.expertise || "N/A",
       location_code: candidate.location || "N/A",
       totalScore: candidate.score || 0,
       skillsAssessed: candidate.skills_assessed?.map((s) => s.skill_name) || [],
@@ -193,7 +193,7 @@ export default function RecruiterDashboard() {
             You are on Free Plan
           </h3>
         </div>
-        <p className="text-sm font-medium text-gray-700">
+        <p className="text-sm font-medium text-slate-700">
           Unlock up to 3 candidate profiles and discover amazing talent waiting
           for opportunities.
         </p>
@@ -427,11 +427,23 @@ export default function RecruiterDashboard() {
                 </Button>
               </div>
             ) : (
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <div className="grid grid-cols-1 gap-4">
                 {favoriteTalents.map((talent) => (
                   <TalentCard
                     key={talent.id}
-                    {...talent}
+                    id={talent.id}
+                    role={talent.role}
+                    expertise={talent.expertise}
+                    location_code={talent.location_code}
+                    totalScore={talent.totalScore}
+                    skillsAssessed={talent.skillsAssessed}
+                    experience={talent.experience}
+                    company={talent.company}
+                    availability={talent.availability}
+                    location={talent.location}
+                    assessmentTaken={talent.assessmentTaken}
+                    assessments={talent.assessments}
+                    about={talent.about}
                     isFavorite={talent.isFavorite}
                     onToggleFavorite={() => {}}
                   />

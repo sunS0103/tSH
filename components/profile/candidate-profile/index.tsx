@@ -8,6 +8,8 @@ import { Progress } from "@/components/ui/progress";
 import { format } from "date-fns";
 import ProfileSection from "./profile-section";
 import Image from "next/image";
+import { useEffect, useState } from "react";
+import { getProfileCompletionPercentage } from "@/api/profile";
 
 interface ProfileData {
   first_name: string;
@@ -131,58 +133,68 @@ export default function CandidateProfile({
   skillsData: SkillsData | null;
 }) {
   const router = useRouter();
+  const [progress, setProgress] = useState<number>(0);
+
+  useEffect(() => {
+    const fetchProfileCompletionPercentage = async () => {
+      const profileCompletionPercentage =
+        await getProfileCompletionPercentage();
+      setProgress(profileCompletionPercentage.total_percentage);
+    };
+    fetchProfileCompletionPercentage();
+  }, []);
 
   // Calculate profile completion percentage
-  const calculateProgress = (): number => {
-    let progress = 0;
+  // const calculateProgress = (): number => {
+  //   let progress = 0;
 
-    // Account & Identity: 10%
+  //   // Account & Identity: 10%
 
-    if (
-      profileData?.email &&
-      profileData?.first_name &&
-      profileData?.last_name
-    ) {
-      progress += 10;
-    }
+  //   if (
+  //     profileData?.email &&
+  //     profileData?.first_name &&
+  //     profileData?.last_name
+  //   ) {
+  //     progress += 10;
+  //   }
 
-    if (
-      profileData?.email &&
-      profileData?.gender &&
-      profileData?.account_type
-    ) {
-      progress += 10;
-    }
+  //   if (
+  //     profileData?.email &&
+  //     profileData?.gender &&
+  //     profileData?.account_type
+  //   ) {
+  //     progress += 10;
+  //   }
 
-    // Skills & Domains: 10%
-    if (skillsData?.primary_skill_category?.id) {
-      progress += 10;
-    }
+  //   // Skills & Domains: 10%
+  //   if (skillsData?.primary_skill_category?.id) {
+  //     progress += 10;
+  //   }
 
-    // Personal & Social: 20%
-    if (personalSocialData?.headline) {
-      progress += 20;
-    }
+  //   // Personal & Social: 20%
+  //   if (personalSocialData?.headline) {
+  //     progress += 20;
+  //   }
 
-    // Current Employment Details: 20%
-    if (currentEmployment?.employment_status) {
-      progress += 20;
-    }
+  //   // Current Employment Details: 20%
+  //   if (currentEmployment?.employment_status) {
+  //     progress += 20;
+  //   }
 
-    // Location & Work Preferences: 20%
-    if (locationAndWorkPreferencesData?.current_city?.id) {
-      progress += 20;
-    }
+  //   // Location & Work Preferences: 20%
+  //   if (locationAndWorkPreferencesData?.current_city?.id) {
+  //     progress += 20;
+  //   }
 
-    // Education: 20%
-    if (educationData?.academic_status) {
-      progress += 10;
-    }
+  //   // Education: 20%
+  //   if (educationData?.academic_status) {
+  //     progress += 10;
+  //   }
 
-    return progress;
-  };
+  //   return progress;
+  // };
 
-  const progress = calculateProgress();
+  // const progress = calculateProgress();
 
   const personalAndSocialData = [
     { label: "Short Headline", value: personalSocialData?.headline },

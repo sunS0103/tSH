@@ -47,7 +47,7 @@ export default function EditIdentityAndAccount() {
   const [selectedCountryCode, setSelectedCountryCode] =
     useState<string>(initialDialCode);
   const [selectedCountryName, setSelectedCountryName] = useState<string>(
-    profileData?.country || ""
+    profileData?.country || "",
   );
 
   const editAccountSchema = z.object({
@@ -66,7 +66,7 @@ export default function EditIdentityAndAccount() {
       ["Student", "Working Professional", "Fresher", "Other", ""],
       {
         message: "Please select account type",
-      }
+      },
     ),
     country_code: z.string().optional(),
   });
@@ -134,7 +134,7 @@ export default function EditIdentityAndAccount() {
         const date = new Date(
           parseInt(year),
           parseInt(month) - 1,
-          parseInt(day)
+          parseInt(day),
         );
         dateOfBirthTimestamp = date.getTime();
       } else {
@@ -175,7 +175,7 @@ export default function EditIdentityAndAccount() {
               dial_code: selectedCountryCode,
               country: selectedCountryName,
               role: role === "CANDIDATE" ? "CANDIDATE" : "RECRUITER",
-            })
+            }),
           );
           router.push("/profile");
         }
@@ -254,7 +254,7 @@ export default function EditIdentityAndAccount() {
                         <RadioGroupItem value="Male" id="Male" />
                         <Label
                           htmlFor="Male"
-                          className="font-normal text-gray-500"
+                          className="font-normal text-slate-700"
                         >
                           Male
                         </Label>
@@ -263,7 +263,7 @@ export default function EditIdentityAndAccount() {
                         <RadioGroupItem value="Female" id="Female" />
                         <Label
                           htmlFor="Female"
-                          className="font-normal text-gray-500"
+                          className="font-normal text-slate-700"
                         >
                           Female
                         </Label>
@@ -324,7 +324,7 @@ export default function EditIdentityAndAccount() {
                             // Remove any non-numeric characters
                             const numericValue = e.target.value.replace(
                               /\D/g,
-                              ""
+                              "",
                             );
                             e.target.value = numericValue;
                             field.onChange(numericValue);
@@ -383,7 +383,7 @@ export default function EditIdentityAndAccount() {
                             variant="outline"
                             className={cn(
                               "w-full justify-start text-left font-normal",
-                              !field.value && "text-muted-foreground"
+                              !field.value && "text-muted-foreground",
                             )}
                           >
                             <CalendarIcon className="mr-2 h-4 w-4" />
