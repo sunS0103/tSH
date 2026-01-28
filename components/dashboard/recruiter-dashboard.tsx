@@ -91,10 +91,10 @@ export default function RecruiterDashboard() {
               job.status === "published"
                 ? "Active"
                 : job.status === "in_review"
-                  ? "In Review"
-                  : job.status === "draft"
-                    ? "Draft"
-                    : job.status,
+                ? "In Review"
+                : job.status === "draft"
+                ? "Draft"
+                : job.status,
             experience_range: job.experience_range || "",
             companyName: job.company_name,
             skills: skillsArray,
@@ -113,7 +113,7 @@ export default function RecruiterDashboard() {
         });
         if (talentsRes?.data) {
           const mappedTalents = talentsRes.data.map((candidate: Candidate) =>
-            mapCandidateToTalentCard(candidate),
+            mapCandidateToTalentCard(candidate)
           );
           setFavoriteTalents(mappedTalents.slice(0, 2));
         }
@@ -194,7 +194,7 @@ export default function RecruiterDashboard() {
           </h3>
         </div>
         <p className="text-sm font-medium text-slate-700">
-          Unlock up to 3 candidate profiles and discover amazing talent waiting
+          Unlock up to 10 candidate profiles and discover amazing talent waiting
           for opportunities.
         </p>
         <Button
