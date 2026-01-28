@@ -76,7 +76,7 @@ export default function AssessmentRecruiterCard({
                 <Badge
                   key={index}
                   variant="outline"
-                  className="border-gray-300 text-black text-xs font-normal px-2 py-1 rounded-full"
+                  className="border-gray-300 text-slate-900 text-xs font-medium px-2 py-1 rounded-full"
                 >
                   {topic.value}
                 </Badge>
