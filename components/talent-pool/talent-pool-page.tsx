@@ -51,10 +51,11 @@ const mapCandidateToTalentCard = (
     (skill) => skill.skill_name,
   );
 
-  // Extract assessment titles or IDs
-  const assessmentTaken = candidate.assessments_taken.map(
-    (assessment) => assessment.assessment_title || assessment.assessment_id,
-  );
+  // Extract assessment titles and slugs
+  const assessmentTaken = candidate.assessments_taken.map((assessment) => ({
+    title: assessment.assessment_title || assessment.assessment_id,
+    slug: assessment.assessment_slug || "#",
+  }));
 
   // Generate location_code (using first 2 letters of city + last 4 digits of candidate_id)
   const locationCode = `${(candidate.city || "NA")
@@ -731,7 +732,6 @@ export default function TalentPoolPage() {
               />
             </div>
           </div>
-
           <div className="flex flex-col gap-5">
             {filteredTalents.map((talent) => (
               <TalentCard
@@ -755,7 +755,6 @@ export default function TalentPoolPage() {
                 onToggleFavorite={() => toggleFavorite(talent.id)}
               />
             ))}
-
             {!isLoading && filteredTalents.length === 0 && (
               <div className="w-full">
                 <NoDataFound
@@ -774,7 +773,6 @@ export default function TalentPoolPage() {
               </div>
             )}
           </div>
-
           {totalPages > 1 && (
             <div className="mt-8">
               <AssessmentPagination
