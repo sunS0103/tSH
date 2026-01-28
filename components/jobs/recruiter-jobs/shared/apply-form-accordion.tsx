@@ -34,7 +34,7 @@ interface CustomField {
 
 export default function ApplyFormAccordion({ form }: ApplyFormAccordionProps) {
   const [customFields, setCustomFields] = useState<CustomField[]>(
-    form.getValues("apply_form_fields") || []
+    form.getValues("apply_form_fields") || [],
   );
   const [newFieldTitle, setNewFieldTitle] = useState("");
   const [newFieldType, setNewFieldType] = useState("text");
@@ -89,171 +89,118 @@ export default function ApplyFormAccordion({ form }: ApplyFormAccordionProps) {
         </AccordionTrigger>
         <AccordionContent className="bg-white rounded-b-2xl px-4 sm:px-6 py-4">
           <div className="space-y-4">
-            {/* Default Fields */}
             <div className="space-y-4">
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                <div className="space-y-2">
-                  <Label className="text-sm font-medium text-gray-950">
-                    Current Company
+              <div className="space-y-4">
+                {/* Merged Fields Section */}
+                <div>
+                  <Label className="text-sm font-semibold text-gray-950 block mb-4">
+                    Candidate Information
                   </Label>
-                  <Input
-                    placeholder="Enter Current Company"
-                    disabled
-                    className="h-8"
-                  />
-                </div>
-                <div className="space-y-2">
-                  <Label className="text-sm font-medium text-gray-950">
-                    Notice Period
-                  </Label>
-                  <Select disabled>
-                    <SelectTrigger className="h-8 w-full">
-                      <SelectValue placeholder="Select Notice Period" />
-                    </SelectTrigger>
-                  </Select>
-                </div>
-                <div className="space-y-2">
-                  <Label className="text-sm font-medium text-gray-950">
-                    Expected CTC
-                  </Label>
-                  <Input
-                    placeholder="Enter Expected CTC"
-                    disabled
-                    className="h-8"
-                  />
-                </div>
-                <div className="space-y-2">
-                  <Label className="text-sm font-medium text-gray-950">
-                    Visa status
-                  </Label>
-                  <Input
-                    placeholder="Enter Visa status"
-                    disabled
-                    className="h-8"
-                  />
-                </div>
-                <div className="space-y-2 col-span-1 sm:col-span-2">
-                  <Label className="text-sm font-medium text-gray-950">
-                    About yourself
-                  </Label>
-                  <Textarea
-                    placeholder="Enter about yourself"
-                    disabled
-                    className="min-h-[99px]"
-                  />
-                </div>
-              </div>
-            </div>
+                  <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
+                    {/* Default Fields - Read Only Cards */}
+                    {[
+                      "Current Company",
+                      "Notice Period",
+                      "Expected CTC",
+                      "Visa status",
+                      "About yourself",
+                    ].map((label) => (
+                      <div
+                        key={label}
+                        className="bg-gray-50 border border-gray-200 rounded-lg px-3 py-2.5 flex items-center justify-between group"
+                      >
+                        <span className="text-sm font-medium text-gray-700">
+                          {label}
+                        </span>
 
-            {/* Custom Fields */}
-            <div className="space-y-3">
-              <h4 className="text-sm font-semibold text-gray-950">
-                Would you like to add a custom field here?
-              </h4>
+                        <Icon
+                          icon="mdi:lock-outline"
+                          className="w-4 h-4 text-gray-400"
+                        />
+                      </div>
+                    ))}
 
-              {/* Preview of Added Fields */}
-              {customFields.length > 0 && (
-                <div className="space-y-2 border-t pt-4">
-                  <p className="text-xs font-medium text-gray-600 mb-2">
-                    Added Fields:
-                  </p>
-                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                    {/* Custom Fields - Read Only Cards with Delete */}
                     {customFields.map((field) => (
                       <div
                         key={field.title + field.id}
-                        className={`flex items-end gap-2 ${
-                          field.type === "textarea"
-                            ? "col-span-1 sm:col-span-2"
-                            : ""
-                        }`}
+                        className="bg-white border border-primary-100 rounded-lg px-3 py-2.5 flex items-center justify-between group hover:border-primary-300 transition-colors shadow-sm"
                       >
-                        <div className="flex-1">
-                          <div className="space-y-2">
-                            <Label className="text-sm font-medium text-gray-950">
-                              {field.title}
-                            </Label>
-                            {field.type === "textarea" ? (
-                              <Textarea
-                                placeholder={`Enter ${field.title.toLowerCase()}`}
-                                disabled
-                                className="min-h-[99px]"
-                              />
-                            ) : field.type === "select" ? (
-                              <Select disabled>
-                                <SelectTrigger className="h-8 w-full">
-                                  <SelectValue
-                                    placeholder={`Select ${field.title}`}
-                                  />
-                                </SelectTrigger>
-                              </Select>
-                            ) : (
-                              <Input
-                                type={field.type}
-                                placeholder={`Enter ${field.title.toLowerCase()}`}
-                                disabled
-                                className="h-8"
-                              />
-                            )}
-                          </div>
+                        <div className="flex items-center gap-2 overflow-hidden">
+                          <Icon
+                            icon={
+                              field.type === "textarea"
+                                ? "mdi:text-box-outline"
+                                : "mdi:format-text"
+                            }
+                            className="w-4 h-4 text-primary-500 shrink-0"
+                          />
+                          <span className="text-sm font-medium text-gray-900 truncate">
+                            {field.title}
+                          </span>
                         </div>
                         <Button
                           type="button"
                           variant="ghost"
                           size="sm"
                           onClick={() => removeCustomField(field.id)}
-                          className="h-8 w-8 p-0 hover:bg-red-50 hover:text-red-600"
+                          className="h-6 w-6 p-0 hover:bg-red-50 text-gray-400 hover:text-red-600 rounded-full"
                         >
-                          <Icon icon="mdi:delete" className="w-4 h-4" />
+                          <Icon icon="mdi:close" className="w-3.5 h-3.5" />
                         </Button>
                       </div>
                     ))}
                   </div>
                 </div>
-              )}
 
-              {/* Add New Field Form */}
-              <div className="space-y-3 border-t pt-4">
-                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                  <div className="space-y-2">
-                    <Label className="text-sm font-medium text-gray-950">
-                      Field Title
-                    </Label>
-                    <Input
-                      placeholder="Enter Title"
-                      value={newFieldTitle}
-                      onChange={(e) => {
-                        setNewFieldTitle(e.target.value);
-                        if (fieldTitleError) {
-                          setFieldTitleError("");
-                        }
-                      }}
-                      className="h-8"
-                    />
-                    {fieldTitleError && (
-                      <p className="text-destructive text-sm">
-                        {fieldTitleError}
-                      </p>
-                    )}
-                  </div>
-                  <div className="space-y-2">
-                    <Label className="text-sm font-medium text-gray-950">
-                      Field Type
-                    </Label>
-                    <Select
-                      value={newFieldType}
-                      onValueChange={setNewFieldType}
-                    >
-                      <SelectTrigger className="h-8 w-full">
-                        <SelectValue placeholder="Select Type" />
-                      </SelectTrigger>
-                      <SelectContent className="w-full">
-                        {fieldTypes.map((type) => (
-                          <SelectItem key={type.value} value={type.value}>
-                            {type.label}
-                          </SelectItem>
-                        ))}
-                      </SelectContent>
-                    </Select>
+                {/* Add New Field Form */}
+                <div className="space-y-3 pt-4 border-t border-gray-100">
+                  <h4 className="text-sm font-semibold text-gray-950">
+                    Would you like to add a custom field here?
+                  </h4>
+                  <div className="flex gap-2 w-full">
+                    <div className="space-y-2 w-full">
+                      <Label className="text-sm font-medium text-gray-950">
+                        Field Title
+                      </Label>
+                      <Input
+                        placeholder="Enter Title"
+                        value={newFieldTitle}
+                        onChange={(e) => {
+                          setNewFieldTitle(e.target.value);
+                          if (fieldTitleError) {
+                            setFieldTitleError("");
+                          }
+                        }}
+                        className="h-9"
+                      />
+                      {fieldTitleError && (
+                        <p className="text-destructive text-sm">
+                          {fieldTitleError}
+                        </p>
+                      )}
+                    </div>
+
+                    <div className="space-y-2 w-full">
+                      <Label className="text-sm font-medium text-gray-950">
+                        Field Type
+                      </Label>
+                      <Select
+                        value={newFieldType}
+                        onValueChange={setNewFieldType}
+                      >
+                        <SelectTrigger className="h-8 w-full">
+                          <SelectValue placeholder="Select Type" />
+                        </SelectTrigger>
+                        <SelectContent className="w-full">
+                          {fieldTypes.map((type) => (
+                            <SelectItem key={type.value} value={type.value}>
+                              {type.label}
+                            </SelectItem>
+                          ))}
+                        </SelectContent>
+                      </Select>
+                    </div>
                   </div>
                 </div>
                 <div className="flex justify-end">

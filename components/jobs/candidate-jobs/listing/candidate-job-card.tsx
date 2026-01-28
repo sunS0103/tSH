@@ -109,7 +109,7 @@ export default function CandidateJobCard({
           {/* Row 2: Relevant Assessments */}
           {assessments.length > 0 && (
             <div className="flex flex-col items-start gap-2 w-full">
-              <span className="text-[10px] uppercase text-gray-900 font-normal font-sans">
+              <span className="text-xs font-medium uppercase text-slate-900 font-sans">
                 Relevant Assessments
               </span>
               <div className="flex items-center gap-2 flex-wrap">
@@ -120,7 +120,7 @@ export default function CandidateJobCard({
                       href={`/assessments/${assessment.slug}`}
                       key={assessment.id || index}
                       className={cn(
-                        "text-xs font-normal italic px-3 py-1 rounded-full border-none underline bg-gray-100 text-gray-700 hover:bg-primary-50 hover:text-primary-500 transition-all duration-300",
+                        "text-xs font-medium  px-3 py-1 rounded-full border-none underline bg-gray-100 hover:bg-primary-50 hover:text-primary-500 transition-all duration-300",
                       )}
                       onClick={(e) => e.stopPropagation()}
                     >
@@ -128,7 +128,7 @@ export default function CandidateJobCard({
                         key={assessment.id || index}
                         variant="outline"
                         className={cn(
-                          "text-xs font-medium italic px-3 py-1 rounded-full border-none underline bg-gray-100 text-gray-700 hover:bg-primary-50 hover:text-primary-500 transition-all duration-300",
+                          "text-xs text-slate-700 font-medium italic px-3 py-1 rounded-full border-none underline bg-gray-100  hover:bg-primary-50 hover:text-primary-500 transition-all duration-300",
                         )}
                       >
                         {assessment.title || `EXAM-${assessment.id}`}
@@ -143,7 +143,7 @@ export default function CandidateJobCard({
                       <TooltipTrigger asChild>
                         <Badge
                           variant="outline"
-                          className="cursor-pointer text-xs font-medium italic px-3 py-1 rounded-full border-none bg-gray-100 text-gray-700 hover:bg-primary-50 hover:text-primary-500 transition-all duration-300"
+                          className="cursor-pointer text-xs font-medium italic px-3 py-1 rounded-full border-none bg-gray-100 text-slate-900 hover:bg-primary-50 hover:text-primary-500 transition-all duration-300"
                           onClick={(e) => e.stopPropagation()}
                         >
                           +{assessments.length - 3}
