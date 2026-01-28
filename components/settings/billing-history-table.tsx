@@ -25,7 +25,6 @@ export default function BillingHistoryTable() {
       setTotalPages(
         Math.ceil(response.data.meta.totalItems / ITEMS_PER_PAGE || 1)
       );
-      console.log(response.data);
     };
     fetchBillingHistory();
   }, [currentPage]);
