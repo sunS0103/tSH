@@ -96,19 +96,19 @@ export default function JobCard({
           {/* Row 1: Exp + Company */}
           <div className="flex justify-between items-start w-full">
             <div className="flex-1 flex flex-col items-start gap-1">
-              <span className="text-xs uppercase text-slate-900 font-medium font-sans">
+              <span className="text-xs uppercase text-slate-900 font-semibold font-sans">
                 Years of Experience
               </span>
-              <span className="text-xs font-normal font-sans text-gray-950">
+              <span className="text-xs font-medium font-sans text-gray-950">
                 {experienceRange}
               </span>
             </div>
             <div className="flex-1 flex flex-col items-start gap-1">
-              <span className="text-xs uppercase text-slate-900 font-medium font-sans">
+              <span className="text-xs uppercase text-slate-900 font-semibold font-sans">
                 Company Name
               </span>
               <span
-                className="text-xs font-normal font-sans text-gray-950 truncate w-full"
+                className="text-xs font-medium font-sans text-gray-950 truncate w-full"
                 title={companyName}
               >
                 {companyName}
@@ -118,7 +118,7 @@ export default function JobCard({
 
           {/* Row 2: Skills */}
           <div className="flex flex-col items-start gap-2 w-full">
-            <span className="text-xs uppercase text-slate-900 font-medium font-sans">
+            <span className="text-xs uppercase text-slate-900 font-semibold font-sans">
               Primary Skills
             </span>
             <div className="flex items-center gap-1 flex-wrap">
@@ -126,7 +126,7 @@ export default function JobCard({
                 <Badge
                   key={index}
                   variant="outline"
-                  className="border-gray-300 text-black text-xs font-normal px-2 py-1 rounded-full"
+                  className="border-gray-300 text-black text-xs font-medium px-2 py-1 rounded-full"
                 >
                   {skill}
                 </Badge>
@@ -137,7 +137,7 @@ export default function JobCard({
                   <TooltipTrigger>
                     <Badge
                       variant="outline"
-                      className="border-gray-300 text-black text-xs font-normal px-2 py-1 rounded-full"
+                      className="border-gray-300 text-black text-xs font-medium px-2 py-1 rounded-full"
                     >
                       +{remainingSkills}
                     </Badge>
@@ -151,7 +151,7 @@ export default function JobCard({
                         {undisplayedSkills.map((item, index) => {
                           return (
                             <li
-                              className="text-gray-800 text-xs font-normal whitespace-normal list-disc list-inside"
+                              className="text-gray-800 text-xs font-medium whitespace-normal list-disc list-inside"
                               key={index}
                             >
                               {item}
@@ -179,7 +179,7 @@ export default function JobCard({
                 className="w-3.5 h-3.5 text-primary-800"
               />
             </div>
-            <span className="text-xs text-primary-800 font-normal font-sans">
+            <span className="text-xs text-primary-800 font-medium font-sans">
               {location}
             </span>
           </div>
@@ -191,7 +191,7 @@ export default function JobCard({
               onClick={(e) => e.stopPropagation()}
               className="h-8 px-3 rounded-lg border border-primary-600 text-primary-600 hover:bg-primary-600 hover:text-white flex items-center gap-2 bg-transparent ml-auto sm:ml-0"
             >
-              <span className="text-xs sm:text-sm font-normal font-sans">
+              <span className="text-xs sm:text-sm font-medium font-sans">
                 View applicants
               </span>
               <Icon icon="mdi:arrow-top-right" className="w-3.5 h-3.5" />
