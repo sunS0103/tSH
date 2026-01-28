@@ -102,7 +102,7 @@ export default function PaymentCards({
         }).then((res) => {
           if (res.success) {
             onUserAssessmentIdChange?.({
-              id: orderData.data.user_assessment_id,
+              id: res.data.user_assessment_id,
               payment: res.data.payment,
               message: res.message,
             });
@@ -212,7 +212,7 @@ export default function PaymentCards({
           .then((res) => {
             if (res.success) {
               window.open(res.data.invite_link, "_blank");
-              router.push(`/assessments`);
+              router.push(`/assessments?tab=taken`);
             }
           })
           .catch((err) => {
@@ -231,8 +231,8 @@ export default function PaymentCards({
         assessment_id: assessment_id,
         token,
         onSuccess: () => {
-          router.refresh();
           toast.success("Assessment purchased successfully 🎉");
+          router.refresh();
         },
       });
 

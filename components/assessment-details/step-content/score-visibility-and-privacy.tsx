@@ -113,6 +113,7 @@ export default function ScoreVisibilityAndPrivacy({
             id="score-visibility-and-privacy"
             checked={isConfirmed}
             onCheckedChange={(checked) => onConfirmChange(Boolean(checked))}
+            className="border border-black cursor-pointer"
           />
           <Label
             htmlFor="score-visibility-and-privacy"

@@ -216,7 +216,7 @@ export default function AssessmentWrapper({
       }));
       return;
     }
-    
+
     // Clear error for current step if proceeding
     if (stepErrors[currentStep]) {
       setStepErrors((prev) => {
@@ -225,7 +225,7 @@ export default function AssessmentWrapper({
         return updated;
       });
     }
-    
+
     if (currentStep < totalSteps) {
       setCurrentStep(currentStep + 1);
     }
@@ -282,7 +282,7 @@ export default function AssessmentWrapper({
           window.open(res.data.invite_link, "_blank");
           setUserAssessmentId(null);
           setAssessmentPayment(null);
-          router.push(`/assessments`);
+          router.push(`/assessments?tab=taken`);
         }
       })
       .catch((err) => {
