@@ -98,6 +98,7 @@ export default function IntegrityAndCodeConduct({
             id="integrity-and-code-conduct"
             checked={isConfirmed}
             onCheckedChange={(checked) => onConfirmChange(Boolean(checked))}
+            className="border border-black cursor-pointer"
           />
           <Label
             htmlFor="integrity-and-code-conduct"
