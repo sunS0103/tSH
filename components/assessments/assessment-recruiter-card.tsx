@@ -10,7 +10,7 @@ interface Topics {
 }
 
 export interface AssessmentRecruiterCardProps {
-  // slug: string;
+  slug: string;
   category: string;
   title: string;
   topics: Topics[];
@@ -34,7 +34,7 @@ function formatDurationRecruiter(seconds: number): string {
 }
 
 export default function AssessmentRecruiterCard({
-  // slug,
+  slug,
   category,
   title,
   topics,
@@ -158,9 +158,9 @@ export default function AssessmentRecruiterCard({
 
   return (
     <Link
-      href="#"
-      // href={`/assessments/${slug}`}
+      href={`/assessment/${slug}`}
       aria-label="View assessment"
+      target="_blank"
       className={cn(
         "bg-white border border-gray-200 flex flex-col items-start justify-between rounded-2xl w-full group hover:shadow-lg duration-500",
         className,

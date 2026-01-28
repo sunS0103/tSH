@@ -46,7 +46,7 @@ export default function AssessmentRecruiterGrid({
           topics={assessment.topics}
           duration={assessment.duration}
           questionCount={assessment.total_questions}
-          // slug={assessment.slug}
+          slug={assessment.slug}
           technology={assessment.technology || assessment.job_role_name}
         />
       ))}

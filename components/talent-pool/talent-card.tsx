@@ -295,10 +295,11 @@ export default function TalentCard({
               {assessmentTaken.map((assessment, index) => (
                 <Link
                   key={index}
-                  href={`/assessments`}
-                  className="h-6 px-3 py-1 rounded-full border border-gray-600 bg-gray-50 flex flex-col justify-center items-start gap-2.5 hover:bg-primary-50 hover:border-primary-500 transition-colors cursor-pointer"
+                  href={`/assessment/${assessment}`}
+                  target="_blank"
+                  className="h-6 px-3 py-1 rounded-full border border-primary-500 bg-primary-50 flex flex-col justify-center items-start gap-2.5 transition-colors cursor-pointer"
                 >
-                  <span className="text-center text-xs italic font-medium font-sans text-gray-800 hover:text-primary-500 hover:underline transition-colors">
+                  <span className="text-center text-xs italic font-medium font-sans text-primary-500 underline transition-colors">
                     {assessment}
                   </span>
                 </Link>
