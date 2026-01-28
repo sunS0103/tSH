@@ -250,7 +250,9 @@ export default function JobApplyForm({
         <DialogTrigger asChild>
           <Button
             className="text-sm flex items-center gap-2"
-            disabled={isAssessmentNotCompleted || customFieldsStatus === "SUBMITTED"}
+            disabled={
+              isAssessmentNotCompleted || customFieldsStatus !== "SUBMITTED"
+            }
             onClick={() => setOpen(true)}
           >
             Contact Recruiter
@@ -333,7 +335,10 @@ export default function JobApplyForm({
               const charCount = formData[fieldId]?.length || 0;
 
               return (
-                <div key={fieldId} className="flex flex-col gap-2 w-full relative">
+                <div
+                  key={fieldId}
+                  className="flex flex-col gap-2 w-full relative"
+                >
                   <Label className="text-sm font-medium text-gray-900">
                     {field.title}
                   </Label>
