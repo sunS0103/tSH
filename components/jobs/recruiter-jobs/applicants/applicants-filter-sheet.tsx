@@ -122,7 +122,7 @@ export default function ApplicantsFilterSheet({
                         />
                         <label
                           htmlFor={`mobile-${item.value}`}
-                          className="cursor-pointer max-w-48 text-sm font-normal"
+                          className="cursor-pointer max-w-48 text-sm font-normal text-slate-700"
                         >
                           {item.title || item.value}
                         </label>

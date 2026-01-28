@@ -2,6 +2,7 @@
 
 import { getCountryById, getSkills, getWorkModes } from "@/api/seeder";
 import { Button } from "@/components/ui/button";
+import { AlertCircle } from "lucide-react";
 import {
   Form,
   FormControl,
@@ -89,6 +90,7 @@ export default function JobFormBase({
 
   const [countryName, setCountryName] = useState<string>("");
   const [skills, setSkills] = useState<Skill[]>([]);
+  const [showValidationError, setShowValidationError] = useState(false);
 
   // Note: `as any` is used here due to a type incompatibility between
   // react-hook-form's resolver types and zodResolver. This is a known issue
@@ -157,7 +159,7 @@ export default function JobFormBase({
             ?.map((item: { id: number; name: string }) => ({
               id: item.id,
               name: item.name,
-            })) || []
+            })) || [],
         );
       })
       .catch((error) => {
@@ -168,7 +170,13 @@ export default function JobFormBase({
   }, []);
 
   const handleSubmit = async (data: JobFormData) => {
+    setShowValidationError(false);
     await onSubmit(data);
+  };
+
+  const onInvalid = () => {
+    setShowValidationError(true);
+    window.scrollTo({ top: 0, behavior: "smooth" });
   };
 
   const handleSaveDraft = async () => {
@@ -221,7 +229,10 @@ export default function JobFormBase({
   return (
     <div className="max-w-3xl mx-auto px-4 sm:px-6 pb-20 sm:py-2">
       <Form {...form}>
-        <form onSubmit={form.handleSubmit(handleSubmit)} className="space-y-6">
+        <form
+          onSubmit={form.handleSubmit(handleSubmit, onInvalid)}
+          className="space-y-6"
+        >
           {/* Title Section */}
           <div className="bg-primary-50 rounded-t-2xl px-4 sm:px-6 py-4">
             <h1 className="text-lg sm:text-xl font-bold text-gray-950">
@@ -231,6 +242,18 @@ export default function JobFormBase({
 
           {/* Form Fields */}
           <div className="bg-white rounded-b-2xl px-4 sm:px-6 py-4 space-y-4">
+            {showValidationError &&
+              Object.keys(form.formState.errors).length > 0 && (
+                <div className="mb-6 rounded-lg bg-destructive/10 p-4 border border-destructive/20 flex items-start gap-3">
+                  <AlertCircle className="h-5 w-5 text-destructive mt-0.5" />
+                  <div className="flex-1">
+                    <h3 className="text-sm font-medium text-destructive mb-1">
+                      Please fill all required fields
+                    </h3>
+                  </div>
+                </div>
+              )}
+
             {/* Company Name and Job Title */}
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
               <FormField
@@ -425,7 +448,7 @@ export default function JobFormBase({
                         onValueChange={(cityId) => {
                           // Ensure we always pass a number
                           field.onChange(
-                            typeof cityId === "number" ? cityId : 0
+                            typeof cityId === "number" ? cityId : 0,
                           );
                         }}
                       />
@@ -453,9 +476,7 @@ export default function JobFormBase({
                         value={field.value?.toString() || ""}
                         onChange={(e) => {
                           const value = e.target.value;
-                          field.onChange(
-                            value === "" ? 0 : Number(value)
-                          );
+                          field.onChange(value === "" ? 0 : Number(value));
                         }}
                         onBlur={field.onBlur}
                         name={field.name}
@@ -479,9 +500,7 @@ export default function JobFormBase({
                         value={field.value?.toString() || ""}
                         onChange={(e) => {
                           const value = e.target.value;
-                          field.onChange(
-                            value === "" ? 0 : Number(value)
-                          );
+                          field.onChange(value === "" ? 0 : Number(value));
                         }}
                         onBlur={field.onBlur}
                         name={field.name}
@@ -589,7 +608,8 @@ export default function JobFormBase({
                                   if (typeof v === "string") {
                                     const mode = workModeOptions.find(
                                       (m) =>
-                                        m.name.toLowerCase() === v.toLowerCase()
+                                        m.name.toLowerCase() ===
+                                        v.toLowerCase(),
                                     );
                                     return mode?.id;
                                   }
@@ -603,7 +623,7 @@ export default function JobFormBase({
                           const modeNames = modeIds
                             .map((id) => {
                               const mode = workModeOptions.find(
-                                (m) => m.id === id
+                                (m) => m.id === id,
                               );
                               return mode?.name.toLowerCase() || "";
                             })

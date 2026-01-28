@@ -359,7 +359,7 @@ export default function CandidateProfile({
   ];
 
   return (
-    <div className="flex flex-col md:flex-row w-full gap-4">
+    <div className="flex flex-col md:flex-row w-full gap-4 mb-20 md:mb-0">
       <div className="md:max-w-md md:sticky md:top-20.5 md:self-start">
         {progress < 100 && (
           <div className="bg-warning-50 border border-warning-500 p-4 rounded-2xl mb-4">
@@ -369,9 +369,12 @@ export default function CandidateProfile({
             <div className="text-xs mt-2">
               Complete your profile to get more relevant job matches.
             </div>
-            <div className="flex items-center gap-2 mt-4">
+            <div className="flex items-center gap-2 my-4">
               <Progress value={progress} />
               <span className="text-xs">{progress}%</span>
+            </div>
+            <div className="text-xs text-gray-500">
+              Notes: Complete profile to view your dashbaord
             </div>
           </div>
         )}
