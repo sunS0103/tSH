@@ -26,6 +26,7 @@ import Image from "next/image";
 import NotificationPopover from "./notifications/notification-dialog";
 import { PopoverTrigger } from "./ui/popover";
 import { useNotification } from "./providers/notification-provider";
+import { getJobFairStatus } from "@/api/jobs/job-fair";
 
 interface NavItem {
   label: string;
@@ -118,6 +119,8 @@ export default function Header() {
   const [notificationDialogOpen, setNotificationDialogOpen] = useState(false);
   const { unreadCount, refreshUnreadCount } = useNotification();
 
+  const [jobFairStatus, setJobFairStatus] = useState<boolean>(false);
+
   // Initialize role and mounted state on client side only
   // This prevents hydration mismatch by ensuring server and client render the same initial state
   // Note: Setting state in useEffect is necessary here to prevent SSR/client mismatch
@@ -127,6 +130,12 @@ export default function Header() {
     setMounted(true);
     const userRole = getCookie("user_role");
     setRole(userRole as string | undefined);
+
+    const fetchJobFairStatus = async () => {
+      const res = await getJobFairStatus();
+      setJobFairStatus(res.data.job_fair_plan_status);
+    };
+    fetchJobFairStatus();
   }, []);
 
   useEffect(() => {
@@ -220,13 +229,15 @@ export default function Header() {
                 >
                   <Icon icon="mdi:plus" className="text-primary-500 size-5" />
                 </Button>
-                <Button
-                  className="hidden md:flex bg-primary-500 hover:bg-primary-600 text-white rounded-full px-4 h-9 text-sm font-medium gap-0"
-                  onClick={() => router.push("/jobs/create")}
-                >
-                  <Icon icon="mdi:plus" className="mr-2 size-4" />
-                  Create Job
-                </Button>
+                {!jobFairStatus && (
+                  <Button
+                    className="hidden md:flex bg-primary-500 hover:bg-primary-600 text-white rounded-full px-4 h-9 text-sm font-medium gap-0"
+                    onClick={() => router.push("/jobs/create")}
+                  >
+                    <Icon icon="mdi:plus" className="mr-2 size-4" />
+                    Create Job
+                  </Button>
+                )}
               </>
             )}
             {/* Notification Bell */}

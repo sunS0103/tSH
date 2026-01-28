@@ -67,19 +67,19 @@ export default function EditProfilePage() {
   const cookieValue = getCookie("profile_data");
   const profileData = cookieValue ? JSON.parse(cookieValue as string) : null;
   const [selectedCountryCode, setSelectedCountryCode] = useState<string>(
-    profileData?.mobile_details?.dial_code || "",
+    profileData?.mobile_details?.dial_code || ""
   );
   const [countries, setCountries] = useState<{ id: number; name: string }[]>(
-    [],
+    []
   );
   const [countryName, setCountryName] = useState<string>("");
 
   const platformRoleOptions = [
-    "Hiring Manager",
-    "Recruiter",
-    "HR Admin",
-    "Team Lead",
+    "Inhouse Hiring",
+    "Hiring For Client",
+    "Referral",
   ];
+
   const jobCategoryOptions = [
     "IT & Software",
     "Finance & Accounting",
@@ -96,7 +96,10 @@ export default function EditProfilePage() {
       company_name: profileData?.company_name || "",
       first_name: profileData?.first_name || "",
       last_name: profileData?.last_name || "",
-      gender: (profileData?.gender === "Male" && "Male") || (profileData?.gender === "Female" && "Female") || undefined,
+      gender:
+        (profileData?.gender === "Male" && "Male") ||
+        (profileData?.gender === "Female" && "Female") ||
+        undefined,
       email: profileData?.email || "",
       mobile_number: profileData?.mobile_details?.mobile_number || "",
       country_code: profileData?.mobile_details?.dial_code || "+91",
@@ -458,7 +461,7 @@ export default function EditProfilePage() {
                           onChange={(e) => {
                             const numericValue = e.target.value.replace(
                               /\D/g,
-                              "",
+                              ""
                             );
                             e.target.value = numericValue;
                             field.onChange(numericValue);
@@ -540,7 +543,7 @@ export default function EditProfilePage() {
                         onValueChange={(cityId) => {
                           // Ensure we always pass a number
                           field.onChange(
-                            typeof cityId === "number" ? cityId : 0,
+                            typeof cityId === "number" ? cityId : 0
                           );
                         }}
                         countryName={countryName || selectedCountryData?.name}
@@ -593,7 +596,7 @@ export default function EditProfilePage() {
                   return (
                     <FormItem className="flex-1">
                       <Label className="text-sm font-medium text-black">
-                        Role using this platform primarily
+                        Nature Of Job Post
                       </Label>
                       <FormControl>
                         <Select

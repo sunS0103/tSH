@@ -105,10 +105,9 @@ const jobCategories = [
 ];
 
 const platformRoles = [
-  { value: "Hiring Manager", label: "Hiring Manager" },
-  { value: "Recruiter", label: "Recruiter" },
-  { value: "HR Admin", label: "HR Admin" },
-  { value: "Team Lead", label: "Team Lead" },
+  { value: "Inhouse Hiring", label: "Inhouse Hiring" },
+  { value: "Hiring For Client", label: "Hiring For Client" },
+  { value: "Referral", label: "Referral" },
 ];
 
 export default function RegisterForm({ role, email }: RegisterFormProps) {
@@ -427,7 +426,7 @@ export default function RegisterForm({ role, email }: RegisterFormProps) {
         .catch((error) => {
           toast.error(
             error?.response?.data?.message ||
-            "An error occurred during registration. Please try again."
+              "An error occurred during registration. Please try again."
           );
         });
     } else {
@@ -469,7 +468,7 @@ export default function RegisterForm({ role, email }: RegisterFormProps) {
         .catch((error) => {
           toast.error(
             error?.response?.data?.message ||
-            "An error occurred during registration. Please try again."
+              "An error occurred during registration. Please try again."
           );
         });
     }
@@ -971,7 +970,7 @@ export default function RegisterForm({ role, email }: RegisterFormProps) {
                 name="platformRole"
                 render={({ field }) => (
                   <FormItem>
-                    <Label>Role using this platform primarily</Label>
+                    <Label>Nature Of Job Post</Label>
                     <Select onValueChange={field.onChange} value={field.value}>
                       <FormControl>
                         <SelectTrigger className="w-full">
