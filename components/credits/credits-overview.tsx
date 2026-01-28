@@ -9,7 +9,6 @@ export default function CreditsOverview() {
     ? JSON.parse(currentPlanCookie as string)
     : null;
 
-  console.log(currentPlan);
   return (
     <div className="lg:col-span-1 h-fit bg-primary-50 border border-primary-500 rounded-2xl p-4 flex flex-col gap-4 max-w-90 min-w-80 flex-1">
       <h3 className="font-semibold text-base md:text-lg text-black text-nowrap">

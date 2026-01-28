@@ -225,7 +225,7 @@ export default function CandidateDashboard() {
               </p>
             </div>
           </div>
-          <div className="flex flex-col sm:flex-row gap-3">
+          <div className="flex flex-col sm:flex-row gap-3 flex-wrap">
             <Button
               variant="outline"
               className="border-primary-500 text-primary-500 hover:bg-primary-100 flex-1 text-sm"
