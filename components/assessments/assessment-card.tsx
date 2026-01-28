@@ -67,7 +67,7 @@ export default function AssessmentCard({
                 <Badge
                   key={index}
                   variant="outline"
-                  className="border-gray-300 text-black text-xs font-normal px-2 py-1 rounded-full"
+                  className="border-gray-300 text-slate-900 text-xs font-medium px-2 py-1 rounded-full"
                 >
                   {topic.value}
                 </Badge>
@@ -156,7 +156,7 @@ export default function AssessmentCard({
       <div
         className={cn(
           "bg-white border border-gray-200 flex flex-col items-start justify-between rounded-2xl w-full min-h-57",
-          className
+          className,
         )}
       >
         {cardContent}
@@ -170,7 +170,7 @@ export default function AssessmentCard({
       aria-label="Start assessment"
       className={cn(
         "bg-white border border-gray-200 flex flex-col items-start justify-between rounded-2xl w-full group hover:shadow-lg duration-500 min-h-57 h-full",
-        className
+        className,
       )}
     >
       {cardContent}

@@ -43,7 +43,7 @@ export default function JobForm({ jobId }: JobFormProps) {
         } catch (error) {
           toast.error(
             (error as { response?: { data?: { message?: string } } })?.response
-              ?.data?.message || "Failed to load job"
+              ?.data?.message || "Failed to load job",
           );
           router.push("/jobs");
         } finally {
@@ -85,7 +85,7 @@ export default function JobForm({ jobId }: JobFormProps) {
       toast.error(
         (error as { response?: { data?: { message?: string } } })?.response
           ?.data?.message ||
-          (isEditMode ? "Failed to update job" : "Failed to create job")
+          (isEditMode ? "Failed to update job" : "Failed to create job"),
       );
     }
   };
@@ -108,7 +108,7 @@ export default function JobForm({ jobId }: JobFormProps) {
     } catch (error) {
       toast.error(
         (error as { response?: { data?: { message?: string } } })?.response
-          ?.data?.message || "Failed to save draft"
+          ?.data?.message || "Failed to save draft",
       );
     }
   };
@@ -159,7 +159,7 @@ const skillNameToIdMap: Record<string, number> = {
 
 // Reverse mapping: skill_id to skill name
 const skillIdToNameMap: Record<number, string> = Object.fromEntries(
-  Object.entries(skillNameToIdMap).map(([name, id]) => [id, name])
+  Object.entries(skillNameToIdMap).map(([name, id]) => [id, name]),
 );
 
 function transformJobToFormData(job: RecruiterJob): Partial<JobFormData> {
@@ -170,8 +170,8 @@ function transformJobToFormData(job: RecruiterJob): Partial<JobFormData> {
     job.job_serving_location === "in-house project"
       ? "inhouse_project"
       : job.job_serving_location === "client location"
-      ? "client_location"
-      : "inhouse_project";
+        ? "client_location"
+        : "inhouse_project";
 
   // Get primary skills from skills array - convert all skills to array of skill names
   const primarySkills = job.skills
@@ -261,7 +261,8 @@ function transformFormDataToPayload(data: JobFormData) {
 
   // Transform work modes to capitalized array
   const workModes = data.work_mode.map(
-    (mode: string) => mode.charAt(0).toUpperCase() + mode.slice(1).toLowerCase()
+    (mode: string) =>
+      mode.charAt(0).toUpperCase() + mode.slice(1).toLowerCase(),
   );
 
   // Transform skills to array with skill_id and is_required
@@ -281,7 +282,7 @@ function transformFormDataToPayload(data: JobFormData) {
           (field: { title?: string; label?: string; type?: string }) => ({
             title: field.title || field.label || "",
             type: field.type || "text",
-          })
+          }),
         )
       : [];
 

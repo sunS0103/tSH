@@ -6,6 +6,12 @@ import { cn } from "@/lib/utils";
 import { RecruiterJob } from "@/types/job";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipProvider,
+  TooltipTrigger,
+} from "@/components/ui/tooltip";
 
 interface CandidateJobCardProps extends Partial<RecruiterJob> {
   slug: string;
@@ -68,7 +74,7 @@ export default function CandidateJobCard({
           <div className="flex justify-between items-start w-full gap-2">
             {/* Company Name */}
             <div className="flex-1 flex flex-col items-start gap-1">
-              <span className="text-[10px] uppercase text-slate-900 font-normal font-sans">
+              <span className="text-xs uppercase text-slate-900 font-normal font-sans">
                 Company Name
               </span>
               <span
@@ -81,17 +87,17 @@ export default function CandidateJobCard({
 
             {/* Years of Experience */}
             <div className="flex-1 flex flex-col items-start gap-1">
-              <span className="text-[10px] uppercase text-gray-900 font-normal font-sans">
+              <span className="text-xs font-medium uppercase text-gray-900 font-sans">
                 Years of Experience
               </span>
-              <span className="text-xs font-normal font-sans text-gray-950">
+              <span className="text-xs font-medium font-sans text-gray-950">
                 {experienceRange}
               </span>
             </div>
 
             {/* Work Mode */}
             <div className="flex-1 flex flex-col items-start gap-1 min-h-[32px]">
-              <span className="text-[10px] uppercase text-gray-900 font-normal font-sans">
+              <span className="text-xs uppercase text-gray-900 font-medium font-sans">
                 Work Mode
               </span>
               <span className="text-xs font-normal font-sans text-gray-950">
@@ -107,14 +113,14 @@ export default function CandidateJobCard({
                 Relevant Assessments
               </span>
               <div className="flex items-center gap-2 flex-wrap">
-                {assessments.map((assessment, index) => {
+                {assessments.slice(0, 3).map((assessment, index) => {
                   // First assessment gets primary styling, others get gray
                   return (
                     <Link
                       href={`/assessments/${assessment.slug}`}
                       key={assessment.id || index}
                       className={cn(
-                        "text-[10px] font-normal italic px-3 py-1 rounded-full border-none underline bg-gray-100 text-gray-700 hover:bg-primary-50 hover:text-primary-500 transition-all duration-300",
+                        "text-xs font-normal italic px-3 py-1 rounded-full border-none underline bg-gray-100 text-gray-700 hover:bg-primary-50 hover:text-primary-500 transition-all duration-300",
                       )}
                       onClick={(e) => e.stopPropagation()}
                     >
@@ -122,7 +128,7 @@ export default function CandidateJobCard({
                         key={assessment.id || index}
                         variant="outline"
                         className={cn(
-                          "text-[10px] font-normal italic px-3 py-1 rounded-full border-none underline bg-gray-100 text-gray-700 hover:bg-primary-50 hover:text-primary-500 transition-all duration-300",
+                          "text-xs font-medium italic px-3 py-1 rounded-full border-none underline bg-gray-100 text-gray-700 hover:bg-primary-50 hover:text-primary-500 transition-all duration-300",
                         )}
                       >
                         {assessment.title || `EXAM-${assessment.id}`}
@@ -130,6 +136,31 @@ export default function CandidateJobCard({
                     </Link>
                   );
                 })}
+
+                {assessments.length > 3 && (
+                  <TooltipProvider>
+                    <Tooltip>
+                      <TooltipTrigger asChild>
+                        <Badge
+                          variant="outline"
+                          className="cursor-pointer text-xs font-medium italic px-3 py-1 rounded-full border-none bg-gray-100 text-gray-700 hover:bg-primary-50 hover:text-primary-500 transition-all duration-300"
+                          onClick={(e) => e.stopPropagation()}
+                        >
+                          +{assessments.length - 3}
+                        </Badge>
+                      </TooltipTrigger>
+                      <TooltipContent className="bg-white text-black border border-gray-200">
+                        <div className="flex flex-col gap-1">
+                          {assessments.slice(3).map((assessment, index) => (
+                            <span key={index} className="text-xs">
+                              {assessment.title || `EXAM-${assessment.id}`}
+                            </span>
+                          ))}
+                        </div>
+                      </TooltipContent>
+                    </Tooltip>
+                  </TooltipProvider>
+                )}
               </div>
             </div>
           )}

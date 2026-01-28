@@ -55,12 +55,20 @@ export interface Assessment {
   score: number;
 }
 
+import { useRouter, useSearchParams, usePathname } from "next/navigation";
+
 export default function AssessmentCandidate() {
+  const router = useRouter();
+  const searchParams = useSearchParams();
+  const pathname = usePathname();
+
   const [assessments, setAssessments] = useState<Assessment[]>([]);
   const [filterItems, setFilterItems] = useState<TechnologySkillsResponse>([]);
   const [searchQuery, setSearchQuery] = useState("");
   const [debouncedSearchQuery, setDebouncedSearchQuery] = useState("");
-  const [selectedTab, setSelectedTab] = useState("all");
+
+  const selectedTab = searchParams.get("tab") || "all";
+
   const [selectedFilters, setSelectedFilters] = useState<string[]>([]);
   const [currentPage, setCurrentPage] = useState(1);
   const [totalPages, setTotalPages] = useState(1);
@@ -114,7 +122,7 @@ export default function AssessmentCandidate() {
       }
       return null;
     },
-    [filterItems]
+    [filterItems],
   );
 
   useEffect(() => {
@@ -123,10 +131,10 @@ export default function AssessmentCandidate() {
       try {
         // Separate technology and skills filters
         const technologyFilters = selectedFilters.filter(
-          (filterId) => getFilterType(filterId) === "technology"
+          (filterId) => getFilterType(filterId) === "technology",
         );
         const skillsFilters = selectedFilters.filter(
-          (filterId) => getFilterType(filterId) === "skills"
+          (filterId) => getFilterType(filterId) === "skills",
         );
 
         // Technology can be multiple values (same as skills)
@@ -197,8 +205,16 @@ export default function AssessmentCandidate() {
   };
 
   const handleTabChange = (value: string) => {
-    setSelectedTab(value);
     setCurrentPage(1);
+
+    // Update URL
+    const params = new URLSearchParams(searchParams);
+    if (value === "all") {
+      params.delete("tab");
+    } else {
+      params.set("tab", value);
+    }
+    router.replace(`${pathname}?${params.toString()}`);
   };
 
   const handleFilterChange = (filters: string[]) => {
@@ -209,8 +225,12 @@ export default function AssessmentCandidate() {
   const handleRefreshFilters = () => {
     setSelectedFilters([]);
     setSearchQuery("");
-    setSelectedTab("all");
     setCurrentPage(1);
+
+    // Reset URL tab param
+    const params = new URLSearchParams(searchParams);
+    params.delete("tab");
+    router.replace(`${pathname}?${params.toString()}`);
   };
 
   return (

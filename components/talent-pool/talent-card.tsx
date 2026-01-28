@@ -13,6 +13,7 @@ import {
   TooltipProvider,
   TooltipTrigger,
 } from "@/components/ui/tooltip";
+import Link from "next/link";
 
 export interface TalentCardProps {
   id: string;
@@ -102,7 +103,7 @@ export default function TalentCard({
                 }
                 className={cn(
                   "w-4.5 h-4.5",
-                  isFavorite ? "text-primary-500" : "text-primary-500"
+                  isFavorite ? "text-primary-500" : "text-primary-500",
                 )}
               />
             </Button>
@@ -140,7 +141,7 @@ export default function TalentCard({
               icon={isFavorite ? "mdi:cards-heart" : "mdi:cards-heart-outline"}
               className={cn(
                 "w-4.5 h-4.5",
-                isFavorite ? "text-primary-500" : "text-primary-500"
+                isFavorite ? "text-primary-500" : "text-primary-500",
               )}
             />
           </Button>
@@ -202,7 +203,7 @@ export default function TalentCard({
                   key={index}
                   className="px-2 py-1 rounded-full border border-gray-600 flex justify-center items-center gap-2"
                 >
-                  <span className="text-center text-black text-xs font-normal font-sans capitalize">
+                  <span className="text-center text-black text-xs font-medium font-sans capitalize">
                     {skill}
                   </span>
                 </div>
@@ -212,7 +213,7 @@ export default function TalentCard({
                   <Tooltip>
                     <TooltipTrigger asChild>
                       <div className="px-2 py-1 rounded-full border border-gray-600 flex justify-center items-center gap-2 cursor-pointer hover:bg-gray-100 transition-colors">
-                        <span className="text-center text-black text-xs font-normal font-sans capitalize">
+                        <span className="text-center text-slate-700 text-xs font-medium font-sans capitalize">
                           +{skillsAssessed.length - 3}
                         </span>
                       </div>
@@ -292,14 +293,15 @@ export default function TalentCard({
             </span>
             <div className="flex justify-start items-center gap-2 flex-wrap">
               {assessmentTaken.map((assessment, index) => (
-                <div
+                <Link
                   key={index}
+                  href={`/assessments`}
                   className="h-6 px-3 py-1 rounded-full border border-gray-600 bg-gray-50 flex flex-col justify-center items-start gap-2.5 hover:bg-primary-50 hover:border-primary-500 transition-colors cursor-pointer"
                 >
-                  <span className="text-center text-xs italic font-normal font-sans text-gray-800 hover:text-primary-500 hover:underline transition-colors">
+                  <span className="text-center text-xs italic font-medium font-sans text-gray-800 hover:text-primary-500 hover:underline transition-colors">
                     {assessment}
                   </span>
-                </div>
+                </Link>
               ))}
             </div>
           </div>
