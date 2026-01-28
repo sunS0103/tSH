@@ -51,16 +51,16 @@ export default function AssessmentRecruiterRequestedCard({
           {/* Row 1: Name and Company Email */}
           <div className="flex flex-col md:flex-row gap-2 md:items-center relative shrink-0 w-full">
             <div className="flex flex-col gap-1 items-start relative shrink-0 w-1/2">
-              <p className="text-gray-900 text-xs font-normal text-center">
+              <p className="text-gray-900 text-xs font-medium text-center">
                 Name
               </p>
-              <p className="text-black text-xs font-normal w-full">{name}</p>
+              <p className="text-black text-sm font-medium w-full">{name}</p>
             </div>
             <div className="flex flex-col gap-1 items-start relative shrink-0 w-1/2">
-              <p className="text-gray-900 text-xs font-normal text-center">
+              <p className="text-gray-900 text-xs font-medium text-center">
                 Company Email
               </p>
-              <p className="text-black text-xs font-normal w-full">
+              <p className="text-black text-sm font-medium w-full">
                 {companyEmail}
               </p>
             </div>
@@ -69,18 +69,18 @@ export default function AssessmentRecruiterRequestedCard({
           {/* Row 2: Skills to Assess and Phone Number */}
           <div className="flex flex-col md:flex-row gap-2 md:items-center relative shrink-0 w-full">
             <div className="flex flex-col gap-1 items-start relative shrink-0 w-1/2">
-              <p className="text-gray-900 text-xs font-normal text-center">
+              <p className="text-gray-900 text-xs font-medium text-center">
                 Skills to Assess
               </p>
-              <p className="text-black text-xs font-normal w-full">
+              <p className="text-black text-sm font-medium w-full">
                 {skillsToAssess}
               </p>
             </div>
             <div className="flex flex-col gap-1 items-start relative shrink-0 w-1/2">
-              <p className="text-gray-900 text-xs font-normal text-center">
+              <p className="text-gray-900 text-xs font-medium text-center">
                 Phone Number
               </p>
-              <p className="text-black text-xs font-normal w-full">
+              <p className="text-black text-sm font-medium w-full">
                 {phoneNumber}
               </p>
             </div>
@@ -89,10 +89,10 @@ export default function AssessmentRecruiterRequestedCard({
           {/* Row 3: Assessment Creation Preference */}
           <div className="flex items-start relative shrink-0 w-full">
             <div className="flex flex-col gap-1 items-start relative shrink-0 w-full pr-2">
-              <p className="text-gray-900 text-xs font-normal text-center">
+              <p className="text-gray-900 text-xs font-medium text-center">
                 Assessment Creation Preference
               </p>
-              <p className="text-black text-xs font-normal w-full">
+              <p className="text-black text-sm font-medium w-full">
                 {(assessmentCreationPreference === "Recruiter Create" &&
                   "Recruiter will create their own questions") ||
                   (assessmentCreationPreference === "Collaborate" &&
