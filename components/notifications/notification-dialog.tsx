@@ -120,7 +120,7 @@ export default function NotificationPopover({
                     <div className="flex flex-col gap-1 flex-1 min-w-0">
                       <div className="flex items-start justify-between gap-2">
                         <span className="text-sm font-semibold text-gray-900 leading-tight">
-                          New Job Alert: {notification.title}
+                          {notification.title}
                         </span>
                         <div className="shrink-0">
                           <p className="text-xs text-gray-500 text-right whitespace-nowrap">
