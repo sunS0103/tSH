@@ -23,6 +23,7 @@ export interface SkillAssessed {
 export interface AssessmentTaken {
   assessment_id: string;
   assessment_title: string;
+  assessment_slug?: string;
   completed_at: string;
   score_percentage: number;
   skills_assessed: {
