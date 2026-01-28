@@ -231,6 +231,7 @@ export default function PaymentCards({
         assessment_id: assessment_id,
         token,
         onSuccess: () => {
+          router.refresh();
           toast.success("Assessment purchased successfully 🎉");
         },
       });
@@ -246,7 +247,7 @@ export default function PaymentCards({
       {is_free_plan_available && (
         <div className="flex flex-col gap-4 mt-4 mb-6">
           {/* Banner */}
-          <div className="bg-primary-50 border border-primary-200 rounded-xl p-4 flex items-start gap-3">
+          <div className="bg-primary-50 border border-primary-200 rounded-xl p-4 flex items-center gap-3">
             <Icon
               icon="material-symbols:campaign-outline-rounded"
               className="w-8 md:w-10 h-8 md:h-10 text-primary-600"
@@ -255,9 +256,6 @@ export default function PaymentCards({
               <p className="text-sm md:text-base font-semibold text-gray-950">
                 Early Access: Take the assessment{" "}
                 <span className="text-primary-500">FREE!</span>
-              </p>
-              <p className="text-sm text-gray-700 font-normal">
-                Upgrade only to unlock full benefits after results.
               </p>
             </div>
           </div>
