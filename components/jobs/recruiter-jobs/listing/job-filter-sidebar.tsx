@@ -45,14 +45,14 @@ export default function JobFilterSidebar({
         title: key,
         items: Array.isArray(items) ? (items as OptionItem[]) : [],
       };
-    }
+    },
   );
 
   return (
     <div
       className={cn(
         "hidden lg:flex bg-white rounded-3xl shadow-sm border border-gray-100 sticky top-22 h-[calc(100vh-100px)] min-w-64 max-w-72 flex-col overflow-hidden",
-        className
+        className,
       )}
     >
       {/* Header */}
@@ -113,19 +113,19 @@ export default function JobFilterSidebar({
                               onChange={(e) =>
                                 handleCheckboxChange(
                                   item?.value,
-                                  e.target.checked
+                                  e.target.checked,
                                 )
                               }
                               className="cursor-pointer"
                             />
                             <label
                               htmlFor={item?.value}
-                              className="cursor-pointer max-w-48"
+                              className="cursor-pointer text-slate-700 max-w-48"
                             >
                               {item?.title}
                             </label>
                           </div>
-                        )
+                        ),
                       )}
                     </div>
                   </AccordionContent>

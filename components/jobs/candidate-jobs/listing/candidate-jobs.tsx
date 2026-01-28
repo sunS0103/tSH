@@ -17,7 +17,13 @@ import { Job } from "../../recruiter-jobs/listing/types";
 import AssessmentOrJobHeader from "@/components/candidates/assessment-or-job-header";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 
+import { useRouter, useSearchParams, usePathname } from "next/navigation";
+
 export default function CandidateJobs() {
+  const router = useRouter();
+  const searchParams = useSearchParams();
+  const pathname = usePathname();
+
   const ITEMS_PER_PAGE = 10;
   const [searchQuery, setSearchQuery] = useState("");
   const [debouncedSearchQuery, setDebouncedSearchQuery] = useState("");
@@ -29,7 +35,8 @@ export default function CandidateJobs() {
   const debounceTimerRef = useRef<NodeJS.Timeout | null>(null);
   //   const [filterItems, setFilterItems] = useState<FilterResponse>([]);
   const [filterItems, setFilterItems] = useState<FilterResponse>([]);
-  const [selectedTab, setSelectedTab] = useState("all");
+
+  const selectedTab = searchParams.get("tab") || "all";
 
   useEffect(() => {
     const fetchFilters = async () => {
@@ -72,7 +79,7 @@ export default function CandidateJobs() {
 
   const getFilterType = useCallback(
     (
-      filterId: string
+      filterId: string,
     ): "work_mode" | "assessments" | "primary_skills" | null => {
       for (const group of filterItems) {
         if ("work_mode" in group) {
@@ -93,20 +100,20 @@ export default function CandidateJobs() {
       }
       return null;
     },
-    [filterItems]
+    [filterItems],
   );
 
   useEffect(() => {
     const fetchJobs = async () => {
       try {
         const workModeFilters = selectedFilters.filter(
-          (filterId) => getFilterType(filterId) === "work_mode"
+          (filterId) => getFilterType(filterId) === "work_mode",
         );
         const primarySkillsFilters = selectedFilters.filter(
-          (filterId) => getFilterType(filterId) === "primary_skills"
+          (filterId) => getFilterType(filterId) === "primary_skills",
         );
         const assessmentsFilters = selectedFilters.filter(
-          (filterId) => getFilterType(filterId) === "assessments"
+          (filterId) => getFilterType(filterId) === "assessments",
         );
 
         setIsLoading(true);
@@ -201,11 +208,28 @@ export default function CandidateJobs() {
     setSelectedFilters([]);
     setSearchQuery("");
     setCurrentPage(1);
+
+    // Reset URL tab param (assuming we don't want to reset tab on refresh filter,
+    // but usually refresh filters might mean "clear everything",
+    // but usually it refers to sidebar filters.
+    // However, if the user wants "persist selected tab on refresh",
+    // we should probably NOT reset tab here unless it's desired behavior.
+    // The previous implementation didn't reset tab on filter refresh, so I will stick to that.
+    // Wait, check original code... "setSelectedTab" was NOT called in handleRefreshFilters.
+    // So I will NOT modify handleRefreshFilters to reset tab.
   };
 
   const handleTabChange = (value: string) => {
-    setSelectedTab(value);
     setCurrentPage(1);
+
+    // Update URL
+    const params = new URLSearchParams(searchParams);
+    if (value === "all") {
+      params.delete("tab");
+    } else {
+      params.set("tab", value);
+    }
+    router.replace(`${pathname}?${params.toString()}`);
   };
 
   return (

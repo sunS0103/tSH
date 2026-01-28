@@ -49,7 +49,7 @@ export default function ApplicantsFilterSidebar({
     <div
       className={cn(
         "hidden lg:flex bg-white rounded-3xl shadow-sm border border-gray-100 sticky top-22 h-[calc(100vh-100px)] min-w-64 max-w-72 flex-col overflow-hidden",
-        className
+        className,
       )}
     >
       {/* Header */}
@@ -108,14 +108,14 @@ export default function ApplicantsFilterSidebar({
                             onCheckedChange={(checked) =>
                               handleCheckboxChange(
                                 item.value,
-                                checked as boolean
+                                checked as boolean,
                               )
                             }
                             className="cursor-pointer"
                           />
                           <label
                             htmlFor={item.value}
-                            className="cursor-pointer max-w-48 text-sm font-normal"
+                            className="cursor-pointer max-w-48 text-sm font-normal text-slate-700"
                           >
                             {item.title || item.value}
                           </label>

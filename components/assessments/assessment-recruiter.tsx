@@ -11,7 +11,7 @@ import {
   getAssessmentList,
   getRequestedAssessmentsList,
 } from "@/api/assessments";
-import { useRouter } from "next/navigation";
+import { useRouter, useSearchParams, usePathname } from "next/navigation";
 import NoDataFound from "../common/no-data-found";
 import { Loader } from "../ui/loader";
 
@@ -38,19 +38,23 @@ export interface Assessment {
 }
 
 export default function AssessmentRecruiter() {
+  const searchParams = useSearchParams();
+  const pathname = usePathname();
+  const router = useRouter();
+
   const [assessments, setAssessments] = useState<Assessment[]>([]);
   const [requestedAssessments, setRequestedAssessments] = useState<
     RequestedAssessment[]
   >([]);
   const [searchQuery, setSearchQuery] = useState("");
   const [debouncedSearchQuery, setDebouncedSearchQuery] = useState("");
-  const [selectedTab, setSelectedTab] = useState("all");
+
+  const selectedTab = searchParams.get("tab") || "all";
+
   const [currentPage, setCurrentPage] = useState(1);
   const [totalPages, setTotalPages] = useState(1);
   const [isLoading, setIsLoading] = useState(false);
   const debounceTimerRef = useRef<NodeJS.Timeout | null>(null);
-
-  const router = useRouter();
 
   // Debounce search query
   useEffect(() => {
@@ -134,9 +138,17 @@ export default function AssessmentRecruiter() {
   };
 
   const handleTabChange = (value: string) => {
-    setSelectedTab(value);
     setCurrentPage(1);
     setSearchQuery("");
+
+    // Update URL
+    const params = new URLSearchParams(searchParams);
+    if (value === "all") {
+      params.delete("tab");
+    } else {
+      params.set("tab", value);
+    }
+    router.replace(`${pathname}?${params.toString()}`);
   };
 
   const handleButtonClick = () => {
