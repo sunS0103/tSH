@@ -193,6 +193,7 @@ export default function AssessmentIntroduction({
               id="syllabus-and-topics"
               checked={isConfirmed}
               onCheckedChange={(checked) => onConfirmChange(Boolean(checked))}
+              className="border border-black cursor-pointer"
             />
             <Label
               htmlFor="syllabus-and-topics"

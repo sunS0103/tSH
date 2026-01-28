@@ -68,6 +68,7 @@ export default function ExamProcess({
             id="exam-process"
             checked={isConfirmed}
             onCheckedChange={(checked) => onConfirmChange(Boolean(checked))}
+            className="border border-black cursor-pointer"
           />
           <Label htmlFor="exam-process" className="inline cursor-pointer">
             I understand the exam flow and its requirements.
