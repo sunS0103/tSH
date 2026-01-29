@@ -25,11 +25,11 @@ import { cn } from "@/lib/utils";
 const editPersonalSocialSchema = z.object({
   headline: z
     .string()
-    .min(80, "Short headline must be at least 80 characters")
+    // .min(80, "Short headline must be at least 80 characters")
     .max(120, "Short headline must not exceed 120 characters"),
   bio: z
     .string()
-    .min(250, "Description must be at least 250 characters")
+    .min(150, "Description must be at least 150 characters")
     .max(500, "Description must not exceed 500 characters"),
   linkedin_url: z
     .string()
@@ -265,9 +265,9 @@ export default function EditPersonalSocial() {
       <div className="text-gray-500 mt-4 px-2">
         <div className="font-semibold text-sm">Notes:</div>
         <ul className="list-disc list-inside text-xs">
-          <li>Short Headline should be 80-120 characters long.</li>
+          {/* <li>Short Headline should be 80-120 characters long.</li> */}
           <li>
-            Describe Yourself in Few Words should be 250-500 characters long.
+            Describe Yourself in Few Words should be 150-500 characters long.
           </li>
         </ul>
       </div>

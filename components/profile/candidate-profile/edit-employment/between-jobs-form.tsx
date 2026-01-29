@@ -43,8 +43,10 @@ const betweenJobsSchema = z.object({
       message: "Please enter a valid number",
     }),
   // duration_description: z.string().min(1, "Reason is required")
-  reason: z.string().min(1, "Reason is required"),
-  upskilling_activities: z.string().min(1, "Upskilling activities is required"),
+  reason: z.string(),
+  // .min(1, "Reason is required"),
+  upskilling_activities: z.string(),
+  // .min(1, "Upskilling activities is required"),
   current_ctc_period_type: z
     .string()
     .min(1, "Current CTC period type is required"),
@@ -145,7 +147,7 @@ export default function BetweenJobsForm({
                 <FormItem className="flex-1">
                   <FormLabel
                     required
-                    className="text-sm font-medium text-black mb-2"
+                    className="text-sm font-medium text-black"
                   >
                     Last Drawn CTC
                   </FormLabel>
@@ -242,7 +244,7 @@ export default function BetweenJobsForm({
               const charCount = field.value?.length || 0;
               return (
                 <FormItem className="w-full">
-                  <FormLabel required className="text-sm font-medium ">
+                  <FormLabel className="text-sm font-medium ">
                     Reason for Career Break
                   </FormLabel>
                   <FormControl>
@@ -272,7 +274,7 @@ export default function BetweenJobsForm({
               const charCount = field.value?.length || 0;
               return (
                 <FormItem className="w-full">
-                  <FormLabel required className="text-sm font-medium ">
+                  <FormLabel className="text-sm font-medium ">
                     Upskilling During This Period
                   </FormLabel>
                   <FormControl>
