@@ -6,6 +6,7 @@ export interface Notification {
   description: string;
   is_read: boolean;
   created_at: string;
+  url?: string;
 }
 
 export interface NotificationsResponse {
@@ -41,7 +42,7 @@ export const getNotifications = async ({
 };
 
 export const markNotificationAsRead = async (
-  notificationId: string
+  notificationId: string,
 ): Promise<{ success: boolean; message: string }> => {
   const response = await axios.put(`/notification/${notificationId}/read`);
   return response.data;

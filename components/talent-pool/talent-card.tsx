@@ -251,12 +251,12 @@ export default function TalentCard({
             </div>
           )}
           {company && (
-            <div className="flex justify-start items-center gap-2">
+            <div className="flex justify-start items-center gap-2 min-w-0">
               <Icon
                 icon="mdi:office-building-outline"
-                className="w-4.5 h-4.5 text-gray-900"
+                className="w-4.5 h-4.5 text-gray-900 shrink-0"
               />
-              <span className="text-center text-gray-900 text-base font-normal font-sans">
+              <span className="text-gray-900 text-base font-normal font-sans truncate">
                 {company}
               </span>
             </div>

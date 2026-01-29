@@ -120,7 +120,7 @@ export default function CandidateJobCard({
                       href={`/assessments/${assessment.slug}`}
                       key={assessment.id || index}
                       className={cn(
-                        "text-xs font-medium  px-3 py-1 rounded-full border-none underline bg-gray-100 hover:bg-primary-50 hover:text-primary-500 transition-all duration-300",
+                        "text-xs font-medium px-3 py-1 rounded-full border-none underline bg-primary-50 transition-all duration-300",
                       )}
                       onClick={(e) => e.stopPropagation()}
                     >
@@ -128,7 +128,7 @@ export default function CandidateJobCard({
                         key={assessment.id || index}
                         variant="outline"
                         className={cn(
-                          "text-xs text-slate-700 font-medium italic px-3 py-1 rounded-full border-none underline bg-gray-100  hover:bg-primary-50 hover:text-primary-500 transition-all duration-300",
+                          "text-xs font-medium italic px-3 py-1 rounded-full border-none underline text-primary-500 transition-all duration-300",
                         )}
                       >
                         {assessment.title || `EXAM-${assessment.id}`}

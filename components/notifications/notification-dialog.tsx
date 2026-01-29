@@ -52,6 +52,34 @@ export default function NotificationPopover({
     router.push("/notifications");
   };
 
+  const handleNotificationClick = async (notification: Notification) => {
+    onOpenChange(false);
+
+    // Mark as read if unread
+    if (!notification.is_read) {
+      try {
+        await markNotificationAsRead(notification.id);
+        setNotifications((prev) =>
+          prev.map((notif) =>
+            notif.id === notification.id ? { ...notif, is_read: true } : notif,
+          ),
+        );
+        // Notify parent to refresh unread count
+        onNotificationRead?.();
+      } catch (error) {
+        console.error("Error marking notification as read:", error);
+      }
+    }
+
+    if (notification.url) {
+      if (notification.url.startsWith("http")) {
+        window.location.href = notification.url;
+      } else {
+        router.push(notification.url);
+      }
+    }
+  };
+
   return (
     <Popover open={open} onOpenChange={onOpenChange}>
       {children}
@@ -80,33 +108,16 @@ export default function NotificationPopover({
               {notifications.map((notification, index) => (
                 <div
                   key={notification.id}
-                  className={`cursor-pointer group px-4 py-3 hover:bg-gray-50 transition-colors ${
+                  className={`group px-4 py-3 hover:bg-gray-50 transition-colors ${
                     index < notifications.length - 1
                       ? "border-b border-gray-200"
                       : ""
+                  } ${
+                    notification.url || !notification.is_read
+                      ? "cursor-pointer"
+                      : "cursor-default"
                   }`}
-                  onClick={async () => {
-                    // Mark as read if unread
-                    if (!notification.is_read) {
-                      try {
-                        await markNotificationAsRead(notification.id);
-                        setNotifications((prev) =>
-                          prev.map((notif) =>
-                            notif.id === notification.id
-                              ? { ...notif, is_read: true }
-                              : notif,
-                          ),
-                        );
-                        // Notify parent to refresh unread count
-                        onNotificationRead?.();
-                      } catch (error) {
-                        console.error(
-                          "Error marking notification as read:",
-                          error,
-                        );
-                      }
-                    }
-                  }}
+                  onClick={() => handleNotificationClick(notification)}
                 >
                   <div className="flex gap-3 items-start">
                     {/* Unread Indicator */}
@@ -129,7 +140,7 @@ export default function NotificationPopover({
                         </div>
                       </div>
                       <div
-                        className={`text-xs text-gray-700 leading-normal ${notification.is_read ? "cursor-default" : "cursor-pointer"}`}
+                        className="text-xs text-gray-700 leading-normal"
                         dangerouslySetInnerHTML={{
                           __html: sanitizeHtml(notification.description),
                         }}
