@@ -76,6 +76,20 @@ export default function NotificationsPageWrapper() {
     }
   };
 
+  const handleNotificationClick = async (notification: Notification) => {
+    if (!notification.is_read) {
+      await handleMarkAsRead(notification.id);
+    }
+
+    if (notification.url) {
+      if (notification.url.startsWith("http")) {
+        window.location.href = notification.url;
+      } else {
+        router.push(notification.url);
+      }
+    }
+  };
+
   const formatTimeAgo = (dateString: string) => {
     const date = new Date(dateString);
     const now = new Date();
@@ -152,12 +166,12 @@ export default function NotificationsPageWrapper() {
                     index < notifications.length - 1
                       ? "border-b border-gray-200"
                       : ""
-                  } ${notification.is_read ? "cursor-default" : "cursor-pointer"}`}
-                  onClick={() => {
-                    if (!notification.is_read) {
-                      handleMarkAsRead(notification.id);
-                    }
-                  }}
+                  } ${
+                    notification.url || !notification.is_read
+                      ? "cursor-pointer"
+                      : "cursor-default"
+                  }`}
+                  onClick={() => handleNotificationClick(notification)}
                 >
                   <div className="flex gap-3 items-start">
                     {/* Unread Indicator */}
