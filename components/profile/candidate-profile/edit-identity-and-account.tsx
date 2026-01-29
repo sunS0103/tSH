@@ -177,7 +177,8 @@ export default function EditIdentityAndAccount() {
               role: role === "CANDIDATE" ? "CANDIDATE" : "RECRUITER",
             }),
           );
-          router.push("/profile");
+          // Navigate to next section in onboarding flow
+          router.push("/profile-details/edit-personal-social");
         }
       })
       .catch((error) => {
@@ -465,7 +466,10 @@ export default function EditIdentityAndAccount() {
                 type="button"
                 variant="secondary"
                 className="w-fit"
-                onClick={() => router.push("/profile")}
+                onClick={() => {
+                  const isOnboarding = window.location.pathname.includes("/profile-details/");
+                  router.push(isOnboarding ? "/dashboard" : "/profile");
+                }}
               >
                 Cancel
               </Button>

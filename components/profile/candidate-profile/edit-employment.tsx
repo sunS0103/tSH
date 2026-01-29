@@ -32,7 +32,9 @@ export default function EditEmployment() {
   >(employmentData?.employment_status || "Employed");
 
   const handleCancel = () => {
-    router.push("/profile");
+    // Check if user is in onboarding flow or editing from profile
+    const isOnboarding = window.location.pathname.includes("/profile-details/");
+    router.push(isOnboarding ? "/profile-details/edit-personal-social" : "/profile");
   };
 
   return (

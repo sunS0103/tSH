@@ -295,7 +295,8 @@ export default function EditSkills() {
 
       if (response.success) {
         toast.success(response.message || "Skills updated successfully");
-        router.push("/profile");
+        // Navigate to next section in onboarding flow
+        router.push("/profile-details/edit-location-and-work-preferences");
       }
     } catch (error: unknown) {
       const errorMessage =
@@ -306,7 +307,9 @@ export default function EditSkills() {
   };
 
   const handleCancel = () => {
-    router.push("/profile");
+    // Check if user is in onboarding flow or editing from profile
+    const isOnboarding = window.location.pathname.includes("/profile-details/");
+    router.push(isOnboarding ? "/profile-details/edit-education" : "/profile");
   };
 
   const getSelectedSkillsLabel = (

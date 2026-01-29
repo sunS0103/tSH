@@ -80,7 +80,8 @@ export default function EditEducation() {
       const response = await updateEducation(data);
       if (response.success) {
         toast.success(response.message || "Education updated successfully");
-        router.push("/profile");
+        // Navigate to next section in onboarding flow
+        router.push("/profile-details/edit-skills");
       } else {
         toast.error(response.message || "Failed to update education");
       }
@@ -273,7 +274,10 @@ export default function EditEducation() {
               <Button
                 type="button"
                 variant="secondary"
-                onClick={() => router.push("/profile")}
+                onClick={() => {
+                  const isOnboarding = window.location.pathname.includes("/profile-details/");
+                  router.push(isOnboarding ? "/profile-details/edit-employment" : "/profile");
+                }}
                 className="h-8 px-4 "
               >
                 Cancel

@@ -30,9 +30,9 @@ export default function DashboardWrapper() {
             profileCompletion.total_percentage !== undefined &&
             profileCompletion.total_percentage < 100
           ) {
-            // Redirect to profile page if profile is not 100% complete
+            // Redirect to profile-details onboarding if profile is not 100% complete
             setIsProfileComplete(false);
-            router.push("/profile");
+            router.push("/profile-details/edit-account-and-identity");
             return;
           }
           setIsProfileComplete(true);

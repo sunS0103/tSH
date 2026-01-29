@@ -72,7 +72,8 @@ export default function EditPersonalSocial() {
 
       if (response.success) {
         toast.success(response.message || "Profile updated successfully");
-        router.push("/profile");
+        // Navigate to next section in onboarding flow
+        router.push("/profile-details/edit-employment");
       }
     } catch (error: unknown) {
       const errorMessage =
@@ -93,7 +94,9 @@ export default function EditPersonalSocial() {
   };
 
   const handleCancel = () => {
-    router.push("/profile");
+    // Check if user is in onboarding flow or editing from profile
+    const isOnboarding = window.location.pathname.includes("/profile-details/");
+    router.push(isOnboarding ? "/profile-details/edit-account-and-identity" : "/profile");
   };
 
   return (

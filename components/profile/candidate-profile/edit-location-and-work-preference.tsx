@@ -230,9 +230,10 @@ export default function EditLocationAndWorkPreference() {
       if (response.success) {
         toast.success(
           response.message ||
-            "Location and work preferences updated successfully"
+            "Profile updated successfully. Your profile is now complete!"
         );
-        router.push("/profile");
+        // Final section - redirect to dashboard
+        router.push("/dashboard");
       }
     } catch (error: unknown) {
       const errorMessage =
@@ -243,7 +244,9 @@ export default function EditLocationAndWorkPreference() {
   };
 
   const handleCancel = () => {
-    router.push("/profile");
+    // Check if user is in onboarding flow or editing from profile
+    const isOnboarding = window.location.pathname.includes("/profile-details/");
+    router.push(isOnboarding ? "/profile-details/edit-skills" : "/profile");
   };
 
   return (
