@@ -272,11 +272,11 @@ export default function CandidateProfile({
     currentEmployment?.employment_status === "Employed"
       ? employmentData
       : currentEmployment?.employment_status === "Student" ||
-        currentEmployment?.employment_status === "Fresher"
-      ? studentOrFresherData
-      : currentEmployment?.employment_status === "Between Jobs"
-      ? betweenJobData
-      : null;
+          currentEmployment?.employment_status === "Fresher"
+        ? studentOrFresherData
+        : currentEmployment?.employment_status === "Between Jobs"
+          ? betweenJobData
+          : null;
 
   const educationDetails = [
     { label: "Highest Degree", value: educationData?.degree_name },
@@ -373,8 +373,9 @@ export default function CandidateProfile({
               <Progress value={progress} />
               <span className="text-xs">{progress}%</span>
             </div>
-            <div className="text-xs text-gray-500">
-              Notes: Complete profile to view your dashbaord
+            <div className="text-xs text-gray-900 font-medium">
+              Note: You need to complete your profile 100% to access the
+              dashboard, jobs, and assessments.
             </div>
           </div>
         )}
