@@ -7,6 +7,7 @@ import { Label } from "@/components/ui/label";
 import { Progress } from "@/components/ui/progress";
 import { format } from "date-fns";
 import ProfileSection from "./profile-section";
+
 import Image from "next/image";
 import { useEffect, useState } from "react";
 import { getProfileCompletionPercentage } from "@/api/profile";

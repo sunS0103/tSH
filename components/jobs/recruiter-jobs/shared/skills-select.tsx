@@ -68,7 +68,7 @@ export default function SkillsSelect({ form, skills }: SkillsSelectProps) {
 
         return (
           <FormItem>
-            <FormLabel>Primary Skill Set</FormLabel>
+            <FormLabel required>Primary Skill Set</FormLabel>
             <FormControl>
               <Popover
                 open={open}

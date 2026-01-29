@@ -7,6 +7,7 @@ import {
   FormControl,
   FormField,
   FormItem,
+  FormLabel,
   FormMessage,
 } from "@/components/ui/form";
 import { Label } from "@/components/ui/label";
@@ -41,7 +42,7 @@ const studentFresherSchema = z
     {
       message: "Please select at least one option",
       path: ["looking_for_internship"], // This will show the error message on the form
-    }
+    },
   );
 
 type StudentFresherFormData = z.infer<typeof studentFresherSchema>;
@@ -99,7 +100,7 @@ export default function StudentFresherForm({
 
       if (response.success) {
         toast.success(
-          response.message || "Employment details updated successfully"
+          response.message || "Employment details updated successfully",
         );
         router.push("/profile");
       }
@@ -126,9 +127,9 @@ export default function StudentFresherForm({
           name="looking_for_internship"
           render={() => (
             <FormItem className="w-full">
-              <Label className="text-sm font-medium text-black">
+              <FormLabel required className="text-sm font-medium text-black">
                 Looking For
-              </Label>
+              </FormLabel>
               <Popover>
                 <PopoverTrigger asChild className="w-full md:w-1/2">
                   <Button
@@ -137,7 +138,7 @@ export default function StudentFresherForm({
                     role="combobox"
                     className={cn(
                       "h-8 w-full justify-between border-gray-900 bg-white text-left font-normal",
-                      "hover:bg-white"
+                      "hover:bg-white",
                     )}
                   >
                     <span className="truncate">
@@ -153,7 +154,7 @@ export default function StudentFresherForm({
                               remote,
                             ];
                             return values[index];
-                          }
+                          },
                         );
                         return selected.length > 0
                           ? selected.map((opt) => opt.label).join(", ")
@@ -182,7 +183,7 @@ export default function StudentFresherForm({
                               "flex items-center gap-4 px-6 py-4 border-b border-gray-200 last:border-b-0 cursor-pointer hover:bg-gray-50",
                               index === 0 && "rounded-t-2xl",
                               index === lookingForOptions.length - 1 &&
-                                "rounded-b-2xl"
+                                "rounded-b-2xl",
                             )}
                             onClick={() => field.onChange(!field.value)}
                           >

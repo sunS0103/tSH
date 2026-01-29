@@ -85,21 +85,21 @@ export default function EditIdentityAndAccount() {
       mobile_number: profileData?.mobile_details?.mobile_number || "",
       date_of_birth: profileData?.date_of_birth
         ? (() => {
-          try {
-            // Handle both timestamp (number) and date string
-            const dateValue = profileData.date_of_birth;
-            const date =
-              typeof dateValue === "number"
-                ? new Date(dateValue)
-                : new Date(dateValue);
-            if (!isNaN(date.getTime())) {
-              return format(date, "MM-dd-yyyy");
+            try {
+              // Handle both timestamp (number) and date string
+              const dateValue = profileData.date_of_birth;
+              const date =
+                typeof dateValue === "number"
+                  ? new Date(dateValue)
+                  : new Date(dateValue);
+              if (!isNaN(date.getTime())) {
+                return format(date, "MM-dd-yyyy");
+              }
+            } catch {
+              // Invalid date, return empty string
             }
-          } catch {
-            // Invalid date, return empty string
-          }
-          return "";
-        })()
+            return "";
+          })()
         : "",
       account_type: profileData?.account_type,
       country_code: profileData?.mobile_details?.dial_code || "+91",
@@ -205,7 +205,7 @@ export default function EditIdentityAndAccount() {
                 name="first_name"
                 render={({ field }) => (
                   <FormItem className="w-full">
-                    <Label>First name</Label>
+                    <FormLabel required>First name</FormLabel>
                     <FormControl>
                       <Input
                         placeholder="Enter first name"
@@ -224,7 +224,7 @@ export default function EditIdentityAndAccount() {
                 name="last_name"
                 render={({ field }) => (
                   <FormItem className="w-full">
-                    <Label>Last name</Label>
+                    <FormLabel required>Last name</FormLabel>
                     <FormControl>
                       <Input
                         placeholder="Enter last name"
@@ -243,7 +243,7 @@ export default function EditIdentityAndAccount() {
               name="gender"
               render={({ field }) => (
                 <FormItem>
-                  <Label>Gender</Label>
+                  <FormLabel required>Gender</FormLabel>
                   <FormControl>
                     <RadioGroup
                       onValueChange={field.onChange}
@@ -282,7 +282,7 @@ export default function EditIdentityAndAccount() {
                 name="email"
                 render={({ field }) => (
                   <FormItem className="w-full md:w-1/2">
-                    <Label>Email ID</Label>
+                    <FormLabel required>Email ID</FormLabel>
                     <FormControl>
                       <Input placeholder="Enter email" {...field} disabled />
                     </FormControl>
@@ -297,7 +297,7 @@ export default function EditIdentityAndAccount() {
                 name="mobile_number"
                 render={({ field }) => (
                   <FormItem className="w-full md:w-1/2">
-                    <Label>Phone Number</Label>
+                    <FormLabel required>Phone Number</FormLabel>
                     <FormControl>
                       <div className="flex border border-black rounded-lg">
                         <CountryCodeDropdown
@@ -408,8 +408,12 @@ export default function EditIdentityAndAccount() {
                       <PopoverContent className="w-auto p-0" align="start">
                         <Calendar
                           mode="single"
-                          selected={field.value ? new Date(field.value) : undefined}
-                          defaultMonth={field.value ? new Date(field.value) : undefined}
+                          selected={
+                            field.value ? new Date(field.value) : undefined
+                          }
+                          defaultMonth={
+                            field.value ? new Date(field.value) : undefined
+                          }
                           onSelect={(date) => {
                             if (date) {
                               // Format as MM-dd-yyyy string for consistency
@@ -438,7 +442,7 @@ export default function EditIdentityAndAccount() {
                 name="account_type"
                 render={({ field }) => (
                   <FormItem className="w-full md:w-1/2">
-                    <Label>Account Type</Label>
+                    <FormLabel required>Account Type</FormLabel>
                     <Select onValueChange={field.onChange} value={field.value}>
                       <FormControl>
                         <SelectTrigger className="w-full border border-black">

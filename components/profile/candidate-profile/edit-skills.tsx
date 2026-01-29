@@ -7,6 +7,7 @@ import {
   FormControl,
   FormField,
   FormItem,
+  FormLabel,
   FormMessage,
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
@@ -84,7 +85,7 @@ export default function EditSkills() {
   // Helper function to validate and filter IDs
   const validateIds = (
     ids: number[] | undefined,
-    validIds: number[]
+    validIds: number[],
   ): number[] => {
     if (!ids || !Array.isArray(ids)) return [];
     return ids.filter((id) => validIds.includes(id));
@@ -102,7 +103,9 @@ export default function EditSkills() {
     if (skill.category?.id) return skill.category.id;
     // If only category_name is available, find matching category
     if (skill.category_name) {
-      const category = categories.find((cat) => cat.name === skill.category_name);
+      const category = categories.find(
+        (cat) => cat.name === skill.category_name,
+      );
       return category?.id || null;
     }
     return null;
@@ -115,12 +118,11 @@ export default function EditSkills() {
     return validCategoryIds.includes(categoryId) ? categoryId : 0;
   };
 
-
   const getValidPreferredRoles = (): number[] => {
     const validCategoryIds = categories.map((cat) => cat.id);
     return validateIds(
       skillsData?.preferred_roles?.map((role: { id: number }) => role.id),
-      validCategoryIds
+      validCategoryIds,
     );
   };
 
@@ -181,18 +183,25 @@ export default function EditSkills() {
       skillsData
     ) {
       const initialPrimarySkillCategory = getValidPrimarySkillCategory();
-      
+
       // Get all valid skill IDs from cookie (not filtered by category yet)
       const allValidSkillIds = skills.map((skill) => skill.id);
-      const cookiePrimarySkillIds = skillsData?.primary_skills?.map(
-        (skill: { id: number }) => skill.id
-      ) || [];
-      const cookieSecondarySkillIds = skillsData?.secondary_skills?.map(
-        (skill: { id: number }) => skill.id
-      ) || [];
-      
-      const validPrimarySkills = validateIds(cookiePrimarySkillIds, allValidSkillIds);
-      const validSecondarySkills = validateIds(cookieSecondarySkillIds, allValidSkillIds);
+      const cookiePrimarySkillIds =
+        skillsData?.primary_skills?.map((skill: { id: number }) => skill.id) ||
+        [];
+      const cookieSecondarySkillIds =
+        skillsData?.secondary_skills?.map(
+          (skill: { id: number }) => skill.id,
+        ) || [];
+
+      const validPrimarySkills = validateIds(
+        cookiePrimarySkillIds,
+        allValidSkillIds,
+      );
+      const validSecondarySkills = validateIds(
+        cookieSecondarySkillIds,
+        allValidSkillIds,
+      );
 
       form.reset({
         primary_skill_category: initialPrimarySkillCategory || 0,
@@ -230,7 +239,7 @@ export default function EditSkills() {
 
     // Filter out skills that don't belong to the new category
     const filteredSkills = currentPrimarySkills.filter((id) =>
-      validSkillIds.includes(id)
+      validSkillIds.includes(id),
     );
 
     if (filteredSkills.length !== currentPrimarySkills.length) {
@@ -240,12 +249,12 @@ export default function EditSkills() {
     // Filter secondary skills to only include those from the current category
     const currentSecondarySkills = form.getValues("secondary_skills") || [];
     const filteredSecondarySkills = currentSecondarySkills.filter((id) =>
-      validSkillIds.includes(id)
+      validSkillIds.includes(id),
     );
 
     // Also remove any secondary skills that are now in primary skills
     const finalSecondarySkills = filteredSecondarySkills.filter(
-      (id) => !filteredSkills.includes(id)
+      (id) => !filteredSkills.includes(id),
     );
 
     if (finalSecondarySkills.length !== currentSecondarySkills.length) {
@@ -261,7 +270,7 @@ export default function EditSkills() {
 
     // Filter out any secondary skills that are now in primary skills
     const filteredSecondarySkills = currentSecondarySkills.filter(
-      (id) => !currentPrimarySkills.includes(id)
+      (id) => !currentPrimarySkills.includes(id),
     );
 
     if (filteredSecondarySkills.length !== currentSecondarySkills.length) {
@@ -311,7 +320,7 @@ export default function EditSkills() {
 
   const getSelectedSkillsLabel = (
     selectedIds: number[],
-    options: SkillOption[] | RoleOption[] | CategoryOption[]
+    options: SkillOption[] | RoleOption[] | CategoryOption[],
   ) => {
     if (selectedIds.length === 0) return "Select options";
     const selected = options.filter((opt) => selectedIds.includes(opt.id));
@@ -337,9 +346,12 @@ export default function EditSkills() {
               name="primary_skill_category"
               render={({ field }) => (
                 <FormItem className="w-full md:w-1/2">
-                  <Label className="text-sm font-medium text-black">
+                  <FormLabel
+                    required
+                    className="text-sm font-medium text-black"
+                  >
                     Primary Skill Category
-                  </Label>
+                  </FormLabel>
                   <FormControl>
                     <Select
                       onValueChange={(value) => {
@@ -380,9 +392,12 @@ export default function EditSkills() {
               name="primary_skills"
               render={({ field }) => (
                 <FormItem className="w-full md:w-1/2">
-                  <Label className="text-sm font-medium text-black">
+                  <FormLabel
+                    required
+                    className="text-sm font-medium text-black"
+                  >
                     Primary Skills
-                  </Label>
+                  </FormLabel>
                   <Popover>
                     <PopoverTrigger asChild>
                       <Button
@@ -391,20 +406,17 @@ export default function EditSkills() {
                         role="combobox"
                         className={cn(
                           "min-h-8 h-auto w-full justify-between border-gray-900 bg-white text-left font-normal py-2",
-                          "hover:bg-white"
+                          "hover:bg-white",
                         )}
                       >
                         <span
                           className={cn(
                             "flex-1 text-wrap wrap-break-word pr-2",
                             (!field.value || field.value.length === 0) &&
-                              "text-gray-500"
+                              "text-gray-500",
                           )}
                         >
-                          {getSelectedSkillsLabel(
-                            field.value || [],
-                            skills
-                          )}
+                          {getSelectedSkillsLabel(field.value || [], skills)}
                         </span>
                         <Icon
                           icon="material-symbols:keyboard-arrow-down-rounded"
@@ -429,18 +441,18 @@ export default function EditSkills() {
                                 "flex items-center gap-4 px-6 py-4 border-b border-gray-200 last:border-b-0 cursor-pointer hover:bg-gray-50",
                                 index === 0 && "rounded-t-2xl",
                                 index === filteredPrimarySkills.length - 1 &&
-                                  "rounded-b-2xl"
+                                  "rounded-b-2xl",
                               )}
                               onClick={() => {
                                 const currentValue = field.value || [];
                                 const isSelected = currentValue.includes(
-                                  option.id
+                                  option.id,
                                 );
                                 if (isSelected) {
                                   field.onChange(
                                     currentValue.filter(
-                                      (id) => id !== option.id
-                                    )
+                                      (id) => id !== option.id,
+                                    ),
                                   );
                                 } else {
                                   field.onChange([...currentValue, option.id]);
@@ -449,7 +461,7 @@ export default function EditSkills() {
                             >
                               <Checkbox
                                 checked={(field.value || []).includes(
-                                  option.id
+                                  option.id,
                                 )}
                                 onCheckedChange={(checked) => {
                                   const currentValue = field.value || [];
@@ -461,8 +473,8 @@ export default function EditSkills() {
                                   } else {
                                     field.onChange(
                                       currentValue.filter(
-                                        (id) => id !== option.id
-                                      )
+                                        (id) => id !== option.id,
+                                      ),
                                     );
                                   }
                                 }}
@@ -493,14 +505,14 @@ export default function EditSkills() {
                 const selectedPrimarySkills =
                   form.getValues("primary_skills") || [];
                 const availableSecondarySkills = filteredPrimarySkills.filter(
-                  (skill) => !selectedPrimarySkills.includes(skill.id)
+                  (skill) => !selectedPrimarySkills.includes(skill.id),
                 );
 
                 return (
                   <FormItem className="w-full md:w-1/2">
-                    <Label className="text-sm font-medium text-black">
+                    <FormLabel className="text-sm font-medium text-black">
                       Secondary Skills
-                    </Label>
+                    </FormLabel>
                     <Popover
                       open={secondaryPopoverOpen}
                       onOpenChange={setSecondaryPopoverOpen}
@@ -512,20 +524,17 @@ export default function EditSkills() {
                           role="combobox"
                           className={cn(
                             "min-h-8 h-auto w-full justify-between border-gray-900 bg-white text-left font-normal py-2",
-                            "hover:bg-white"
+                            "hover:bg-white",
                           )}
                         >
                           <span
                             className={cn(
                               "flex-1 text-wrap wrap-break-word pr-2",
                               (!field.value || field.value.length === 0) &&
-                                "text-gray-500"
+                                "text-gray-500",
                             )}
                           >
-                            {getSelectedSkillsLabel(
-                              field.value || [],
-                              skills
-                            )}
+                            {getSelectedSkillsLabel(field.value || [], skills)}
                           </span>
                           <Icon
                             icon="material-symbols:keyboard-arrow-down-rounded"
@@ -551,18 +560,18 @@ export default function EditSkills() {
                                   index === 0 && "rounded-t-2xl",
                                   index ===
                                     availableSecondarySkills.length - 1 &&
-                                    "rounded-b-2xl"
+                                    "rounded-b-2xl",
                                 )}
                                 onClick={() => {
                                   const currentValue = field.value || [];
                                   const isSelected = currentValue.includes(
-                                    option.id
+                                    option.id,
                                   );
                                   if (isSelected) {
                                     field.onChange(
                                       currentValue.filter(
-                                        (id) => id !== option.id
-                                      )
+                                        (id) => id !== option.id,
+                                      ),
                                     );
                                   } else {
                                     field.onChange([
@@ -574,7 +583,7 @@ export default function EditSkills() {
                               >
                                 <Checkbox
                                   checked={(field.value || []).includes(
-                                    option.id
+                                    option.id,
                                   )}
                                   onCheckedChange={(checked) => {
                                     const currentValue = field.value || [];
@@ -586,8 +595,8 @@ export default function EditSkills() {
                                     } else {
                                       field.onChange(
                                         currentValue.filter(
-                                          (id) => id !== option.id
-                                        )
+                                          (id) => id !== option.id,
+                                        ),
                                       );
                                     }
                                   }}
@@ -613,9 +622,12 @@ export default function EditSkills() {
               name="preferred_roles"
               render={({ field }) => (
                 <FormItem className="w-full md:w-1/2">
-                  <Label className="text-sm font-medium text-black">
+                  <FormLabel
+                    required
+                    className="text-sm font-medium text-black"
+                  >
                     Preferred Roles
-                  </Label>
+                  </FormLabel>
                   <Popover>
                     <PopoverTrigger asChild>
                       <Button
@@ -624,19 +636,19 @@ export default function EditSkills() {
                         role="combobox"
                         className={cn(
                           "min-h-8 h-auto w-full justify-between border-gray-900 bg-white text-left font-normal py-2",
-                          "hover:bg-white"
+                          "hover:bg-white",
                         )}
                       >
                         <span
                           className={cn(
                             "flex-1 text-wrap wrap-break-word pr-2",
                             (!field.value || field.value.length === 0) &&
-                              "text-gray-500"
+                              "text-gray-500",
                           )}
                         >
                           {getSelectedSkillsLabel(
                             field.value || [],
-                            categories
+                            categories,
                           )}
                         </span>
                         <Icon
@@ -657,18 +669,18 @@ export default function EditSkills() {
                               "flex items-center gap-4 px-6 py-4 border-b border-gray-200 last:border-b-0 cursor-pointer hover:bg-gray-50",
                               index === 0 && "rounded-t-2xl",
                               index === categories.length - 1 &&
-                                "rounded-b-2xl"
+                                "rounded-b-2xl",
                             )}
                             onClick={() => {
                               const currentValue = field.value || [];
                               const isSelected = currentValue.includes(
-                                category.id
+                                category.id,
                               );
                               if (isSelected) {
                                 field.onChange(
                                   currentValue.filter(
-                                    (id) => id !== category.id
-                                  )
+                                    (id) => id !== category.id,
+                                  ),
                                 );
                               } else {
                                 field.onChange([...currentValue, category.id]);
@@ -677,7 +689,7 @@ export default function EditSkills() {
                           >
                             <Checkbox
                               checked={(field.value || []).includes(
-                                category.id
+                                category.id,
                               )}
                               onCheckedChange={(checked) => {
                                 const currentValue = field.value || [];
@@ -689,8 +701,8 @@ export default function EditSkills() {
                                 } else {
                                   field.onChange(
                                     currentValue.filter(
-                                      (id) => id !== category.id
-                                    )
+                                      (id) => id !== category.id,
+                                    ),
                                   );
                                 }
                               }}
@@ -717,9 +729,9 @@ export default function EditSkills() {
               name="certifications"
               render={({ field }) => (
                 <FormItem className="w-full md:w-1/2">
-                  <Label className="text-sm font-medium text-black">
+                  <FormLabel className="text-sm font-medium text-black">
                     Certifications
-                  </Label>
+                  </FormLabel>
                   <FormControl>
                     <Input
                       placeholder="e.g., AWS-3, React"
