@@ -91,10 +91,10 @@ export default function RecruiterDashboard() {
               job.status === "published"
                 ? "Active"
                 : job.status === "in_review"
-                ? "In Review"
-                : job.status === "draft"
-                ? "Draft"
-                : job.status,
+                  ? "In Review"
+                  : job.status === "draft"
+                    ? "Draft"
+                    : job.status,
             experience_range: job.experience_range || "",
             companyName: job.company_name,
             skills: skillsArray,
@@ -113,7 +113,7 @@ export default function RecruiterDashboard() {
         });
         if (talentsRes?.data) {
           const mappedTalents = talentsRes.data.map((candidate: Candidate) =>
-            mapCandidateToTalentCard(candidate)
+            mapCandidateToTalentCard(candidate),
           );
           setFavoriteTalents(mappedTalents.slice(0, 2));
         }
@@ -494,7 +494,7 @@ export default function RecruiterDashboard() {
                       })) || []
                     }
                     duration={assessment.duration || 0}
-                    questionCount={assessment.question_count || 0}
+                    questionCount={assessment.total_questions || 0}
                     score={assessment.score || 0}
                     selectedTab="all"
                   />

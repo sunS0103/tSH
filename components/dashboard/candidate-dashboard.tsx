@@ -429,7 +429,7 @@ export default function CandidateDashboard() {
                       })) || []
                     }
                     duration={assessment.duration || 0}
-                    questionCount={assessment.question_count || 0}
+                    questionCount={assessment.total_questions || 0}
                     score={assessment.score || 0}
                     selectedTab="taken"
                   />
@@ -482,7 +482,7 @@ export default function CandidateDashboard() {
                       })) || []
                     }
                     duration={assessment.duration || 0}
-                    questionCount={assessment.question_count || 0}
+                    questionCount={assessment.total_questions || 0}
                     score={assessment.score || 0}
                     selectedTab="all"
                   />

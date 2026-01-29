@@ -119,7 +119,7 @@ export default function EmailForm({ role }: EmailFormProps) {
       .then((response) => {
         if (response.success) {
           toast.success(
-            response.message || "OTP sent successfully to your email"
+            response.message || "OTP sent successfully to your email",
           );
           setStep("otp");
           setTimer(59);
@@ -141,7 +141,7 @@ export default function EmailForm({ role }: EmailFormProps) {
       .then((response) => {
         if (response.success) {
           toast.success(
-            response.message || "OTP sent successfully to your email"
+            response.message || "OTP sent successfully to your email",
           );
           setTimer(59);
           setCanResend(false);
@@ -236,12 +236,12 @@ export default function EmailForm({ role }: EmailFormProps) {
       console.error("Google sign-in error:", error);
       let errorMessage = "Failed to sign in with Google";
 
-      if (
-        (error as { code?: string })?.code === "auth/popup-closed-by-user"
-      ) {
+      if ((error as { code?: string })?.code === "auth/popup-closed-by-user") {
         errorMessage = "Google sign-in popup window closed by user";
       } else if ((error as unknown as { message?: string })?.message) {
-        errorMessage = (error as unknown as { message?: string })?.message || "Failed to sign in with Google";
+        errorMessage =
+          (error as unknown as { message?: string })?.message ||
+          "Failed to sign in with Google";
       }
 
       toast.error(errorMessage);
@@ -377,7 +377,7 @@ export default function EmailForm({ role }: EmailFormProps) {
                 Resend OTP
               </Button>
               <Button
-                type="button"
+                type="submit"
                 className="flex-1"
                 onClick={onVerifyOtp}
                 disabled={otp.length !== 4}
