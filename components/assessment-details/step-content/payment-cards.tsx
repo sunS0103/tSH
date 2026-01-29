@@ -269,8 +269,7 @@ export default function PaymentCards({
           <div className="flex flex-col items-center gap-2">
             <Button
               disabled={
-                currentPayment?.package_type !== "FREE" ||
-                currentPayment?.package_type === null
+                currentPayment?.package_type !== "FREE"
                 // &&
                 // currentPayment?.package_type === null
               }
