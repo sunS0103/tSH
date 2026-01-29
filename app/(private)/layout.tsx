@@ -1,5 +1,6 @@
 import Header from "@/components/header";
 import { NotificationProvider } from "@/components/providers/notification-provider";
+import CandidateGuard from "@/components/providers/candidate-guard";
 
 export default function Layout({
   children,
@@ -13,7 +14,7 @@ export default function Layout({
 
         <div className="bg-gray-50">
           <div className="max-container mx-auto bg-gray-50 px-4 pt-4 h-full">
-            {children}
+            <CandidateGuard>{children}</CandidateGuard>
           </div>
         </div>
       </NotificationProvider>
