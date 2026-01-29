@@ -47,8 +47,11 @@ export default function PaymentCards({
   }) => void;
 }) {
   const [paymentSuccessData, setPaymentSuccessData] = useState<Payment | null>(
-    payment || null
+    payment || null,
   );
+
+  console.log({ paymentSuccessData });
+  console.log({ payment });
 
   const router = useRouter();
 
@@ -196,7 +199,7 @@ export default function PaymentCards({
   };
 
   const handlePurchase = async (
-    packageType: "FREE" | "BASIC" | "PREMIUM" | "PLATINUM"
+    packageType: "FREE" | "BASIC" | "PREMIUM" | "PLATINUM",
   ) => {
     try {
       // 1️⃣ Create Order
@@ -242,6 +245,8 @@ export default function PaymentCards({
     }
   };
 
+  console.log(currentPayment?.package_type);
+
   return (
     <div>
       {is_free_plan_available && (
@@ -264,8 +269,10 @@ export default function PaymentCards({
           <div className="flex flex-col items-center gap-2">
             <Button
               disabled={
-                currentPayment?.package_type !== "FREE" &&
+                currentPayment?.package_type !== "FREE" ||
                 currentPayment?.package_type === null
+                // &&
+                // currentPayment?.package_type === null
               }
               className="w-fit px-10"
               onClick={() => handlePurchase("FREE")}
@@ -287,7 +294,7 @@ export default function PaymentCards({
               "border border-gray-200 rounded-lg p-2 md:p-3 flex flex-col gap-10 justify-between min-w-64",
               currentPayment?.initial_payment_status === "PAID" &&
                 currentPayment?.package_type === card.packageType &&
-                "border-primary-500"
+                "border-primary-500",
             )}
           >
             <div>
@@ -333,7 +340,7 @@ export default function PaymentCards({
                               | "FREE"
                               | "BASIC"
                               | "PREMIUM"
-                              | "PLATINUM"
+                              | "PLATINUM",
                           );
                         }
                       }}
@@ -385,7 +392,7 @@ export default function PaymentCards({
                               | "FREE"
                               | "BASIC"
                               | "PREMIUM"
-                              | "PLATINUM"
+                              | "PLATINUM",
                           )
                         }
                       >
@@ -404,7 +411,7 @@ export default function PaymentCards({
                         | "FREE"
                         | "BASIC"
                         | "PREMIUM"
-                        | "PLATINUM"
+                        | "PLATINUM",
                     )
                   }
                   disabled={
