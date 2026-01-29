@@ -23,6 +23,10 @@ import { getCookie } from "cookies-next/client";
 import { toast } from "sonner";
 import { useRouter } from "next/navigation";
 
+type Field = {
+  title: string;
+  value: string;
+};
 export interface AdditionalDetails {
   title: string;
   type?: "text" | "textarea";
@@ -109,34 +113,25 @@ export default function JobApplyForm({
       const profile_fields = customFields.slice(0, 5).map((field) => {
         const fieldId =
           typeof field.id === "number" ? field.id : Number(field.id);
+        const val = formData[fieldId];
         return {
           title: field.title,
-          value: String(formData[fieldId]) || "",
+          value: val !== undefined ? String(val) : "",
         };
       });
 
       const custom_fields = customFields.slice(5).map((field) => {
         const fieldId =
           typeof field.id === "number" ? field.id : Number(field.id);
+        const val = formData[fieldId];
         return {
           job_custom_field_id: fieldId,
-          value: String(formData[fieldId]) || "",
+          value: val !== undefined ? String(val) : "",
         };
       });
 
-      const updated_fields = profile_fields
-        .map((field, index) => {
-          const updatedFields: { title: string; value: string }[] = [];
-          if (field.value !== customFields[index].value) {
-            updatedFields.push({
-              title: field.title,
-              value: field.value,
-            });
-          }
-
-          return updatedFields;
-        })
-        ?.flat();
+      // Send all profile fields to ensure data consistency
+      const updated_fields = profile_fields;
 
       const payload = {
         profile_fields: updated_fields,
