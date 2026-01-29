@@ -122,7 +122,7 @@ export default function EditEducation() {
                 name="degree_name"
                 render={({ field }) => (
                   <FormItem className="w-full md:w-1/2">
-                    <FormLabel>Highest Degree</FormLabel>
+                    <FormLabel required>Highest Degree</FormLabel>
                     <FormControl>
                       <Select
                         onValueChange={field.onChange}
@@ -149,7 +149,7 @@ export default function EditEducation() {
                 name="specialization"
                 render={({ field }) => (
                   <FormItem className="w-full md:w-1/2">
-                    <FormLabel>Specialization</FormLabel>
+                    <FormLabel required>Specialization</FormLabel>
                     <FormControl>
                       <Input
                         placeholder="Enter specialization"
@@ -169,7 +169,7 @@ export default function EditEducation() {
                 name="university_name"
                 render={({ field }) => (
                   <FormItem className="w-full md:w-1/2">
-                    <FormLabel>University Name</FormLabel>
+                    <FormLabel required>University Name</FormLabel>
                     <FormControl>
                       <Input
                         placeholder="Enter university name"
@@ -187,7 +187,7 @@ export default function EditEducation() {
                 name="graduation_year"
                 render={({ field }) => (
                   <FormItem className="w-full md:w-1/2">
-                    <FormLabel>Graduation Year</FormLabel>
+                    <FormLabel required>Graduation Year</FormLabel>
                     <FormControl>
                       <Input
                         type="number"
@@ -199,12 +199,12 @@ export default function EditEducation() {
                           // Remove any non-numeric characters
                           const numericValue = e.target.value.replace(
                             /\D/g,
-                            ""
+                            "",
                           );
                           e.target.value = numericValue;
                           // Set to null if empty, otherwise convert to number
                           field.onChange(
-                            numericValue === "" ? null : Number(numericValue)
+                            numericValue === "" ? null : Number(numericValue),
                           );
                         }}
                         onKeyDown={(e) => {
@@ -242,12 +242,12 @@ export default function EditEducation() {
               name="academic_status"
               render={({ field }) => (
                 <FormItem className="w-full md:w-1/2">
-                  <FormLabel>Academic Status</FormLabel>
+                  <FormLabel required>Academic Status</FormLabel>
                   <FormControl>
                     <Select
                       onValueChange={(value) => {
                         field.onChange(
-                          value as "Completed" | "Final Year" | "Pursuing"
+                          value as "Completed" | "Final Year" | "Pursuing",
                         );
                       }}
                       value={field.value || undefined}

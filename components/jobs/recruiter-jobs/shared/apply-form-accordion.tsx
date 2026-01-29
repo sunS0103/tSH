@@ -161,7 +161,8 @@ export default function ApplyFormAccordion({ form }: ApplyFormAccordionProps) {
                   <div className="flex gap-2 w-full">
                     <div className="space-y-2 w-full">
                       <Label className="text-sm font-medium text-gray-950">
-                        Field Title
+                        Field Title{" "}
+                        <span className="text-destructive ms-1">*</span>
                       </Label>
                       <Input
                         placeholder="Enter Title"
@@ -183,7 +184,8 @@ export default function ApplyFormAccordion({ form }: ApplyFormAccordionProps) {
 
                     <div className="space-y-2 w-full">
                       <Label className="text-sm font-medium text-gray-950">
-                        Field Type
+                        Field Type{" "}
+                        <span className="text-destructive ms-1">*</span>
                       </Label>
                       <Select
                         value={newFieldType}

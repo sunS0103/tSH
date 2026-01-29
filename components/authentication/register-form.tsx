@@ -498,7 +498,7 @@ export default function RegisterForm({ role, email }: RegisterFormProps) {
               name="companyName"
               render={({ field }) => (
                 <FormItem>
-                  <Label>Company name</Label>
+                  <FormLabel required>Company name</FormLabel>
                   <FormControl>
                     <Input placeholder="Enter Company Name" {...field} />
                   </FormControl>
@@ -514,7 +514,7 @@ export default function RegisterForm({ role, email }: RegisterFormProps) {
             name="firstName"
             render={({ field }) => (
               <FormItem>
-                <Label>First name</Label>
+                <FormLabel required>First name</FormLabel>
                 <FormControl>
                   <Input placeholder="Enter First Name" {...field} />
                 </FormControl>
@@ -529,7 +529,7 @@ export default function RegisterForm({ role, email }: RegisterFormProps) {
             name="lastName"
             render={({ field }) => (
               <FormItem>
-                <Label>Last name</Label>
+                <FormLabel required>Last name</FormLabel>
                 <FormControl>
                   <Input placeholder="Enter Last Name" {...field} />
                 </FormControl>
@@ -544,7 +544,7 @@ export default function RegisterForm({ role, email }: RegisterFormProps) {
             name="gender"
             render={({ field }) => (
               <FormItem>
-                <Label>Gender</Label>
+                <FormLabel required>Gender</FormLabel>
                 <FormControl>
                   <RadioGroup
                     onValueChange={field.onChange}
@@ -586,7 +586,7 @@ export default function RegisterForm({ role, email }: RegisterFormProps) {
 
           {/* Email ID - Disabled */}
           <div className="space-y-2">
-            <Label>Email ID</Label>
+            <FormLabel required>Email ID</FormLabel>
             <Input
               value={email}
               disabled
@@ -600,7 +600,7 @@ export default function RegisterForm({ role, email }: RegisterFormProps) {
             name="phone"
             render={({ field }) => (
               <FormItem>
-                <Label>Phone Number</Label>
+                <FormLabel required>Phone Number</FormLabel>
                 <FormControl>
                   <div className="flex border border-black rounded-lg">
                     <CountryCodeDropdown
@@ -721,7 +721,7 @@ export default function RegisterForm({ role, email }: RegisterFormProps) {
               name="accountType"
               render={({ field }) => (
                 <FormItem>
-                  <Label>Account Type</Label>
+                  <FormLabel required>Account Type</FormLabel>
                   <Select onValueChange={field.onChange} value={field.value}>
                     <FormControl>
                       <SelectTrigger className="w-full border-black">
@@ -752,7 +752,7 @@ export default function RegisterForm({ role, email }: RegisterFormProps) {
                 name="country_id"
                 render={({ field }) => (
                   <FormItem>
-                    <Label>Country</Label>
+                    <FormLabel required>Country</FormLabel>
                     <Popover open={countryOpen} onOpenChange={setCountryOpen}>
                       <PopoverTrigger asChild>
                         <FormControl>
@@ -851,7 +851,7 @@ export default function RegisterForm({ role, email }: RegisterFormProps) {
 
                   return (
                     <FormItem>
-                      <Label>City</Label>
+                      <FormLabel required>City</FormLabel>
                       <Popover open={cityOpen} onOpenChange={setCityOpen}>
                         <PopoverTrigger asChild>
                           <FormControl>
@@ -949,7 +949,7 @@ export default function RegisterForm({ role, email }: RegisterFormProps) {
                 name="jobCategory"
                 render={({ field }) => (
                   <FormItem>
-                    <Label>Primary Job Posting Category</Label>
+                    <FormLabel required>Primary Job Posting Category</FormLabel>
                     <Select onValueChange={field.onChange} value={field.value}>
                       <FormControl>
                         <SelectTrigger className="w-full">
@@ -978,7 +978,7 @@ export default function RegisterForm({ role, email }: RegisterFormProps) {
                 name="platformRole"
                 render={({ field }) => (
                   <FormItem>
-                    <Label>Nature Of Job Post</Label>
+                    <FormLabel required>Nature Of Job Post</FormLabel>
                     <Select onValueChange={field.onChange} value={field.value}>
                       <FormControl>
                         <SelectTrigger className="w-full">

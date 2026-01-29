@@ -7,6 +7,7 @@ import {
   FormControl,
   FormField,
   FormItem,
+  FormLabel,
   FormMessage,
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
@@ -34,13 +35,13 @@ const editPersonalSocialSchema = z.object({
     .string()
     .refine(
       (val) => !val || z.string().url().safeParse(val).success,
-      "Please enter a valid LinkedIn URL"
+      "Please enter a valid LinkedIn URL",
     ),
   github_url: z
     .string()
     .refine(
       (val) => !val || z.string().url().safeParse(val).success,
-      "Please enter a valid GitHub/Portfolio URL"
+      "Please enter a valid GitHub/Portfolio URL",
     ),
 });
 
@@ -122,9 +123,12 @@ export default function EditPersonalSocial() {
                     const charCount = field.value?.length || 0;
                     return (
                       <FormItem className="w-full md:w-1/2">
-                        <Label className="text-sm font-medium text-black">
+                        <FormLabel
+                          required
+                          className="text-sm font-medium text-black"
+                        >
                           Short Headline
-                        </Label>
+                        </FormLabel>
                         <FormControl>
                           <div className="relative mb-2">
                             <Textarea
@@ -152,9 +156,12 @@ export default function EditPersonalSocial() {
                     const charCount = field.value?.length || 0;
                     return (
                       <FormItem className="w-full md:w-1/2">
-                        <Label className="text-sm font-medium text-black">
+                        <FormLabel
+                          required
+                          className="text-sm font-medium text-black"
+                        >
                           Describe Yourself in Few Words
-                        </Label>
+                        </FormLabel>
                         <FormControl>
                           <div className="relative mb-2">
                             <Textarea
@@ -183,9 +190,9 @@ export default function EditPersonalSocial() {
                   name="linkedin_url"
                   render={({ field }) => (
                     <FormItem className="w-full md:w-1/2">
-                      <Label className="text-sm font-medium text-black">
+                      <FormLabel className="text-sm font-medium text-black">
                         LinkedIn Profile URL
-                      </Label>
+                      </FormLabel>
                       <FormControl>
                         <div className="relative">
                           <Input
@@ -210,9 +217,9 @@ export default function EditPersonalSocial() {
                   name="github_url"
                   render={({ field }) => (
                     <FormItem className="w-full md:w-1/2">
-                      <Label className="text-sm font-medium text-black">
+                      <FormLabel className="text-sm font-medium text-black">
                         GitHub / Portfolio URL
-                      </Label>
+                      </FormLabel>
                       <FormControl>
                         <div className="relative">
                           <Input

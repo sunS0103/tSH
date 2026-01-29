@@ -159,7 +159,8 @@ export default function AdditionalDetailsForm({
                       className="flex-1 flex flex-col gap-2"
                     >
                       <Label className="text-sm font-medium text-gray-900">
-                        {field.title}
+                        {field.title}{" "}
+                        <span className="text-destructive ms-1">*</span>
                       </Label>
                       <Input
                         type="text"
@@ -195,9 +196,13 @@ export default function AdditionalDetailsForm({
               const charCount = formData[field.title]?.length || 0;
 
               return (
-                <div key={field.title} className="flex flex-col gap-2 w-full relative">
+                <div
+                  key={field.title}
+                  className="flex flex-col gap-2 w-full relative"
+                >
                   <Label className="text-sm font-medium text-gray-900">
-                    {field.title}
+                    {field.title}{" "}
+                    <span className="text-destructive ms-1">*</span>
                   </Label>
                   <Textarea
                     placeholder={placeholder}
@@ -250,13 +255,13 @@ export default function AdditionalDetailsForm({
                     if (response.success) {
                       toast.success(
                         response.message ||
-                          "Additional details submitted successfully"
+                          "Additional details submitted successfully",
                       );
                       router.refresh();
                     } else {
                       toast.error(
                         response.message ||
-                          "Error submitting additional details"
+                          "Error submitting additional details",
                       );
                     }
                   });
