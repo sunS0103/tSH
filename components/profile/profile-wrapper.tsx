@@ -170,7 +170,7 @@ export default function ProfilePage() {
           .catch((error) => {
             toast.error(
               error?.response?.data?.message ||
-                "Failed to get recruiter profile data"
+                "Failed to get recruiter profile data",
             );
           });
       }
@@ -185,7 +185,7 @@ export default function ProfilePage() {
           .catch((error) => {
             toast.error(
               error?.response?.data?.message ||
-                "Failed to get candidate profile data"
+                "Failed to get candidate profile data",
             );
           });
 
@@ -199,7 +199,7 @@ export default function ProfilePage() {
           .catch((error) => {
             toast.error(
               error?.response?.data?.message ||
-                "Failed to get candidate social data"
+                "Failed to get candidate social data",
             );
           });
 
@@ -209,14 +209,14 @@ export default function ProfilePage() {
               setCurrentEmploymentDetailsData(response.data);
               setCookie(
                 "current_employment_details_data",
-                JSON.stringify(response.data)
+                JSON.stringify(response.data),
               );
             }
           })
           .catch((error) => {
             toast.error(
               error?.response?.data?.message ||
-                "Failed to get current employment details data"
+                "Failed to get current employment details data",
             );
           });
 
@@ -226,14 +226,14 @@ export default function ProfilePage() {
               setLocationAndWorkPreferencesData(response.data);
               setCookie(
                 "location_and_work_preferences_data",
-                JSON.stringify(response.data)
+                JSON.stringify(response.data),
               );
             }
           })
           .catch((error) => {
             toast.error(
               error?.response?.data?.message ||
-                "Failed to get location and work preferences data"
+                "Failed to get location and work preferences data",
             );
           });
 
@@ -246,7 +246,7 @@ export default function ProfilePage() {
           })
           .catch((error) => {
             toast.error(
-              error?.response?.data?.message || "Failed to get education data"
+              error?.response?.data?.message || "Failed to get education data",
             );
           });
 
@@ -259,7 +259,7 @@ export default function ProfilePage() {
           })
           .catch((error) => {
             toast.error(
-              error?.response?.data?.message || "Failed to get skills data"
+              error?.response?.data?.message || "Failed to get skills data",
             );
           });
       }

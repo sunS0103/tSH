@@ -15,6 +15,7 @@ import {
   FormControl,
   FormField,
   FormItem,
+  FormLabel,
   FormMessage,
 } from "@/components/ui/form";
 import { createAssessmentRequest } from "@/api/assessments";
@@ -61,7 +62,7 @@ export default function RequestAssessmentForm() {
       console.error("Error submitting assessment request:", error);
       toast.error(
         error.response?.data?.message ||
-          "Failed to submit assessment request. Please try again."
+          "Failed to submit assessment request. Please try again.",
       );
     } finally {
       setIsSubmitting(false);
@@ -87,9 +88,12 @@ export default function RequestAssessmentForm() {
               name="assessment_title"
               render={({ field }) => (
                 <FormItem className="flex flex-col gap-2 grow items-start relative w-full md:w-1/2">
-                  <Label className="text-sm font-medium text-black">
+                  <FormLabel
+                    required
+                    className="text-sm font-medium text-black"
+                  >
                     Assessment Title
-                  </Label>
+                  </FormLabel>
                   <FormControl>
                     <Input
                       placeholder="Enter Title"
@@ -110,7 +114,12 @@ export default function RequestAssessmentForm() {
               name="name"
               render={({ field }) => (
                 <FormItem className="flex flex-col gap-2 grow items-start relative w-full md:w-1/2">
-                  <Label className="text-sm font-medium text-black">Name</Label>
+                  <FormLabel
+                    required
+                    className="text-sm font-medium text-black"
+                  >
+                    Name
+                  </FormLabel>
                   <FormControl>
                     <Input
                       placeholder="Enter Name"
@@ -127,9 +136,12 @@ export default function RequestAssessmentForm() {
               name="company_email"
               render={({ field }) => (
                 <FormItem className="flex flex-col gap-2 grow items-start relative w-full md:w-1/2">
-                  <Label className="text-sm font-medium text-black">
+                  <FormLabel
+                    required
+                    className="text-sm font-medium text-black"
+                  >
                     Company Email
-                  </Label>
+                  </FormLabel>
                   <FormControl>
                     <Input
                       type="email"
@@ -151,9 +163,12 @@ export default function RequestAssessmentForm() {
               name="skills_to_assess"
               render={({ field }) => (
                 <FormItem className="flex flex-col gap-2 grow items-start relative w-full md:w-1/2">
-                  <Label className="text-sm font-medium text-black">
+                  <FormLabel
+                    required
+                    className="text-sm font-medium text-black"
+                  >
                     Skills to Assess
-                  </Label>
+                  </FormLabel>
                   <FormControl>
                     <Input
                       placeholder="Enter Skills"
@@ -170,9 +185,12 @@ export default function RequestAssessmentForm() {
               name="mobile_number"
               render={({ field }) => (
                 <FormItem className="flex flex-col gap-2 grow items-start relative w-full md:w-1/2">
-                  <Label className="text-sm font-medium text-black">
+                  <FormLabel
+                    required
+                    className="text-sm font-medium text-black"
+                  >
                     Phone Number
-                  </Label>
+                  </FormLabel>
                   <FormControl>
                     <div className="flex items-center border border-gray-200 rounded-lg overflow-hidden w-full h-8">
                       <FormField
@@ -220,9 +238,12 @@ export default function RequestAssessmentForm() {
               const charCount = field.value?.length || 0;
               return (
                 <FormItem className="flex flex-col gap-2 items-start relative shrink-0 w-full">
-                  <Label className="text-sm font-medium text-black">
+                  <FormLabel
+                    required
+                    className="text-sm font-medium text-black"
+                  >
                     Job Description
-                  </Label>
+                  </FormLabel>
                   <FormControl>
                     <div className="relative pb-1 w-full h-full">
                       <Textarea
@@ -249,9 +270,9 @@ export default function RequestAssessmentForm() {
             name="assessment_creation_preference"
             render={({ field }) => (
               <FormItem className="flex flex-col gap-2 items-start relative shrink-0 w-full">
-                <Label className="text-sm font-medium text-black">
+                <FormLabel required className="text-sm font-medium text-black">
                   Assessment Creation Preference
-                </Label>
+                </FormLabel>
                 <FormControl>
                   <RadioGroup
                     value={field.value || undefined}
@@ -297,9 +318,9 @@ export default function RequestAssessmentForm() {
               const charCount = field.value?.length || 0;
               return (
                 <FormItem className="flex flex-col gap-2 items-start relative shrink-0 w-full">
-                  <Label className="text-sm font-medium text-black">
+                  <FormLabel className="text-sm font-medium text-black">
                     Custom Instructions
-                  </Label>
+                  </FormLabel>
                   <FormControl>
                     <div className="relative pb-1 w-full h-full">
                       <Textarea
