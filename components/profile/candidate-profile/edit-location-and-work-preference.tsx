@@ -27,52 +27,51 @@ import { useEffect, useState } from "react";
 import { getWorkModes, getCountryById } from "@/api/seeder";
 import { fa } from "zod/v4/locales";
 
-const locationAndWorkPreferenceSchema = z
-  .object({
-    city_id: z.number().min(1, "Current city is required"),
-    country_id: z.number().min(1, "Current country is required"),
-    preferred_cities: z
-      .array(z.number())
-      .min(1, "At least one preferred work location is required"),
-    preferred_work_modes: z
-      .array(z.number())
-      .min(1, "At least one work mode is required"),
-    is_citizen_of_work_country: z.boolean(),
-    visa_type: z.string().optional(),
-    willing_to_relocate: z.boolean().optional(),
-    open_to_remote_only: z.boolean().optional(),
-    open_to_contract_to_hire: z.boolean().optional(),
-  })
-  .refine(
-    (data) => {
-      // If NOT a citizen, visa_type is required
-      if (data.is_citizen_of_work_country) {
-        return data.visa_type !== undefined && data.visa_type !== "";
-      }
-      return true;
-    },
-    {
-      message: "Visa type is required when you are not a citizen",
-      path: ["visa_type"],
-    },
-  )
-  .refine(
-    (data) => {
-      // If IS a citizen, these fields are required
-      if (data.is_citizen_of_work_country) {
-        return (
-          data.willing_to_relocate !== undefined &&
-          data.open_to_remote_only !== undefined &&
-          data.open_to_contract_to_hire !== undefined
-        );
-      }
-      return true;
-    },
-    {
-      message: "All fields are required when you are a citizen",
-      path: ["willing_to_relocate"],
-    },
-  );
+const locationAndWorkPreferenceSchema = z.object({
+  city_id: z.number().min(1, "Current city is required"),
+  country_id: z.number().min(1, "Current country is required"),
+  preferred_cities: z
+    .array(z.number())
+    .min(1, "At least one preferred work location is required"),
+  preferred_work_modes: z
+    .array(z.number())
+    .min(1, "At least one work mode is required"),
+  is_citizen_of_work_country: z.boolean(),
+  visa_type: z.string().optional(),
+  willing_to_relocate: z.boolean().optional(),
+  open_to_remote_only: z.boolean().optional(),
+  open_to_contract_to_hire: z.boolean().optional(),
+});
+// .refine(
+//   (data) => {
+//     // If NOT a citizen, visa_type is required
+//     if (data.is_citizen_of_work_country) {
+//       return data.visa_type !== undefined && data.visa_type !== "";
+//     }
+//     return true;
+//   },
+//   {
+//     message: "Visa type is required when you are not a citizen",
+//     path: ["visa_type"],
+//   },
+// )
+// .refine(
+//   (data) => {
+//     // If IS a citizen, these fields are required
+//     if (data.is_citizen_of_work_country) {
+//       return (
+//         data.willing_to_relocate !== undefined &&
+//         data.open_to_remote_only !== undefined &&
+//         data.open_to_contract_to_hire !== undefined
+//       );
+//     }
+//     return true;
+//   },
+//   {
+//     message: "All fields are required when you are a citizen",
+//     path: ["willing_to_relocate"],
+//   },
+// );
 
 type LocationAndWorkPreferenceFormData = z.infer<
   typeof locationAndWorkPreferenceSchema
@@ -422,10 +421,7 @@ export default function EditLocationAndWorkPreference() {
                 name="visa_type"
                 render={({ field }) => (
                   <FormItem className="w-full md:w-1/2">
-                    <FormLabel
-                      required
-                      className="text-sm font-medium text-black"
-                    >
+                    <FormLabel className="text-sm font-medium text-black">
                       What type of visa do you currently hold?
                     </FormLabel>
                     <FormControl>

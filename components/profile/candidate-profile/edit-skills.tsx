@@ -43,9 +43,8 @@ const editSkillsSchema = z.object({
   primary_skills: z
     .array(z.number())
     .min(1, "At least one primary skill is required"),
-  secondary_skills: z
-    .array(z.number())
-    .min(1, "At least one secondary skill is required"),
+  secondary_skills: z.array(z.number()).optional(),
+  // .min(1, "At least one secondary skill is required"),
   // preferred_roles: z
   //   .array(z.number())
   //   .min(1, "At least one preferred role is required"),
