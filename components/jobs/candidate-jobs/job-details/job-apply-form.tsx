@@ -246,7 +246,7 @@ export default function JobApplyForm({
           <Button
             className="text-sm flex items-center gap-2"
             disabled={
-              isAssessmentNotCompleted || customFieldsStatus === "SUBMITTED"
+              isAssessmentNotCompleted || customFieldsStatus !== "SUBMITTED"
             }
             onClick={() => setOpen(true)}
           >

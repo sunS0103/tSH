@@ -207,7 +207,7 @@ export default function RegisterForm({ role, email }: RegisterFormProps) {
 
       if (response?.pagination) {
         setHasMoreCountries(
-          response.pagination.currentPage < response.pagination.totalPages
+          response.pagination.currentPage < response.pagination.totalPages,
         );
       } else {
         setHasMoreCountries(countriesData.length === 10);
@@ -238,7 +238,7 @@ export default function RegisterForm({ role, email }: RegisterFormProps) {
       const response = await getCities(
         selectedCountryData.name,
         pageNum,
-        query
+        query,
       );
 
       const citiesData = Array.isArray(response)
@@ -261,7 +261,7 @@ export default function RegisterForm({ role, email }: RegisterFormProps) {
 
       if (response?.pagination) {
         setHasMoreCities(
-          response.pagination.currentPage < response.pagination.totalPages
+          response.pagination.currentPage < response.pagination.totalPages,
         );
       } else {
         setHasMoreCities(citiesData.length === 10);
@@ -419,14 +419,14 @@ export default function RegisterForm({ role, email }: RegisterFormProps) {
             router.push("/dashboard");
           } else {
             toast.error(
-              response.message || "Registration failed. Please try again."
+              response.message || "Registration failed. Please try again.",
             );
           }
         })
         .catch((error) => {
           toast.error(
             error?.response?.data?.message ||
-              "An error occurred during registration. Please try again."
+              "An error occurred during registration. Please try again.",
           );
         });
     } else {
@@ -461,14 +461,14 @@ export default function RegisterForm({ role, email }: RegisterFormProps) {
             router.push("/dashboard");
           } else {
             toast.error(
-              response.message || "Registration failed. Please try again."
+              response.message || "Registration failed. Please try again.",
             );
           }
         })
         .catch((error) => {
           toast.error(
             error?.response?.data?.message ||
-              "An error occurred during registration. Please try again."
+              "An error occurred during registration. Please try again.",
           );
         });
     }
@@ -552,7 +552,11 @@ export default function RegisterForm({ role, email }: RegisterFormProps) {
                     className="flex flex-col gap-2 mt-2"
                   >
                     <div className="flex items-center gap-3">
-                      <RadioGroupItem value="Male" id="Male" />
+                      <RadioGroupItem
+                        className="border-black"
+                        value="Male"
+                        id="Male"
+                      />
                       <Label
                         htmlFor="Male"
                         className="font-normal text-gray-800"
@@ -561,7 +565,11 @@ export default function RegisterForm({ role, email }: RegisterFormProps) {
                       </Label>
                     </div>
                     <div className="flex items-center gap-3">
-                      <RadioGroupItem value="Female" id="Female" />
+                      <RadioGroupItem
+                        className="border-black"
+                        value="Female"
+                        id="Female"
+                      />
                       <Label
                         htmlFor="Female"
                         className="font-normal text-gray-800"
@@ -669,8 +677,8 @@ export default function RegisterForm({ role, email }: RegisterFormProps) {
                         <Button
                           variant="outline"
                           className={cn(
-                            "w-full justify-start text-left font-normal",
-                            !field.value && "text-muted-foreground"
+                            "w-full justify-start text-left font-normal border-black",
+                            !field.value && "text-muted-foreground",
                           )}
                         >
                           <CalendarIcon className="mr-2 h-4 w-4" />
@@ -716,7 +724,7 @@ export default function RegisterForm({ role, email }: RegisterFormProps) {
                   <Label>Account Type</Label>
                   <Select onValueChange={field.onChange} value={field.value}>
                     <FormControl>
-                      <SelectTrigger className="w-full">
+                      <SelectTrigger className="w-full border-black">
                         <SelectValue placeholder="Select Account Type" />
                       </SelectTrigger>
                     </FormControl>
@@ -805,7 +813,7 @@ export default function RegisterForm({ role, email }: RegisterFormProps) {
                               }}
                               className={cn(
                                 "w-full flex items-center gap-3 px-4 py-2 text-left hover:bg-gray-100 transition-colors",
-                                field.value === country.id && "bg-gray-100"
+                                field.value === country.id && "bg-gray-100",
                               )}
                             >
                               <span className="flex-1 text-sm font-medium">
@@ -838,7 +846,7 @@ export default function RegisterForm({ role, email }: RegisterFormProps) {
                 name="city_id"
                 render={({ field }) => {
                   const selectedCityData = cities.find(
-                    (c) => c.id === field.value
+                    (c) => c.id === field.value,
                   );
 
                   return (
@@ -907,7 +915,7 @@ export default function RegisterForm({ role, email }: RegisterFormProps) {
                                 }}
                                 className={cn(
                                   "w-full flex items-center gap-3 px-4 py-2 text-left hover:bg-gray-100 transition-colors",
-                                  field.value === city.id && "bg-gray-100"
+                                  field.value === city.id && "bg-gray-100",
                                 )}
                               >
                                 <span className="flex-1 text-sm font-medium">
