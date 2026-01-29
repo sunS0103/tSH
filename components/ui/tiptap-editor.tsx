@@ -66,7 +66,7 @@ export default function TiptapEditor({
           "[&_h3]:text-lg [&_h3]:font-bold [&_h3]:mb-2 [&_h3]:mt-2 [&_h3]:wrap-break-words",
           "[&_code]:bg-gray-100 [&_code]:px-1 [&_code]:rounded [&_code]:wrap-break-words",
           "[&_blockquote]:border-l-4 [&_blockquote]:border-gray-300 [&_blockquote]:pl-4 [&_blockquote]:italic [&_blockquote]:my-2 [&_blockquote]:wrap-break-words",
-          "[&_a]:text-primary-600 [&_a]:cursor-pointer [&_a]:underline [&_a]:hover:text-primary-700 [&_a]:wrap-break-words"
+          "[&_a]:text-primary-600 [&_a]:cursor-pointer [&_a]:underline [&_a]:hover:text-primary-700 [&_a]:wrap-break-words",
         ),
       },
     },
@@ -85,7 +85,7 @@ export default function TiptapEditor({
 
   return (
     <div
-      className={cn("border border-gray-200 rounded-md relative", className)}
+      className={cn("border border-black rounded-md relative", className)}
       style={{ minHeight, maxHeight }}
     >
       {/* Toolbar */}
@@ -99,7 +99,7 @@ export default function TiptapEditor({
           disabled={!editor.can().chain().focus().toggleBold().run()}
           className={cn(
             "h-7 w-7",
-            editor.isActive("bold") && "bg-primary-100 text-primary-600"
+            editor.isActive("bold") && "bg-primary-100 text-primary-600",
           )}
           aria-label="Bold"
         >
@@ -113,7 +113,7 @@ export default function TiptapEditor({
           disabled={!editor.can().chain().focus().toggleItalic().run()}
           className={cn(
             "h-7 w-7",
-            editor.isActive("italic") && "bg-primary-100 text-primary-600"
+            editor.isActive("italic") && "bg-primary-100 text-primary-600",
           )}
           aria-label="Italic"
         >
@@ -127,7 +127,7 @@ export default function TiptapEditor({
           disabled={!editor.can().chain().focus().toggleStrike().run()}
           className={cn(
             "h-7 w-7",
-            editor.isActive("strike") && "bg-primary-100 text-primary-600"
+            editor.isActive("strike") && "bg-primary-100 text-primary-600",
           )}
           aria-label="Strikethrough"
         >
@@ -147,7 +147,7 @@ export default function TiptapEditor({
           className={cn(
             "h-7 w-7",
             editor.isActive("heading", { level: 1 }) &&
-              "bg-primary-100 text-primary-600"
+              "bg-primary-100 text-primary-600",
           )}
           aria-label="Heading 1"
         >
@@ -163,7 +163,7 @@ export default function TiptapEditor({
           className={cn(
             "h-7 w-7",
             editor.isActive("heading", { level: 2 }) &&
-              "bg-primary-100 text-primary-600"
+              "bg-primary-100 text-primary-600",
           )}
           aria-label="Heading 2"
         >
@@ -179,7 +179,7 @@ export default function TiptapEditor({
           className={cn(
             "h-7 w-7",
             editor.isActive("heading", { level: 3 }) &&
-              "bg-primary-100 text-primary-600"
+              "bg-primary-100 text-primary-600",
           )}
           aria-label="Heading 3"
         >
@@ -196,7 +196,7 @@ export default function TiptapEditor({
           onClick={() => editor.chain().focus().toggleBulletList().run()}
           className={cn(
             "h-7 w-7",
-            editor.isActive("bulletList") && "bg-primary-100 text-primary-600"
+            editor.isActive("bulletList") && "bg-primary-100 text-primary-600",
           )}
           aria-label="Bullet List"
         >
@@ -209,7 +209,7 @@ export default function TiptapEditor({
           onClick={() => editor.chain().focus().toggleOrderedList().run()}
           className={cn(
             "h-7 w-7",
-            editor.isActive("orderedList") && "bg-primary-100 text-primary-600"
+            editor.isActive("orderedList") && "bg-primary-100 text-primary-600",
           )}
           aria-label="Numbered List"
         >
@@ -227,7 +227,7 @@ export default function TiptapEditor({
           disabled={!editor.can().chain().focus().toggleCode().run()}
           className={cn(
             "h-7 w-7",
-            editor.isActive("code") && "bg-primary-100 text-primary-600"
+            editor.isActive("code") && "bg-primary-100 text-primary-600",
           )}
           aria-label="Code"
         >
@@ -240,7 +240,7 @@ export default function TiptapEditor({
           onClick={() => editor.chain().focus().toggleBlockquote().run()}
           className={cn(
             "h-7 w-7",
-            editor.isActive("blockquote") && "bg-primary-100 text-primary-600"
+            editor.isActive("blockquote") && "bg-primary-100 text-primary-600",
           )}
           aria-label="Blockquote"
         >
@@ -265,7 +265,7 @@ export default function TiptapEditor({
               }}
               className={cn(
                 "h-7 w-7",
-                editor.isActive("link") && "bg-primary-100 text-primary-600"
+                editor.isActive("link") && "bg-primary-100 text-primary-600",
               )}
               aria-label="Insert Link"
             >
@@ -325,7 +325,7 @@ export default function TiptapEditor({
                             .chain()
                             .focus()
                             .insertContent(
-                              `<a href="${linkUrl}">${linkText}</a>`
+                              `<a href="${linkUrl}">${linkText}</a>`,
                             )
                             .run();
                         } else {

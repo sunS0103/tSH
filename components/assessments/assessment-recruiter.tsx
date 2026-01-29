@@ -155,6 +155,8 @@ export default function AssessmentRecruiter() {
     router.push("/assessments/request-assessment");
   };
 
+  console.log({ assessments });
+
   return (
     <div className="p-6">
       {/* Controls: Tabs and Search */}
