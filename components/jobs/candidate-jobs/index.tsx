@@ -36,6 +36,9 @@ export default async function CandidateJobDetails({
 }: {
   job: CandidateJob;
 }) {
+  console.log({ job });
+  console.log(job.mandate_assessment);
+
   const cookieStore = await cookies();
   const token = cookieStore.get("token")?.value;
 

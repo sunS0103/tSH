@@ -34,6 +34,8 @@ export default function AssessmentCard({
   score,
   selectedTab,
 }: AssessmentCardProps) {
+  console.log({ slug });
+
   const displayedTopics = topics.slice(0, 2);
   const remainingCount = topics.length - 2;
 
