@@ -187,7 +187,7 @@ export default function EditEducation() {
                 name="university_name"
                 render={({ field }) => (
                   <FormItem className="w-full md:w-1/2">
-                    <FormLabel required>University Name</FormLabel>
+                    <FormLabel>University Name</FormLabel>
                     <FormControl>
                       <Input
                         placeholder="Enter university name"
@@ -205,7 +205,7 @@ export default function EditEducation() {
                 name="graduation_year"
                 render={({ field }) => (
                   <FormItem className="w-full md:w-1/2">
-                    <FormLabel required>Graduation Year</FormLabel>
+                    <FormLabel>Graduation Year</FormLabel>
                     <FormControl>
                       <Input
                         type="number"
