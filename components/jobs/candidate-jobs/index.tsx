@@ -9,8 +9,10 @@ import ContactRecruiterFormDetails from "./job-details/contact-recruiter-form-de
 import AdditionalDetailsForm from "./job-details/additional-details-form";
 import AdditionalDetails from "./job-details/additional-details";
 
-interface CandidateJob
-  extends Omit<Partial<RecruiterJob>, "mandate_assessment" | "custom_fields"> {
+interface CandidateJob extends Omit<
+  Partial<RecruiterJob>,
+  "mandate_assessment" | "custom_fields"
+> {
   slug: string;
   title: string;
   company_name: string;
@@ -20,6 +22,9 @@ interface CandidateJob
     title: string;
     topics: Array<{ id: string; value: string }>;
     is_assessment_complete: boolean;
+    duration: number;
+    total_questions: number;
+    score: number;
   }>;
   custom_fields: CustomField[];
   customFieldsStatus: "NOT_REQUESTED" | "REQUESTED" | "SUBMITTED";
@@ -54,7 +59,7 @@ export default async function CandidateJobDetails({
 
   const isAssessmentNotCompleted = job.mandate_assessment.some(
     (assessment: { is_assessment_complete: boolean }) =>
-      assessment.is_assessment_complete === false
+      assessment.is_assessment_complete === false,
   );
 
   return (
@@ -100,11 +105,13 @@ export default async function CandidateJobDetails({
               </p>
             ) : (
               <p className="text-success-600 text-base md:text-lg font-semibold">
-                “ 🎉 Congratulations! 🎉 You’ve already completed this assessment —
-                you have a high chance of being shortlisted. Apply now!”
+                “ 🎉 Congratulations! 🎉 You’ve already completed this
+                assessment — you have a high chance of being shortlisted. Apply
+                now!”
               </p>
             )}
-          </>)}
+          </>
+        )}
 
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-2 xl:grid-cols-3 gap-4 mt-3">
           {job.mandate_assessment.map((assessment) => (
@@ -114,9 +121,9 @@ export default async function CandidateJobDetails({
               category={assessment.category}
               title={assessment.title}
               topics={assessment.topics}
-              duration={0}
-              questionCount={0}
-              score={0}
+              duration={assessment.duration}
+              questionCount={assessment.total_questions}
+              score={assessment.score}
               selectedTab={assessment?.is_assessment_complete ? "taken" : "all"}
             />
           ))}
@@ -126,11 +133,9 @@ export default async function CandidateJobDetails({
       {job.customFieldsStatus === "SUBMITTED" && (
         <ContactRecruiterFormDetails customFields={customFields || []} />
       )}
-      {job.additionalDetailsStatus === "SUBMITTED" &&
-        <AdditionalDetails
-          additional_details={job.additional_details || []}
-        />
-      }
+      {job.additionalDetailsStatus === "SUBMITTED" && (
+        <AdditionalDetails additional_details={job.additional_details || []} />
+      )}
     </div>
   );
 }
