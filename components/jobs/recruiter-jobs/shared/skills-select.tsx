@@ -36,7 +36,7 @@ export default function SkillsSelect({ form, skills }: SkillsSelectProps) {
 
   // Filter skills based on search query
   const filteredSkills = skills.filter((skill) =>
-    skill.name.toLowerCase().includes(searchQuery.toLowerCase())
+    skill.name.toLowerCase().includes(searchQuery.toLowerCase()),
   );
 
   return (
@@ -85,9 +85,9 @@ export default function SkillsSelect({ form, skills }: SkillsSelectProps) {
                     variant="outline"
                     className={cn(
                       "min-h-8 h-fit w-full justify-between bg-transparent text-left font-normal",
-                      "border-input hover:bg-transparent",
+                      "border-black hover:bg-transparent",
                       "text-sm",
-                      selectedSkills.length === 0 && "text-muted-foreground"
+                      selectedSkills.length === 0 && "text-muted-foreground",
                     )}
                   >
                     <span className="flex-1 text-wrap wrap-break-word pr-2 text-sm ">
@@ -131,7 +131,7 @@ export default function SkillsSelect({ form, skills }: SkillsSelectProps) {
                         {filteredSkills.map((skill, index) => {
                           // Match by skill label/name, not by value/ID
                           const isSelected = selectedSkills.includes(
-                            skill.name
+                            skill.name,
                           );
                           return (
                             <div
@@ -139,7 +139,7 @@ export default function SkillsSelect({ form, skills }: SkillsSelectProps) {
                               className={cn(
                                 "flex items-center gap-4 px-6 py-4 border-b border-gray-200 last:border-b-0 cursor-pointer hover:bg-gray-50",
                                 isSelected && "bg-gray-50",
-                                index === 0 && "rounded-t-2xl"
+                                index === 0 && "rounded-t-2xl",
                               )}
                               onClick={() => handleToggle(skill.name)}
                             >
