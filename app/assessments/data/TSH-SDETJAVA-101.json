@@ -3,8 +3,8 @@
   "seoTitle": "Java SDET Engineer Skill Assessment",
   "seoDescription": "Take the Java SDET Engineer skill assessment. Prove your expertise in Selenium WebDriver, API Testing, Core Java, and Testing Fundamentals. AI-proctored, 20 questions, 25 minutes.",
   "description": "Prove your expertise in Selenium WebDriver, API Testing, Core Java, and Testing Fundamentals through our comprehensive, AI-proctored assessment.",
-  "questions": 20,
-  "minutes": 25,
+  "questions": 25,
+  "minutes": 30,
   "level": "Intermediate",
   "sampleQuestionsHref": "/assessments/TSH-SDETJAVA-101.pdf",
   "skills": [

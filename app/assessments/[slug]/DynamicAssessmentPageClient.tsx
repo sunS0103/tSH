@@ -27,7 +27,8 @@ import {
   X,
   Calendar,
   Loader2,
-  FileDown
+  FileDown,
+  GraduationCap
 } from 'lucide-react';
 import { useRouter } from 'next/navigation';
 import ReCAPTCHA from 'react-google-recaptcha';
@@ -87,6 +88,31 @@ Your identity and contact details are revealed only when:
 Even then, your details are shared only with that specific recruiter, not publicly. Your privacy is fully in your control.`
     },
     {
+      icon: Zap,
+      question: "Do I get any advantage by taking the assessment early on the platform?",
+      answer: `Absolutely. Profile ranking is partially influenced by the assessment completion date.
+
+For example, if two candidates achieve the same score for the same assessment, the candidate who completed the assessment earlier will rank higher in recruiter search results.
+
+Early participation gives you a visibility advantage.`
+    },
+    {
+      icon: Globe,
+      question: "I don't see job postings for my location yet. What's the benefit of taking the assessment now?",
+      answer: `TechSmartHire is a newly launched platform, and we are actively onboarding recruiters from across the globe.
+
+If your profile already has a validated score, future recruiters will immediately see your profile higher in search results when they join the platform.
+
+Being an early mover gives you a strong advantage in visibility and opportunities as the platform grows.`
+    },
+    {
+      icon: CheckCircle,
+      question: "Can I retake the exam if I'm not satisfied with my score?",
+      answer: `Yes. You can retake the assessment after a 30-day cooling period.
+
+If you attempt the assessment multiple times, we will always consider your best score.`
+    },
+    {
       icon: Users,
       question: "When and how will recruiters see my score?",
       answer: `Recruiters receive daily updates of new candidate scores for the roles they are hiring.
@@ -97,6 +123,46 @@ They can log in anytime to:
 • Send interview requests to selected candidates
 
 Once you accept, your profile is unlocked only for that recruiter.`
+    },
+    {
+      icon: Clock,
+      question: "How long is my score valid?",
+      answer: `Your score is valid for 365 days from the date you take the assessment.`
+    },
+    {
+      icon: BarChart3,
+      question: "How will my score be interpreted?",
+      answer: `Your assessment score represents a signal of your practical experience level, not just how many questions you answered correctly.
+
+Recruiters use this score to quickly understand how ready you are for real-world projects and job responsibilities.
+
+📊 Score Bands:
+
+Intermediate (40.01 – 60)
+Indicates foundational knowledge with growing hands-on skills.
+Suitable for junior roles, trainees, and early career positions.
+
+Experienced (60.01 – 75)
+Indicates strong working knowledge and good practical exposure.
+Suitable for mid-level roles and independent contributors.
+
+Expert (75.01 – 90)
+Indicates deep technical expertise and strong problem-solving ability.
+Suitable for senior roles, lead engineers, and critical projects.`
+    },
+    {
+      icon: Award,
+      question: "Will I receive any Professional certificate?",
+      answer: `Yes. If you score above 60%, you will be eligible to receive a certification.
+
+This certificate can serve as a strong credential when applying for jobs.`
+    },
+    {
+      icon: Code,
+      question: "I see one coding question in each assessment. Do I need to write everything from scratch?",
+      answer: `Not necessarily. The coding editor is preconfigured with all required imports and basic setup.
+
+You only need to focus on implementing the correct logic to solve the problem.`
     },
     {
       icon: Globe,
@@ -132,6 +198,13 @@ So you invest very little upfront — and pay more only when there is real hirin
 • Preparation tips
 
 👉 Download the Exam Guide to know exactly what to expect before taking the test. No surprises. Full transparency.`
+    },
+    {
+      icon: GraduationCap,
+      question: "Do I get mentorship support to prepare and clear this assessment?",
+      answer: `Yes. Once you sign up on TechSmartHire, you will see an option in the Assessment window to enroll in a Mentorship Guidance + Exam package.
+
+This package is designed to help you prepare effectively, strengthen your skills, and confidently attempt the assessment.`
     },
     {
       icon: CheckSquare,
@@ -186,15 +259,6 @@ This helps prevent:
 • Multiple attempts using different emails
 
 Our goal is simple: one real person = one real score.`
-    },
-    {
-      icon: Clock,
-      question: "Can I retake the same assessment multiple times?",
-      answer: `No. There is a 30-day lock period before you can retake the same assessment.
-
-This prevents trial-and-error attempts and ensures scores reflect real skill readiness.
-
-We strongly recommend using the Exam Guide and preparing well before attempting.`
     },
     {
       icon: BarChart3,
