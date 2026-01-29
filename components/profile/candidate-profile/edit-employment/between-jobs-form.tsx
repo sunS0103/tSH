@@ -145,7 +145,7 @@ export default function BetweenJobsForm({
                 <FormItem className="flex-1">
                   <FormLabel
                     required
-                    className="text-sm font-medium text-black mb-2"
+                    className="text-sm font-medium text-black"
                   >
                     Last Drawn CTC
                   </FormLabel>
