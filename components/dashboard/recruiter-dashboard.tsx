@@ -156,7 +156,7 @@ export default function RecruiterDashboard() {
     return {
       id: candidate.user_id,
       role: candidate.expertise || "N/A",
-      expertise: candidate.expertise || "N/A",
+      expertise: candidate.bio || "N/A",
       location_code: candidate.location || "N/A",
       totalScore: candidate.score || 0,
       skillsAssessed: candidate.skills_assessed?.map((s) => s.skill_name) || [],
