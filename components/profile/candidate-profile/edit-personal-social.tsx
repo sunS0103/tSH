@@ -147,6 +147,17 @@ export default function EditPersonalSocial() {
                             </span>
                           </div>
                         </FormControl>
+                        <div className="text-xs text-gray-600 leading-relaxed space-y-1 -mt-3">
+                          <p className="font-medium">This Short headline is the first thing recruiters see.</p>
+                          <p>Use a clear, role-based title</p>
+                          <p>Avoid skill lists - assessments show that.</p>
+                          <p className="font-medium mt-2">Examples:</p>
+                          <ul className="list-disc list-inside pl-2 space-y-0.5">
+                            <li>QA Automation Engineer</li>
+                            <li>SDET – Automation</li>
+                            <li>Test Engineer</li>
+                          </ul>
+                        </div>
                         <FormMessage />
                       </FormItem>
                     );
