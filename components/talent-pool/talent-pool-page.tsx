@@ -18,6 +18,7 @@ import {
 } from "@/components/ui/dropdown-menu";
 import { SortDropdown } from "@/components/ui/sort-dropdown";
 import InviteDialog, { InviteMode } from "./invite-dialog";
+import ScoreInterpretationPopover from "./score-interpretation-popover";
 import {
   getRecruiterTalentPool,
   getTalentPoolFilters,
@@ -636,9 +637,12 @@ export default function TalentPoolPage() {
         {/* Main Content */}
         <div className="flex-1 min-w-0">
           <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 mb-4">
-            <h1 className="text-2xl font-bold font-sans text-transparent bg-clip-text bg-linear-to-b from-primary to-secondary">
-              Talent Pool
-            </h1>
+            <div className="flex flex-col sm:flex-row items-start sm:items-center gap-3">
+              <h1 className="text-2xl font-bold font-sans text-transparent bg-clip-text bg-linear-to-b from-primary to-secondary">
+                Talent Pool
+              </h1>
+              <ScoreInterpretationPopover />
+            </div>
 
             <div className="flex items-center gap-3 w-full md:w-auto">
               {selectedTalents.length > 0 && (

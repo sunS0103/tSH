@@ -60,3 +60,22 @@ export function formatDurationWithSeconds(seconds: number): string {
 
   return parts.join(" ") || "0 mins";
 }
+
+/**
+ * Get score interpretation label based on score percentage
+ * @param score - Score percentage (0-100)
+ * @returns Score level label
+ */
+export function getScoreInterpretation(score: number): string {
+  if (score <= 40) {
+    return "Foundation";
+  } else if (score <= 60) {
+    return "Intermediate";
+  } else if (score <= 75) {
+    return "Experienced";
+  } else if (score <= 90) {
+    return "Expert";
+  } else {
+    return "Master";
+  }
+}
