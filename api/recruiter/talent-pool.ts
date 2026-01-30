@@ -52,6 +52,7 @@ export interface Candidate {
   company: string | null;
   availability: string | null;
   about: string | null;
+  bio: string | null;
 }
 
 export interface TalentPoolPagination {
@@ -78,7 +79,7 @@ export interface TalentPoolResponse {
 }
 
 export const getRecruiterTalentPool = async (
-  params?: TalentPoolQueryParams
+  params?: TalentPoolQueryParams,
 ): Promise<TalentPoolResponse> => {
   const response = await axios.get("/recruiter/talent-pool", {
     params,
@@ -97,7 +98,7 @@ export interface FavoriteTalentResponse {
 }
 
 export const addFavoriteTalent = async (
-  candidateId: string
+  candidateId: string,
 ): Promise<FavoriteTalentResponse> => {
   const response = await axios.post("/recruiter/talent-pool/favorite", {
     candidate_id: candidateId,
@@ -106,10 +107,10 @@ export const addFavoriteTalent = async (
 };
 
 export const removeFavoriteTalent = async (
-  candidateId: string
+  candidateId: string,
 ): Promise<FavoriteTalentResponse> => {
   const response = await axios.delete(
-    `/recruiter/talent-pool/favorite/${candidateId}`
+    `/recruiter/talent-pool/favorite/${candidateId}`,
   );
   return response.data;
 };
@@ -143,10 +144,11 @@ export interface TalentPoolFiltersResponse {
   };
 }
 
-export const getTalentPoolFilters = async (): Promise<TalentPoolFiltersResponse> => {
-  const response = await axios.get("/recruiter/talent-pool/filters");
-  return response.data;
-};
+export const getTalentPoolFilters =
+  async (): Promise<TalentPoolFiltersResponse> => {
+    const response = await axios.get("/recruiter/talent-pool/filters");
+    return response.data;
+  };
 
 export interface LocationSearchResponse {
   success: boolean;
@@ -159,7 +161,7 @@ export interface LocationSearchResponse {
 }
 
 export const searchTalentPoolLocations = async (
-  location_search: string
+  location_search: string,
 ): Promise<FilterLocation[]> => {
   const response = await axios.get("/recruiter/talent-pool/filters", {
     params: { location_search },
