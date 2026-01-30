@@ -135,7 +135,7 @@ export default function EditPersonalSocial() {
                               placeholder="Enter your short headline"
                               className="border-gray-900 resize-none max-h-25 min-h-25"
                               rows={5}
-                              maxLength={120}
+                              maxLength={30}
                               {...field}
                             />
                             <span className="absolute -bottom-5 right-0 text-xs text-gray-600">
