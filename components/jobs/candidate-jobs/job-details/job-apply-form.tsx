@@ -160,7 +160,7 @@ export default function JobApplyForm({
       toast.error(
         axiosError.response?.data?.message ||
           axiosError.message ||
-          "Failed to submit application",
+          "Failed to submit application"
       );
     } finally {
       setIsSubmitting(false);

@@ -61,8 +61,8 @@ export default function NotificationPopover({
         await markNotificationAsRead(notification.id);
         setNotifications((prev) =>
           prev.map((notif) =>
-            notif.id === notification.id ? { ...notif, is_read: true } : notif,
-          ),
+            notif.id === notification.id ? { ...notif, is_read: true } : notif
+          )
         );
         // Notify parent to refresh unread count
         onNotificationRead?.();
@@ -100,7 +100,7 @@ export default function NotificationPopover({
                 No notifications
               </p>
               <p className="text-gray-400 text-xs mt-1">
-                You're all caught up!
+                You&apos;re all caught up!
               </p>
             </div>
           ) : (
