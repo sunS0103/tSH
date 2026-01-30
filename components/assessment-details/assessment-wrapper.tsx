@@ -94,6 +94,13 @@ export default function AssessmentWrapper({
     "FREE" | "BASIC" | "PREMIUM" | "PLATINUM" | null
   >(assessment?.payment?.package_type || null);
 
+  const [purchaseHandler, setPurchaseHandler] = useState<
+    | ((
+        packageType: "FREE" | "BASIC" | "PREMIUM" | "PLATINUM"
+      ) => Promise<void>)
+    | null
+  >(null);
+
   const totalSteps = STEPS.length;
 
   const assessmentLaterDetails = [
@@ -281,7 +288,7 @@ export default function AssessmentWrapper({
     currentStep === totalSteps || currentStep === totalSteps - 1;
   const firstTwoSteps = currentStep === 1 || currentStep === 2;
 
-  const handleStartAssessmentNow = () => {
+  const handleStartAssessmentNow = async () => {
     // Validate all checkboxes are confirmed for steps 1-4
     const unconfirmedStepNumbers = [1, 2, 3, 4].filter(
       (stepNum) => !stepConfirmations[stepNum]
@@ -300,10 +307,29 @@ export default function AssessmentWrapper({
       return;
     }
 
-    // if (!assessmentPayment?.initial_paid) {
-    //   toast.error("Please purchase the assessment to start.");
-    //   return;
-    // }
+    // Check if payment is required
+    if (!assessmentPayment?.initial_paid) {
+      // Check if a package is selected
+      if (!selectedPackageType) {
+        toast.error("Please select a package first.");
+        return;
+      }
+
+      // Trigger payment flow
+      if (purchaseHandler) {
+        try {
+          await purchaseHandler(selectedPackageType);
+          // Payment completed successfully, continue with starting assessment
+        } catch (error) {
+          toast.error("Payment failed. Please try again.");
+          return;
+        }
+      } else {
+        toast.error("Payment system not ready. Please refresh the page.");
+        return;
+      }
+    }
+
     if (!userAssessmentId) {
       toast.error("User assessment ID is missing.");
       return;
@@ -322,7 +348,7 @@ export default function AssessmentWrapper({
       });
   };
 
-  const handleStartAssessmentLater = () => {
+  const handleStartAssessmentLater = async () => {
     // Validate all checkboxes are confirmed for steps 1-4
     const unconfirmedStepNumbers = [1, 2, 3, 4].filter(
       (stepNum) => !stepConfirmations[stepNum]
@@ -341,10 +367,29 @@ export default function AssessmentWrapper({
       return;
     }
 
+    // Check if payment is required
     if (!assessmentPayment?.initial_paid) {
-      toast.error("Please purchase the assessment to start.");
-      return;
+      // Check if a package is selected
+      if (!selectedPackageType) {
+        toast.error("Please select a package first.");
+        return;
+      }
+
+      // Trigger payment flow
+      if (purchaseHandler) {
+        try {
+          await purchaseHandler(selectedPackageType);
+          // Payment completed successfully, continue with sending assessment link
+        } catch (error) {
+          toast.error("Payment failed. Please try again.");
+          return;
+        }
+      } else {
+        toast.error("Payment system not ready. Please refresh the page.");
+        return;
+      }
     }
+
     if (!userAssessmentId) {
       toast.error("User assessment ID is missing.");
       return;
@@ -373,6 +418,12 @@ export default function AssessmentWrapper({
     setUserAssessmentId(id);
     setAssessmentPayment(payment);
     setSelectedPackageType(payment.package_type);
+  };
+
+  const handlePackageSelect = (
+    packageType: "FREE" | "BASIC" | "PREMIUM" | "PLATINUM"
+  ) => {
+    setSelectedPackageType(packageType);
   };
 
   return (
@@ -418,6 +469,8 @@ export default function AssessmentWrapper({
             onUserAssessmentIdChange={handleUserAssessmentIdChange}
             assessmentPayment={assessmentPayment}
             hasError={Boolean(stepErrors[currentStep])}
+            onPackagePurchaseReady={setPurchaseHandler}
+            onPackageSelect={handlePackageSelect}
           />
         </div>
       </div>
@@ -560,12 +613,12 @@ export default function AssessmentWrapper({
                   assessmentPayment?.package_type === "PLATINUM" ? (
                     <p className="text-xs text-center text-amber-600 leading-relaxed font-medium">
                       Platinum package requires mentorship preparation. Please
-                      use "Start Assessment Later" option.
+                      use &quot;Start Assessment Later&quot; option.
                     </p>
                   ) : (
                     <p className="text-xs text-center text-gray-600 leading-relaxed">
                       Begin immediately and access the exam window right away.
-                      Make sure you're ready to complete it now.
+                      Make sure you&apos;re ready to complete it now.
                     </p>
                   )}
                 </div>

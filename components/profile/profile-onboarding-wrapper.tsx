@@ -25,7 +25,7 @@ const PROFILE_SECTIONS: ProfileSection[] = [
     icon: "material-symbols:id-card-outline-rounded",
   },
   {
-    name: "Employment",
+    name: "Current Employment Details",
     route: "/profile-details/edit-employment",
     icon: "material-symbols:work-outline-rounded",
   },
@@ -35,7 +35,7 @@ const PROFILE_SECTIONS: ProfileSection[] = [
     icon: "material-symbols:school-outline-rounded",
   },
   {
-    name: "Skills",
+    name: "Skills & Domains",
     route: "/profile-details/edit-skills",
     icon: "material-symbols:stars-outline-rounded",
   },
@@ -61,11 +61,6 @@ export default function ProfileOnboardingWrapper({
       try {
         const response = await getProfileCompletionPercentage();
         setProfileCompletion(response);
-
-        // If profile is 100% complete, redirect to dashboard
-        if (response.total_percentage === 100) {
-          router.push("/dashboard");
-        }
       } catch (error) {
         console.error("Error fetching profile completion:", error);
       } finally {

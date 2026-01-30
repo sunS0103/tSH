@@ -69,6 +69,9 @@ interface StepContentProps {
       packageType: "FREE" | "BASIC" | "PREMIUM" | "PLATINUM"
     ) => Promise<void>
   ) => void;
+  onPackageSelect?: (
+    packageType: "FREE" | "BASIC" | "PREMIUM" | "PLATINUM"
+  ) => void;
 }
 
 export default function StepContent({
@@ -81,6 +84,7 @@ export default function StepContent({
   assessmentPayment,
   hasError,
   onPackagePurchaseReady,
+  onPackageSelect,
 }: StepContentProps) {
   return (
     <div className={cn("flex flex-col gap-6", className)}>
@@ -129,6 +133,7 @@ export default function StepContent({
             candidate_status={assessment.candidate_status}
             is_free_plan_available={assessment.is_free_plan_available}
             onPackagePurchaseReady={onPackagePurchaseReady}
+            onPackageSelect={onPackageSelect}
           />
         )}
       </div>
