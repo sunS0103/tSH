@@ -22,8 +22,7 @@ export default function Footer({ className }: FooterProps) {
     },
     {
       links: [
-        { label: "About Us", href: "/about" },
-        { label: "Blog", href: "/blog" },
+        { label: "Product Vision", href: "/techSmartHireVision" },
         { label: "Contact Us", href: "/contact" },
       ],
     },
@@ -74,20 +73,13 @@ export default function Footer({ className }: FooterProps) {
                   className="size-4 md:size-5 text-white shrink-0 mt-0.5"
                 />
                 <p className="text-white text-xs md:text-sm font-normal leading-normal">
-                  61-A, Elm street, <br />
-                  Ahmedabad, India.
+                  Pranav Business park, Kondapur, <br />
+                  Hyderabad, India.
                 </p>
               </div>
 
               {/* Phone */}
               <div className="flex gap-2 items-center">
-                <Icon
-                  icon="mdi:phone-outline"
-                  className="size-4 md:size-5 text-white shrink-0"
-                />
-                <p className="text-white text-xs md:text-sm font-normal whitespace-nowrap">
-                  +91 99999 99999
-                </p>
               </div>
 
               {/* Email */}
@@ -97,7 +89,7 @@ export default function Footer({ className }: FooterProps) {
                   className="size-4 md:size-5 text-white shrink-0"
                 />
                 <p className="text-white text-xs md:text-sm font-normal whitespace-nowrap">
-                  support@techsmarthire.com
+                  info@techsmarthire.com
                 </p>
               </div>
             </div>
