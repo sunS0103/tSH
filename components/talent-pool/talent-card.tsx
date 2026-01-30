@@ -54,20 +54,6 @@ export default function TalentCard({
   isFavorite,
   onToggleFavorite,
 }: TalentCardProps) {
-  // Format years of experience
-  const formattedExperience = (() => {
-    if (typeof experience === "string") return experience;
-    if (experience === null || experience === undefined) return "0-1 Years";
-    const years = experience;
-    if (years === 0) return "0-1 Years";
-    if (years === 1) return "1-2 Years";
-    if (years >= 2 && years < 4) return "2-3 Years";
-    if (years >= 4 && years < 6) return "4-5 Years";
-    if (years >= 6 && years < 10) return "6-10 Years";
-    if (years >= 10 && years < 15) return "10-15 Years";
-    return "15+ Years";
-  })();
-
   const [showInviteDialog, setShowInviteDialog] = useState(false);
   const [inviteMode, setInviteMode] = useState<InviteMode>("job");
 
