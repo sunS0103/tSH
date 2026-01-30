@@ -22,7 +22,7 @@ export interface TalentCardProps {
   location_code: string; // e.g. D.C 8852
   totalScore: number;
   skillsAssessed: string[];
-  experience: string; // e.g. 4-5 Years
+  experience: string | number | null; // e.g. 4-5 Years
   company: string;
   availability: string;
   location: string; // e.g. Mumbai, MH
@@ -54,6 +54,20 @@ export default function TalentCard({
   isFavorite,
   onToggleFavorite,
 }: TalentCardProps) {
+  // Format years of experience
+  const formattedExperience = (() => {
+    if (typeof experience === "string") return experience;
+    if (experience === null || experience === undefined) return "0-1 Years";
+    const years = experience;
+    if (years === 0) return "0-1 Years";
+    if (years === 1) return "1-2 Years";
+    if (years >= 2 && years < 4) return "2-3 Years";
+    if (years >= 4 && years < 6) return "4-5 Years";
+    if (years >= 6 && years < 10) return "6-10 Years";
+    if (years >= 10 && years < 15) return "10-15 Years";
+    return "15+ Years";
+  })();
+
   const [showInviteDialog, setShowInviteDialog] = useState(false);
   const [inviteMode, setInviteMode] = useState<InviteMode>("job");
 
@@ -225,7 +239,7 @@ export default function TalentCard({
                             key={index}
                             className="text-xs text-gray-700 capitalize"
                           >
-                            {skill}
+                            • {skill}
                           </span>
                         ))}
                       </div>
@@ -246,7 +260,7 @@ export default function TalentCard({
                 className="w-4.5 h-4.5 text-gray-900"
               />
               <span className="text-center text-gray-900 text-base font-normal font-sans">
-                {experience}
+                {experience} years
               </span>
             </div>
           )}
@@ -292,21 +306,20 @@ export default function TalentCard({
               Assessment Taken
             </span>
             <div className="flex justify-start items-center gap-2 flex-wrap">
-              {assessmentTaken.map((assessment, index) => (
+              {assessments?.map((assessment, index) => (
                 <Link
                   key={index}
-                  href={`/assessment/${assessment.slug}`}
+                  href={`/assessment/${assessment.assessment_slug}`}
                   target="_blank"
                   className="h-6 px-3 py-1 rounded-full border border-primary-500 bg-primary-50 flex flex-col justify-center items-start gap-2.5 transition-colors cursor-pointer"
                 >
                   <span className="text-center text-xs italic font-medium font-sans text-primary-500 underline transition-colors">
-                    {assessment.title}
+                    {assessment.assessment_title}
                   </span>
                 </Link>
               ))}
             </div>
           </div>
-
           <div className="w-full flex flex-col justify-start items-start gap-1">
             <span className="text-gray-900 text-xs font-medium font-sans">
               About

@@ -10,7 +10,7 @@ export default function JobFair() {
           <h1 className="text-4xl font-semibold tracking-tight text-gray-900">
             Job Fair Coming Soon
           </h1>
-          <p className="text-lg text-gray-500 leading-relaxed max-w-md mx-auto">
+          <p className="text-lg text-slate-900 leading-relaxed max-w-md mx-auto">
             We're putting the finishing touches on a new way to connect. Full
             launch scheduled for{" "}
             <span className="text-gray-900 font-medium">March</span>.
