@@ -12,13 +12,7 @@ export default function FinalStartSection({
 }: {
   assessment_id: string;
   is_free_plan_available: boolean;
-  payment: {
-    initial_paid: boolean;
-    initial_payment_status: "PAID";
-    package_type: "FREE" | "BASIC" | "PREMIUM" | "PLATINUM";
-    purchase_status: "ACTIVE" | "INACTIVE";
-    purchased_at: number;
-  };
+  payment: Payment | null;
   onUserAssessmentIdChange?: ({
     id,
     payment,
@@ -33,11 +27,15 @@ export default function FinalStartSection({
     | "COMPLETED"
     | "ENROLLED"
     | "PENDING";
-  onPackagePurchaseReady?: (purchaseHandler: (packageType: "FREE" | "BASIC" | "PREMIUM" | "PLATINUM") => Promise<void>) => void;
+  onPackagePurchaseReady?: (
+    purchaseHandler: (
+      packageType: "FREE" | "BASIC" | "PREMIUM" | "PLATINUM"
+    ) => Promise<void>
+  ) => void;
 }) {
-  const [selectedPackage, setSelectedPackage] = useState<"FREE" | "BASIC" | "PREMIUM" | "PLATINUM" | null>(
-    payment?.package_type || null
-  );
+  const [selectedPackage, setSelectedPackage] = useState<
+    "FREE" | "BASIC" | "PREMIUM" | "PLATINUM" | null
+  >(payment?.package_type || null);
 
   return (
     <>

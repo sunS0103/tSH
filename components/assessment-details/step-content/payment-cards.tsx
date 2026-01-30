@@ -11,7 +11,7 @@ import {
   DialogTitle,
   DialogTrigger,
 } from "@/components/ui/dialog";
-import { cn, sanitizeHtml } from "@/lib/utils";
+import { cn } from "@/lib/utils";
 import { Icon } from "@iconify/react";
 import { getCookie } from "cookies-next/client";
 import { useRouter } from "next/navigation";
@@ -20,10 +20,10 @@ import { toast } from "sonner";
 
 export interface Payment {
   initial_paid: boolean;
-  initial_payment_status: "PAID";
+  initial_payment_status: "PAID" | "PENDING";
   package_type: "FREE" | "BASIC" | "PREMIUM" | "PLATINUM";
-  purchase_status: "ACTIVE" | "INACTIVE";
-  purchased_at: number;
+  purchase_status: "ACTIVE" | "INACTIVE" | "NOT_PURCHASED";
+  purchased_at: number | null;
 }
 
 export default function PaymentCards({
@@ -45,25 +45,34 @@ export default function PaymentCards({
   }: {
     id: string;
     payment: Payment;
-    message: string;
+    message?: string;
   }) => void;
-  onPackageSelect?: (packageType: "FREE" | "BASIC" | "PREMIUM" | "PLATINUM") => void;
+  onPackageSelect?: (
+    packageType: "FREE" | "BASIC" | "PREMIUM" | "PLATINUM"
+  ) => void;
   selectedPackage?: "FREE" | "BASIC" | "PREMIUM" | "PLATINUM" | null;
-  onPackagePurchaseReady?: (purchaseHandler: (packageType: "FREE" | "BASIC" | "PREMIUM" | "PLATINUM") => Promise<void>) => void;
+  onPackagePurchaseReady?: (
+    purchaseHandler: (
+      packageType: "FREE" | "BASIC" | "PREMIUM" | "PLATINUM"
+    ) => Promise<void>
+  ) => void;
 }) {
   const [paymentSuccessData, setPaymentSuccessData] = useState<Payment | null>(
-    payment || null,
+    payment || null
   );
-  const [localSelectedPackage, setLocalSelectedPackage] = useState<"FREE" | "BASIC" | "PREMIUM" | "PLATINUM" | null>(
-    selectedPackage || payment?.package_type || null
-  );
-  
+  const [localSelectedPackage, setLocalSelectedPackage] = useState<
+    "FREE" | "BASIC" | "PREMIUM" | "PLATINUM" | null
+  >(selectedPackage || payment?.package_type || null);
+
   // Detect user's currency based on location
   const getDefaultCurrency = (): "INR" | "USD" => {
     try {
       // Method 1: Try to get timezone
       const timezone = Intl.DateTimeFormat().resolvedOptions().timeZone;
-      if (timezone.includes("Asia/Kolkata") || timezone.includes("Asia/Calcutta")) {
+      if (
+        timezone.includes("Asia/Kolkata") ||
+        timezone.includes("Asia/Calcutta")
+      ) {
         return "INR";
       }
 
@@ -259,7 +268,7 @@ export default function PaymentCards({
   };
 
   const handlePurchase = async (
-    packageType: "FREE" | "BASIC" | "PREMIUM" | "PLATINUM",
+    packageType: "FREE" | "BASIC" | "PREMIUM" | "PLATINUM"
   ) => {
     try {
       // 1️⃣ Create Order
@@ -305,17 +314,19 @@ export default function PaymentCards({
     }
   };
 
-  // Make handlePurchase exportable for parent component  
+  // Make handlePurchase exportable for parent component
   console.log(currentPayment?.package_type);
 
-  const handlePackageCardClick = (packageType: "FREE" | "BASIC" | "PREMIUM" | "PLATINUM") => {
+  const handlePackageCardClick = (
+    packageType: "FREE" | "BASIC" | "PREMIUM" | "PLATINUM"
+  ) => {
     // Don't allow changing if already purchased
     if (currentPayment?.initial_payment_status === "PAID") {
       return;
     }
     setLocalSelectedPackage(packageType);
     onPackageSelect?.(packageType);
-    
+
     // Update parent with package selection (for UI state like disabling buttons)
     // Create a payment object with the selected package type
     const paymentData: Payment = currentPayment || {
@@ -325,7 +336,7 @@ export default function PaymentCards({
       purchase_status: "NOT_PURCHASED",
       purchased_at: null,
     };
-    
+
     onUserAssessmentIdChange?.({
       id: assessment_id,
       payment: {
@@ -410,16 +421,22 @@ export default function PaymentCards({
         {cards.map((card) => (
           <div
             key={card.title}
-            onClick={() => handlePackageCardClick(card.packageType as "FREE" | "BASIC" | "PREMIUM" | "PLATINUM")}
+            onClick={() =>
+              handlePackageCardClick(
+                card.packageType as "FREE" | "BASIC" | "PREMIUM" | "PLATINUM"
+              )
+            }
             className={cn(
               "border-2 rounded-lg p-2 md:p-3 flex flex-col gap-10 justify-between min-w-64 cursor-pointer transition-all",
               // Selected state
-              (localSelectedPackage === card.packageType || 
-               (currentPayment?.package_type === card.packageType && currentPayment?.initial_payment_status === "PAID"))
+              localSelectedPackage === card.packageType ||
+                (currentPayment?.package_type === card.packageType &&
+                  currentPayment?.initial_payment_status === "PAID")
                 ? "border-primary-500 bg-primary-50/30"
                 : "border-gray-200 hover:border-primary-200",
               // Disable interaction if already paid
-              currentPayment?.initial_payment_status === "PAID" && "cursor-not-allowed opacity-70"
+              currentPayment?.initial_payment_status === "PAID" &&
+                "cursor-not-allowed opacity-70"
             )}
           >
             <div>
@@ -428,16 +445,23 @@ export default function PaymentCards({
                   <Icon icon={card.icon} className="size-5 text-primary-500" />
                 </div>
                 {/* Selection indicator */}
-                <div className={cn(
-                  "size-5 rounded-full border-2 flex items-center justify-center transition-all",
-                  (localSelectedPackage === card.packageType || 
-                   (currentPayment?.package_type === card.packageType && currentPayment?.initial_payment_status === "PAID"))
-                    ? "border-primary-500 bg-primary-500"
-                    : "border-gray-300"
-                )}>
-                  {(localSelectedPackage === card.packageType || 
-                    (currentPayment?.package_type === card.packageType && currentPayment?.initial_payment_status === "PAID")) && (
-                    <Icon icon="material-symbols:check" className="size-4 text-white" />
+                <div
+                  className={cn(
+                    "size-5 rounded-full border-2 flex items-center justify-center transition-all",
+                    localSelectedPackage === card.packageType ||
+                      (currentPayment?.package_type === card.packageType &&
+                        currentPayment?.initial_payment_status === "PAID")
+                      ? "border-primary-500 bg-primary-500"
+                      : "border-gray-300"
+                  )}
+                >
+                  {(localSelectedPackage === card.packageType ||
+                    (currentPayment?.package_type === card.packageType &&
+                      currentPayment?.initial_payment_status === "PAID")) && (
+                    <Icon
+                      icon="material-symbols:check"
+                      className="size-4 text-white"
+                    />
                   )}
                 </div>
               </div>
@@ -465,18 +489,33 @@ export default function PaymentCards({
             </div>
 
             {/* Show "Selected" badge or "Paid" badge */}
-            {currentPayment?.initial_payment_status === "PAID" && currentPayment?.package_type === card.packageType && (
-              <div className="flex items-center justify-center gap-2 bg-success-50 border border-success-500 rounded-lg py-2 px-3">
-                <Icon icon="material-symbols:check-circle" className="size-5 text-success-600" />
-                <span className="text-sm font-semibold text-success-700">Activated</span>
-              </div>
-            )}
-            {localSelectedPackage === card.packageType && !(currentPayment?.initial_payment_status === "PAID" && currentPayment?.package_type === card.packageType) && (
-              <div className="flex items-center justify-center gap-2 bg-primary-50 border border-primary-500 rounded-lg py-2 px-3">
-                <Icon icon="material-symbols:check-circle" className="size-5 text-primary-600" />
-                <span className="text-sm font-semibold text-primary-700">Selected</span>
-              </div>
-            )}
+            {currentPayment?.initial_payment_status === "PAID" &&
+              currentPayment?.package_type === card.packageType && (
+                <div className="flex items-center justify-center gap-2 bg-success-50 border border-success-500 rounded-lg py-2 px-3">
+                  <Icon
+                    icon="material-symbols:check-circle"
+                    className="size-5 text-success-600"
+                  />
+                  <span className="text-sm font-semibold text-success-700">
+                    Activated
+                  </span>
+                </div>
+              )}
+            {localSelectedPackage === card.packageType &&
+              !(
+                currentPayment?.initial_payment_status === "PAID" &&
+                currentPayment?.package_type === card.packageType
+              ) && (
+                <div className="flex items-center justify-center gap-2 bg-primary-50 border border-primary-500 rounded-lg py-2 px-3">
+                  <Icon
+                    icon="material-symbols:check-circle"
+                    className="size-5 text-primary-600"
+                  />
+                  <span className="text-sm font-semibold text-primary-700">
+                    Selected
+                  </span>
+                </div>
+              )}
 
             {/* View Details for Platinum */}
             {card.title === "Platinum Package" && card.mentorServices && (
@@ -488,10 +527,16 @@ export default function PaymentCards({
                     onClick={(e) => e.stopPropagation()}
                   >
                     View Mentor Services Details
-                    <Icon icon="material-symbols:arrow-right" className="ml-1 size-4" />
+                    <Icon
+                      icon="material-symbols:arrow-right"
+                      className="ml-1 size-4"
+                    />
                   </Button>
                 </DialogTrigger>
-                <DialogContent className="py-4 px-0 md:max-w-100!" onClick={(e) => e.stopPropagation()}>
+                <DialogContent
+                  className="py-4 px-0 md:max-w-100!"
+                  onClick={(e) => e.stopPropagation()}
+                >
                   <DialogHeader className="px-6">
                     <DialogTitle className="text-left text-base md:text-lg">
                       {card.title}
@@ -516,9 +561,7 @@ export default function PaymentCards({
                   </div>
                   <div className="flex gap-2 justify-end px-6">
                     <DialogClose asChild>
-                      <Button variant="secondary">
-                        Close
-                      </Button>
+                      <Button variant="secondary">Close</Button>
                     </DialogClose>
                   </div>
                 </DialogContent>

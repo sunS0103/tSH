@@ -6,7 +6,6 @@ import { Icon } from "@iconify/react";
 import { Button } from "@/components/ui/button";
 import { Progress } from "@/components/ui/progress";
 import { getProfileCompletionPercentage } from "@/api/profile";
-import Logo from "@/components/logo";
 
 interface ProfileSection {
   name: string;
@@ -62,7 +61,7 @@ export default function ProfileOnboardingWrapper({
       try {
         const response = await getProfileCompletionPercentage();
         setProfileCompletion(response);
-        
+
         // If profile is 100% complete, redirect to dashboard
         if (response.total_percentage === 100) {
           router.push("/dashboard");
@@ -88,23 +87,19 @@ export default function ProfileOnboardingWrapper({
   }
 
   return (
-    <div className="flex flex-col lg:flex-row gap-6 max-w-7xl mx-auto pb-20">
+    <div className="flex flex-col lg:flex-row gap-6 pb-20 max-container mx-auto p-4">
       {/* Left Sidebar - Profile Sections Progress */}
       <div className="lg:w-80 lg:sticky lg:top-8 lg:self-start">
-        {/* Logo */}
-        <div className="mb-6">
-          <Logo />
-        </div>
-
         {/* Welcome Message */}
         <div className="bg-white border border-gray-200 rounded-2xl p-6 mb-6">
           <h1 className="text-2xl font-bold text-gray-900 mb-2">
             Welcome to TechSmartHire! 👋
           </h1>
           <p className="text-sm text-gray-600 mb-4">
-            Complete your profile to unlock the dashboard and start exploring job opportunities.
+            Complete your profile to unlock the dashboard and start exploring
+            job opportunities.
           </p>
-          
+
           {/* Progress Bar */}
           <div className="mb-4">
             <div className="flex items-center justify-between mb-2">
@@ -124,13 +119,19 @@ export default function ProfileOnboardingWrapper({
             disabled={!isProfileComplete}
             onClick={() => router.push("/dashboard")}
           >
-            <Icon icon="material-symbols:dashboard-outline" className="mr-2 size-5" />
+            <Icon
+              icon="material-symbols:dashboard-outline"
+              className="mr-2 size-5"
+            />
             Go to Dashboard
             {!isProfileComplete && (
-              <Icon icon="material-symbols:lock-outline" className="ml-2 size-4" />
+              <Icon
+                icon="material-symbols:lock-outline"
+                className="ml-2 size-4"
+              />
             )}
           </Button>
-          
+
           {!isProfileComplete && (
             <p className="text-xs text-center text-gray-500 mt-3">
               Complete all sections to unlock
@@ -141,15 +142,19 @@ export default function ProfileOnboardingWrapper({
         {/* Profile Sections Checklist */}
         <div className="bg-white border border-gray-200 rounded-2xl p-6">
           <h2 className="text-lg font-semibold text-gray-900 mb-4 flex items-center gap-2">
-            <Icon icon="material-symbols:checklist" className="size-6 text-primary-500" />
+            <Icon
+              icon="material-symbols:checklist"
+              className="size-6 text-primary-500"
+            />
             Profile Sections
           </h2>
-          
+
           <div className="space-y-3">
             {PROFILE_SECTIONS.map((section, index) => {
               const sectionKey = section.name;
-              const isCompleted = profileCompletion?.sections?.[sectionKey] || false;
-              
+              const isCompleted =
+                profileCompletion?.sections?.[sectionKey] || false;
+
               return (
                 <div
                   key={index}
@@ -160,7 +165,7 @@ export default function ProfileOnboardingWrapper({
                   }`}
                   onClick={() => router.push(section.route)}
                 >
-                  <div className="flex-shrink-0">
+                  <div className="shrink-0">
                     {isCompleted ? (
                       <Icon
                         icon="mdi:check-circle"
@@ -170,10 +175,13 @@ export default function ProfileOnboardingWrapper({
                       <div className="size-6 rounded-full border-2 border-gray-300" />
                     )}
                   </div>
-                  
+
                   <div className="flex-1 min-w-0">
                     <div className="flex items-center gap-2">
-                      <Icon icon={section.icon} className="size-5 text-gray-600 flex-shrink-0" />
+                      <Icon
+                        icon={section.icon}
+                        className="size-5 text-gray-600 shrink-0"
+                      />
                       <span
                         className={`text-sm font-medium truncate ${
                           isCompleted ? "text-success-700" : "text-gray-700"
@@ -183,10 +191,10 @@ export default function ProfileOnboardingWrapper({
                       </span>
                     </div>
                   </div>
-                  
+
                   <Icon
                     icon="material-symbols:chevron-right"
-                    className="size-5 text-gray-400 flex-shrink-0"
+                    className="size-5 text-gray-400 shrink-0"
                   />
                 </div>
               );
@@ -196,9 +204,7 @@ export default function ProfileOnboardingWrapper({
       </div>
 
       {/* Main Content Area */}
-      <div className="flex-1">
-        {children}
-      </div>
+      <div className="flex-1">{children}</div>
     </div>
   );
 }

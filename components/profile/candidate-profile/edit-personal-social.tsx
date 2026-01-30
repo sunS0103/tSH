@@ -20,7 +20,6 @@ import { useForm } from "react-hook-form";
 import { toast } from "sonner";
 import z from "zod";
 import { Icon } from "@iconify/react";
-import { cn } from "@/lib/utils";
 
 const editPersonalSocialSchema = z.object({
   headline: z
@@ -97,11 +96,13 @@ export default function EditPersonalSocial() {
   const handleCancel = () => {
     // Check if user is in onboarding flow or editing from profile
     const isOnboarding = window.location.pathname.includes("/profile-details/");
-    router.push(isOnboarding ? "/profile-details/edit-account-and-identity" : "/profile");
+    router.push(
+      isOnboarding ? "/profile-details/edit-account-and-identity" : "/profile"
+    );
   };
 
   return (
-    <div className="max-w-3xl mx-auto mt-4">
+    <div className="mt-4">
       <div className="bg-white border border-gray-200 rounded-2xl w-full overflow-hidden">
         {/* Header */}
         <div className="bg-primary-50 py-4 px-6">

@@ -376,7 +376,7 @@ export default function AssessmentWrapper({
   };
 
   return (
-    <div className="flex flex-col mt-4 lg:mt-6 pb-8">
+    <div className="flex flex-col mt-4 lg:mt-6 pb-17">
       <div className="flex flex-col lg:flex-row gap-6 flex-1">
         {/* Mobile Stepper - Horizontal (Fluid Layout) */}
         <div

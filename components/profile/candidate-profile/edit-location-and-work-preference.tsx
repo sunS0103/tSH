@@ -25,7 +25,6 @@ import { WorkModeMultiSelect } from "@/components/ui/work-mode-multi-select";
 import { Input } from "@/components/ui/input";
 import { useEffect, useState } from "react";
 import { getWorkModes, getCountryById } from "@/api/seeder";
-import { fa } from "zod/v4/locales";
 
 const locationAndWorkPreferenceSchema = z.object({
   city_id: z.number().min(1, "Current city is required"),
@@ -250,7 +249,7 @@ export default function EditLocationAndWorkPreference() {
   };
 
   return (
-    <div className="bg-white border border-gray-200 rounded-2xl w-full max-w-3xl mx-auto mt-4 overflow-hidden">
+    <div className="bg-white border border-gray-200 rounded-2xl w-full mt-4 overflow-hidden">
       {/* Header */}
       <div className="bg-purple-50 px-6 py-4">
         <h2 className="text-xl font-bold text-black">

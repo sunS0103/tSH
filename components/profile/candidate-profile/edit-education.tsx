@@ -127,7 +127,7 @@ export default function EditEducation() {
   ];
 
   return (
-    <div className="bg-white border border-gray-200 rounded-2xl w-full max-w-3xl mx-auto mt-4 overflow-hidden">
+    <div className="bg-white border border-gray-200 rounded-2xl w-full mt-4 overflow-hidden">
       <div className="bg-primary-50 py-4 px-6">
         <h1 className="text-xl font-bold text-black">Edit Education</h1>
       </div>
@@ -293,8 +293,13 @@ export default function EditEducation() {
                 type="button"
                 variant="secondary"
                 onClick={() => {
-                  const isOnboarding = window.location.pathname.includes("/profile-details/");
-                  router.push(isOnboarding ? "/profile-details/edit-employment" : "/profile");
+                  const isOnboarding =
+                    window.location.pathname.includes("/profile-details/");
+                  router.push(
+                    isOnboarding
+                      ? "/profile-details/edit-employment"
+                      : "/profile"
+                  );
                 }}
                 className="h-8 px-4 "
               >

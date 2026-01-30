@@ -4,7 +4,12 @@ import EditEmployment from "@/components/profile/candidate-profile/edit-employme
 export const dynamic = "force-dynamic";
 
 export default function Page() {
-  const routes = [{ label: "Profile Details", href: "/profile" }];
+  const routes = [
+    {
+      label: "Profile Details",
+      href: "/profile-details/edit-account-and-identity",
+    },
+  ];
 
   return (
     <div>

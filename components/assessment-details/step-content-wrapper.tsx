@@ -2,7 +2,6 @@
 
 import { cn } from "@/lib/utils";
 import AssessmentIntroduction from "./step-content/introduction";
-import SyllabusAndTopics from "./step-content/syllabus-and-topics";
 import ExamProcess from "./step-content/exam-process";
 import ScoreVisibilityAndPrivacy from "./step-content/score-visibility-and-privacy";
 import IntegrityAndCodeConduct from "./step-content/integrity-and-code-conduct";
@@ -65,7 +64,11 @@ interface StepContentProps {
   }) => void;
   assessmentPayment?: Payment | null;
   hasError?: boolean;
-  onPackagePurchaseReady?: (purchaseHandler: (packageType: "FREE" | "BASIC" | "PREMIUM" | "PLATINUM") => Promise<void>) => void;
+  onPackagePurchaseReady?: (
+    purchaseHandler: (
+      packageType: "FREE" | "BASIC" | "PREMIUM" | "PLATINUM"
+    ) => Promise<void>
+  ) => void;
 }
 
 export default function StepContent({

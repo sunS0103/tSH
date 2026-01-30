@@ -86,7 +86,7 @@ export default function EditSkills() {
   // Helper function to validate and filter IDs
   const validateIds = (
     ids: number[] | undefined,
-    validIds: number[],
+    validIds: number[]
   ): number[] => {
     if (!ids || !Array.isArray(ids)) return [];
     return ids.filter((id) => validIds.includes(id));
@@ -105,7 +105,7 @@ export default function EditSkills() {
     // If only category_name is available, find matching category
     if (skill.category_name) {
       const category = categories.find(
-        (cat) => cat.name === skill.category_name,
+        (cat) => cat.name === skill.category_name
       );
       return category?.id || null;
     }
@@ -119,15 +119,14 @@ export default function EditSkills() {
     return validCategoryIds.includes(categoryId) ? categoryId : 0;
   };
 
-  /*
   const getValidPreferredRoles = (): number[] => {
     const validCategoryIds = categories.map((cat) => cat.id);
     return validateIds(
       skillsData?.preferred_roles?.map((role: { id: number }) => role.id),
-      validCategoryIds,
+      validCategoryIds
     );
   };
-  */
+  // */
 
   // Initialize form with validated cookie data
   const form = useForm<EditSkillsFormData>({
@@ -194,16 +193,16 @@ export default function EditSkills() {
         [];
       const cookieSecondarySkillIds =
         skillsData?.secondary_skills?.map(
-          (skill: { id: number }) => skill.id,
+          (skill: { id: number }) => skill.id
         ) || [];
 
       const validPrimarySkills = validateIds(
         cookiePrimarySkillIds,
-        allValidSkillIds,
+        allValidSkillIds
       );
       const validSecondarySkills = validateIds(
         cookieSecondarySkillIds,
-        allValidSkillIds,
+        allValidSkillIds
       );
 
       form.reset({
@@ -242,7 +241,7 @@ export default function EditSkills() {
 
     // Filter out skills that don't belong to the new category
     const filteredSkills = currentPrimarySkills.filter((id) =>
-      validSkillIds.includes(id),
+      validSkillIds.includes(id)
     );
 
     if (filteredSkills.length !== currentPrimarySkills.length) {
@@ -252,12 +251,12 @@ export default function EditSkills() {
     // Filter secondary skills to only include those from the current category
     const currentSecondarySkills = form.getValues("secondary_skills") || [];
     const filteredSecondarySkills = currentSecondarySkills.filter((id) =>
-      validSkillIds.includes(id),
+      validSkillIds.includes(id)
     );
 
     // Also remove any secondary skills that are now in primary skills
     const finalSecondarySkills = filteredSecondarySkills.filter(
-      (id) => !filteredSkills.includes(id),
+      (id) => !filteredSkills.includes(id)
     );
 
     if (finalSecondarySkills.length !== currentSecondarySkills.length) {
@@ -273,7 +272,7 @@ export default function EditSkills() {
 
     // Filter out any secondary skills that are now in primary skills
     const filteredSecondarySkills = currentSecondarySkills.filter(
-      (id) => !currentPrimarySkills.includes(id),
+      (id) => !currentPrimarySkills.includes(id)
     );
 
     if (filteredSecondarySkills.length !== currentSecondarySkills.length) {
@@ -326,7 +325,7 @@ export default function EditSkills() {
 
   const getSelectedSkillsLabel = (
     selectedIds: number[],
-    options: SkillOption[] | RoleOption[] | CategoryOption[],
+    options: SkillOption[] | RoleOption[] | CategoryOption[]
   ) => {
     if (selectedIds.length === 0) return "Select options";
     const selected = options.filter((opt) => selectedIds.includes(opt.id));
@@ -334,7 +333,7 @@ export default function EditSkills() {
   };
 
   return (
-    <div className="bg-white border border-gray-200 rounded-2xl w-full max-w-3xl mx-auto mt-4 overflow-hidden">
+    <div className="bg-white border border-gray-200 rounded-2xl w-full mt-4 overflow-hidden">
       {/* Header */}
       <div className="bg-purple-50 px-6 py-4">
         <h2 className="text-xl font-bold text-black">Edit Skills & Domains</h2>
@@ -412,14 +411,14 @@ export default function EditSkills() {
                         role="combobox"
                         className={cn(
                           "min-h-8 h-auto w-full justify-between border-gray-900 bg-white text-left font-normal py-2",
-                          "hover:bg-white",
+                          "hover:bg-white"
                         )}
                       >
                         <span
                           className={cn(
                             "flex-1 text-wrap wrap-break-word pr-2",
                             (!field.value || field.value.length === 0) &&
-                              "text-gray-500",
+                              "text-gray-500"
                           )}
                         >
                           {getSelectedSkillsLabel(field.value || [], skills)}
@@ -447,18 +446,18 @@ export default function EditSkills() {
                                 "flex items-center gap-4 px-6 py-4 border-b border-gray-200 last:border-b-0 cursor-pointer hover:bg-gray-50",
                                 index === 0 && "rounded-t-2xl",
                                 index === filteredPrimarySkills.length - 1 &&
-                                  "rounded-b-2xl",
+                                  "rounded-b-2xl"
                               )}
                               onClick={() => {
                                 const currentValue = field.value || [];
                                 const isSelected = currentValue.includes(
-                                  option.id,
+                                  option.id
                                 );
                                 if (isSelected) {
                                   field.onChange(
                                     currentValue.filter(
-                                      (id) => id !== option.id,
-                                    ),
+                                      (id) => id !== option.id
+                                    )
                                   );
                                 } else {
                                   field.onChange([...currentValue, option.id]);
@@ -467,7 +466,7 @@ export default function EditSkills() {
                             >
                               <Checkbox
                                 checked={(field.value || []).includes(
-                                  option.id,
+                                  option.id
                                 )}
                                 onCheckedChange={(checked) => {
                                   const currentValue = field.value || [];
@@ -479,8 +478,8 @@ export default function EditSkills() {
                                   } else {
                                     field.onChange(
                                       currentValue.filter(
-                                        (id) => id !== option.id,
-                                      ),
+                                        (id) => id !== option.id
+                                      )
                                     );
                                   }
                                 }}
@@ -511,7 +510,7 @@ export default function EditSkills() {
                 const selectedPrimarySkills =
                   form.getValues("primary_skills") || [];
                 const availableSecondarySkills = filteredPrimarySkills.filter(
-                  (skill) => !selectedPrimarySkills.includes(skill.id),
+                  (skill) => !selectedPrimarySkills.includes(skill.id)
                 );
 
                 return (
@@ -530,14 +529,14 @@ export default function EditSkills() {
                           role="combobox"
                           className={cn(
                             "min-h-8 h-auto w-full justify-between border-gray-900 bg-white text-left font-normal py-2",
-                            "hover:bg-white",
+                            "hover:bg-white"
                           )}
                         >
                           <span
                             className={cn(
                               "flex-1 text-wrap wrap-break-word pr-2",
                               (!field.value || field.value.length === 0) &&
-                                "text-gray-500",
+                                "text-gray-500"
                             )}
                           >
                             {getSelectedSkillsLabel(field.value || [], skills)}
@@ -566,18 +565,18 @@ export default function EditSkills() {
                                   index === 0 && "rounded-t-2xl",
                                   index ===
                                     availableSecondarySkills.length - 1 &&
-                                    "rounded-b-2xl",
+                                    "rounded-b-2xl"
                                 )}
                                 onClick={() => {
                                   const currentValue = field.value || [];
                                   const isSelected = currentValue.includes(
-                                    option.id,
+                                    option.id
                                   );
                                   if (isSelected) {
                                     field.onChange(
                                       currentValue.filter(
-                                        (id) => id !== option.id,
-                                      ),
+                                        (id) => id !== option.id
+                                      )
                                     );
                                   } else {
                                     field.onChange([
@@ -589,7 +588,7 @@ export default function EditSkills() {
                               >
                                 <Checkbox
                                   checked={(field.value || []).includes(
-                                    option.id,
+                                    option.id
                                   )}
                                   onCheckedChange={(checked) => {
                                     const currentValue = field.value || [];
@@ -601,8 +600,8 @@ export default function EditSkills() {
                                     } else {
                                       field.onChange(
                                         currentValue.filter(
-                                          (id) => id !== option.id,
-                                        ),
+                                          (id) => id !== option.id
+                                        )
                                       );
                                     }
                                   }}
@@ -675,7 +674,7 @@ export default function EditSkills() {
                               "flex items-center gap-4 px-6 py-4 border-b border-gray-200 last:border-b-0 cursor-pointer hover:bg-gray-50",
                               index === 0 && "rounded-t-2xl",
                               index === categories.length - 1 &&
-                                "rounded-b-2xl",
+                                "rounded-b-2xl"
                             )}
                             onClick={() => {
                               const currentValue = field.value || [];

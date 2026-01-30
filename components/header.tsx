@@ -66,7 +66,13 @@ const BOTTOM_NAV_VISIBLE_ROUTES_BY_ROLE: Record<string, string[]> = {
     "/profile",
     "/credits",
   ],
-  CANDIDATE: ["/dashboard", "/assessments", "/jobs", "/jobs/*", "/profile"],
+  CANDIDATE: [
+    "/dashboard",
+    "/assessments",
+    "/jobs",
+    "/jobs/*",
+    "/profile-details/*",
+  ],
 };
 
 function shouldShowBottomNav(pathname: string | null, role?: string): boolean {

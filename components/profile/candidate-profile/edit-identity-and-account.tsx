@@ -48,7 +48,7 @@ export default function EditIdentityAndAccount() {
   const [selectedCountryCode, setSelectedCountryCode] =
     useState<string>(initialDialCode);
   const [selectedCountryName, setSelectedCountryName] = useState<string>(
-    profileData?.country || "",
+    profileData?.country || ""
   );
 
   const editAccountSchema = z.object({
@@ -67,7 +67,7 @@ export default function EditIdentityAndAccount() {
       ["Student", "Working Professional", "Fresher", "Other", ""],
       {
         message: "Please select account type",
-      },
+      }
     ),
     country_code: z.string().optional(),
   });
@@ -135,7 +135,7 @@ export default function EditIdentityAndAccount() {
         const date = new Date(
           parseInt(year),
           parseInt(month) - 1,
-          parseInt(day),
+          parseInt(day)
         );
         dateOfBirthTimestamp = date.getTime();
       } else {
@@ -176,7 +176,7 @@ export default function EditIdentityAndAccount() {
               dial_code: selectedCountryCode,
               country: selectedCountryName,
               role: role === "CANDIDATE" ? "CANDIDATE" : "RECRUITER",
-            }),
+            })
           );
           // Navigate to next section in onboarding flow
           router.push("/profile-details/edit-personal-social");
@@ -188,7 +188,7 @@ export default function EditIdentityAndAccount() {
   };
 
   return (
-    <div className="bg-white border border-gray-200 rounded-2xl w-full max-w-3xl mx-auto mt-4">
+    <div className="bg-white border border-gray-200 rounded-2xl w-full mt-4">
       <div className="bg-primary-50 py-3 md:py-4 px-4 md:px-6 rounded-t-2xl">
         <h1 className="text-lg md:text-xl font-bold">
           Edit Account and Identity
@@ -326,7 +326,7 @@ export default function EditIdentityAndAccount() {
                             // Remove any non-numeric characters
                             const numericValue = e.target.value.replace(
                               /\D/g,
-                              "",
+                              ""
                             );
                             e.target.value = numericValue;
                             field.onChange(numericValue);
@@ -385,7 +385,7 @@ export default function EditIdentityAndAccount() {
                             variant="outline"
                             className={cn(
                               "w-full justify-start text-left font-normal",
-                              !field.value && "text-muted-foreground",
+                              !field.value && "text-muted-foreground"
                             )}
                           >
                             <CalendarIcon className="mr-2 h-4 w-4" />
@@ -472,7 +472,8 @@ export default function EditIdentityAndAccount() {
                 variant="secondary"
                 className="w-fit"
                 onClick={() => {
-                  const isOnboarding = window.location.pathname.includes("/profile-details/");
+                  const isOnboarding =
+                    window.location.pathname.includes("/profile-details/");
                   router.push(isOnboarding ? "/dashboard" : "/profile");
                 }}
               >
