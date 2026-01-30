@@ -27,15 +27,29 @@ const betweenJobsSchema = z.object({
       message: "Please enter a valid number",
     }),
   duration_years: z
-    .number()
-    .min(0, "Duration years must be 0 or greater")
-    .max(100, "Duration years must be less than 100")
-    .nullable(),
+    .number({
+      error: "Duration years is required",
+    })
+    .min(1, "Duration years must be 1 or greater")
+    .max(100, "Duration years must be less than 100"),
+
   duration_months: z
-    .number()
+    .number({
+      error: "Duration months is required",
+    })
     .min(0, "Duration months must be between 0 and 11")
-    .max(11, "Duration months must be between 0 and 11")
-    .nullable(),
+    .max(11, "Duration months must be between 0 and 11"),
+
+  // duration_years: z
+  //   .number()
+  //   .min(0, "Duration years must be 0 or greater")
+  //   .max(100, "Duration years must be less than 100"),
+  // // .nullable(),
+  // duration_months: z
+  //   .number()
+  //   .min(0, "Duration months must be between 0 and 11")
+  //   .max(11, "Duration months must be between 0 and 11"),
+  // .nullable(),
   last_drawn_ctc_amount: z
     .string()
     .min(1, "Last drawn CTC is required")
@@ -70,8 +84,8 @@ export default function BetweenJobsForm({
     defaultValues: {
       total_years_of_experience:
         defaultValues?.total_years_of_experience?.toString() || "",
-      duration_years: defaultValues?.duration_years || null,
-      duration_months: defaultValues?.duration_months || null,
+      duration_years: defaultValues?.duration_years || 0,
+      duration_months: defaultValues?.duration_months || 0,
       last_drawn_ctc_amount:
         defaultValues?.last_drawn_ctc_amount?.toString() || "",
       // duration_description: defaultValues?.duration_description || "",
@@ -173,7 +187,7 @@ export default function BetweenJobsForm({
               name="duration_years"
               render={({ field }) => (
                 <FormItem className="w-full">
-                  <FormLabel className="text-sm font-medium ">
+                  <FormLabel required className="text-sm font-medium ">
                     Duration of Career Break (in years)
                   </FormLabel>
                   <FormControl>
@@ -200,7 +214,7 @@ export default function BetweenJobsForm({
               name="duration_months"
               render={({ field }) => (
                 <FormItem className="w-full">
-                  <FormLabel className="text-sm font-medium ">
+                  <FormLabel required className="text-sm font-medium ">
                     Duration of Career Break (in months)
                   </FormLabel>
                   <FormControl>
