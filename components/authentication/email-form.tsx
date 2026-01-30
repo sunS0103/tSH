@@ -17,6 +17,7 @@ import {
   FormControl,
   FormField,
   FormItem,
+  FormLabel,
   FormMessage,
 } from "../ui/form";
 import { googleCallback, sendOtp, verifyOtp } from "@/api/auth";
@@ -285,7 +286,9 @@ export default function EmailForm({ role }: EmailFormProps) {
             name="email"
             render={({ field }) => (
               <FormItem>
-                <Label htmlFor="email">Email ID</Label>
+                <FormLabel required htmlFor="email">
+                  Email ID
+                </FormLabel>
                 <FormControl>
                   <div className="relative">
                     <Input
@@ -317,7 +320,9 @@ export default function EmailForm({ role }: EmailFormProps) {
             <div className="space-y-2">
               <div className="flex items-end justify-between">
                 <div className="space-y-2">
-                  <Label>OTP</Label>
+                  <Label>
+                    OTP <span className="text-destructive ms-1">*</span>
+                  </Label>
                   <InputOTP
                     maxLength={4}
                     value={otp}

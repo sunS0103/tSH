@@ -7,6 +7,7 @@ import {
   FormControl,
   FormField,
   FormItem,
+  FormLabel,
   FormMessage,
 } from "@/components/ui/form";
 import { Label } from "@/components/ui/label";
@@ -26,52 +27,51 @@ import { useEffect, useState } from "react";
 import { getWorkModes, getCountryById } from "@/api/seeder";
 import { fa } from "zod/v4/locales";
 
-const locationAndWorkPreferenceSchema = z
-  .object({
-    city_id: z.number().min(1, "Current city is required"),
-    country_id: z.number().min(1, "Current country is required"),
-    preferred_cities: z
-      .array(z.number())
-      .min(1, "At least one preferred work location is required"),
-    preferred_work_modes: z
-      .array(z.number())
-      .min(1, "At least one work mode is required"),
-    is_citizen_of_work_country: z.boolean(),
-    visa_type: z.string().optional(),
-    willing_to_relocate: z.boolean().optional(),
-    open_to_remote_only: z.boolean().optional(),
-    open_to_contract_to_hire: z.boolean().optional(),
-  })
-  .refine(
-    (data) => {
-      // If NOT a citizen, visa_type is required
-      if (data.is_citizen_of_work_country) {
-        return data.visa_type !== undefined && data.visa_type !== "";
-      }
-      return true;
-    },
-    {
-      message: "Visa type is required when you are not a citizen",
-      path: ["visa_type"],
-    }
-  )
-  .refine(
-    (data) => {
-      // If IS a citizen, these fields are required
-      if (data.is_citizen_of_work_country) {
-        return (
-          data.willing_to_relocate !== undefined &&
-          data.open_to_remote_only !== undefined &&
-          data.open_to_contract_to_hire !== undefined
-        );
-      }
-      return true;
-    },
-    {
-      message: "All fields are required when you are a citizen",
-      path: ["willing_to_relocate"],
-    }
-  );
+const locationAndWorkPreferenceSchema = z.object({
+  city_id: z.number().min(1, "Current city is required"),
+  country_id: z.number().min(1, "Current country is required"),
+  preferred_cities: z
+    .array(z.number())
+    .min(1, "At least one preferred work location is required"),
+  preferred_work_modes: z
+    .array(z.number())
+    .min(1, "At least one work mode is required"),
+  is_citizen_of_work_country: z.boolean(),
+  visa_type: z.string().optional(),
+  willing_to_relocate: z.boolean().optional(),
+  open_to_remote_only: z.boolean().optional(),
+  open_to_contract_to_hire: z.boolean().optional(),
+});
+// .refine(
+//   (data) => {
+//     // If NOT a citizen, visa_type is required
+//     if (data.is_citizen_of_work_country) {
+//       return data.visa_type !== undefined && data.visa_type !== "";
+//     }
+//     return true;
+//   },
+//   {
+//     message: "Visa type is required when you are not a citizen",
+//     path: ["visa_type"],
+//   },
+// )
+// .refine(
+//   (data) => {
+//     // If IS a citizen, these fields are required
+//     if (data.is_citizen_of_work_country) {
+//       return (
+//         data.willing_to_relocate !== undefined &&
+//         data.open_to_remote_only !== undefined &&
+//         data.open_to_contract_to_hire !== undefined
+//       );
+//     }
+//     return true;
+//   },
+//   {
+//     message: "All fields are required when you are a citizen",
+//     path: ["willing_to_relocate"],
+//   },
+// );
 
 type LocationAndWorkPreferenceFormData = z.infer<
   typeof locationAndWorkPreferenceSchema
@@ -270,9 +270,12 @@ export default function EditLocationAndWorkPreference() {
               name="country_id"
               render={({ field }) => (
                 <FormItem className="w-full md:w-1/2">
-                  <Label className="text-sm font-medium text-black">
+                  <FormLabel
+                    required
+                    className="text-sm font-medium text-black"
+                  >
                     Current Country
-                  </Label>
+                  </FormLabel>
                   <FormControl>
                     <CountryDropdown
                       value={typeof field.value === "number" ? field.value : 0}
@@ -298,9 +301,12 @@ export default function EditLocationAndWorkPreference() {
               name="city_id"
               render={({ field }) => (
                 <FormItem className="w-full md:w-1/2">
-                  <Label className="text-sm font-medium text-black">
+                  <FormLabel
+                    required
+                    className="text-sm font-medium text-black"
+                  >
                     Current City
-                  </Label>
+                  </FormLabel>
                   <FormControl>
                     <CityDropdown
                       value={typeof field.value === "number" ? field.value : 0}
@@ -324,9 +330,12 @@ export default function EditLocationAndWorkPreference() {
               name="preferred_cities"
               render={({ field }) => (
                 <FormItem className="w-full md:w-1/2">
-                  <Label className="text-sm font-medium text-black">
+                  <FormLabel
+                    required
+                    className="text-sm font-medium text-black"
+                  >
                     Preferred Work Locations
-                  </Label>
+                  </FormLabel>
                   <FormControl>
                     <CityMultiSelect
                       value={field.value}
@@ -343,9 +352,12 @@ export default function EditLocationAndWorkPreference() {
               name="preferred_work_modes"
               render={({ field }) => (
                 <FormItem className="w-full md:w-1/2">
-                  <Label className="text-sm font-medium text-black">
+                  <FormLabel
+                    required
+                    className="text-sm font-medium text-black"
+                  >
                     Preferred Work Mode
-                  </Label>
+                  </FormLabel>
                   <FormControl>
                     <WorkModeMultiSelect
                       value={field.value}
@@ -363,7 +375,7 @@ export default function EditLocationAndWorkPreference() {
           <div className="flex flex-col gap-2.5">
             <Label className="text-base font-medium text-black">
               Are you a citizen or permanent resident of the country where you
-              prefer to work?
+              prefer to work? <span className="text-destructive ms-1">*</span>
             </Label>
             <FormField
               control={form.control}
@@ -412,9 +424,9 @@ export default function EditLocationAndWorkPreference() {
                 name="visa_type"
                 render={({ field }) => (
                   <FormItem className="w-full md:w-1/2">
-                    <Label className="text-sm font-medium text-black">
+                    <FormLabel className="text-sm font-medium text-black">
                       What type of visa do you currently hold?
-                    </Label>
+                    </FormLabel>
                     <FormControl>
                       <Input
                         placeholder="Enter visa type"
@@ -434,7 +446,8 @@ export default function EditLocationAndWorkPreference() {
             <>
               <div className="flex flex-col gap-2.5">
                 <Label className="text-base font-medium text-black">
-                  Willing to relocate within your authorized work country?
+                  Willing to relocate within your authorized work country?{" "}
+                  <span className="text-destructive ms-1">*</span>
                 </Label>
                 <FormField
                   control={form.control}
@@ -477,7 +490,8 @@ export default function EditLocationAndWorkPreference() {
               {/* Open to remote-only roles? */}
               <div className="flex flex-col gap-2.5">
                 <Label className="text-base font-medium text-black">
-                  Open to remote-only roles?
+                  Open to remote-only roles?{" "}
+                  <span className="text-destructive ms-1">*</span>
                 </Label>
                 <FormField
                   control={form.control}
@@ -521,7 +535,8 @@ export default function EditLocationAndWorkPreference() {
               {/* Are you open to Contract to Hire positions? */}
               <div className="flex flex-col gap-2.5">
                 <Label className="text-base font-medium text-black">
-                  Are you open to Contract to Hire positions?
+                  Are you open to Contract to Hire positions?{" "}
+                  <span className="text-destructive ms-1">*</span>
                 </Label>
                 <FormField
                   control={form.control}

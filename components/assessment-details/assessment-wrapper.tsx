@@ -294,7 +294,9 @@ export default function AssessmentWrapper({
         newErrors[stepNum] = true;
       });
       setStepErrors((prev) => ({ ...prev, ...newErrors }));
-      toast.error("Please confirm all required sections before starting the assessment.");
+      toast.error(
+        "Please confirm all required sections before starting the assessment."
+      );
       return;
     }
 
@@ -333,7 +335,9 @@ export default function AssessmentWrapper({
         newErrors[stepNum] = true;
       });
       setStepErrors((prev) => ({ ...prev, ...newErrors }));
-      toast.error("Please confirm all required sections before starting the assessment.");
+      toast.error(
+        "Please confirm all required sections before starting the assessment."
+      );
       return;
     }
 
@@ -443,119 +447,125 @@ export default function AssessmentWrapper({
               <div className="flex flex-col md:flex-row gap-6 items-center justify-center w-full mt-6">
                 {/* Start Assessment Later */}
                 <div className="flex flex-col items-center gap-2 max-w-xs">
-                <Dialog>
-                  <DialogTrigger asChild>
-                    <Button
-                      disabled={
-                        assessment.candidate_status !== null &&
-                        assessment.candidate_status !== "PENDING"
-                      }
-                      variant="secondary"
-                      className="text-sm px-6 py-6 w-full md:w-auto min-w-[200px]"
-                    >
-                      Start Assessment Later
-                    </Button>
-                  </DialogTrigger>
-                  <DialogContent className="py-4 px-0 md:max-w-100!">
-                    <DialogHeader className="px-6">
-                      <DialogTitle className="text-left text-base md:text-lg">
+                  <Dialog>
+                    <DialogTrigger asChild>
+                      <Button
+                        disabled={
+                          (assessment.candidate_status !== null &&
+                            assessment.candidate_status !== "PENDING") ||
+                          !assessmentPayment
+                        }
+                        variant="secondary"
+                        className="text-sm px-6 py-6 w-full md:w-auto min-w-[200px]"
+                      >
                         Start Assessment Later
-                      </DialogTitle>
-                    </DialogHeader>
-                    <hr className="border-gray-200" />
-                    <div className="pl-6">
-                      <div className="text-xs md:text-sm font-semibold">
-                        If You’re Not Ready to Start Now
-                      </div>
-
-                      <ul className="list-disc list-outside text-gray-600 px-2 mt-2 marker:text-primary-100 pl-4">
-                        {assessmentLaterDetails?.map((item: string) => (
-                          <li
-                            key={item}
-                            className="text-xs md:text-sm text-gray-600 font-medium"
-                          >
-                            {item}
-                          </li>
-                        ))}
-                      </ul>
-                    </div>
-                    <div className="flex gap-2 justify-end px-6">
-                      <DialogClose asChild>
-                        <Button variant="secondary" className="">
-                          Cancel
-                        </Button>
-                      </DialogClose>
-
-                      <Button onClick={handleStartAssessmentLater}>
-                        Proceed
                       </Button>
-                    </div>
-                  </DialogContent>
-                </Dialog>
-                <p className="text-xs text-center text-gray-600 leading-relaxed">
-                  A secure exam link will be sent to your email. Take the assessment at your convenience within the next 30 days.
-                </p>
+                    </DialogTrigger>
+                    <DialogContent className="py-4 px-0 md:max-w-100!">
+                      <DialogHeader className="px-6">
+                        <DialogTitle className="text-left text-base md:text-lg">
+                          Start Assessment Later
+                        </DialogTitle>
+                      </DialogHeader>
+                      <hr className="border-gray-200" />
+                      <div className="pl-6">
+                        <div className="text-xs md:text-sm font-semibold">
+                          If You’re Not Ready to Start Now
+                        </div>
+
+                        <ul className="list-disc list-outside text-gray-600 px-2 mt-2 marker:text-primary-100 pl-4">
+                          {assessmentLaterDetails?.map((item: string) => (
+                            <li
+                              key={item}
+                              className="text-xs md:text-sm text-gray-600 font-medium"
+                            >
+                              {item}
+                            </li>
+                          ))}
+                        </ul>
+                      </div>
+                      <div className="flex gap-2 justify-end px-6">
+                        <DialogClose asChild>
+                          <Button variant="secondary" className="">
+                            Cancel
+                          </Button>
+                        </DialogClose>
+
+                        <Button onClick={handleStartAssessmentLater}>
+                          Proceed
+                        </Button>
+                      </div>
+                    </DialogContent>
+                  </Dialog>
+                  <p className="text-xs text-center text-gray-600 leading-relaxed">
+                    A secure exam link will be sent to your email. Take the
+                    assessment at your convenience within the next 30 days.
+                  </p>
                 </div>
 
                 {/* Start Assessment Now */}
                 <div className="flex flex-col items-center gap-2 max-w-xs">
-                <Dialog>
-                  <DialogTrigger asChild>
-                    <Button
-                      disabled={
-                        (assessment.candidate_status !== null &&
-                        assessment.candidate_status !== "PENDING") ||
-                        selectedPackageType === "PLATINUM" ||
-                        assessmentPayment?.package_type === "PLATINUM"
-                      }
-                      className="text-sm px-6 py-6 w-full md:w-auto min-w-[200px]"
-                    >
-                      Start Assessment Now
-                    </Button>
-                  </DialogTrigger>
-                  <DialogContent className="py-4 px-0 md:max-w-100!">
-                    <DialogHeader className="px-6">
-                      <DialogTitle className="text-left text-base md:text-lg">
+                  <Dialog>
+                    <DialogTrigger asChild>
+                      <Button
+                        disabled={
+                          (assessment.candidate_status !== null &&
+                            assessment.candidate_status !== "PENDING") ||
+                          selectedPackageType === "PLATINUM" ||
+                          assessmentPayment?.package_type === "PLATINUM" ||
+                          !assessmentPayment
+                        }
+                        className="text-sm px-6 py-6 w-full md:w-auto min-w-[200px]"
+                      >
                         Start Assessment Now
-                      </DialogTitle>
-                    </DialogHeader>
-                    <hr className="border-gray-200" />
-                    <div className="pl-6">
-                      <div className="text-xs md:text-sm font-semibold">
-                        Prepare Before You Start
-                      </div>
-
-                      <ul className="list-disc list-outside text-gray-600 px-2 mt-2 marker:text-primary-100 pl-4">
-                        {assessmentNowDetails?.map((item: string) => (
-                          <li
-                            key={item}
-                            className="text-xs md:text-sm text-gray-600 font-medium"
-                          >
-                            {item}
-                          </li>
-                        ))}
-                      </ul>
-                    </div>
-                    <div className="flex gap-2 justify-end px-6">
-                      <DialogClose asChild>
-                        <Button variant="secondary" className="">
-                          Cancel
-                        </Button>
-                      </DialogClose>
-
-                      <Button className="" onClick={handleStartAssessmentNow}>
-                        Proceed
                       </Button>
-                    </div>
-                  </DialogContent>
-                </Dialog>
-                  {(selectedPackageType === "PLATINUM" || assessmentPayment?.package_type === "PLATINUM") ? (
+                    </DialogTrigger>
+                    <DialogContent className="py-4 px-0 md:max-w-100!">
+                      <DialogHeader className="px-6">
+                        <DialogTitle className="text-left text-base md:text-lg">
+                          Start Assessment Now
+                        </DialogTitle>
+                      </DialogHeader>
+                      <hr className="border-gray-200" />
+                      <div className="pl-6">
+                        <div className="text-xs md:text-sm font-semibold">
+                          Prepare Before You Start
+                        </div>
+
+                        <ul className="list-disc list-outside text-gray-600 px-2 mt-2 marker:text-primary-100 pl-4">
+                          {assessmentNowDetails?.map((item: string) => (
+                            <li
+                              key={item}
+                              className="text-xs md:text-sm text-gray-600 font-medium"
+                            >
+                              {item}
+                            </li>
+                          ))}
+                        </ul>
+                      </div>
+                      <div className="flex gap-2 justify-end px-6">
+                        <DialogClose asChild>
+                          <Button variant="secondary" className="">
+                            Cancel
+                          </Button>
+                        </DialogClose>
+
+                        <Button className="" onClick={handleStartAssessmentNow}>
+                          Proceed
+                        </Button>
+                      </div>
+                    </DialogContent>
+                  </Dialog>
+                  {selectedPackageType === "PLATINUM" ||
+                  assessmentPayment?.package_type === "PLATINUM" ? (
                     <p className="text-xs text-center text-amber-600 leading-relaxed font-medium">
-                      Platinum package requires mentorship preparation. Please use "Start Assessment Later" option.
+                      Platinum package requires mentorship preparation. Please
+                      use "Start Assessment Later" option.
                     </p>
                   ) : (
                     <p className="text-xs text-center text-gray-600 leading-relaxed">
-                      Begin immediately and access the exam window right away. Make sure you're ready to complete it now.
+                      Begin immediately and access the exam window right away.
+                      Make sure you're ready to complete it now.
                     </p>
                   )}
                 </div>

@@ -292,7 +292,8 @@ export default function JobApplyForm({
                   return (
                     <div key={fieldId} className="flex-1 flex flex-col gap-2">
                       <Label className="text-sm font-medium text-gray-900">
-                        {field.title}
+                        {field.title}{" "}
+                        <span className="text-destructive ms-1">*</span>
                       </Label>
                       <Input
                         type="text"
@@ -335,7 +336,8 @@ export default function JobApplyForm({
                   className="flex flex-col gap-2 w-full relative"
                 >
                   <Label className="text-sm font-medium text-gray-900">
-                    {field.title}
+                    {field.title}{" "}
+                    <span className="text-destructive ms-1">*</span>
                   </Label>
                   <Textarea
                     placeholder={placeholder}

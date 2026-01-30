@@ -7,6 +7,7 @@ import {
   FormControl,
   FormField,
   FormItem,
+  FormLabel,
   FormMessage,
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
@@ -86,7 +87,7 @@ const employedSchema = z
     {
       message: "Last working day is required when serving notice",
       path: ["last_working_day"],
-    }
+    },
   );
 
 type EmployedFormData = z.infer<typeof employedSchema>;
@@ -138,7 +139,7 @@ export default function EmployedForm({
         notice_period_type: data.notice_period_type,
         is_serving_notice: data.is_serving_notice,
         last_working_day: data.is_serving_notice
-          ? data.last_working_day ?? null
+          ? (data.last_working_day ?? null)
           : null,
       };
       const response = await updateEmployedStatus(payload);
@@ -146,7 +147,7 @@ export default function EmployedForm({
       if (response.success) {
         setCookie("current_employment_details_data", JSON.stringify(payload));
         toast.success(
-          response.message || "Employment details updated successfully"
+          response.message || "Employment details updated successfully",
         );
         // Navigate to next section in onboarding flow
         router.push("/profile-details/edit-education");
@@ -176,9 +177,9 @@ export default function EmployedForm({
             name="company_name"
             render={({ field }) => (
               <FormItem className="w-full">
-                <Label className="text-sm font-medium text-black">
+                <FormLabel required className="text-sm font-medium text-black">
                   Current Company Name
-                </Label>
+                </FormLabel>
                 <FormControl>
                   <Input
                     placeholder="Enter company name"
@@ -199,9 +200,9 @@ export default function EmployedForm({
             name="designation"
             render={({ field }) => (
               <FormItem className="w-full md:w-1/2">
-                <Label className="text-sm font-medium text-black">
+                <FormLabel required className="text-sm font-medium text-black">
                   Current Designation
-                </Label>
+                </FormLabel>
                 <FormControl>
                   <Input
                     placeholder="Enter designation"
@@ -219,9 +220,9 @@ export default function EmployedForm({
             name="total_years_of_experience"
             render={({ field }) => (
               <FormItem className="w-full md:w-1/2">
-                <Label className="text-sm font-medium text-black">
+                <FormLabel required className="text-sm font-medium text-black">
                   Total Experience (Years)
-                </Label>
+                </FormLabel>
                 <FormControl>
                   <Input
                     type="number"
@@ -250,9 +251,12 @@ export default function EmployedForm({
               name="current_ctc_amount"
               render={({ field }) => (
                 <FormItem className="space-y-1">
-                  <Label className="text-sm font-medium text-black mb-2">
+                  <FormLabel
+                    required
+                    className="text-sm font-medium text-black mb-2"
+                  >
                     Current CTC
-                  </Label>
+                  </FormLabel>
                   <div className="flex border border-gray-900 rounded-lg overflow-hidden items-center">
                     <FormControl>
                       <Input
@@ -275,9 +279,12 @@ export default function EmployedForm({
               name="expected_ctc_amount"
               render={({ field }) => (
                 <FormItem className="space-y-1">
-                  <Label className="text-sm font-medium text-black mb-2">
+                  <FormLabel
+                    required
+                    className="text-sm font-medium text-black mb-2"
+                  >
                     Expected CTC
-                  </Label>
+                  </FormLabel>
                   <div className="flex border border-gray-900 rounded-lg overflow-hidden items-center">
                     <FormControl>
                       <Input
@@ -302,9 +309,9 @@ export default function EmployedForm({
             name="notice_period_type"
             render={({ field }) => (
               <FormItem className="w-full md:w-1/2">
-                <Label className="text-sm font-medium text-black">
+                <FormLabel required className="text-sm font-medium text-black">
                   Notice Period
-                </Label>
+                </FormLabel>
                 <FormControl>
                   <Select onValueChange={field.onChange} value={field.value}>
                     <SelectTrigger className="h-8 border-gray-900 w-full">
@@ -360,9 +367,12 @@ export default function EmployedForm({
               name="last_working_day"
               render={({ field }) => (
                 <FormItem className="w-full md:w-1/2">
-                  <Label className="text-sm font-medium text-black">
+                  <FormLabel
+                    required
+                    className="text-sm font-medium text-black"
+                  >
                     Last Working Day
-                  </Label>
+                  </FormLabel>
                   <Popover>
                     <PopoverTrigger asChild>
                       <FormControl>
@@ -370,7 +380,7 @@ export default function EmployedForm({
                           variant="outline"
                           className={cn(
                             "h-8 w-full justify-start text-left font-normal border-gray-900",
-                            !field.value && "text-muted-foreground"
+                            !field.value && "text-muted-foreground",
                           )}
                         >
                           <CalendarIcon className="mr-2 h-4 w-4" />
@@ -385,7 +395,9 @@ export default function EmployedForm({
                     <PopoverContent className="w-auto p-0" align="start">
                       <Calendar
                         mode="single"
-                        defaultMonth={field.value ? new Date(field.value) : undefined}
+                        defaultMonth={
+                          field.value ? new Date(field.value) : undefined
+                        }
                         selected={
                           field.value ? new Date(field.value) : undefined
                         }

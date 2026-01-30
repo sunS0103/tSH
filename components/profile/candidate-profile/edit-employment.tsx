@@ -51,13 +51,13 @@ export default function EditEmployment() {
         {/* Employment Status Selector */}
         <div className="flex flex-col md:flex-row gap-4 mb-4">
           <div className="w-full md:w-1/2">
-            <Label className="text-sm font-medium text-black mb-2">
-              Current Status
+            <Label className="text-sm font-medium text-black">
+              Current Status <span className="text-destructive -ml-1.5">*</span>
             </Label>
             <Select
               onValueChange={(value) =>
                 setEmploymentStatus(
-                  value as "Employed" | "Student" | "Fresher" | "Between Jobs"
+                  value as "Employed" | "Student" | "Fresher" | "Between Jobs",
                 )
               }
               value={employmentStatus}

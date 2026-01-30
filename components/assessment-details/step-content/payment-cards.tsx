@@ -393,11 +393,7 @@ export default function PaymentCards({
           {/* CTA Button */}
           <div className="flex flex-col items-center gap-2">
             <Button
-              disabled={
-                currentPayment?.package_type !== "FREE"
-                // &&
-                // currentPayment?.package_type === null
-              }
+              disabled={!!currentPayment}
               className="w-fit px-10"
               onClick={() => handlePurchase("FREE")}
             >

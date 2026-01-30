@@ -28,7 +28,7 @@ import z from "zod";
 interface EditEducationFormData {
   degree_name: string;
   specialization: string;
-  university_name: string;
+  university_name?: string;
   graduation_year: number | null;
   academic_status: "Completed" | "Final Year" | "Pursuing" | null;
 }
@@ -36,30 +36,45 @@ interface EditEducationFormData {
 export default function EditEducation() {
   const router = useRouter();
 
-  const educationSchema = z
-    .object({
-      degree_name: z.string().min(1, "Degree name is required"),
-      specialization: z.string().min(1, "Specialization is required"),
-      university_name: z.string().min(1, "University name is required"),
-      graduation_year: z.union([
-        z
-          .number()
-          .min(1, "Graduation year must be at least 1")
-          .max(2100, "Graduation year cannot be greater than 2100"),
-        z.null(),
-      ]),
-      academic_status: z
-        .enum(["Completed", "Final Year", "Pursuing"])
-        .nullable(),
-    })
-    .refine((data) => data.graduation_year !== null, {
-      message: "Graduation year is required",
-      path: ["graduation_year"],
-    })
-    .refine((data) => data.academic_status !== null, {
-      message: "Academic status is required",
-      path: ["academic_status"],
-    });
+  // const educationSchema = z
+  //   .object({
+  //     degree_name: z.string().min(1, "Degree name is required"),
+  //     specialization: z.string().min(1, "Specialization is required"),
+  //     university_name: z.string().min(1, "University name is required"),
+  //     graduation_year: z.union([
+  //       z
+  //         .number()
+  //         .min(1, "Graduation year must be at least 1")
+  //         .max(2100, "Graduation year cannot be greater than 2100"),
+  //       z.null(),
+  //     ]),
+  //     academic_status: z
+  //       .enum(["Completed", "Final Year", "Pursuing"])
+  //       .nullable(),
+  //   })
+  //   .refine((data) => data.graduation_year !== null, {
+  //     message: "Graduation year is required",
+  //     path: ["graduation_year"],
+  //   })
+  //   .refine((data) => data.academic_status !== null, {
+  //     message: "Academic status is required",
+  //     path: ["academic_status"],
+  //   });
+
+  const educationSchema = z.object({
+    degree_name: z.string().min(1, "Degree is required"),
+    specialization: z.string().min(1, "Specialization is required"),
+
+    university_name: z.string().optional(),
+
+    graduation_year: z
+      .number()
+      .min(1900, "Invalid graduation year")
+      .max(2100, "Invalid graduation year")
+      .nullable(),
+
+    academic_status: z.enum(["Completed", "Final Year", "Pursuing"]).nullable(),
+  });
 
   const cookieValue = getCookie("education_data");
   const educationData = cookieValue ? JSON.parse(cookieValue as string) : null;
@@ -77,7 +92,10 @@ export default function EditEducation() {
 
   const onSubmit = async (data: EditEducationFormData) => {
     try {
-      const response = await updateEducation(data);
+      const response = await updateEducation({
+        ...data,
+        university_name: data.university_name || "",
+      });
       if (response.success) {
         toast.success(response.message || "Education updated successfully");
         // Navigate to next section in onboarding flow
@@ -123,7 +141,7 @@ export default function EditEducation() {
                 name="degree_name"
                 render={({ field }) => (
                   <FormItem className="w-full md:w-1/2">
-                    <FormLabel>Highest Degree</FormLabel>
+                    <FormLabel required>Highest Degree</FormLabel>
                     <FormControl>
                       <Select
                         onValueChange={field.onChange}
@@ -150,7 +168,7 @@ export default function EditEducation() {
                 name="specialization"
                 render={({ field }) => (
                   <FormItem className="w-full md:w-1/2">
-                    <FormLabel>Specialization</FormLabel>
+                    <FormLabel required>Specialization</FormLabel>
                     <FormControl>
                       <Input
                         placeholder="Enter specialization"
@@ -200,12 +218,12 @@ export default function EditEducation() {
                           // Remove any non-numeric characters
                           const numericValue = e.target.value.replace(
                             /\D/g,
-                            ""
+                            "",
                           );
                           e.target.value = numericValue;
                           // Set to null if empty, otherwise convert to number
                           field.onChange(
-                            numericValue === "" ? null : Number(numericValue)
+                            numericValue === "" ? null : Number(numericValue),
                           );
                         }}
                         onKeyDown={(e) => {
@@ -243,12 +261,12 @@ export default function EditEducation() {
               name="academic_status"
               render={({ field }) => (
                 <FormItem className="w-full md:w-1/2">
-                  <FormLabel>Academic Status</FormLabel>
+                  <FormLabel required>Academic Status</FormLabel>
                   <FormControl>
                     <Select
                       onValueChange={(value) => {
                         field.onChange(
-                          value as "Completed" | "Final Year" | "Pursuing"
+                          value as "Completed" | "Final Year" | "Pursuing",
                         );
                       }}
                       value={field.value || undefined}

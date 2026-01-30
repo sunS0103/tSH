@@ -7,6 +7,7 @@ import {
   FormControl,
   FormField,
   FormItem,
+  FormLabel,
   FormMessage,
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
@@ -42,8 +43,10 @@ const betweenJobsSchema = z.object({
       message: "Please enter a valid number",
     }),
   // duration_description: z.string().min(1, "Reason is required")
-  reason: z.string().min(1, "Reason is required"),
-  upskilling_activities: z.string().min(1, "Upskilling activities is required"),
+  reason: z.string(),
+  // .min(1, "Reason is required"),
+  upskilling_activities: z.string(),
+  // .min(1, "Upskilling activities is required"),
   current_ctc_period_type: z
     .string()
     .min(1, "Current CTC period type is required"),
@@ -93,7 +96,7 @@ export default function BetweenJobsForm({
 
       if (response.success) {
         toast.success(
-          response.message || "Employment details updated successfully"
+          response.message || "Employment details updated successfully",
         );
         // Navigate to next section in onboarding flow
         router.push("/profile-details/edit-education");
@@ -122,9 +125,9 @@ export default function BetweenJobsForm({
             name="total_years_of_experience"
             render={({ field }) => (
               <FormItem className="w-full md:w-1/2">
-                <Label className="text-sm font-medium ">
+                <FormLabel required className="text-sm font-medium ">
                   Total Work Experience (in years)
-                </Label>
+                </FormLabel>
                 <FormControl>
                   <Input
                     type="number"
@@ -138,14 +141,17 @@ export default function BetweenJobsForm({
             )}
           />
           <div className="w-full md:w-1/2">
-            <Label className="text-sm font-medium text-black mb-2">
-              Last Drawn CTC
-            </Label>
             <FormField
               control={form.control}
               name="last_drawn_ctc_amount"
               render={({ field }) => (
                 <FormItem className="flex-1">
+                  <FormLabel
+                    required
+                    className="text-sm font-medium text-black"
+                  >
+                    Last Drawn CTC
+                  </FormLabel>
                   <FormControl>
                     <Input
                       type="number"
@@ -168,9 +174,9 @@ export default function BetweenJobsForm({
               name="duration_years"
               render={({ field }) => (
                 <FormItem className="w-full">
-                  <Label className="text-sm font-medium ">
+                  <FormLabel className="text-sm font-medium ">
                     Duration of Career Break (in years)
-                  </Label>
+                  </FormLabel>
                   <FormControl>
                     <Input
                       type="number"
@@ -181,7 +187,7 @@ export default function BetweenJobsForm({
                       value={field.value || ""}
                       onChange={(e) =>
                         field.onChange(
-                          e.target.value ? parseFloat(e.target.value) : null
+                          e.target.value ? parseFloat(e.target.value) : null,
                         )
                       }
                     />
@@ -195,9 +201,9 @@ export default function BetweenJobsForm({
               name="duration_months"
               render={({ field }) => (
                 <FormItem className="w-full">
-                  <Label className="text-sm font-medium ">
+                  <FormLabel className="text-sm font-medium ">
                     Duration of Career Break (in months)
-                  </Label>
+                  </FormLabel>
                   <FormControl>
                     <Input
                       type="number"
@@ -215,7 +221,7 @@ export default function BetweenJobsForm({
                             if (numValue > 11) {
                               form.setError("duration_months", {
                                 message: "Duration months must be less than 12",
-                                type:"onChange"
+                                type: "onChange",
                               });
                             }
                             field.onChange(numValue);
@@ -239,9 +245,9 @@ export default function BetweenJobsForm({
               const charCount = field.value?.length || 0;
               return (
                 <FormItem className="w-full">
-                  <Label className="text-sm font-medium ">
+                  <FormLabel className="text-sm font-medium ">
                     Reason for Career Break
-                  </Label>
+                  </FormLabel>
                   <FormControl>
                     <div className="relative mb-2">
                       <Textarea
@@ -269,9 +275,9 @@ export default function BetweenJobsForm({
               const charCount = field.value?.length || 0;
               return (
                 <FormItem className="w-full">
-                  <Label className="text-sm font-medium ">
+                  <FormLabel className="text-sm font-medium ">
                     Upskilling During This Period
-                  </Label>
+                  </FormLabel>
                   <FormControl>
                     <div className="relative mb-2">
                       <Textarea
