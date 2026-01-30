@@ -81,7 +81,10 @@ export default function TalentCard({
               />
             </div>
             <div className="flex flex-col items-start gap-1">
-              <h1 className="text-black text-xl font-bold font-sans">
+              <h1
+                className="text-black text-xl font-bold font-sans line-clamp-1"
+                title={expertise}
+              >
                 {expertise}
               </h1>
               <p className="text-left text-gray-600 text-xs font-normal font-sans uppercase">

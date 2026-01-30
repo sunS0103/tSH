@@ -24,8 +24,8 @@ import { Icon } from "@iconify/react";
 const editPersonalSocialSchema = z.object({
   headline: z
     .string()
-    // .min(80, "Short headline must be at least 80 characters")
-    .max(120, "Short headline must not exceed 120 characters"),
+    .min(1, "Short headline is required")
+    .max(30, "Short headline must not exceed 30 characters"),
   bio: z
     .string()
     .min(150, "Description must be at least 150 characters")
@@ -139,11 +139,11 @@ export default function EditPersonalSocial() {
                               placeholder="Enter your short headline"
                               className="border-gray-900 resize-none max-h-25 min-h-25"
                               rows={5}
-                              maxLength={120}
+                              maxLength={30}
                               {...field}
                             />
                             <span className="absolute -bottom-5 right-0 text-xs text-gray-600">
-                              {charCount} / 120
+                              {charCount} / 30
                             </span>
                           </div>
                         </FormControl>

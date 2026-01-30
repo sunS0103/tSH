@@ -55,7 +55,7 @@ const mapCandidateToTalentCard = (
   return {
     id: candidate.user_id,
     role: candidate.expertise || "",
-    expertise: candidate.expertise || "",
+    expertise: candidate.bio || "",
     location_code: locationCode,
     totalScore: candidate.score,
     skillsAssessed,
@@ -517,6 +517,8 @@ export default function TalentPoolPage() {
 
     return matchesOtherFilters;
   });
+
+  console.log({ talents });
 
   const handleRefreshFilters = () => {
     setSelectedFilters([]);
