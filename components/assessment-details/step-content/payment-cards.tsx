@@ -41,11 +41,9 @@ export default function PaymentCards({
   onUserAssessmentIdChange?: ({
     id,
     payment,
-    message,
   }: {
     id: string;
     payment: Payment;
-    message: string;
   }) => void;
   onPackageSelect?: (packageType: "FREE" | "BASIC" | "PREMIUM" | "PLATINUM") => void;
   selectedPackage?: "FREE" | "BASIC" | "PREMIUM" | "PLATINUM" | null;
@@ -96,9 +94,6 @@ export default function PaymentCards({
     },
   };
 
-  console.log({ paymentSuccessData });
-  console.log({ payment });
-
   const router = useRouter();
 
   // Sync local selection with prop when it changes
@@ -107,13 +102,6 @@ export default function PaymentCards({
       setLocalSelectedPackage(selectedPackage);
     }
   }, [selectedPackage]);
-
-  // Pass purchase handler to parent component
-  useEffect(() => {
-    if (onPackagePurchaseReady) {
-      onPackagePurchaseReady(handlePurchase);
-    }
-  }, [onPackagePurchaseReady]);
 
   // Reset paymentSuccessData when payment prop becomes null (after proceed success)
   // This syncs the local state with parent state reset
@@ -141,57 +129,64 @@ export default function PaymentCards({
     assessment_id: string;
     token: string;
     onSuccess: () => void;
-  }) => {
-    const options = {
-      key: orderData.data.razorpay_key_id,
-      amount: orderData.data.amount,
-      currency: orderData.data.currency,
-      order_id: orderData.data.razorpay_order_id,
-      name: "TechSmartHire",
-      description: `${orderData.data.package_type} Package - ${orderData.data.assessment_title}`,
-      prefill: {
-        email: user.email,
-        contact: user.phone || "",
-      },
-      theme: {
-        color: "#7C3AED",
-      },
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      handler: async (response: any) => {
-        await verifyPayment(assessment_id, {
-          razorpay_order_id: response.razorpay_order_id,
-          razorpay_payment_id: response.razorpay_payment_id,
-          razorpay_signature: response.razorpay_signature,
-        }).then((res) => {
-          if (res.success) {
-            onUserAssessmentIdChange?.({
-              id: res.data.user_assessment_id,
-              payment: res.data.payment,
-              message: res.message,
-            });
-            setPaymentSuccessData({
-              initial_paid: res.data.payment.initial_paid,
-              initial_payment_status: res.data.payment.initial_payment_status,
-              package_type: res.data.payment.package_type,
-              purchase_status: res.data.payment.purchase_status,
-              purchased_at: res.data.payment.purchased_at,
-            });
-          }
-        });
-
-        onSuccess();
-      },
-      modal: {
-        ondismiss: () => {
-          toast.error("Payment cancelled");
+  }): Promise<void> => {
+    return new Promise((resolve, reject) => {
+      const options = {
+        key: orderData.data.razorpay_key_id,
+        amount: orderData.data.amount,
+        currency: orderData.data.currency,
+        order_id: orderData.data.razorpay_order_id,
+        name: "TechSmartHire",
+        description: `${orderData.data.package_type} Package - ${orderData.data.assessment_title}`,
+        prefill: {
+          email: user.email,
+          contact: user.phone || "",
         },
-      },
-    };
+        theme: {
+          color: "#7C3AED",
+        },
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        handler: async (response: any) => {
+          try {
+            await verifyPayment(assessment_id, {
+              razorpay_order_id: response.razorpay_order_id,
+              razorpay_payment_id: response.razorpay_payment_id,
+              razorpay_signature: response.razorpay_signature,
+            }).then((res) => {
+              if (res.success) {
+                onUserAssessmentIdChange?.({
+                  id: res.data.user_assessment_id,
+                  payment: res.data.payment,
+                });
+                setPaymentSuccessData({
+                  initial_paid: res.data.payment.initial_paid,
+                  initial_payment_status: res.data.payment.initial_payment_status,
+                  package_type: res.data.payment.package_type,
+                  purchase_status: res.data.payment.purchase_status,
+                  purchased_at: res.data.payment.purchased_at,
+                });
+              }
+            });
 
-    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-    // @ts-ignore
-    const rzp = new window.Razorpay(options);
-    rzp.open();
+            onSuccess();
+            resolve();
+          } catch (error) {
+            reject(error);
+          }
+        },
+        modal: {
+          ondismiss: () => {
+            toast.error("Payment cancelled");
+            reject(new Error("Payment cancelled by user"));
+          },
+        },
+      };
+
+      // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+      // @ts-ignore
+      const rzp = new window.Razorpay(options);
+      rzp.open();
+    });
   };
 
   const basicPackageIncludedItems = [
@@ -287,26 +282,32 @@ export default function PaymentCards({
         return;
       }
 
-      // 2️⃣ Open Razorpay
-      openRazorpayCheckout({
+      // 2️⃣ Open Razorpay and wait for completion
+      await openRazorpayCheckout({
         orderData,
         user,
         assessment_id: assessment_id,
         token,
         onSuccess: () => {
-          toast.success("Assessment purchased successfully 🎉");
-          router.refresh();
+          toast.success("Assessment purchased successfully 🎉 You can now start the assessment.");
+          // Don't refresh - let the state update flow through
         },
       });
 
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
     } catch (err: any) {
       toast.error(err.response?.data?.message || "Payment failed");
+      throw err; // Re-throw to let parent handler know
     }
   };
 
-  // Make handlePurchase exportable for parent component  
-  console.log(currentPayment?.package_type);
+  // Pass purchase handler to parent component
+  useEffect(() => {
+    if (onPackagePurchaseReady) {
+      onPackagePurchaseReady(handlePurchase);
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [onPackagePurchaseReady]);
 
   const handlePackageCardClick = (packageType: "FREE" | "BASIC" | "PREMIUM" | "PLATINUM") => {
     // Don't allow changing if already purchased
@@ -317,22 +318,16 @@ export default function PaymentCards({
     onPackageSelect?.(packageType);
     
     // Update parent with package selection (for UI state like disabling buttons)
-    // Create a payment object with the selected package type
-    const paymentData: Payment = currentPayment || {
-      initial_paid: false,
-      initial_payment_status: "PENDING",
-      package_type: packageType,
-      purchase_status: "NOT_PURCHASED",
-      purchased_at: null,
-    };
-    
-    onUserAssessmentIdChange?.({
-      id: assessment_id,
-      payment: {
-        ...paymentData,
-        package_type: packageType,
-      },
-    });
+    // If currentPayment exists, update it; otherwise only update local state
+    if (currentPayment) {
+      onUserAssessmentIdChange?.({
+        id: assessment_id,
+        payment: {
+          ...currentPayment,
+          package_type: packageType,
+        },
+      });
+    }
   };
 
   return (
@@ -393,11 +388,7 @@ export default function PaymentCards({
           {/* CTA Button */}
           <div className="flex flex-col items-center gap-2">
             <Button
-              disabled={
-                currentPayment?.package_type !== "FREE"
-                // &&
-                // currentPayment?.package_type === null
-              }
+              disabled={!!currentPayment}
               className="w-fit px-10"
               onClick={() => handlePurchase("FREE")}
             >

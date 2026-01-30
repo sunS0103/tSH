@@ -1079,7 +1079,7 @@ export default function DynamicAssessmentPageClient({
               <div className="mb-8">
                 <div className="relative inline-block">
                   <button
-                    onClick={() => router.push("/authentication")}
+                    onClick={() => window.open("/authentication", "_blank")}
                     className="cursor-pointer px-12 py-5 rounded-xl bg-white text-emerald-600 font-black text-xl hover:shadow-2xl hover:scale-105 transition-all flex items-center gap-3"
                   >
                     <CheckCircle className="w-6 h-6" />

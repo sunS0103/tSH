@@ -334,7 +334,7 @@ const WaitlistForm: React.FC<WaitlistFormProps> = ({ initialRole = null }) => {
             {/* ROLE SELECTION */}
             <div className="space-y-3">
               <Label className="text-base font-medium overflow-hidden">
-                I am a... *
+                I am a... <span className="text-destructive">*</span>
               </Label>
               <div className="grid grid-cols-2 gap-4">
                 <button
@@ -403,7 +403,9 @@ const WaitlistForm: React.FC<WaitlistFormProps> = ({ initialRole = null }) => {
 
             {/* NAME FIELD */}
             <div className="space-y-2">
-              <Label htmlFor="name">Name *</Label>
+              <Label htmlFor="name">
+                Name <span className="text-destructive">*</span>
+              </Label>
               <Input
                 {...register("name")}
                 id="name"
@@ -423,7 +425,9 @@ const WaitlistForm: React.FC<WaitlistFormProps> = ({ initialRole = null }) => {
 
             {/* EMAIL FIELD */}
             <div className="space-y-2">
-              <Label htmlFor="email">Email *</Label>
+              <Label htmlFor="email">
+                Email <span className="text-destructive">*</span>
+              </Label>
               <Input
                 {...register("email")}
                 id="email"
@@ -451,7 +455,9 @@ const WaitlistForm: React.FC<WaitlistFormProps> = ({ initialRole = null }) => {
                   className="space-y-6 overflow-hidden"
                 >
                   <div className="space-y-2">
-                    <Label htmlFor="company">Company Name *</Label>
+                    <Label htmlFor="company">
+                      Company Name <span className="text-destructive">*</span>
+                    </Label>
                     <Input
                       {...register("company")}
                       id="company"
@@ -470,7 +476,9 @@ const WaitlistForm: React.FC<WaitlistFormProps> = ({ initialRole = null }) => {
                   </div>
 
                   <div className="space-y-2">
-                    <Label htmlFor="phone">Phone Number *</Label>
+                    <Label htmlFor="phone">
+                      Phone Number <span className="text-destructive">*</span>
+                    </Label>
                     <Input
                       {...register("phone")}
                       id="phone"

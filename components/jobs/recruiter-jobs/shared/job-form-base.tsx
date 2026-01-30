@@ -261,7 +261,7 @@ export default function JobFormBase({
                 name="company_name"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>Company Name</FormLabel>
+                    <FormLabel required>Company Name</FormLabel>
                     <FormControl>
                       <Input {...field} placeholder="Enter company name" />
                     </FormControl>
@@ -274,7 +274,7 @@ export default function JobFormBase({
                 name="job_title"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>Job Title</FormLabel>
+                    <FormLabel required>Job Title</FormLabel>
                     <FormControl>
                       <Input {...field} placeholder="Enter job title" />
                     </FormControl>
@@ -290,7 +290,7 @@ export default function JobFormBase({
               name="job_location_type"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Where will this Job be served?</FormLabel>
+                  <FormLabel required>Where will this Job be served?</FormLabel>
                   <FormControl>
                     <RadioGroup
                       onValueChange={field.onChange}
@@ -406,9 +406,12 @@ export default function JobFormBase({
                 name="country_id"
                 render={({ field }) => (
                   <FormItem className="w-full md:w-1/2">
-                    <Label className="text-sm font-medium text-black">
+                    <FormLabel
+                      required
+                      className="text-sm font-medium text-black"
+                    >
                       Current Country
-                    </Label>
+                    </FormLabel>
                     <FormControl>
                       <CountryDropdown
                         value={
@@ -436,9 +439,12 @@ export default function JobFormBase({
                 name="city_id"
                 render={({ field }) => (
                   <FormItem className="w-full md:w-1/2">
-                    <Label className="text-sm font-medium text-black">
+                    <FormLabel
+                      required
+                      className="text-sm font-medium text-black"
+                    >
                       Current City
-                    </Label>
+                    </FormLabel>
                     <FormControl>
                       <CityDropdown
                         value={
@@ -460,7 +466,7 @@ export default function JobFormBase({
             </div>
 
             {/* Salary Range and Years of Experience */}
-            <FormLabel>Salary Range (in CTC)</FormLabel>
+            <FormLabel required>Salary Range (in CTC)</FormLabel>
 
             <div className="flex flex-col md:flex-row items-start gap-2 md:gap-4">
               {/* Salary Range */}
@@ -547,7 +553,7 @@ export default function JobFormBase({
                 name="experience_min"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>Years of Experience</FormLabel>
+                    <FormLabel required>Years of Experience</FormLabel>
                     <Select onValueChange={field.onChange} value={field.value}>
                       <FormControl>
                         <SelectTrigger className="w-full">
@@ -572,7 +578,7 @@ export default function JobFormBase({
                 name="notice_period"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>Notice Period</FormLabel>
+                    <FormLabel required>Notice Period</FormLabel>
                     <Select onValueChange={field.onChange} value={field.value}>
                       <FormControl>
                         <SelectTrigger className="w-full">
@@ -596,7 +602,7 @@ export default function JobFormBase({
                 name="work_mode"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>Work Mode</FormLabel>
+                    <FormLabel required>Work Mode</FormLabel>
                     <FormControl>
                       <WorkModeMultiSelect
                         value={
@@ -650,7 +656,7 @@ export default function JobFormBase({
               name="job_description"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Job Description</FormLabel>
+                  <FormLabel required>Job Description</FormLabel>
                   <FormControl>
                     <TiptapEditor
                       value={field.value || ""}

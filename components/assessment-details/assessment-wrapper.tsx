@@ -83,16 +83,20 @@ export default function AssessmentWrapper({
   const [isHydrated, setIsHydrated] = useState(false);
   const previousPathnameRef = useRef<string | null>(null);
   const [userAssessmentId, setUserAssessmentId] = useState<string | null>(
-    assessment?.user_assessment_id || null
+    assessment?.user_assessment_id || null,
   );
 
   const [assessmentPayment, setAssessmentPayment] = useState<Payment | null>(
-    assessment?.payment || null
+    assessment?.payment || null,
   );
 
   const [selectedPackageType, setSelectedPackageType] = useState<
     "FREE" | "BASIC" | "PREMIUM" | "PLATINUM" | null
   >(assessment?.payment?.package_type || null);
+
+  const [purchaseHandler, setPurchaseHandler] = useState<
+    ((packageType: "FREE" | "BASIC" | "PREMIUM" | "PLATINUM") => Promise<void>) | null
+  >(null);
 
   const totalSteps = STEPS.length;
 
@@ -157,7 +161,7 @@ export default function AssessmentWrapper({
       }
 
       const confirmationsValue = localStorage.getItem(
-        STORAGE_KEY_CONFIRMATIONS
+        STORAGE_KEY_CONFIRMATIONS,
       );
       if (confirmationsValue) {
         try {
@@ -193,7 +197,7 @@ export default function AssessmentWrapper({
     if (isHydrated && typeof window !== "undefined" && isAssessmentRoute) {
       localStorage.setItem(
         STORAGE_KEY_CONFIRMATIONS,
-        JSON.stringify(stepConfirmations)
+        JSON.stringify(stepConfirmations),
       );
     }
   }, [
@@ -281,7 +285,7 @@ export default function AssessmentWrapper({
     currentStep === totalSteps || currentStep === totalSteps - 1;
   const firstTwoSteps = currentStep === 1 || currentStep === 2;
 
-  const handleStartAssessmentNow = () => {
+  const handleStartAssessmentNow = async () => {
     // Validate all checkboxes are confirmed for steps 1-4
     const unconfirmedStepNumbers = [1, 2, 3, 4].filter(
       (stepNum) => !stepConfirmations[stepNum]
@@ -298,10 +302,29 @@ export default function AssessmentWrapper({
       return;
     }
 
-    // if (!assessmentPayment?.initial_paid) {
-    //   toast.error("Please purchase the assessment to start.");
-    //   return;
-    // }
+    // Check if payment is required
+    if (!assessmentPayment?.initial_paid) {
+      // Check if a package is selected
+      if (!selectedPackageType) {
+        toast.error("Please select a package first.");
+        return;
+      }
+      
+      // Trigger payment flow
+      if (purchaseHandler) {
+        try {
+          await purchaseHandler(selectedPackageType);
+          // Payment completed successfully, continue with starting assessment
+        } catch (error) {
+          toast.error("Payment failed. Please try again.");
+          return;
+        }
+      } else {
+        toast.error("Payment system not ready. Please refresh the page.");
+        return;
+      }
+    }
+
     if (!userAssessmentId) {
       toast.error("User assessment ID is missing.");
       return;
@@ -320,7 +343,7 @@ export default function AssessmentWrapper({
       });
   };
 
-  const handleStartAssessmentLater = () => {
+  const handleStartAssessmentLater = async () => {
     // Validate all checkboxes are confirmed for steps 1-4
     const unconfirmedStepNumbers = [1, 2, 3, 4].filter(
       (stepNum) => !stepConfirmations[stepNum]
@@ -337,10 +360,29 @@ export default function AssessmentWrapper({
       return;
     }
 
+    // Check if payment is required
     if (!assessmentPayment?.initial_paid) {
-      toast.error("Please purchase the assessment to start.");
-      return;
+      // Check if a package is selected
+      if (!selectedPackageType) {
+        toast.error("Please select a package first.");
+        return;
+      }
+      
+      // Trigger payment flow
+      if (purchaseHandler) {
+        try {
+          await purchaseHandler(selectedPackageType);
+          // Payment completed successfully, continue with sending assessment link
+        } catch (error) {
+          toast.error("Payment failed. Please try again.");
+          return;
+        }
+      } else {
+        toast.error("Payment system not ready. Please refresh the page.");
+        return;
+      }
     }
+    
     if (!userAssessmentId) {
       toast.error("User assessment ID is missing.");
       return;
@@ -371,6 +413,10 @@ export default function AssessmentWrapper({
     setSelectedPackageType(payment.package_type);
   };
 
+  const handlePackageSelect = (packageType: "FREE" | "BASIC" | "PREMIUM" | "PLATINUM") => {
+    setSelectedPackageType(packageType);
+  };
+
   return (
     <div className="flex flex-col mt-4 lg:mt-6 pb-8">
       <div className="flex flex-col lg:flex-row gap-6 flex-1">
@@ -379,7 +425,7 @@ export default function AssessmentWrapper({
           className={cn(
             "lg:hidden bg-white border border-gray-200 py-4 -mx-4 md:mx-0",
             lastTwoSteps && "rounded-r-2xl mr-2",
-            firstTwoSteps && "rounded-l-2xl ml-0"
+            firstTwoSteps && "rounded-l-2xl ml-0",
           )}
         >
           <AssessmentStepper
@@ -414,6 +460,8 @@ export default function AssessmentWrapper({
             onUserAssessmentIdChange={handleUserAssessmentIdChange}
             assessmentPayment={assessmentPayment}
             hasError={Boolean(stepErrors[currentStep])}
+            onPackagePurchaseReady={setPurchaseHandler}
+            onPackageSelect={handlePackageSelect}
           />
         </div>
       </div>
@@ -447,8 +495,9 @@ export default function AssessmentWrapper({
                   <DialogTrigger asChild>
                     <Button
                       disabled={
-                        assessment.candidate_status !== null &&
-                        assessment.candidate_status !== "PENDING"
+                        (assessment.candidate_status !== null &&
+                        assessment.candidate_status !== "PENDING") ||
+                        !selectedPackageType
                       }
                       variant="secondary"
                       className="text-sm px-6 py-6 w-full md:w-auto min-w-[200px]"

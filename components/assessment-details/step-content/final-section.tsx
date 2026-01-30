@@ -9,6 +9,7 @@ export default function FinalStartSection({
   candidate_status,
   is_free_plan_available,
   onPackagePurchaseReady,
+  onPackageSelect,
 }: {
   assessment_id: string;
   is_free_plan_available: boolean;
@@ -34,10 +35,16 @@ export default function FinalStartSection({
     | "ENROLLED"
     | "PENDING";
   onPackagePurchaseReady?: (purchaseHandler: (packageType: "FREE" | "BASIC" | "PREMIUM" | "PLATINUM") => Promise<void>) => void;
+  onPackageSelect?: (packageType: "FREE" | "BASIC" | "PREMIUM" | "PLATINUM") => void;
 }) {
   const [selectedPackage, setSelectedPackage] = useState<"FREE" | "BASIC" | "PREMIUM" | "PLATINUM" | null>(
     payment?.package_type || null
   );
+
+  const handlePackageSelect = (packageType: "FREE" | "BASIC" | "PREMIUM" | "PLATINUM") => {
+    setSelectedPackage(packageType);
+    onPackageSelect?.(packageType);
+  };
 
   return (
     <>
@@ -55,7 +62,7 @@ export default function FinalStartSection({
           payment={payment}
           onUserAssessmentIdChange={onUserAssessmentIdChange}
           is_free_plan_available={is_free_plan_available}
-          onPackageSelect={setSelectedPackage}
+          onPackageSelect={handlePackageSelect}
           selectedPackage={selectedPackage}
           onPackagePurchaseReady={onPackagePurchaseReady}
         />
