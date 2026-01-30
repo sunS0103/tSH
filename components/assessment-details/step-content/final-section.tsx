@@ -1,5 +1,6 @@
 import { Icon } from "@iconify/react";
 import PaymentCards, { Payment } from "./payment-cards";
+import { useState } from "react";
 
 export default function FinalStartSection({
   assessment_id,
@@ -7,6 +8,7 @@ export default function FinalStartSection({
   onUserAssessmentIdChange,
   candidate_status,
   is_free_plan_available,
+  onPackagePurchaseReady,
 }: {
   assessment_id: string;
   is_free_plan_available: boolean;
@@ -31,7 +33,12 @@ export default function FinalStartSection({
     | "COMPLETED"
     | "ENROLLED"
     | "PENDING";
+  onPackagePurchaseReady?: (purchaseHandler: (packageType: "FREE" | "BASIC" | "PREMIUM" | "PLATINUM") => Promise<void>) => void;
 }) {
+  const [selectedPackage, setSelectedPackage] = useState<"FREE" | "BASIC" | "PREMIUM" | "PLATINUM" | null>(
+    payment?.package_type || null
+  );
+
   return (
     <>
       <div>
@@ -48,6 +55,9 @@ export default function FinalStartSection({
           payment={payment}
           onUserAssessmentIdChange={onUserAssessmentIdChange}
           is_free_plan_available={is_free_plan_available}
+          onPackageSelect={setSelectedPackage}
+          selectedPackage={selectedPackage}
+          onPackagePurchaseReady={onPackagePurchaseReady}
         />
       </div>
       {candidate_status === "INVITED" && (

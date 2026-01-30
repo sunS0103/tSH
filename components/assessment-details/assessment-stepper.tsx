@@ -13,12 +13,18 @@ interface AssessmentStepperProps {
   steps: Step[];
   currentStep: number;
   className?: string;
+  onStepClick?: (stepNumber: number) => void;
+  unconfirmedSteps?: number[];
+  stepConfirmations?: Record<number, boolean>;
 }
 
 export default function AssessmentStepper({
   steps,
   currentStep,
   className,
+  onStepClick,
+  unconfirmedSteps = [],
+  stepConfirmations = {},
 }: AssessmentStepperProps) {
   // Update step statuses based on currentStep
   const updatedSteps = steps.map((step) => {
@@ -95,6 +101,8 @@ export default function AssessmentStepper({
           const nextStepCompleted = nextStep?.status === "completed";
           const nextStepActive = nextStep?.status === "active";
 
+          const hasError = unconfirmedSteps?.includes(step.number);
+
           return (
             <div
               key={step.number}
@@ -103,16 +111,26 @@ export default function AssessmentStepper({
               <div className="flex flex-col items-center w-full relative z-10">
                 {/* Step Circle */}
                 <div
+                  onClick={() => onStepClick?.(step.number)}
                   className={cn(
                     "flex items-center justify-center rounded-full size-6 border-2 shrink-0 transition-colors",
+                    onStepClick && "cursor-pointer hover:scale-110",
                     isActive
                       ? "bg-primary border-primary"
-                      : isCompleted
-                        ? "bg-success-500 border-success-500"
-                        : "bg-white border-gray-300",
+                      : hasError
+                        ? "bg-red-500 border-red-500"
+                        : isCompleted
+                          ? "bg-success-500 border-success-500"
+                          : "bg-white border-gray-300",
                   )}
                 >
-                  {isCompleted ? (
+                  {hasError ? (
+                    <Icon
+                      icon="material-symbols:error"
+                      className="size-3.5 text-white"
+                      aria-hidden="true"
+                    />
+                  ) : isCompleted ? (
                     <Icon
                       icon="mdi:check"
                       className="size-3.5 text-white"
@@ -125,13 +143,17 @@ export default function AssessmentStepper({
 
                 {/* Step Label */}
                 <span
+                  onClick={() => onStepClick?.(step.number)}
                   className={cn(
                     "text-xs font-medium mt-2 text-center leading-tight px-1",
+                    onStepClick && "cursor-pointer hover:opacity-80",
                     isActive
                       ? "text-primary font-semibold"
-                      : isCompleted
-                        ? "text-success-600"
-                        : "text-gray-400",
+                      : hasError
+                        ? "text-red-600"
+                        : isCompleted
+                          ? "text-success-600"
+                          : "text-gray-400",
                   )}
                 >
                   {step.label}
@@ -203,8 +225,10 @@ export default function AssessmentStepper({
       <div className="hidden lg:flex flex-col">
         {updatedSteps.map((step, index) => {
           const isLast = index === updatedSteps.length - 1;
-          const isActive = step.status === "active";
-          const isCompleted = step.status === "completed";
+          const isActive = step.number === currentStep;
+          const isConfirmed = stepConfirmations[step.number];
+          const hasError = unconfirmedSteps?.includes(step.number);
+          const isCompleted = isConfirmed && step.number < currentStep;
 
           return (
             <div key={step.number} className="flex items-start gap-3">
@@ -212,16 +236,26 @@ export default function AssessmentStepper({
               <div className="flex flex-col items-center">
                 {/* Step Circle */}
                 <div
+                  onClick={() => onStepClick?.(step.number)}
                   className={cn(
                     "flex items-center justify-center rounded-full size-6 border-2 shrink-0 transition-colors",
+                    onStepClick && "cursor-pointer hover:scale-110",
                     isActive
                       ? "bg-primary border-primary"
-                      : isCompleted
-                        ? "bg-success-500 border-success-500"
-                        : "bg-white border-gray-300",
+                      : hasError
+                        ? "bg-red-500 border-red-500"
+                        : isCompleted
+                          ? "bg-success-500 border-success-500"
+                          : "bg-white border-gray-300",
                   )}
                 >
-                  {isCompleted ? (
+                  {hasError ? (
+                    <Icon
+                      icon="material-symbols:error"
+                      className="size-3.5 text-white"
+                      aria-hidden="true"
+                    />
+                  ) : isCompleted ? (
                     <Icon
                       icon="mdi:check"
                       className="size-3.5 text-white"
@@ -263,15 +297,19 @@ export default function AssessmentStepper({
               {/* Step Label */}
               <div className="flex-1 pb-6">
                 <span
+                  onClick={() => onStepClick?.(step.number)}
                   className={cn(
                     "text-sm block",
-                    isCompleted
-                      ? "text-success-500"
-                      : isActive
-                        ? "text-primary font-semibold"
-                        : isCompleted
-                          ? "text-gray-900"
-                          : "text-slate-700",
+                    onStepClick && "cursor-pointer hover:opacity-80",
+                    hasError
+                      ? "text-red-600 font-medium"
+                      : isCompleted
+                        ? "text-success-500"
+                        : isActive
+                          ? "text-primary font-semibold"
+                          : isCompleted
+                            ? "text-gray-900"
+                            : "text-slate-700",
                   )}
                 >
                   {step.label}

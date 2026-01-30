@@ -90,6 +90,10 @@ export default function AssessmentWrapper({
     assessment?.payment || null
   );
 
+  const [selectedPackageType, setSelectedPackageType] = useState<
+    "FREE" | "BASIC" | "PREMIUM" | "PLATINUM" | null
+  >(assessment?.payment?.package_type || null);
+
   const totalSteps = STEPS.length;
 
   const assessmentLaterDetails = [
@@ -263,11 +267,37 @@ export default function AssessmentWrapper({
     ? Boolean(stepConfirmations[currentStep])
     : true;
 
+  // Calculate unconfirmed steps with errors (only show red when user has tried to proceed without confirming)
+  const unconfirmedSteps = Object.keys(stepErrors).map((stepNum) =>
+    parseInt(stepNum)
+  );
+
+  // Handle navigation click from stepper
+  const handleStepClick = (stepNumber: number) => {
+    setCurrentStep(stepNumber);
+  };
+
   const lastTwoSteps =
     currentStep === totalSteps || currentStep === totalSteps - 1;
   const firstTwoSteps = currentStep === 1 || currentStep === 2;
 
   const handleStartAssessmentNow = () => {
+    // Validate all checkboxes are confirmed for steps 1-4
+    const unconfirmedStepNumbers = [1, 2, 3, 4].filter(
+      (stepNum) => !stepConfirmations[stepNum]
+    );
+
+    if (unconfirmedStepNumbers.length > 0) {
+      // Mark all unconfirmed steps as having errors
+      const newErrors: Record<number, boolean> = {};
+      unconfirmedStepNumbers.forEach((stepNum) => {
+        newErrors[stepNum] = true;
+      });
+      setStepErrors((prev) => ({ ...prev, ...newErrors }));
+      toast.error("Please confirm all required sections before starting the assessment.");
+      return;
+    }
+
     // if (!assessmentPayment?.initial_paid) {
     //   toast.error("Please purchase the assessment to start.");
     //   return;
@@ -291,6 +321,22 @@ export default function AssessmentWrapper({
   };
 
   const handleStartAssessmentLater = () => {
+    // Validate all checkboxes are confirmed for steps 1-4
+    const unconfirmedStepNumbers = [1, 2, 3, 4].filter(
+      (stepNum) => !stepConfirmations[stepNum]
+    );
+
+    if (unconfirmedStepNumbers.length > 0) {
+      // Mark all unconfirmed steps as having errors
+      const newErrors: Record<number, boolean> = {};
+      unconfirmedStepNumbers.forEach((stepNum) => {
+        newErrors[stepNum] = true;
+      });
+      setStepErrors((prev) => ({ ...prev, ...newErrors }));
+      toast.error("Please confirm all required sections before starting the assessment.");
+      return;
+    }
+
     if (!assessmentPayment?.initial_paid) {
       toast.error("Please purchase the assessment to start.");
       return;
@@ -322,10 +368,11 @@ export default function AssessmentWrapper({
   }) => {
     setUserAssessmentId(id);
     setAssessmentPayment(payment);
+    setSelectedPackageType(payment.package_type);
   };
 
   return (
-    <div className="flex flex-col mt-4 lg:mt-6 pb-20">
+    <div className="flex flex-col mt-4 lg:mt-6 pb-8">
       <div className="flex flex-col lg:flex-row gap-6 flex-1">
         {/* Mobile Stepper - Horizontal (Fluid Layout) */}
         <div
@@ -335,13 +382,25 @@ export default function AssessmentWrapper({
             firstTwoSteps && "rounded-l-2xl ml-0"
           )}
         >
-          <AssessmentStepper steps={STEPS} currentStep={currentStep} />
+          <AssessmentStepper
+            steps={STEPS}
+            currentStep={currentStep}
+            onStepClick={handleStepClick}
+            unconfirmedSteps={unconfirmedSteps}
+            stepConfirmations={stepConfirmations}
+          />
         </div>
 
         {/* Desktop Sidebar - Stepper (Vertical) */}
         <div className="hidden lg:block w-64 shrink-0">
           <div className="bg-white border border-gray-200 rounded-2xl p-4 sticky top-6">
-            <AssessmentStepper steps={STEPS} currentStep={currentStep} />
+            <AssessmentStepper
+              steps={STEPS}
+              currentStep={currentStep}
+              onStepClick={handleStepClick}
+              unconfirmedSteps={unconfirmedSteps}
+              stepConfirmations={stepConfirmations}
+            />
           </div>
         </div>
 
@@ -381,7 +440,9 @@ export default function AssessmentWrapper({
             </Button>
 
             {currentStep === totalSteps && (
-              <>
+              <div className="flex flex-col md:flex-row gap-6 items-center justify-center w-full mt-6">
+                {/* Start Assessment Later */}
+                <div className="flex flex-col items-center gap-2 max-w-xs">
                 <Dialog>
                   <DialogTrigger asChild>
                     <Button
@@ -390,7 +451,7 @@ export default function AssessmentWrapper({
                         assessment.candidate_status !== "PENDING"
                       }
                       variant="secondary"
-                      className="text-xs md:text-sm px-2 md:px-4"
+                      className="text-sm px-6 py-6 w-full md:w-auto min-w-[200px]"
                     >
                       Start Assessment Later
                     </Button>
@@ -431,14 +492,23 @@ export default function AssessmentWrapper({
                     </div>
                   </DialogContent>
                 </Dialog>
+                <p className="text-xs text-center text-gray-600 leading-relaxed">
+                  A secure exam link will be sent to your email. Take the assessment at your convenience within the next 30 days.
+                </p>
+                </div>
+
+                {/* Start Assessment Now */}
+                <div className="flex flex-col items-center gap-2 max-w-xs">
                 <Dialog>
                   <DialogTrigger asChild>
                     <Button
                       disabled={
-                        assessment.candidate_status !== null &&
-                        assessment.candidate_status !== "PENDING"
+                        (assessment.candidate_status !== null &&
+                        assessment.candidate_status !== "PENDING") ||
+                        selectedPackageType === "PLATINUM" ||
+                        assessmentPayment?.package_type === "PLATINUM"
                       }
-                      className="text-xs md:text-sm px-2 md:px-4"
+                      className="text-sm px-6 py-6 w-full md:w-auto min-w-[200px]"
                     >
                       Start Assessment Now
                     </Button>
@@ -479,7 +549,17 @@ export default function AssessmentWrapper({
                     </div>
                   </DialogContent>
                 </Dialog>
-              </>
+                  {(selectedPackageType === "PLATINUM" || assessmentPayment?.package_type === "PLATINUM") ? (
+                    <p className="text-xs text-center text-amber-600 leading-relaxed font-medium">
+                      Platinum package requires mentorship preparation. Please use "Start Assessment Later" option.
+                    </p>
+                  ) : (
+                    <p className="text-xs text-center text-gray-600 leading-relaxed">
+                      Begin immediately and access the exam window right away. Make sure you're ready to complete it now.
+                    </p>
+                  )}
+                </div>
+              </div>
             )}
             {currentStep !== totalSteps && (
               <Button
