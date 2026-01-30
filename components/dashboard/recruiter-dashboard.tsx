@@ -484,7 +484,7 @@ export default function RecruiterDashboard() {
                 {assessments.map((assessment) => (
                   <AssessmentCard
                     key={assessment.id || assessment.slug}
-                    slug={"#"}
+                    slug={assessment.slug}
                     category={assessment.category || "Technology"}
                     title={assessment.title}
                     topics={

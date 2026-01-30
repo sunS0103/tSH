@@ -318,7 +318,10 @@ export default function RequestAssessmentForm() {
               const charCount = field.value?.length || 0;
               return (
                 <FormItem className="flex flex-col gap-2 items-start relative shrink-0 w-full">
-                  <FormLabel className="text-sm font-medium text-black">
+                  <FormLabel
+                    required
+                    className="text-sm font-medium text-black"
+                  >
                     Custom Instructions
                   </FormLabel>
                   <FormControl>
