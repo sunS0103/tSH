@@ -28,17 +28,17 @@ const betweenJobsSchema = z.object({
     }),
   duration_years: z
     .number({
-      error: "Duration years is required",
+      error: "Years is required",
     })
-    .min(1, "Duration years must be 1 or greater")
-    .max(100, "Duration years must be less than 100"),
+    .min(1, "Years must be 1 or greater")
+    .max(100, "Years must be less than 100"),
 
   duration_months: z
     .number({
-      error: "Duration months is required",
+      error: "Months is required",
     })
-    .min(0, "Duration months must be between 0 and 11")
-    .max(11, "Duration months must be between 0 and 11"),
+    .min(0, "Months must be between 0 and 11")
+    .max(11, "Months must be between 0 and 11"),
 
   // duration_years: z
   //   .number()
