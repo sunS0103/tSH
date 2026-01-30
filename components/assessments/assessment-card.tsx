@@ -40,7 +40,7 @@ export default function AssessmentCard({
 
   const userRole = getCookie("user_role");
 
-  const isCandidate = userRole === "candidate";
+  const isCandidate = userRole === "CANDIDATE";
 
   const undisplayedTopics = topics.slice(2, topics.length);
   const isTaken = selectedTab === "taken";
@@ -168,6 +168,8 @@ export default function AssessmentCard({
       </div>
     );
   }
+
+  console.log(isCandidate);
 
   return (
     <Link
