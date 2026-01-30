@@ -307,7 +307,7 @@ export default function EditLocationAndWorkPreference() {
                   <FormControl>
                     <CityDropdown
                       value={typeof field.value === "number" ? field.value : 0}
-                      countryName={countryName}
+                      countryId={countryId}
                       onValueChange={(cityId) => {
                         // Ensure we always pass a number
                         field.onChange(typeof cityId === "number" ? cityId : 0);

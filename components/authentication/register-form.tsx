@@ -235,11 +235,7 @@ export default function RegisterForm({ role, email }: RegisterFormProps) {
 
     setLoadingCities(true);
     try {
-      const response = await getCities(
-        selectedCountryData.name,
-        pageNum,
-        query,
-      );
+      const response = await getCities(selectedCountryData.id, pageNum, query);
 
       const citiesData = Array.isArray(response)
         ? response
