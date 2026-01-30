@@ -33,7 +33,6 @@ export default function PaymentCards({
   onUserAssessmentIdChange,
   onPackageSelect,
   selectedPackage,
-  onPackagePurchaseReady,
 }: {
   assessment_id: string;
   payment: Payment | null;
@@ -50,11 +49,6 @@ export default function PaymentCards({
     packageType: "FREE" | "BASIC" | "PREMIUM" | "PLATINUM"
   ) => void;
   selectedPackage?: "FREE" | "BASIC" | "PREMIUM" | "PLATINUM" | null;
-  onPackagePurchaseReady?: (
-    purchaseHandler: (
-      packageType: "FREE" | "BASIC" | "PREMIUM" | "PLATINUM"
-    ) => Promise<void>
-  ) => void;
 }) {
   const [paymentSuccessData, setPaymentSuccessData] = useState<Payment | null>(
     payment || null
@@ -313,16 +307,6 @@ export default function PaymentCards({
       throw err; // Re-throw to let parent handler know
     }
   };
-
-  // Make handlePurchase exportable for parent component
-  console.log(currentPayment?.package_type);
-  // Pass purchase handler to parent component
-  useEffect(() => {
-    if (onPackagePurchaseReady) {
-      onPackagePurchaseReady(handlePurchase);
-    }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [onPackagePurchaseReady]);
 
   const handlePackageCardClick = (
     packageType: "FREE" | "BASIC" | "PREMIUM" | "PLATINUM"

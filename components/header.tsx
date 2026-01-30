@@ -139,7 +139,7 @@ export default function Header() {
 
     const fetchJobFairStatus = async () => {
       const res = await getJobFairStatus();
-      setJobFairStatus(res.data.job_fair_plan_status);
+      setJobFairStatus(res.data?.job_fair_plan_status || false);
     };
     fetchJobFairStatus();
   }, []);

@@ -34,13 +34,13 @@ const editPersonalSocialSchema = z.object({
     .string()
     .refine(
       (val) => !val || z.string().url().safeParse(val).success,
-      "Please enter a valid LinkedIn URL",
+      "Please enter a valid LinkedIn URL"
     ),
   github_url: z
     .string()
     .refine(
       (val) => !val || z.string().url().safeParse(val).success,
-      "Please enter a valid GitHub/Portfolio URL",
+      "Please enter a valid GitHub/Portfolio URL"
     ),
 });
 
@@ -147,8 +147,11 @@ export default function EditPersonalSocial() {
                             </span>
                           </div>
                         </FormControl>
-                        <div className="text-xs text-gray-600 leading-relaxed space-y-1 -mt-3">
-                          <p className="font-medium">This Short headline is the first thing recruiters see.</p>
+                        <div className="text-xs text-gray-600 leading-relaxed space-y-1">
+                          <p className="font-medium ">
+                            This Short headline is the first thing recruiters
+                            see.
+                          </p>
                           <p>Use a clear, role-based title</p>
                           <p>Avoid skill lists - assessments show that.</p>
                           <p className="font-medium mt-2">Examples:</p>

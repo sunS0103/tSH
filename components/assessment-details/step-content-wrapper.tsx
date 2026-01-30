@@ -64,11 +64,6 @@ interface StepContentProps {
   }) => void;
   assessmentPayment?: Payment | null;
   hasError?: boolean;
-  onPackagePurchaseReady?: (
-    purchaseHandler: (
-      packageType: "FREE" | "BASIC" | "PREMIUM" | "PLATINUM"
-    ) => Promise<void>
-  ) => void;
   onPackageSelect?: (
     packageType: "FREE" | "BASIC" | "PREMIUM" | "PLATINUM"
   ) => void;
@@ -83,13 +78,12 @@ export default function StepContent({
   onUserAssessmentIdChange,
   assessmentPayment,
   hasError,
-  onPackagePurchaseReady,
   onPackageSelect,
 }: StepContentProps) {
   return (
     <div className={cn("flex flex-col gap-6", className)}>
       {/* Main Content */}
-      <div className="bg-white border border-gray-200 rounded-2xl p-3 md:p-4 mb-4">
+      <div className="bg-white border border-gray-200 rounded-2xl p-3 md:p-4 mb-8">
         {currentStep === 1 && (
           <AssessmentIntroduction
             assessment={assessment}
@@ -132,7 +126,6 @@ export default function StepContent({
             onUserAssessmentIdChange={onUserAssessmentIdChange}
             candidate_status={assessment.candidate_status}
             is_free_plan_available={assessment.is_free_plan_available}
-            onPackagePurchaseReady={onPackagePurchaseReady}
             onPackageSelect={onPackageSelect}
           />
         )}
