@@ -394,9 +394,12 @@ export default function InviteDialog({
                                 checked={isSelected}
                                 className="border-gray-300 pointer-events-none"
                               />
-                              <span className="text-sm text-gray-900 font-sans flex-1">
+                              <Link
+                                href={`/assessment/${item.slug}`}
+                                className="text-sm text-gray-900 font-sans flex-1 underline"
+                              >
                                 {item.title}
-                              </span>
+                              </Link>
                             </div>
                           );
                         })}
