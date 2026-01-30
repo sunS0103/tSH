@@ -9,10 +9,8 @@ import ContactRecruiterFormDetails from "./job-details/contact-recruiter-form-de
 import AdditionalDetailsForm from "./job-details/additional-details-form";
 import AdditionalDetails from "./job-details/additional-details";
 
-interface CandidateJob extends Omit<
-  Partial<RecruiterJob>,
-  "mandate_assessment" | "custom_fields"
-> {
+interface CandidateJob
+  extends Omit<Partial<RecruiterJob>, "mandate_assessment" | "custom_fields"> {
   slug: string;
   title: string;
   company_name: string;
@@ -36,9 +34,6 @@ export default async function CandidateJobDetails({
 }: {
   job: CandidateJob;
 }) {
-  console.log({ job });
-  console.log(job.mandate_assessment);
-
   const cookieStore = await cookies();
   const token = cookieStore.get("token")?.value;
 
@@ -62,7 +57,7 @@ export default async function CandidateJobDetails({
 
   const isAssessmentNotCompleted = job.mandate_assessment.some(
     (assessment: { is_assessment_complete: boolean }) =>
-      assessment.is_assessment_complete === false,
+      assessment.is_assessment_complete === false
   );
 
   return (

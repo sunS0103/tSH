@@ -20,8 +20,8 @@ export default async function DashboardPage() {
         profileCompletion.total_percentage !== undefined &&
         profileCompletion.total_percentage < 100
       ) {
-        // Redirect to profile page if profile is not 100% complete
-        redirect("/profile");
+        // Redirect to profile-details onboarding if profile is not 100% complete
+        redirect("/profile-details/edit-account-and-identity");
       }
     } catch (error) {
       // If API call fails, allow access but log error

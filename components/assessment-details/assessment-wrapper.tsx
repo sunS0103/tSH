@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useEffect, useLayoutEffect, useRef } from "react";
-import { useParams, usePathname, useRouter } from "next/navigation";
+import { usePathname, useRouter } from "next/navigation";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 import AssessmentStepper from "./assessment-stepper";
@@ -14,11 +14,12 @@ import {
   DialogContent,
   DialogHeader,
   DialogTitle,
-  DialogTrigger,
 } from "../ui/dialog";
 import { changeAssessmentStatus } from "@/api/assessments";
+import { initiatePurchase, verifyPayment } from "@/api/payment";
 import { toast } from "sonner";
 import { Payment } from "./step-content/payment-cards";
+import { getCookie } from "cookies-next/client";
 
 const STEPS = [
   { number: 1, label: "Introduction & Syllabus", status: "active" as const },
@@ -56,9 +57,8 @@ interface AssessmentWrapperProps {
 export default function AssessmentWrapper({
   assessment,
 }: AssessmentWrapperProps) {
-  const params = useParams();
   const pathname = usePathname();
-  const assessmentId = params?.id as string;
+  const assessmentId = assessment.assessment_id;
   const router = useRouter();
 
   // Check if we're on an assessment route
@@ -83,12 +83,19 @@ export default function AssessmentWrapper({
   const [isHydrated, setIsHydrated] = useState(false);
   const previousPathnameRef = useRef<string | null>(null);
   const [userAssessmentId, setUserAssessmentId] = useState<string | null>(
-    assessment?.user_assessment_id || null,
+    assessment?.user_assessment_id || null
   );
 
   const [assessmentPayment, setAssessmentPayment] = useState<Payment | null>(
-    assessment?.payment || null,
+    assessment?.payment || null
   );
+
+  const [selectedPackageType, setSelectedPackageType] = useState<
+    "FREE" | "BASIC" | "PREMIUM" | "PLATINUM" | null
+  >(assessment?.payment?.package_type || null);
+
+  const [isStartNowDialogOpen, setIsStartNowDialogOpen] = useState(false);
+  const [isStartLaterDialogOpen, setIsStartLaterDialogOpen] = useState(false);
 
   const totalSteps = STEPS.length;
 
@@ -153,7 +160,7 @@ export default function AssessmentWrapper({
       }
 
       const confirmationsValue = localStorage.getItem(
-        STORAGE_KEY_CONFIRMATIONS,
+        STORAGE_KEY_CONFIRMATIONS
       );
       if (confirmationsValue) {
         try {
@@ -189,7 +196,7 @@ export default function AssessmentWrapper({
     if (isHydrated && typeof window !== "undefined" && isAssessmentRoute) {
       localStorage.setItem(
         STORAGE_KEY_CONFIRMATIONS,
-        JSON.stringify(stepConfirmations),
+        JSON.stringify(stepConfirmations)
       );
     }
   }, [
@@ -263,55 +270,19 @@ export default function AssessmentWrapper({
     ? Boolean(stepConfirmations[currentStep])
     : true;
 
+  // Calculate unconfirmed steps with errors (only show red when user has tried to proceed without confirming)
+  const unconfirmedSteps = Object.keys(stepErrors).map((stepNum) =>
+    parseInt(stepNum)
+  );
+
+  // Handle navigation click from stepper
+  const handleStepClick = (stepNumber: number) => {
+    setCurrentStep(stepNumber);
+  };
+
   const lastTwoSteps =
     currentStep === totalSteps || currentStep === totalSteps - 1;
   const firstTwoSteps = currentStep === 1 || currentStep === 2;
-
-  const handleStartAssessmentNow = () => {
-    // if (!assessmentPayment?.initial_paid) {
-    //   toast.error("Please purchase the assessment to start.");
-    //   return;
-    // }
-    if (!userAssessmentId) {
-      toast.error("User assessment ID is missing.");
-      return;
-    }
-    changeAssessmentStatus(userAssessmentId, "ON_GOING")
-      .then((res) => {
-        if (res.success) {
-          window.open(res.data.invite_link, "_blank");
-          setUserAssessmentId(null);
-          setAssessmentPayment(null);
-          router.push(`/assessments?tab=taken`);
-        }
-      })
-      .catch((err) => {
-        toast.error(err?.response?.data?.message);
-      });
-  };
-
-  const handleStartAssessmentLater = () => {
-    if (!assessmentPayment?.initial_paid) {
-      toast.error("Please purchase the assessment to start.");
-      return;
-    }
-    if (!userAssessmentId) {
-      toast.error("User assessment ID is missing.");
-      return;
-    }
-    changeAssessmentStatus(userAssessmentId, "LATER")
-      .then((res) => {
-        if (res.success) {
-          toast.success(res.message || "Exam link will send via email");
-          // setUserAssessmentId(null);
-          // setAssessmentPayment(null);
-          router.push(`/assessments`);
-        }
-      })
-      .catch((err) => {
-        toast.error(err?.response?.data?.message);
-      });
-  };
 
   const handleUserAssessmentIdChange = ({
     id,
@@ -322,26 +293,378 @@ export default function AssessmentWrapper({
   }) => {
     setUserAssessmentId(id);
     setAssessmentPayment(payment);
+    setSelectedPackageType(payment.package_type);
+  };
+
+  const handlePackageSelect = (
+    packageType: "FREE" | "BASIC" | "PREMIUM" | "PLATINUM"
+  ) => {
+    setSelectedPackageType(packageType);
+  };
+
+  // Get user data from cookies for payment
+  const getProfileData = () => {
+    try {
+      const profileData = JSON.parse(getCookie("profile_data") as string);
+      return {
+        email: profileData?.email || "",
+        phone: profileData?.mobile_details?.mobile_number || "",
+      };
+    } catch {
+      return { email: "", phone: "" };
+    }
+  };
+
+  // Open Razorpay checkout
+  const openRazorpayCheckout = ({
+    orderData,
+    user,
+    onSuccess,
+  }: {
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    orderData: any;
+    user: { email: string; phone?: string };
+    onSuccess: (paymentData: {
+      user_assessment_id: string;
+      payment: Payment;
+    }) => void;
+  }): Promise<void> => {
+    return new Promise((resolve, reject) => {
+      const options = {
+        key: orderData.data.razorpay_key_id,
+        amount: orderData.data.amount,
+        currency: orderData.data.currency,
+        order_id: orderData.data.razorpay_order_id,
+        name: "TechSmartHire",
+        description: `${orderData.data.package_type} Package - ${orderData.data.assessment_title}`,
+        prefill: {
+          email: user.email,
+          contact: user.phone || "",
+        },
+        theme: {
+          color: "#7C3AED",
+        },
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        handler: async (response: any) => {
+          try {
+            const verifyRes = await verifyPayment(assessmentId, {
+              razorpay_order_id: response.razorpay_order_id,
+              razorpay_payment_id: response.razorpay_payment_id,
+              razorpay_signature: response.razorpay_signature,
+            });
+
+            if (verifyRes.success) {
+              onSuccess({
+                user_assessment_id: verifyRes.data.user_assessment_id,
+                payment: verifyRes.data.payment,
+              });
+            }
+
+            resolve();
+          } catch (error) {
+            reject(error);
+          }
+        },
+        modal: {
+          ondismiss: () => {
+            toast.error("Payment cancelled");
+            reject(new Error("Payment cancelled by user"));
+          },
+        },
+      };
+
+      // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+      // @ts-ignore
+      const rzp = new window.Razorpay(options);
+      rzp.open();
+    });
+  };
+
+  // Handle purchase - calls initiate purchase API for PAID packages only
+  // Returns the user_assessment_id and payment data after successful payment
+  // Note: FREE packages are handled separately by the "Start Assessment - Free" button in PaymentCards
+  const handlePurchase = async (
+    packageType: "BASIC" | "PREMIUM" | "PLATINUM"
+  ): Promise<{ user_assessment_id: string; payment: Payment }> => {
+    // Call initiate purchase API
+    const orderData = await initiatePurchase({
+      assessment_id: assessmentId,
+      packageType,
+    });
+
+    // Open Razorpay checkout for paid packages
+    const user = getProfileData();
+    let paymentResult: {
+      user_assessment_id: string;
+      payment: Payment;
+    } | null = null;
+
+    await openRazorpayCheckout({
+      orderData,
+      user,
+      onSuccess: (paymentData) => {
+        paymentResult = paymentData;
+        setUserAssessmentId(paymentData.user_assessment_id);
+        setAssessmentPayment(paymentData.payment);
+        setSelectedPackageType(paymentData.payment.package_type);
+        toast.success(
+          "Assessment purchased successfully 🎉 You can now start the assessment."
+        );
+      },
+    });
+
+    if (!paymentResult) {
+      throw new Error("Payment was not completed");
+    }
+
+    return paymentResult;
+  };
+
+  // Handler for "Start Assessment Now" button click
+  const handleStartNowButtonClick = async () => {
+    // Validate all checkboxes are confirmed for steps 1-4
+    const unconfirmedStepNumbers = [1, 2, 3, 4].filter(
+      (stepNum) => !stepConfirmations[stepNum]
+    );
+
+    if (unconfirmedStepNumbers.length > 0) {
+      const newErrors: Record<number, boolean> = {};
+      unconfirmedStepNumbers.forEach((stepNum) => {
+        newErrors[stepNum] = true;
+      });
+      setStepErrors((prev) => ({ ...prev, ...newErrors }));
+      toast.error(
+        "Please confirm all required sections before starting the assessment."
+      );
+      return;
+    }
+
+    setIsStartNowDialogOpen(true);
+  };
+
+  // Handler for "Start Assessment Later" button click
+  const handleStartLaterButtonClick = async () => {
+    // Validate all checkboxes are confirmed for steps 1-4
+    const unconfirmedStepNumbers = [1, 2, 3, 4].filter(
+      (stepNum) => !stepConfirmations[stepNum]
+    );
+
+    if (unconfirmedStepNumbers.length > 0) {
+      const newErrors: Record<number, boolean> = {};
+      unconfirmedStepNumbers.forEach((stepNum) => {
+        newErrors[stepNum] = true;
+      });
+      setStepErrors((prev) => ({ ...prev, ...newErrors }));
+      toast.error(
+        "Please confirm all required sections before starting the assessment."
+      );
+      return;
+    }
+
+    setIsStartLaterDialogOpen(true);
+  };
+
+  // Proceed handler for Start Now dialog
+  const handleProceedStartNow = async () => {
+    // Check if a package is selected
+    if (!selectedPackageType) {
+      toast.error("Please select a package first.");
+      return;
+    }
+
+    // FREE packages should use the "Start Assessment - Free" button in PaymentCards
+    if (selectedPackageType === "FREE") {
+      toast.error(
+        "Please use the 'Start Assessment - Free' button for free packages."
+      );
+      setIsStartNowDialogOpen(false);
+      return;
+    }
+
+    // Check if payment is already completed - use state or existing userAssessmentId
+    if (assessmentPayment?.initial_paid && userAssessmentId) {
+      // Already paid, proceed with assessment
+      try {
+        const res = await changeAssessmentStatus(userAssessmentId, "ON_GOING");
+        if (res.success && res.data.invite_link) {
+          // Try to open the assessment link
+          const newWindow = window.open(res.data.invite_link, "_blank");
+
+          // Check if popup was blocked
+          if (
+            !newWindow ||
+            newWindow.closed ||
+            typeof newWindow.closed === "undefined"
+          ) {
+            toast.info(
+              <div>
+                <p>Please click the link below to start your assessment:</p>
+                <a
+                  href={res.data.invite_link}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="text-primary-600 underline font-medium"
+                >
+                  Open Assessment
+                </a>
+              </div>,
+              { duration: 10000 }
+            );
+          }
+
+          setUserAssessmentId(null);
+          setAssessmentPayment(null);
+          setIsStartNowDialogOpen(false);
+          router.push(`/assessments?tab=taken`);
+        }
+      } catch (err: unknown) {
+        const error = err as { response?: { data?: { message?: string } } };
+        toast.error(
+          error?.response?.data?.message || "Failed to start assessment"
+        );
+      }
+      return;
+    }
+
+    // Trigger payment flow for paid packages (BASIC, PREMIUM, PLATINUM)
+    try {
+      const paymentResult = await handlePurchase(selectedPackageType);
+
+      // After successful payment, call changeAssessmentStatus with ON_GOING
+      const res = await changeAssessmentStatus(
+        paymentResult.user_assessment_id,
+        "ON_GOING"
+      );
+      if (res.success && res.data.invite_link) {
+        // Try to open the assessment link
+        const newWindow = window.open(res.data.invite_link, "_blank");
+
+        // Check if popup was blocked
+        if (
+          !newWindow ||
+          newWindow.closed ||
+          typeof newWindow.closed === "undefined"
+        ) {
+          // Popup was blocked - show toast with link
+          toast.info(
+            <div>
+              <p>Please click the link below to start your assessment:</p>
+              <a
+                href={res.data.invite_link}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="text-primary-600 underline font-medium"
+              >
+                Open Assessment
+              </a>
+            </div>,
+            { duration: 10000 }
+          );
+        }
+
+        setUserAssessmentId(null);
+        setAssessmentPayment(null);
+        setIsStartNowDialogOpen(false);
+        router.push(`/assessments?tab=taken`);
+      }
+    } catch (err: unknown) {
+      // Error might be from handlePurchase (payment cancelled) or changeAssessmentStatus
+      const error = err as { response?: { data?: { message?: string } } };
+      if (error?.response?.data?.message) {
+        toast.error(error.response.data.message);
+      }
+    }
+  };
+
+  // Proceed handler for Start Later dialog
+  const handleProceedStartLater = async () => {
+    // Check if a package is selected
+    if (!selectedPackageType) {
+      toast.error("Please select a package first.");
+      return;
+    }
+
+    // FREE packages should use the "Start Assessment - Free" button in PaymentCards
+    if (selectedPackageType === "FREE") {
+      toast.error(
+        "Please use the 'Start Assessment - Free' button for free packages."
+      );
+      setIsStartLaterDialogOpen(false);
+      return;
+    }
+
+    // Check if payment is already completed - use state or existing userAssessmentId
+    if (assessmentPayment?.initial_paid && userAssessmentId) {
+      // Already paid, proceed with sending later
+      try {
+        const res = await changeAssessmentStatus(userAssessmentId, "LATER");
+        if (res.success) {
+          toast.success(res.message || "Exam link will send via email");
+          setIsStartLaterDialogOpen(false);
+          router.push(`/assessments`);
+        }
+      } catch (err: unknown) {
+        const error = err as { response?: { data?: { message?: string } } };
+        toast.error(
+          error?.response?.data?.message || "Failed to schedule assessment"
+        );
+      }
+      return;
+    }
+
+    // Trigger payment flow for paid packages (BASIC, PREMIUM, PLATINUM)
+    try {
+      const paymentResult = await handlePurchase(selectedPackageType);
+
+      // After successful payment, call changeAssessmentStatus with LATER
+      const res = await changeAssessmentStatus(
+        paymentResult.user_assessment_id,
+        "LATER"
+      );
+      if (res.success) {
+        toast.success(res.message || "Exam link will send via email");
+        setIsStartLaterDialogOpen(false);
+        router.push(`/assessments`);
+      }
+    } catch (err: unknown) {
+      // Error might be from handlePurchase (payment cancelled) or changeAssessmentStatus
+      const error = err as { response?: { data?: { message?: string } } };
+      if (error?.response?.data?.message) {
+        toast.error(error.response.data.message);
+      }
+    }
   };
 
   return (
-    <div className="flex flex-col mt-4 lg:mt-6 pb-20">
+    <div className="flex flex-col mt-4 lg:mt-6 pb-17">
       <div className="flex flex-col lg:flex-row gap-6 flex-1">
         {/* Mobile Stepper - Horizontal (Fluid Layout) */}
         <div
           className={cn(
             "lg:hidden bg-white border border-gray-200 py-4 -mx-4 md:mx-0",
             lastTwoSteps && "rounded-r-2xl mr-2",
-            firstTwoSteps && "rounded-l-2xl ml-0",
+            firstTwoSteps && "rounded-l-2xl ml-0"
           )}
         >
-          <AssessmentStepper steps={STEPS} currentStep={currentStep} />
+          <AssessmentStepper
+            steps={STEPS}
+            currentStep={currentStep}
+            onStepClick={handleStepClick}
+            unconfirmedSteps={unconfirmedSteps}
+            stepConfirmations={stepConfirmations}
+          />
         </div>
 
         {/* Desktop Sidebar - Stepper (Vertical) */}
         <div className="hidden lg:block w-64 shrink-0">
           <div className="bg-white border border-gray-200 rounded-2xl p-4 sticky top-6">
-            <AssessmentStepper steps={STEPS} currentStep={currentStep} />
+            <AssessmentStepper
+              steps={STEPS}
+              currentStep={currentStep}
+              onStepClick={handleStepClick}
+              unconfirmedSteps={unconfirmedSteps}
+              stepConfirmations={stepConfirmations}
+            />
           </div>
         </div>
 
@@ -355,20 +678,21 @@ export default function AssessmentWrapper({
             onUserAssessmentIdChange={handleUserAssessmentIdChange}
             assessmentPayment={assessmentPayment}
             hasError={Boolean(stepErrors[currentStep])}
+            onPackageSelect={handlePackageSelect}
           />
         </div>
       </div>
       {/* Navigation Buttons - Fixed at Bottom */}
       <div className="fixed bottom-0 left-0 right-0 z-50">
         <FluidLayout>
-          <div className="flex justify-end items-center gap-2 md:gap-3 bg-white p-4 border-y border-t">
+          <div className="flex justify-end items-end md:items-center gap-2 md:gap-3 bg-white p-4 border-y border-t">
             <Button
               variant="secondary"
               onClick={handleBack}
               disabled={currentStep === 1}
               className="flex items-center gap-1"
             >
-              {currentStep === 6 && (
+              {currentStep === 5 && (
                 <>
                   <Icon
                     icon="material-symbols:arrow-back-ios-new-rounded"
@@ -377,111 +701,119 @@ export default function AssessmentWrapper({
                   <span className="md:block hidden">Back</span>
                 </>
               )}
-              {currentStep !== 6 && <span className="block">Back</span>}
+              {currentStep !== 5 && <span className="block">Back</span>}
             </Button>
 
             {currentStep === totalSteps && (
-              <>
-                <Dialog>
-                  <DialogTrigger asChild>
-                    <Button
-                      disabled={
-                        (assessment.candidate_status !== null &&
-                          assessment.candidate_status !== "PENDING") ||
-                        !assessmentPayment
-                      }
-                      variant="secondary"
-                      className="text-xs md:text-sm px-2 md:px-4"
-                    >
-                      Start Assessment Later
-                    </Button>
-                  </DialogTrigger>
-                  <DialogContent className="py-4 px-0 md:max-w-100!">
-                    <DialogHeader className="px-6">
-                      <DialogTitle className="text-left text-base md:text-lg">
-                        Start Assessment Later
-                      </DialogTitle>
-                    </DialogHeader>
-                    <hr className="border-gray-200" />
-                    <div className="pl-6">
-                      <div className="text-xs md:text-sm font-semibold">
-                        If You’re Not Ready to Start Now
+              <div className="flex flex-row gap-2 md:gap-6 items-center justify-end w-fit">
+                {/* Start Assessment Later */}
+                <div className="flex flex-col items-center gap-2 max-w-xs">
+                  <Button
+                    disabled={assessment.candidate_status === "INVITED"}
+                    variant="secondary"
+                    className="text-xs sm:text-sm px-1 py-2 w-fit"
+                    onClick={handleStartLaterButtonClick}
+                  >
+                    Start Assessment Later
+                  </Button>
+                  <Dialog
+                    open={isStartLaterDialogOpen}
+                    onOpenChange={setIsStartLaterDialogOpen}
+                  >
+                    <DialogContent className="py-4 px-0 md:max-w-100!">
+                      <DialogHeader className="px-6">
+                        <DialogTitle className="text-left text-base md:text-lg">
+                          Start Assessment Later
+                        </DialogTitle>
+                      </DialogHeader>
+                      <hr className="border-gray-200" />
+                      <div className="pl-6">
+                        <div className="text-xs md:text-sm font-semibold">
+                          If You’re Not Ready to Start Now
+                        </div>
+
+                        <ul className="list-disc list-outside text-gray-600 px-2 mt-2 marker:text-primary-100 pl-4">
+                          {assessmentLaterDetails?.map((item: string) => (
+                            <li
+                              key={item}
+                              className="text-xs md:text-sm text-gray-600 font-medium"
+                            >
+                              {item}
+                            </li>
+                          ))}
+                        </ul>
                       </div>
+                      <div className="flex gap-2 justify-end px-6">
+                        <DialogClose asChild>
+                          <Button variant="secondary">Cancel</Button>
+                        </DialogClose>
 
-                      <ul className="list-disc list-outside text-gray-600 px-2 mt-2 marker:text-primary-100 pl-4">
-                        {assessmentLaterDetails?.map((item: string) => (
-                          <li
-                            key={item}
-                            className="text-xs md:text-sm text-gray-600 font-medium"
-                          >
-                            {item}
-                          </li>
-                        ))}
-                      </ul>
-                    </div>
-                    <div className="flex gap-2 justify-end px-6">
-                      <DialogClose asChild>
-                        <Button variant="secondary" className="">
-                          Cancel
+                        <Button onClick={handleProceedStartLater}>
+                          Proceed
                         </Button>
-                      </DialogClose>
-
-                      <Button onClick={handleStartAssessmentLater}>
-                        Proceed
-                      </Button>
-                    </div>
-                  </DialogContent>
-                </Dialog>
-                <Dialog>
-                  <DialogTrigger asChild>
-                    <Button
-                      disabled={
-                        (assessment.candidate_status !== null &&
-                          assessment.candidate_status !== "PENDING") ||
-                        !assessmentPayment
-                      }
-                      className="text-xs md:text-sm px-2 md:px-4"
-                    >
-                      Start Assessment Now
-                    </Button>
-                  </DialogTrigger>
-                  <DialogContent className="py-4 px-0 md:max-w-100!">
-                    <DialogHeader className="px-6">
-                      <DialogTitle className="text-left text-base md:text-lg">
-                        Start Assessment Now
-                      </DialogTitle>
-                    </DialogHeader>
-                    <hr className="border-gray-200" />
-                    <div className="pl-6">
-                      <div className="text-xs md:text-sm font-semibold">
-                        Prepare Before You Start
                       </div>
+                    </DialogContent>
+                  </Dialog>
+                </div>
 
-                      <ul className="list-disc list-outside text-gray-600 px-2 mt-2 marker:text-primary-100 pl-4">
-                        {assessmentNowDetails?.map((item: string) => (
-                          <li
-                            key={item}
-                            className="text-xs md:text-sm text-gray-600 font-medium"
-                          >
-                            {item}
-                          </li>
-                        ))}
-                      </ul>
-                    </div>
-                    <div className="flex gap-2 justify-end px-6">
-                      <DialogClose asChild>
-                        <Button variant="secondary" className="">
-                          Cancel
-                        </Button>
-                      </DialogClose>
+                {/* Start Assessment Now */}
+                <div className="flex flex-col items-center gap-2 max-w-xs">
+                  <Button
+                    disabled={assessment.candidate_status === "INVITED"}
+                    className="text-xs px-1 py-2 w-fit"
+                    onClick={handleStartNowButtonClick}
+                  >
+                    Start Assessment Now
+                  </Button>
+                  <Dialog
+                    open={isStartNowDialogOpen}
+                    onOpenChange={setIsStartNowDialogOpen}
+                  >
+                    <DialogContent className="py-4 px-0 md:max-w-100!">
+                      <DialogHeader className="px-6">
+                        <DialogTitle className="text-left text-base md:text-lg">
+                          Start Assessment Now
+                        </DialogTitle>
+                      </DialogHeader>
+                      <hr className="border-gray-200" />
+                      <div className="pl-6">
+                        {selectedPackageType === "PLATINUM" ||
+                        assessmentPayment?.package_type === "PLATINUM" ? (
+                          <p className="text-xs text-amber-600 leading-relaxed font-medium">
+                            Platinum package requires mentorship preparation.
+                            Please use &quot;Start Assessment Later&quot;
+                            option.
+                          </p>
+                        ) : (
+                          <>
+                            <div className="text-xs md:text-sm font-semibold">
+                              Prepare Before You Start
+                            </div>
 
-                      <Button className="" onClick={handleStartAssessmentNow}>
-                        Proceed
-                      </Button>
-                    </div>
-                  </DialogContent>
-                </Dialog>
-              </>
+                            <ul className="list-disc list-outside text-gray-600 px-2 mt-2 marker:text-primary-100 pl-4">
+                              {assessmentNowDetails?.map((item: string) => (
+                                <li
+                                  key={item}
+                                  className="text-xs md:text-sm text-gray-600 font-medium"
+                                >
+                                  {item}
+                                </li>
+                              ))}
+                            </ul>
+                          </>
+                        )}
+                      </div>
+                      <div className="flex gap-2 justify-end px-6">
+                        <DialogClose asChild>
+                          <Button variant="secondary">Cancel</Button>
+                        </DialogClose>
+
+                        <Button onClick={handleProceedStartNow}>Proceed</Button>
+                      </div>
+                    </DialogContent>
+                  </Dialog>
+                </div>
+              </div>
             )}
             {currentStep !== totalSteps && (
               <Button

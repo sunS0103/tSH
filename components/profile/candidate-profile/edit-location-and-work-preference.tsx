@@ -25,7 +25,6 @@ import { WorkModeMultiSelect } from "@/components/ui/work-mode-multi-select";
 import { Input } from "@/components/ui/input";
 import { useEffect, useState } from "react";
 import { getWorkModes, getCountryById } from "@/api/seeder";
-import { fa } from "zod/v4/locales";
 
 const locationAndWorkPreferenceSchema = z.object({
   city_id: z.number().min(1, "Current city is required"),
@@ -96,13 +95,13 @@ export default function EditLocationAndWorkPreference() {
             ?.map((item: { id: number; name: string }) => ({
               id: item.id,
               name: item.name,
-            })) || [],
+            })) || []
         );
       })
       .catch((error) => {
         toast.error(
           (error as { response?: { data?: { message?: string } } })?.response
-            ?.data?.message || "Failed to fetch work modes",
+            ?.data?.message || "Failed to fetch work modes"
         );
       });
   }, []);
@@ -145,12 +144,12 @@ export default function EditLocationAndWorkPreference() {
         (Array.isArray(locationData?.preferred_cities)
           ? locationData.preferred_cities
           : locationData?.preferred_cities
-            ? [locationData.preferred_cities]
-            : []),
+          ? [locationData.preferred_cities]
+          : []),
       preferred_work_modes:
         locationData?.preferred_work_modes?.map(
           (mode: { id: number } | number) =>
-            typeof mode === "object" ? mode.id : mode,
+            typeof mode === "object" ? mode.id : mode
         ) || [],
       is_citizen_of_work_country:
         locationData?.is_citizen_of_work_country ?? true,
@@ -230,9 +229,10 @@ export default function EditLocationAndWorkPreference() {
       if (response.success) {
         toast.success(
           response.message ||
-            "Location and work preferences updated successfully",
+            "Profile updated successfully. Your profile is now complete!"
         );
-        router.push("/profile");
+        // Final section - redirect to dashboard
+        router.push("/dashboard");
       }
     } catch (error: unknown) {
       const errorMessage =
@@ -243,11 +243,13 @@ export default function EditLocationAndWorkPreference() {
   };
 
   const handleCancel = () => {
-    router.push("/profile");
+    // Check if user is in onboarding flow or editing from profile
+    const isOnboarding = window.location.pathname.includes("/profile-details/");
+    router.push(isOnboarding ? "/profile-details/edit-skills" : "/profile");
   };
 
   return (
-    <div className="bg-white border border-gray-200 rounded-2xl w-full max-w-3xl mx-auto mt-4 overflow-hidden">
+    <div className="bg-white border border-gray-200 rounded-2xl w-full mt-4 overflow-hidden">
       {/* Header */}
       <div className="bg-purple-50 px-6 py-4">
         <h2 className="text-xl font-bold text-black">

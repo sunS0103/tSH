@@ -23,7 +23,7 @@ export default function RequestedAssessmentPage() {
   const routes = [{ label: "Assessments", href: "/assessments" }];
 
   return (
-    <div className="mt-4">
+    <div className="">
       <Breadcrumbs
         routes={routes}
         currentRoute={{

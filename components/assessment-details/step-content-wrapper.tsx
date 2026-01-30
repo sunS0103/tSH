@@ -2,7 +2,6 @@
 
 import { cn } from "@/lib/utils";
 import AssessmentIntroduction from "./step-content/introduction";
-import SyllabusAndTopics from "./step-content/syllabus-and-topics";
 import ExamProcess from "./step-content/exam-process";
 import ScoreVisibilityAndPrivacy from "./step-content/score-visibility-and-privacy";
 import IntegrityAndCodeConduct from "./step-content/integrity-and-code-conduct";
@@ -65,6 +64,9 @@ interface StepContentProps {
   }) => void;
   assessmentPayment?: Payment | null;
   hasError?: boolean;
+  onPackageSelect?: (
+    packageType: "FREE" | "BASIC" | "PREMIUM" | "PLATINUM"
+  ) => void;
 }
 
 export default function StepContent({
@@ -76,11 +78,12 @@ export default function StepContent({
   onUserAssessmentIdChange,
   assessmentPayment,
   hasError,
+  onPackageSelect,
 }: StepContentProps) {
   return (
     <div className={cn("flex flex-col gap-6", className)}>
       {/* Main Content */}
-      <div className="bg-white border border-gray-200 rounded-2xl p-3 md:p-4 mb-4">
+      <div className="bg-white border border-gray-200 rounded-2xl p-3 md:p-4 mb-8">
         {currentStep === 1 && (
           <AssessmentIntroduction
             assessment={assessment}
@@ -123,6 +126,7 @@ export default function StepContent({
             onUserAssessmentIdChange={onUserAssessmentIdChange}
             candidate_status={assessment.candidate_status}
             is_free_plan_available={assessment.is_free_plan_available}
+            onPackageSelect={onPackageSelect}
           />
         )}
       </div>

@@ -153,7 +153,8 @@ export default function EmployedForm({
         toast.success(
           response.message || "Employment details updated successfully",
         );
-        router.push("/profile");
+        // Navigate to next section in onboarding flow
+        router.push("/profile-details/edit-education");
       }
     } catch (error: unknown) {
       if (error instanceof z.ZodError) {

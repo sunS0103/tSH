@@ -11,7 +11,7 @@ import {
   DialogTitle,
   DialogTrigger,
 } from "@/components/ui/dialog";
-import { cn, sanitizeHtml } from "@/lib/utils";
+import { cn } from "@/lib/utils";
 import { Icon } from "@iconify/react";
 import { getCookie } from "cookies-next/client";
 import { useRouter } from "next/navigation";
@@ -20,18 +20,19 @@ import { toast } from "sonner";
 
 export interface Payment {
   initial_paid: boolean;
-  initial_payment_status: "PAID";
+  initial_payment_status: "PAID" | "PENDING";
   package_type: "FREE" | "BASIC" | "PREMIUM" | "PLATINUM";
-  purchase_status: "ACTIVE" | "INACTIVE";
-  purchased_at: number;
+  purchase_status: "ACTIVE" | "INACTIVE" | "NOT_PURCHASED";
+  purchased_at: number | null;
 }
 
 export default function PaymentCards({
   assessment_id,
   payment,
   is_free_plan_available,
-
   onUserAssessmentIdChange,
+  onPackageSelect,
+  selectedPackage,
 }: {
   assessment_id: string;
   payment: Payment | null;
@@ -39,21 +40,72 @@ export default function PaymentCards({
   onUserAssessmentIdChange?: ({
     id,
     payment,
-    message,
   }: {
     id: string;
     payment: Payment;
-    message: string;
+    message?: string;
   }) => void;
+  onPackageSelect?: (
+    packageType: "FREE" | "BASIC" | "PREMIUM" | "PLATINUM"
+  ) => void;
+  selectedPackage?: "FREE" | "BASIC" | "PREMIUM" | "PLATINUM" | null;
 }) {
   const [paymentSuccessData, setPaymentSuccessData] = useState<Payment | null>(
-    payment || null,
+    payment || null
   );
+  const [localSelectedPackage, setLocalSelectedPackage] = useState<
+    "FREE" | "BASIC" | "PREMIUM" | "PLATINUM" | null
+  >(selectedPackage || payment?.package_type || null);
 
-  console.log({ paymentSuccessData });
-  console.log({ payment });
+  // Detect user's currency based on location
+  const getDefaultCurrency = (): "INR" | "USD" => {
+    try {
+      // Method 1: Try to get timezone
+      const timezone = Intl.DateTimeFormat().resolvedOptions().timeZone;
+      if (
+        timezone.includes("Asia/Kolkata") ||
+        timezone.includes("Asia/Calcutta")
+      ) {
+        return "INR";
+      }
+
+      // Method 2: Try to get locale
+      const locale = navigator.language || (navigator as any).userLanguage;
+      if (locale && locale.toLowerCase().includes("in")) {
+        return "INR";
+      }
+
+      // Default to USD for all other countries
+      return "USD";
+    } catch {
+      return "USD"; // Default fallback
+    }
+  };
+
+  const [currency, setCurrency] = useState<"INR" | "USD">(getDefaultCurrency());
+
+  // Pricing maps for different currencies
+  const pricingMap = {
+    INR: {
+      BASIC: "₹499",
+      PREMIUM: "₹1299",
+      PLATINUM: "₹7999",
+    },
+    USD: {
+      BASIC: "$10",
+      PREMIUM: "$19",
+      PLATINUM: "$99",
+    },
+  };
 
   const router = useRouter();
+
+  // Sync local selection with prop when it changes
+  useEffect(() => {
+    if (selectedPackage !== undefined) {
+      setLocalSelectedPackage(selectedPackage);
+    }
+  }, [selectedPackage]);
 
   // Reset paymentSuccessData when payment prop becomes null (after proceed success)
   // This syncs the local state with parent state reset
@@ -81,57 +133,65 @@ export default function PaymentCards({
     assessment_id: string;
     token: string;
     onSuccess: () => void;
-  }) => {
-    const options = {
-      key: orderData.data.razorpay_key_id,
-      amount: orderData.data.amount,
-      currency: orderData.data.currency,
-      order_id: orderData.data.razorpay_order_id,
-      name: "TechSmartHire",
-      description: `${orderData.data.package_type} Package - ${orderData.data.assessment_title}`,
-      prefill: {
-        email: user.email,
-        contact: user.phone || "",
-      },
-      theme: {
-        color: "#7C3AED",
-      },
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      handler: async (response: any) => {
-        await verifyPayment(assessment_id, {
-          razorpay_order_id: response.razorpay_order_id,
-          razorpay_payment_id: response.razorpay_payment_id,
-          razorpay_signature: response.razorpay_signature,
-        }).then((res) => {
-          if (res.success) {
-            onUserAssessmentIdChange?.({
-              id: res.data.user_assessment_id,
-              payment: res.data.payment,
-              message: res.message,
-            });
-            setPaymentSuccessData({
-              initial_paid: res.data.payment.initial_paid,
-              initial_payment_status: res.data.payment.initial_payment_status,
-              package_type: res.data.payment.package_type,
-              purchase_status: res.data.payment.purchase_status,
-              purchased_at: res.data.payment.purchased_at,
-            });
-          }
-        });
-
-        onSuccess();
-      },
-      modal: {
-        ondismiss: () => {
-          toast.error("Payment cancelled");
+  }): Promise<void> => {
+    return new Promise((resolve, reject) => {
+      const options = {
+        key: orderData.data.razorpay_key_id,
+        amount: orderData.data.amount,
+        currency: orderData.data.currency,
+        order_id: orderData.data.razorpay_order_id,
+        name: "TechSmartHire",
+        description: `${orderData.data.package_type} Package - ${orderData.data.assessment_title}`,
+        prefill: {
+          email: user.email,
+          contact: user.phone || "",
         },
-      },
-    };
+        theme: {
+          color: "#7C3AED",
+        },
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        handler: async (response: any) => {
+          try {
+            await verifyPayment(assessment_id, {
+              razorpay_order_id: response.razorpay_order_id,
+              razorpay_payment_id: response.razorpay_payment_id,
+              razorpay_signature: response.razorpay_signature,
+            }).then((res) => {
+              if (res.success) {
+                onUserAssessmentIdChange?.({
+                  id: res.data.user_assessment_id,
+                  payment: res.data.payment,
+                });
+                setPaymentSuccessData({
+                  initial_paid: res.data.payment.initial_paid,
+                  initial_payment_status:
+                    res.data.payment.initial_payment_status,
+                  package_type: res.data.payment.package_type,
+                  purchase_status: res.data.payment.purchase_status,
+                  purchased_at: res.data.payment.purchased_at,
+                });
+              }
+            });
 
-    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-    // @ts-ignore
-    const rzp = new window.Razorpay(options);
-    rzp.open();
+            onSuccess();
+            resolve();
+          } catch (error) {
+            reject(error);
+          }
+        },
+        modal: {
+          ondismiss: () => {
+            toast.error("Payment cancelled");
+            reject(new Error("Payment cancelled by user"));
+          },
+        },
+      };
+
+      // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+      // @ts-ignore
+      const rzp = new window.Razorpay(options);
+      rzp.open();
+    });
   };
 
   const basicPackageIncludedItems = [
@@ -160,7 +220,7 @@ export default function PaymentCards({
       title: "Basic Package",
       description:
         "Get started at a minimal cost, pay the remaining when hiring interest is confirmed.",
-      price: "₹499",
+      price: pricingMap[currency].BASIC,
       includedItems: basicPackageIncludedItems,
       buttonText: "Activate for ₹99",
       icon: "material-symbols:star-shine-outline-rounded",
@@ -170,7 +230,7 @@ export default function PaymentCards({
       title: "Premium Package",
       description:
         "Best value for professionals who want certification + improvement feedback",
-      price: "₹1299",
+      price: pricingMap[currency].PREMIUM,
       includedItems: premiumPackageIncludedItems,
       buttonText: "Upgrade to Premium",
       icon: "material-symbols:diamond-outline-rounded",
@@ -179,7 +239,7 @@ export default function PaymentCards({
       packageType: "PLATINUM",
       title: "Platinum Package",
       description: "Complete coaching + exam strategy to level up fast",
-      price: "₹7999",
+      price: pricingMap[currency].PLATINUM,
       includedItems: platinumPackageIncludedItems,
       buttonText: "Upgrade to Platinum",
       icon: "material-symbols:crown-outline-rounded",
@@ -199,7 +259,7 @@ export default function PaymentCards({
   };
 
   const handlePurchase = async (
-    packageType: "FREE" | "BASIC" | "PREMIUM" | "PLATINUM",
+    packageType: "FREE" | "BASIC" | "PREMIUM" | "PLATINUM"
   ) => {
     try {
       // 1️⃣ Create Order
@@ -227,28 +287,89 @@ export default function PaymentCards({
         return;
       }
 
-      // 2️⃣ Open Razorpay
-      openRazorpayCheckout({
+      // 2️⃣ Open Razorpay and wait for completion
+      await openRazorpayCheckout({
         orderData,
         user,
         assessment_id: assessment_id,
         token,
         onSuccess: () => {
-          toast.success("Assessment purchased successfully 🎉");
-          router.refresh();
+          toast.success(
+            "Assessment purchased successfully 🎉 You can now start the assessment."
+          );
+          // Don't refresh - let the state update flow through
         },
       });
 
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
     } catch (err: any) {
       toast.error(err.response?.data?.message || "Payment failed");
+      throw err; // Re-throw to let parent handler know
     }
   };
 
-  console.log(currentPayment?.package_type);
+  const handlePackageCardClick = (
+    packageType: "FREE" | "BASIC" | "PREMIUM" | "PLATINUM"
+  ) => {
+    // Don't allow changing if already purchased
+    if (currentPayment?.initial_payment_status === "PAID") {
+      return;
+    }
+    setLocalSelectedPackage(packageType);
+    onPackageSelect?.(packageType);
+
+    // Update parent with package selection (for UI state like disabling buttons)
+    // If currentPayment exists, update it; otherwise only update local state
+    if (currentPayment) {
+      onUserAssessmentIdChange?.({
+        id: assessment_id,
+        payment: {
+          ...currentPayment,
+          package_type: packageType,
+        },
+      });
+    }
+  };
 
   return (
     <div>
+      {/* Currency Switcher */}
+      <div className="flex items-center justify-between mb-6 mt-4">
+        <div className="flex items-center gap-2">
+          <Icon
+            icon="material-symbols:payments-outline"
+            className="w-5 h-5 text-gray-600"
+          />
+          <span className="text-sm font-medium text-gray-700">
+            Select Currency
+          </span>
+        </div>
+        <div className="flex items-center gap-1 bg-gray-100 rounded-lg p-1">
+          <button
+            onClick={() => setCurrency("INR")}
+            className={cn(
+              "px-4 py-1.5 rounded-md text-sm font-medium transition-all",
+              currency === "INR"
+                ? "bg-white text-gray-900 shadow-sm"
+                : "text-gray-600 hover:text-gray-900"
+            )}
+          >
+            ₹ INR
+          </button>
+          <button
+            onClick={() => setCurrency("USD")}
+            className={cn(
+              "px-4 py-1.5 rounded-md text-sm font-medium transition-all",
+              currency === "USD"
+                ? "bg-white text-gray-900 shadow-sm"
+                : "text-gray-600 hover:text-gray-900"
+            )}
+          >
+            $ USD
+          </button>
+        </div>
+      </div>
+
       {is_free_plan_available && (
         <div className="flex flex-col gap-4 mt-4 mb-6">
           {/* Banner */}
@@ -285,17 +406,48 @@ export default function PaymentCards({
         {cards.map((card) => (
           <div
             key={card.title}
+            onClick={() =>
+              handlePackageCardClick(
+                card.packageType as "FREE" | "BASIC" | "PREMIUM" | "PLATINUM"
+              )
+            }
             className={cn(
-              "border border-gray-200 rounded-lg p-2 md:p-3 flex flex-col gap-10 justify-between min-w-64",
+              "border-2 rounded-lg p-2 md:p-3 flex flex-col gap-10 justify-between min-w-64 cursor-pointer transition-all",
+              // Selected state
+              localSelectedPackage === card.packageType ||
+                (currentPayment?.package_type === card.packageType &&
+                  currentPayment?.initial_payment_status === "PAID")
+                ? "border-primary-500 bg-primary-50/30"
+                : "border-gray-200 hover:border-primary-200",
+              // Disable interaction if already paid
               currentPayment?.initial_payment_status === "PAID" &&
-                currentPayment?.package_type === card.packageType &&
-                "border-primary-500",
+                "cursor-not-allowed opacity-70"
             )}
           >
             <div>
               <div className="flex items-center justify-between w-full mb-1">
                 <div className="bg-gray-50 flex items-center justify-center rounded-lg size-8">
                   <Icon icon={card.icon} className="size-5 text-primary-500" />
+                </div>
+                {/* Selection indicator */}
+                <div
+                  className={cn(
+                    "size-5 rounded-full border-2 flex items-center justify-center transition-all",
+                    localSelectedPackage === card.packageType ||
+                      (currentPayment?.package_type === card.packageType &&
+                        currentPayment?.initial_payment_status === "PAID")
+                      ? "border-primary-500 bg-primary-500"
+                      : "border-gray-300"
+                  )}
+                >
+                  {(localSelectedPackage === card.packageType ||
+                    (currentPayment?.package_type === card.packageType &&
+                      currentPayment?.initial_payment_status === "PAID")) && (
+                    <Icon
+                      icon="material-symbols:check"
+                      className="size-4 text-white"
+                    />
+                  )}
                 </div>
               </div>
               <div className="font-semibold text-xs md:text-sm mb-1">
@@ -321,106 +473,85 @@ export default function PaymentCards({
               </ul>
             </div>
 
-            <div>
-              {card.title === "Platinum Package" ? (
-                <Dialog>
-                  <DialogTrigger asChild>
-                    <Button
-                      variant="secondary"
-                      className="w-full mt-1"
-                      onClick={() => {
-                        if (card.packageType === "PLATINUM") {
-                          handlePurchase(
-                            card.packageType as
-                              | "FREE"
-                              | "BASIC"
-                              | "PREMIUM"
-                              | "PLATINUM",
-                          );
-                        }
-                      }}
-                      disabled={
-                        currentPayment?.initial_payment_status === "PAID" &&
-                        currentPayment?.package_type === card.packageType
-                      }
-                    >
-                      {currentPayment?.initial_payment_status === "PAID" &&
-                      currentPayment?.package_type === card.packageType
-                        ? "Activated"
-                        : "Activate"}
-                    </Button>
-                  </DialogTrigger>
-                  <DialogContent className="py-4 px-0 md:max-w-100!">
-                    <DialogHeader className="px-6">
-                      <DialogTitle className="text-left text-base md:text-lg">
-                        {card.title}
-                      </DialogTitle>
-                    </DialogHeader>
-                    <hr className="border-gray-200" />
-                    <div className="pl-6">
-                      <div className="text-xs md:text-sm font-semibold">
-                        Mentor Services Typically Include (May Vary):
-                      </div>
-
-                      <ul className="list-disc list-outside text-gray-600 px-2 mt-2 marker:text-primary-100 pl-4">
-                        {card.mentorServices?.map((item: string) => (
-                          <li
-                            key={item}
-                            className="text-xs md:text-sm text-gray-600 font-medium"
-                          >
-                            {item}
-                          </li>
-                        ))}
-                      </ul>
-                    </div>
-                    <div className="flex gap-2 justify-end px-6">
-                      <DialogClose asChild>
-                        <Button variant="secondary" className="">
-                          Cancel
-                        </Button>
-                      </DialogClose>
-                      <Button
-                        className=""
-                        onClick={() =>
-                          handlePurchase(
-                            card.packageType as
-                              | "FREE"
-                              | "BASIC"
-                              | "PREMIUM"
-                              | "PLATINUM",
-                          )
-                        }
-                      >
-                        Proceed
-                      </Button>
-                    </div>
-                  </DialogContent>
-                </Dialog>
-              ) : (
-                <Button
-                  variant="secondary"
-                  className="w-full mt-1"
-                  onClick={() =>
-                    handlePurchase(
-                      card.packageType as
-                        | "FREE"
-                        | "BASIC"
-                        | "PREMIUM"
-                        | "PLATINUM",
-                    )
-                  }
-                  disabled={
-                    currentPayment?.initial_payment_status === "PAID" &&
-                    currentPayment?.package_type === card.packageType
-                  }
-                >
-                  {currentPayment?.initial_payment_status === "PAID" &&
-                  currentPayment?.package_type === card.packageType
-                    ? "Activated"
-                    : "Activate"}
-                </Button>
+            {/* Show "Selected" badge or "Paid" badge */}
+            {currentPayment?.initial_payment_status === "PAID" &&
+              currentPayment?.package_type === card.packageType && (
+                <div className="flex items-center justify-center gap-2 bg-success-50 border border-success-500 rounded-lg py-2 px-3">
+                  <Icon
+                    icon="material-symbols:check-circle"
+                    className="size-5 text-success-600"
+                  />
+                  <span className="text-sm font-semibold text-success-700">
+                    Activated
+                  </span>
+                </div>
               )}
-            </div>
+            {localSelectedPackage === card.packageType &&
+              !(
+                currentPayment?.initial_payment_status === "PAID" &&
+                currentPayment?.package_type === card.packageType
+              ) && (
+                <div className="flex items-center justify-center gap-2 bg-primary-50 border border-primary-500 rounded-lg py-2 px-3">
+                  <Icon
+                    icon="material-symbols:check-circle"
+                    className="size-5 text-primary-600"
+                  />
+                  <span className="text-sm font-semibold text-primary-700">
+                    Selected
+                  </span>
+                </div>
+              )}
+
+            {/* View Details for Platinum */}
+            {card.title === "Platinum Package" && card.mentorServices && (
+              <Dialog>
+                <DialogTrigger asChild>
+                  <Button
+                    variant="ghost"
+                    className="w-full text-primary-600 hover:text-primary-700 hover:bg-primary-50 text-xs"
+                    onClick={(e) => e.stopPropagation()}
+                  >
+                    View Mentor Services Details
+                    <Icon
+                      icon="material-symbols:arrow-right"
+                      className="ml-1 size-4"
+                    />
+                  </Button>
+                </DialogTrigger>
+                <DialogContent
+                  className="py-4 px-0 md:max-w-100!"
+                  onClick={(e) => e.stopPropagation()}
+                >
+                  <DialogHeader className="px-6">
+                    <DialogTitle className="text-left text-base md:text-lg">
+                      {card.title}
+                    </DialogTitle>
+                  </DialogHeader>
+                  <hr className="border-gray-200" />
+                  <div className="pl-6">
+                    <div className="text-xs md:text-sm font-semibold">
+                      Mentor Services Typically Include (May Vary):
+                    </div>
+
+                    <ul className="list-disc list-outside text-gray-600 px-2 mt-2 marker:text-primary-100 pl-4">
+                      {card.mentorServices?.map((item: string) => (
+                        <li
+                          key={item}
+                          className="text-xs md:text-sm text-gray-600 font-medium"
+                        >
+                          {item}
+                        </li>
+                      ))}
+                    </ul>
+                  </div>
+                  <div className="flex gap-2 justify-end px-6">
+                    <DialogClose asChild>
+                      <Button variant="secondary">Close</Button>
+                    </DialogClose>
+                  </div>
+                </DialogContent>
+              </Dialog>
+            )}
           </div>
         ))}
       </div>

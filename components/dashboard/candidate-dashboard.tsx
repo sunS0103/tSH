@@ -186,7 +186,7 @@ export default function CandidateDashboard() {
             {profileCompletionPercentage.total_percentage < 100 && (
               <Button
                 className="bg-primary-500 text-white hover:bg-primary-600 w-full text-sm"
-                onClick={() => router.push("/profile")}
+                onClick={() => router.push("/profile-details/edit-account-and-identity")}
               >
                 Complete Your Profile
                 <Icon icon="mdi:arrow-top-right" className="ml-2 size-4" />
