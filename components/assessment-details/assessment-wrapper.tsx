@@ -292,7 +292,6 @@ export default function AssessmentWrapper({
     payment: Payment;
   }) => {
     setUserAssessmentId(id);
-    console.log(id, "id");
     setAssessmentPayment(payment);
     setSelectedPackageType(payment.package_type);
   };
@@ -635,8 +634,6 @@ export default function AssessmentWrapper({
       }
     }
   };
-
-  console.log(assessment, "assessment");
 
   return (
     <div className="flex flex-col mt-4 lg:mt-6 pb-17">
