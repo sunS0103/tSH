@@ -198,7 +198,7 @@ export default function InviteDialog({
     } catch (error: any) {
       console.error("Error submitting:", error);
       toast.error(
-        error?.response?.data?.message || "An error occurred while submitting",
+        error?.response?.data?.message || "An error occurred while submitting"
       );
     } finally {
       setIsSubmitting(false);
@@ -235,7 +235,7 @@ export default function InviteDialog({
     const timeoutId = setTimeout(() => {
       // For assessments, we now use a custom scroll container in PopoverContent
       const scrollContainer = document.getElementById(
-        "assessment-scroll-container",
+        "assessment-scroll-container"
       );
 
       if (!scrollContainer) return;
@@ -359,9 +359,11 @@ export default function InviteDialog({
                       <Button
                         variant="outline"
                         role="combobox"
-                        className="w-full h-8 px-3 justify-between border-gray-200 rounded-lg text-gray-600 text-sm font-normal font-sans bg-white hover:bg-white"
+                        className="w-96 h-fit px-3 justify-between border-gray-200 rounded-lg text-gray-600 text-sm font-normal font-sans bg-white hover:bg-white"
                       >
-                        <span className="truncate">{getSelectedLabel()}</span>
+                        <span className="whitespace-normal">
+                          {getSelectedLabel()}
+                        </span>
                         <Icon
                           icon="lucide:chevrons-up-down"
                           className="ml-2 h-4 w-4 shrink-0 opacity-50"
@@ -369,7 +371,7 @@ export default function InviteDialog({
                       </Button>
                     </PopoverTrigger>
                     <PopoverContent
-                      className="w-[var(--radix-popover-trigger-width)] p-0 bg-white"
+                      className="w-(--radix-popover-trigger-width) p-0 bg-white"
                       align="start"
                     >
                       <div
@@ -384,7 +386,7 @@ export default function InviteDialog({
                               key={value}
                               className={cn(
                                 "flex items-center gap-3 px-4 py-2 hover:bg-gray-50 cursor-pointer border-b border-gray-100 last:border-0",
-                                isSelected && "bg-primary-50/50",
+                                isSelected && "bg-primary-50/50"
                               )}
                               onClick={() => handleToggle(value)}
                             >
