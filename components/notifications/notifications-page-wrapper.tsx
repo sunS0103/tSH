@@ -53,8 +53,8 @@ export default function NotificationsPageWrapper() {
       await markNotificationAsRead(notificationId);
       setNotifications((prev) =>
         prev.map((notif) =>
-          notif.id === notificationId ? { ...notif, is_read: true } : notif,
-        ),
+          notif.id === notificationId ? { ...notif, is_read: true } : notif
+        )
       );
       // Refresh unread count
       refreshUnreadCount();
@@ -67,7 +67,7 @@ export default function NotificationsPageWrapper() {
     try {
       await markAllNotificationsAsRead();
       setNotifications((prev) =>
-        prev.map((notif) => ({ ...notif, is_read: true })),
+        prev.map((notif) => ({ ...notif, is_read: true }))
       );
       // Refresh unread count
       refreshUnreadCount();
@@ -154,7 +154,7 @@ export default function NotificationsPageWrapper() {
                 No notifications
               </p>
               <p className="text-gray-400 text-sm mt-2">
-                You're all caught up! Check back later for updates.
+                You&apos;re all caught up! Check back later for updates.
               </p>
             </div>
           ) : (
