@@ -35,15 +35,15 @@ export function proxy(request: NextRequest) {
   const role = request.cookies.get("user_role")?.value;
 
   // Root redirect
-  if (pathname === "/") {
-    const userRole = request.cookies.get("user_role")?.value;
-    if (userRole === "CANDIDATE") {
-      return NextResponse.redirect(new URL("/dashboard", request.url));
-    } else if (userRole === "RECRUITER") {
-      return NextResponse.redirect(new URL("/dashboard", request.url));
-    }
-    return NextResponse.next();
-  }
+  // if (pathname === "/") {
+  //   const userRole = request.cookies.get("user_role")?.value;
+  //   if (userRole === "CANDIDATE") {
+  //     return NextResponse.redirect(new URL("/dashboard", request.url));
+  //   } else if (userRole === "RECRUITER") {
+  //     return NextResponse.redirect(new URL("/dashboard", request.url));
+  //   }
+  //   return NextResponse.next();
+  // }
 
   if (role) {
     const forbiddenRoutes = Object.entries(ROLE_ONLY_ROUTES)
