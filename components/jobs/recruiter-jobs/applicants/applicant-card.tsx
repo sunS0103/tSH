@@ -185,9 +185,22 @@ export default function ApplicantCard({
               </span>
             )}
           </div>
+
           {/* Desktop: Show all buttons (>= 768px) */}
           <div className="hidden md:flex items-center gap-2">
-            <Button
+            {application_status === "THUMBS_UP" && (
+              <Icon
+                icon="material-symbols:thumb-up-outline"
+                className="w-5 h-5 text-primary-500"
+              />
+            )}
+            {application_status === "HANDSHAKE" && (
+              <Icon
+                icon="material-symbols:handshake-outline"
+                className="w-5 h-5 text-primary-500"
+              />
+            )}
+            {/* <Button
               variant="secondary"
               size="icon"
               onClick={onDownload}
@@ -198,7 +211,7 @@ export default function ApplicantCard({
                 icon="material-symbols:download-rounded"
                 className="w-4 h-4 text-primary-500 group-hover:text-white"
               />
-            </Button>
+            </Button> */}
             <Button
               type="button"
               variant="secondary"
@@ -220,8 +233,21 @@ export default function ApplicantCard({
             </Button>
           </div>
 
-          {/* Mobile: Show three dots menu (< 768px) */}
-          <div className="md:hidden">
+          <div className="flex items-center gap-2 md:hidden">
+            {application_status === "THUMBS_UP" && (
+              <Icon
+                icon="material-symbols:thumb-up-outline"
+                className="w-4 h-4 text-primary-500"
+              />
+            )}
+            {application_status === "HANDSHAKE" && (
+              <Icon
+                icon="material-symbols:handshake-outline"
+                className="w-4 h-4 text-primary-500"
+              />
+            )}
+            {/* Mobile: Show three dots menu (< 768px) */}
+            {/* <div className="md:hidden"> */}
             <DropdownMenu>
               <DropdownMenuTrigger asChild>
                 <Button variant="ghost" size="icon" aria-label="More options">
@@ -232,7 +258,7 @@ export default function ApplicantCard({
                 </Button>
               </DropdownMenuTrigger>
               <DropdownMenuContent align="end" className="w-56">
-                <DropdownMenuItem
+                {/* <DropdownMenuItem
                   onClick={onDownload}
                   className="cursor-pointer"
                 >
@@ -241,7 +267,7 @@ export default function ApplicantCard({
                     className="w-4 h-4 mr-2 text-gray-700"
                   />
                   Download
-                </DropdownMenuItem>
+                </DropdownMenuItem> */}
                 <DropdownMenuItem
                   onClick={handleAdditionalDetails}
                   disabled={additionalDetailsStatus === "REQUESTED"}
@@ -269,6 +295,7 @@ export default function ApplicantCard({
                 </DropdownMenuItem>
               </DropdownMenuContent>
             </DropdownMenu>
+            {/* </div> */}
           </div>
         </div>
 

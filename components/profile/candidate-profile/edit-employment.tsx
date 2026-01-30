@@ -89,6 +89,9 @@ export default function EditEmployment() {
                     current_ctc_amount: employmentData?.current_ctc_amount,
                     current_ctc_period_type:
                       employmentData?.current_ctc_period_type,
+                    current_ctc_currency: employmentData?.current_ctc_currency,
+                    expected_ctc_currency:
+                      employmentData?.expected_ctc_currency,
                     expected_ctc_amount: employmentData?.expected_ctc_amount,
                     expected_ctc_period: employmentData?.expected_ctc_period,
                     notice_period_type: employmentData?.notice_period_type,

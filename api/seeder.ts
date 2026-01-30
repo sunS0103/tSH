@@ -1,17 +1,19 @@
 import axios from "./axios";
 
 export const getCities = async (
-  countryName: string,
+  countryId: number | string,
   page: number,
-  searchQuery?: string
+  searchQuery?: string,
 ) => {
-  const params: { page: number; query?: string } = { page };
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const params: any = { page };
 
-  // If searchQuery is provided, use it; otherwise use countryName if provided
+  if (countryId) {
+    params.country_id = countryId;
+  }
+
   if (searchQuery) {
     params.query = searchQuery;
-  } else if (countryName) {
-    params.query = countryName;
   }
 
   const response = await axios.get("/seeder/city", { params });

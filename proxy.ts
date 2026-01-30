@@ -56,7 +56,15 @@ export function proxy(request: NextRequest) {
   }
 
   // Allow public routes without token
-  if (!token && publicRoutes.some((path) => pathname.startsWith(path))) {
+  if (
+    !token &&
+    (pathname === "/" ||
+      publicRoutes.some((path) => {
+        // Remove wildcard if present
+        const cleanPath = path.endsWith("/*") ? path.slice(0, -2) : path;
+        return pathname === cleanPath || pathname.startsWith(`${cleanPath}/`);
+      }))
+  ) {
     return NextResponse.next();
   }
 

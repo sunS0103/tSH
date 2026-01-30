@@ -4,6 +4,7 @@ import { Icon } from "@iconify/react";
 import { Badge } from "@/components/ui/badge";
 import { cn, formatDuration } from "@/lib/utils";
 import { Tooltip, TooltipContent, TooltipTrigger } from "../ui/tooltip";
+import { getCookie } from "cookies-next/client";
 
 interface Topics {
   id: string;
@@ -34,10 +35,12 @@ export default function AssessmentCard({
   score,
   selectedTab,
 }: AssessmentCardProps) {
-  console.log({ slug });
-
   const displayedTopics = topics.slice(0, 2);
   const remainingCount = topics.length - 2;
+
+  const userRole = getCookie("user_role");
+
+  const isCandidate = userRole === "CANDIDATE";
 
   const undisplayedTopics = topics.slice(2, topics.length);
   const isTaken = selectedTab === "taken";
@@ -168,7 +171,8 @@ export default function AssessmentCard({
 
   return (
     <Link
-      href={`/assessments/${slug}`}
+      href={isCandidate ? `/assessments/${slug}` : `/assessment/${slug}`}
+      target={!isCandidate ? "_blank" : undefined}
       aria-label="Start assessment"
       className={cn(
         "bg-white border border-gray-200 flex flex-col items-start justify-between rounded-2xl w-full group hover:shadow-lg duration-500 min-h-57 h-full",
