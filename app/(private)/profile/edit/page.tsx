@@ -67,10 +67,10 @@ export default function EditProfilePage() {
   const cookieValue = getCookie("profile_data");
   const profileData = cookieValue ? JSON.parse(cookieValue as string) : null;
   const [selectedCountryCode, setSelectedCountryCode] = useState<string>(
-    profileData?.mobile_details?.dial_code || ""
+    profileData?.mobile_details?.dial_code || "",
   );
   const [countries, setCountries] = useState<{ id: number; name: string }[]>(
-    []
+    [],
   );
   const [countryName, setCountryName] = useState<string>("");
 
@@ -461,7 +461,7 @@ export default function EditProfilePage() {
                           onChange={(e) => {
                             const numericValue = e.target.value.replace(
                               /\D/g,
-                              ""
+                              "",
                             );
                             e.target.value = numericValue;
                             field.onChange(numericValue);
@@ -543,10 +543,10 @@ export default function EditProfilePage() {
                         onValueChange={(cityId) => {
                           // Ensure we always pass a number
                           field.onChange(
-                            typeof cityId === "number" ? cityId : 0
+                            typeof cityId === "number" ? cityId : 0,
                           );
                         }}
-                        countryName={countryName || selectedCountryData?.name}
+                        countryId={selectedCountryId}
                         placeholder="Select City"
                       />
                     </FormControl>

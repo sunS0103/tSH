@@ -35,17 +35,6 @@ const mapCandidateToTalentCard = (
   candidate: Candidate,
   isFavorite: boolean,
 ): Omit<TalentCardProps, "isSelected" | "onSelect" | "onToggleFavorite"> => {
-  // Format years of experience
-  const formatExperience = (years: number | null): string => {
-    if (!years || years === 0) return "0-1 Years";
-    if (years === 1) return "1-2 Years";
-    if (years >= 2 && years < 4) return "2-3 Years";
-    if (years >= 4 && years < 6) return "4-5 Years";
-    if (years >= 6 && years < 10) return "6-10 Years";
-    if (years >= 10 && years < 15) return "10-15 Years";
-    return "15+ Years";
-  };
-
   // Extract skill names from skills_assessed
   const skillsAssessed = candidate.skills_assessed.map(
     (skill) => skill.skill_name,
@@ -69,7 +58,7 @@ const mapCandidateToTalentCard = (
     location_code: locationCode,
     totalScore: candidate.score,
     skillsAssessed,
-    experience: formatExperience(candidate.years_of_experience),
+    experience: candidate.years_of_experience,
     company: candidate.company || "",
     availability: candidate.availability || candidate.notice_period || "",
     location: candidate.location || "",

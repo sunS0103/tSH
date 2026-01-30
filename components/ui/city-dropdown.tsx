@@ -21,7 +21,7 @@ interface City {
 interface CityDropdownProps {
   value?: number;
   onValueChange: (cityId: number) => void;
-  countryName?: string;
+  countryId?: number;
   disabled?: boolean;
   className?: string;
   placeholder?: string;
@@ -30,7 +30,7 @@ interface CityDropdownProps {
 export function CityDropdown({
   value,
   onValueChange,
-  countryName,
+  countryId,
   // disabled = false,
   className,
   placeholder = "Select City",
@@ -48,10 +48,10 @@ export function CityDropdown({
   const searchInputRef = useRef<HTMLInputElement>(null);
 
   const selectedCity = cities.find((c) => c.id === value);
-  // const isDisabled = disabled || !countryName || loading;
+  // const isDisabled = disabled || !countryId || loading;
 
   const loadCities = async (pageNum: number, query?: string) => {
-    if (!countryName) return;
+    if (!countryId) return;
 
     if (pageNum === 1 && query !== searchQuery) {
       loadedPagesRef.current.clear();
@@ -61,7 +61,7 @@ export function CityDropdown({
 
     setLoading(true);
     try {
-      const response = await getCities(countryName, pageNum, query);
+      const response = await getCities(countryId, pageNum, query);
       const citiesData = Array.isArray(response)
         ? response
         : response?.data || response?.cities || [];
@@ -71,7 +71,7 @@ export function CityDropdown({
         setCities((prev) => {
           const existingIds = new Set(prev.map((c) => c.id));
           const newCities = citiesData.filter(
-            (c: City) => !existingIds.has(c.id)
+            (c: City) => !existingIds.has(c.id),
           );
           return [...prev, ...newCities];
         });
@@ -87,7 +87,7 @@ export function CityDropdown({
 
       if (response?.pagination) {
         setHasMore(
-          response.pagination.currentPage < response.pagination.totalPages
+          response.pagination.currentPage < response.pagination.totalPages,
         );
       } else {
         setHasMore(citiesData.length === 10);
@@ -116,7 +116,7 @@ export function CityDropdown({
 
   const handleScroll = () => {
     const container = scrollContainerRef.current;
-    if (!container || loading || !hasMore || !countryName) return;
+    if (!container || loading || !hasMore || !countryId) return;
 
     const { scrollTop, scrollHeight, clientHeight } = container;
     if (scrollTop + clientHeight >= scrollHeight * 0.8) {
@@ -137,7 +137,7 @@ export function CityDropdown({
 
   // Load default city if value is provided on mount or when value changes
   useEffect(() => {
-    if (value && value > 0 && countryName && !loading && !initialCityLoading) {
+    if (value && value > 0 && countryId && !loading && !initialCityLoading) {
       // Check if the city is already in the list
       const cityExists = cities.some((c) => c.id === value);
 
@@ -166,11 +166,11 @@ export function CityDropdown({
       }
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [value, countryName]);
+  }, [value, countryId]);
 
   // Load cities when country changes
   useEffect(() => {
-    if (countryName) {
+    if (countryId) {
       loadedPagesRef.current.clear();
       setPage(1);
       // Don't clear cities if we have a default value loaded
@@ -184,7 +184,7 @@ export function CityDropdown({
       setCities([]);
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [countryName]);
+  }, [countryId]);
 
   // Always refresh cities when dropdown opens
   useEffect(() => {
@@ -194,7 +194,7 @@ export function CityDropdown({
       }, 0);
     }
 
-    if (open && countryName && !loading) {
+    if (open && countryId && !loading) {
       loadedPagesRef.current.clear();
       setPage(1);
       setSearchQuery("");
@@ -207,7 +207,7 @@ export function CityDropdown({
       loadCities(1);
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [open, countryName]);
+  }, [open, countryId]);
 
   // Cleanup timer
   useEffect(() => {
@@ -262,12 +262,12 @@ export function CityDropdown({
               onChange={(e) => handleSearch(e.target.value)}
               className="pl-8 h-9"
               onClick={(e) => e.stopPropagation()}
-              // disabled={!countryName}
+              // disabled={!countryId}
               onKeyDown={(e) => {
                 if (e.key === "ArrowDown") {
                   e.preventDefault();
                   const firstButton = scrollContainerRef.current?.querySelector(
-                    "button"
+                    "button",
                   ) as HTMLButtonElement;
                   if (firstButton) firstButton.focus();
                 }
@@ -287,7 +287,7 @@ export function CityDropdown({
               onClick={() => handleSelect(city.id)}
               className={cn(
                 "w-full flex items-center gap-3 px-4 py-2 text-left hover:bg-gray-100 transition-colors focus:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-inset focus:ring-primary-500",
-                value === city.id && "bg-gray-100"
+                value === city.id && "bg-gray-100",
               )}
               onKeyDown={(e) => {
                 if (e.key === "Enter") {

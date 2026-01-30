@@ -65,6 +65,7 @@ const employedSchema = z
       .refine((val) => !isNaN(parseFloat(val)) && parseFloat(val) >= 0, {
         message: "Please enter a valid number",
       }),
+    current_ctc_currency: z.string(),
     current_ctc_period_type: z.string().min(1, "Period type is required"),
     expected_ctc_amount: z
       .string()
@@ -72,6 +73,7 @@ const employedSchema = z
       .refine((val) => !isNaN(parseFloat(val)) && parseFloat(val) >= 0, {
         message: "Please enter a valid number",
       }),
+    expected_ctc_currency: z.string(),
     expected_ctc_period: z.string().min(1, "Period type is required"),
     notice_period_type: z.string().min(1, "Notice period is required"),
     is_serving_notice: z.boolean(),
@@ -111,8 +113,10 @@ export default function EmployedForm({
       total_years_of_experience:
         defaultValues?.total_years_of_experience?.toString() || "",
       current_ctc_amount: defaultValues?.current_ctc_amount?.toString() || "",
+      current_ctc_currency: defaultValues?.current_ctc_currency || "INR",
       current_ctc_period_type: defaultValues?.current_ctc_period_type || "LPA",
       expected_ctc_amount: defaultValues?.expected_ctc_amount?.toString() || "",
+      expected_ctc_currency: defaultValues?.expected_ctc_currency || "INR",
       expected_ctc_period: defaultValues?.expected_ctc_period || "LPA",
       notice_period_type: defaultValues?.notice_period_type || "",
       is_serving_notice: defaultValues?.is_serving_notice || false,
@@ -129,11 +133,11 @@ export default function EmployedForm({
         designation: data.designation,
         total_years_of_experience: parseFloat(data.total_years_of_experience),
         current_ctc_amount: parseFloat(data.current_ctc_amount),
-        current_ctc_currency: "INR",
+        current_ctc_currency: data.current_ctc_currency,
         current_ctc_period_type: "LPA",
         // data.current_ctc_period_type,
         expected_ctc_amount: parseFloat(data.expected_ctc_amount),
-        expected_ctc_currency: "INR",
+        expected_ctc_currency: data.expected_ctc_currency,
         expected_ctc_period: "LPA",
         // data.expected_ctc_period,
         notice_period_type: data.notice_period_type,
@@ -246,59 +250,109 @@ export default function EmployedForm({
         {/* Current CTC and Expected CTC */}
         <div className="flex flex-col md:flex-row gap-4">
           <div className="w-full md:w-1/2">
-            <FormField
-              control={form.control}
-              name="current_ctc_amount"
-              render={({ field }) => (
-                <FormItem className="space-y-1">
-                  <FormLabel
-                    required
-                    className="text-sm font-medium text-black mb-2"
-                  >
-                    Current CTC
-                  </FormLabel>
-                  <div className="flex border border-gray-900 rounded-lg overflow-hidden items-center">
+            <Label className="text-sm font-medium text-black mb-2 block">
+              Current CTC <span className="text-destructive">*</span>
+            </Label>
+            <div className="flex gap-2">
+              <FormField
+                control={form.control}
+                name="current_ctc_amount"
+                render={({ field }) => (
+                  <FormItem className="flex-1 space-y-1">
+                    <div className="flex border border-gray-900 rounded-lg overflow-hidden items-center">
+                      <FormControl>
+                        <Input
+                          type="number"
+                          placeholder="0.0"
+                          className="h-8 border-0 rounded-none w-full"
+                          {...field}
+                        />
+                      </FormControl>
+                    </div>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+              <FormField
+                control={form.control}
+                name="current_ctc_currency"
+                render={({ field }) => (
+                  <FormItem className="w-24 space-y-1">
                     <FormControl>
-                      <Input
-                        type="number"
-                        placeholder="0.0"
-                        className="h-8 border-0 rounded-none w-full"
-                        {...field}
-                      />
+                      <Select
+                        onValueChange={field.onChange}
+                        value={field.value}
+                      >
+                        <SelectTrigger className="h-[34px] border-gray-900">
+                          <SelectValue placeholder="INR" />
+                        </SelectTrigger>
+                        <SelectContent>
+                          <SelectItem value="INR">INR</SelectItem>
+                          <SelectItem value="USD">USD</SelectItem>
+                          <SelectItem value="CAD">CAD</SelectItem>
+                          <SelectItem value="AED">AED</SelectItem>
+                          <SelectItem value="GBP">GBP</SelectItem>
+                        </SelectContent>
+                      </Select>
                     </FormControl>
-                  </div>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+            </div>
           </div>
 
           <div className="w-full md:w-1/2">
-            <FormField
-              control={form.control}
-              name="expected_ctc_amount"
-              render={({ field }) => (
-                <FormItem className="space-y-1">
-                  <FormLabel
-                    required
-                    className="text-sm font-medium text-black mb-2"
-                  >
-                    Expected CTC
-                  </FormLabel>
-                  <div className="flex border border-gray-900 rounded-lg overflow-hidden items-center">
+            <Label className="text-sm font-medium text-black mb-2 block">
+              Expected CTC <span className="text-destructive">*</span>
+            </Label>
+            <div className="flex gap-2">
+              <FormField
+                control={form.control}
+                name="expected_ctc_amount"
+                render={({ field }) => (
+                  <FormItem className="flex-1 space-y-1">
+                    <div className="flex border border-gray-900 rounded-lg overflow-hidden items-center">
+                      <FormControl>
+                        <Input
+                          type="number"
+                          placeholder="0.0"
+                          className="h-8 border-0 rounded-none w-full"
+                          {...field}
+                        />
+                      </FormControl>
+                    </div>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+              <FormField
+                control={form.control}
+                name="expected_ctc_currency"
+                render={({ field }) => (
+                  <FormItem className="w-24 space-y-1">
                     <FormControl>
-                      <Input
-                        type="number"
-                        placeholder="0.0"
-                        className="h-8 border-0 rounded-none w-full"
-                        {...field}
-                      />
+                      <Select
+                        onValueChange={field.onChange}
+                        value={field.value}
+                      >
+                        <SelectTrigger className="h-[34px] border-gray-900">
+                          <SelectValue placeholder="INR" />
+                        </SelectTrigger>
+                        <SelectContent>
+                          <SelectItem value="INR">INR</SelectItem>
+                          <SelectItem value="USD">USD</SelectItem>
+                          <SelectItem value="CAD">CAD</SelectItem>
+                          <SelectItem value="AED">AED</SelectItem>
+                          <SelectItem value="GBP">GBP</SelectItem>
+                        </SelectContent>
+                      </Select>
                     </FormControl>
-                  </div>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+            </div>
           </div>
         </div>
 

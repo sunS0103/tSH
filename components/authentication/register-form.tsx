@@ -52,7 +52,7 @@ const candidateSchema = z.object({
     .min(1, "Phone number is required")
     .regex(/^\d+$/, "Phone number must contain only numbers")
     .length(10, "Phone number must be exactly 10 digits"),
-  date_of_birth: z.string().optional(),
+  date_of_birth: z.string().min(1, "Date of birth is required"),
   accountType: z.enum(["Student", "Working Professional", "Fresher", "Other"], {
     message: "Please select account type",
   }),
@@ -235,11 +235,7 @@ export default function RegisterForm({ role, email }: RegisterFormProps) {
 
     setLoadingCities(true);
     try {
-      const response = await getCities(
-        selectedCountryData.name,
-        pageNum,
-        query,
-      );
+      const response = await getCities(selectedCountryData.id, pageNum, query);
 
       const citiesData = Array.isArray(response)
         ? response
@@ -665,11 +661,11 @@ export default function RegisterForm({ role, email }: RegisterFormProps) {
               name="date_of_birth"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel className="gap-1">
+                  <FormLabel required className="gap-1">
                     Date of Birth
-                    <span className="text-[10px] text-gray-500">
+                    {/* <span className="text-[10px] text-gray-500">
                       - optional
-                    </span>
+                    </span> */}
                   </FormLabel>
                   <Popover>
                     <PopoverTrigger asChild>
@@ -677,7 +673,7 @@ export default function RegisterForm({ role, email }: RegisterFormProps) {
                         <Button
                           variant="outline"
                           className={cn(
-                            "w-full justify-start text-left font-normal border-black",
+                            "w-full justify-start text-left font-normal border-black aria-invalid:border-black",
                             !field.value && "text-muted-foreground",
                           )}
                         >

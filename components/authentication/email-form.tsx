@@ -382,7 +382,7 @@ export default function EmailForm({ role }: EmailFormProps) {
                 Resend OTP
               </Button>
               <Button
-                type="submit"
+                type="button"
                 className="flex-1"
                 onClick={onVerifyOtp}
                 disabled={otp.length !== 4}

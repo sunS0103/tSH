@@ -160,7 +160,7 @@ export default function RecruiterDashboard() {
       location_code: candidate.location || "N/A",
       totalScore: candidate.score || 0,
       skillsAssessed: candidate.skills_assessed?.map((s) => s.skill_name) || [],
-      experience: `${candidate.years_of_experience || 0} Years`,
+      experience: candidate.years_of_experience || 0,
       company: candidate.company || "N/A",
       availability: candidate.availability || "N/A",
       location: candidate.city || candidate.location || "N/A",
@@ -484,7 +484,7 @@ export default function RecruiterDashboard() {
                 {assessments.map((assessment) => (
                   <AssessmentCard
                     key={assessment.id || assessment.slug}
-                    slug={"#"}
+                    slug={assessment.slug}
                     category={assessment.category || "Technology"}
                     title={assessment.title}
                     topics={
