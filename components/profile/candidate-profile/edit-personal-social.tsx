@@ -194,6 +194,20 @@ export default function EditPersonalSocial() {
                             </span>
                           </div>
                         </FormControl>
+                        <div className="text-xs text-gray-600 leading-relaxed space-y-1 -mt-3">
+                          <p>Use this space to briefly describe who you are as a professional — your experience level, core strengths, and the types of roles you're interested in.</p>
+                          <p className="font-medium mt-2">This is the only free-text section recruiters will see.</p>
+                          <p>All other profile insights are driven by your assessment scores.</p>
+                          <div className="flex items-start gap-1.5 mt-2 p-2 bg-amber-50 border border-amber-200 rounded">
+                            <Icon 
+                              icon="mdi:alert-circle-outline" 
+                              className="size-3.5 text-amber-600 mt-0.5 shrink-0" 
+                            />
+                            <p className="text-amber-800">
+                              Please do not include contact details, email IDs, phone numbers, or external links.
+                            </p>
+                          </div>
+                        </div>
                         <FormMessage />
                       </FormItem>
                     );
@@ -201,7 +215,7 @@ export default function EditPersonalSocial() {
                 />
               </div>
 
-              {/* Second Row: LinkedIn and GitHub URLs */}
+              {/* Second Row: LinkedIn URL */}
               <div className="flex flex-col md:flex-row gap-4">
                 <FormField
                   control={form.control}
@@ -216,33 +230,6 @@ export default function EditPersonalSocial() {
                           <Input
                             type="url"
                             placeholder="https://www.linkedin.com/in/your-profile"
-                            className="h-8 border-gray-900 pr-10"
-                            {...field}
-                          />
-                          <Icon
-                            icon="material-symbols:link"
-                            className="absolute right-3 top-1/2 -translate-y-1/2 size-4.5 text-gray-900 pointer-events-none"
-                          />
-                        </div>
-                      </FormControl>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
-
-                <FormField
-                  control={form.control}
-                  name="github_url"
-                  render={({ field }) => (
-                    <FormItem className="w-full md:w-1/2">
-                      <FormLabel className="text-sm font-medium text-black">
-                        GitHub / Portfolio URL
-                      </FormLabel>
-                      <FormControl>
-                        <div className="relative">
-                          <Input
-                            type="url"
-                            placeholder="https://github.com/your-profile"
                             className="h-8 border-gray-900 pr-10"
                             {...field}
                           />
