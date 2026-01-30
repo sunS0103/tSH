@@ -169,11 +169,10 @@ export default function AssessmentCard({
     );
   }
 
-  console.log(isCandidate);
-
   return (
     <Link
       href={isCandidate ? `/assessments/${slug}` : `/assessment/${slug}`}
+      target={!isCandidate ? "_blank" : undefined}
       aria-label="Start assessment"
       className={cn(
         "bg-white border border-gray-200 flex flex-col items-start justify-between rounded-2xl w-full group hover:shadow-lg duration-500 min-h-57 h-full",
