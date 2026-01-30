@@ -38,7 +38,7 @@ export default function CandidateGuard({
             );
 
             if (!isComplete && isRestrictedPath) {
-              router.push("/profile");
+              router.push("/profile-details/edit-account-and-identity");
               // Don't set loading to false to keep spinner while redirecting
               return;
             }

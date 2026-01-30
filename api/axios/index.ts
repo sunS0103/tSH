@@ -35,6 +35,7 @@ axiosClient.interceptors.request.use(
     if (typeof window !== "undefined") {
       const token = getCookie("token") as string | undefined;
       if (token) {
+        request.headers["ngrok-skip-browser-warning"] = "true";
         request.headers.Authorization = `Bearer ${token}`;
       }
     }

@@ -98,7 +98,8 @@ export default function EditEducation() {
       });
       if (response.success) {
         toast.success(response.message || "Education updated successfully");
-        router.push("/profile");
+        // Navigate to next section in onboarding flow
+        router.push("/profile-details/edit-skills");
       } else {
         toast.error(response.message || "Failed to update education");
       }
@@ -126,7 +127,7 @@ export default function EditEducation() {
   ];
 
   return (
-    <div className="bg-white border border-gray-200 rounded-2xl w-full max-w-3xl mx-auto mt-4 overflow-hidden">
+    <div className="bg-white border border-gray-200 rounded-2xl w-full mt-4 overflow-hidden">
       <div className="bg-primary-50 py-4 px-6">
         <h1 className="text-xl font-bold text-black">Edit Education</h1>
       </div>
@@ -291,7 +292,15 @@ export default function EditEducation() {
               <Button
                 type="button"
                 variant="secondary"
-                onClick={() => router.push("/profile")}
+                onClick={() => {
+                  const isOnboarding =
+                    window.location.pathname.includes("/profile-details/");
+                  router.push(
+                    isOnboarding
+                      ? "/profile-details/edit-employment"
+                      : "/profile"
+                  );
+                }}
                 className="h-8 px-4 "
               >
                 Cancel

@@ -13,7 +13,7 @@ export default function JobsWrapper() {
   useEffect(() => {
     const fetchJobFairStatus = async () => {
       const res = await getJobFairStatus();
-      setJobFairStatus(res.data.job_fair_plan_status);
+      setJobFairStatus(res.data?.job_fair_plan_status || false);
     };
     fetchJobFairStatus();
   }, []);

@@ -5,15 +5,18 @@ type PackageType = "FREE" | "BASIC" | "PREMIUM" | "PLATINUM";
 export const initiatePurchase = async ({
   assessment_id,
   packageType,
-}: {
+}: // currency,
+{
   assessment_id: string;
   packageType: PackageType;
+  // currency: "INR" | "USD";
 }) => {
   const res = await axios.post(
     `/assessment/${assessment_id}/initiate-purchase`,
     {
       package_type: packageType,
-    },
+      // currency,
+    }
   );
 
   return res.data;
@@ -25,7 +28,7 @@ export const verifyPayment = async (
     razorpay_order_id: string;
     razorpay_payment_id: string;
     razorpay_signature: string;
-  },
+  }
 ) => {
   const res = await axios.post(
     `/assessment/${assessment_id}/verify-payment`,
@@ -41,7 +44,7 @@ export const initiateCreditPurchase = async ({
   packageType: "TIER_1" | "TIER_2" | "TIER_3";
 }) => {
   const res = await axios.post(`/recruiter/credits/purchase/initiate`, {
-    pack_type: packageType
+    pack_type: packageType,
   });
   return res.data;
 };

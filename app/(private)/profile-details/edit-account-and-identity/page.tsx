@@ -4,9 +4,14 @@ import EditIdentityAndAccount from "@/components/profile/candidate-profile/edit-
 export const dynamic = "force-dynamic";
 
 export default function Page() {
-  const routes = [{ label: "Profile Details", href: "/profile" }];
+  const routes = [
+    {
+      label: "Profile Details",
+      href: "/profile-details/edit-account-and-identity",
+    },
+  ];
   return (
-    <div className="mt-4">
+    <div className="">
       <Breadcrumbs
         routes={routes}
         currentRoute={{

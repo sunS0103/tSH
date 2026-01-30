@@ -20,7 +20,6 @@ import { useForm } from "react-hook-form";
 import { toast } from "sonner";
 import z from "zod";
 import { Icon } from "@iconify/react";
-import { cn } from "@/lib/utils";
 
 const editPersonalSocialSchema = z.object({
   headline: z
@@ -35,13 +34,13 @@ const editPersonalSocialSchema = z.object({
     .string()
     .refine(
       (val) => !val || z.string().url().safeParse(val).success,
-      "Please enter a valid LinkedIn URL",
+      "Please enter a valid LinkedIn URL"
     ),
   github_url: z
     .string()
     .refine(
       (val) => !val || z.string().url().safeParse(val).success,
-      "Please enter a valid GitHub/Portfolio URL",
+      "Please enter a valid GitHub/Portfolio URL"
     ),
 });
 
@@ -73,7 +72,8 @@ export default function EditPersonalSocial() {
 
       if (response.success) {
         toast.success(response.message || "Profile updated successfully");
-        router.push("/profile");
+        // Navigate to next section in onboarding flow
+        router.push("/profile-details/edit-employment");
       }
     } catch (error: unknown) {
       const errorMessage =
@@ -94,11 +94,15 @@ export default function EditPersonalSocial() {
   };
 
   const handleCancel = () => {
-    router.push("/profile");
+    // Check if user is in onboarding flow or editing from profile
+    const isOnboarding = window.location.pathname.includes("/profile-details/");
+    router.push(
+      isOnboarding ? "/profile-details/edit-account-and-identity" : "/profile"
+    );
   };
 
   return (
-    <div className="max-w-3xl mx-auto mt-4">
+    <div className="mt-4">
       <div className="bg-white border border-gray-200 rounded-2xl w-full overflow-hidden">
         {/* Header */}
         <div className="bg-primary-50 py-4 px-6">
@@ -143,6 +147,20 @@ export default function EditPersonalSocial() {
                             </span>
                           </div>
                         </FormControl>
+                        <div className="text-xs text-gray-600 leading-relaxed space-y-1">
+                          <p className="font-medium ">
+                            This Short headline is the first thing recruiters
+                            see.
+                          </p>
+                          <p>Use a clear, role-based title</p>
+                          <p>Avoid skill lists - assessments show that.</p>
+                          <p className="font-medium mt-2">Examples:</p>
+                          <ul className="list-disc list-inside pl-2 space-y-0.5">
+                            <li>QA Automation Engineer</li>
+                            <li>SDET – Automation</li>
+                            <li>Test Engineer</li>
+                          </ul>
+                        </div>
                         <FormMessage />
                       </FormItem>
                     );
@@ -176,6 +194,20 @@ export default function EditPersonalSocial() {
                             </span>
                           </div>
                         </FormControl>
+                        <div className="text-xs text-gray-600 leading-relaxed space-y-1 -mt-3">
+                          <p>Use this space to briefly describe who you are as a professional — your experience level, core strengths, and the types of roles you're interested in.</p>
+                          <p className="font-medium mt-2">This is the only free-text section recruiters will see.</p>
+                          <p>All other profile insights are driven by your assessment scores.</p>
+                          <div className="flex items-start gap-1.5 mt-2 p-2 bg-amber-50 border border-amber-200 rounded">
+                            <Icon 
+                              icon="mdi:alert-circle-outline" 
+                              className="size-3.5 text-amber-600 mt-0.5 shrink-0" 
+                            />
+                            <p className="text-amber-800">
+                              Please do not include contact details, email IDs, phone numbers, or external links.
+                            </p>
+                          </div>
+                        </div>
                         <FormMessage />
                       </FormItem>
                     );
@@ -183,7 +215,7 @@ export default function EditPersonalSocial() {
                 />
               </div>
 
-              {/* Second Row: LinkedIn and GitHub URLs */}
+              {/* Second Row: LinkedIn URL */}
               <div className="flex flex-col md:flex-row gap-4">
                 <FormField
                   control={form.control}
@@ -198,33 +230,6 @@ export default function EditPersonalSocial() {
                           <Input
                             type="url"
                             placeholder="https://www.linkedin.com/in/your-profile"
-                            className="h-8 border-gray-900 pr-10"
-                            {...field}
-                          />
-                          <Icon
-                            icon="material-symbols:link"
-                            className="absolute right-3 top-1/2 -translate-y-1/2 size-4.5 text-gray-900 pointer-events-none"
-                          />
-                        </div>
-                      </FormControl>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
-
-                <FormField
-                  control={form.control}
-                  name="github_url"
-                  render={({ field }) => (
-                    <FormItem className="w-full md:w-1/2">
-                      <FormLabel className="text-sm font-medium text-black">
-                        GitHub / Portfolio URL
-                      </FormLabel>
-                      <FormControl>
-                        <div className="relative">
-                          <Input
-                            type="url"
-                            placeholder="https://github.com/your-profile"
                             className="h-8 border-gray-900 pr-10"
                             {...field}
                           />

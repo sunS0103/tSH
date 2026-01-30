@@ -1,4 +1,4 @@
-import { cn } from "@/lib/utils";
+import { cn, getScoreInterpretation } from "@/lib/utils";
 import TalentScoreSheet from "./talent-score-sheet";
 import TalentAboutModal from "./talent-about-modal";
 import InviteDialog, { InviteMode } from "./invite-dialog";
@@ -120,16 +120,12 @@ export default function TalentCard({
                 className="w-4.5 h-4.5 text-primary-500"
               />
             </Button>
-            <Button
-              variant="outline"
-              className="w-8 h-8 rounded-lg border border-primary-500 p-0 flex items-center justify-center hover:bg-primary-50 bg-white"
+            <button
+              className="text-primary-500 text-xs font-medium hover:underline transition-all"
               onClick={() => onRequestAssessment()}
             >
-              <Icon
-                icon="mdi:help-box-multiple-outline"
-                className="w-4.5 h-4.5 text-primary-500"
-              />
-            </Button>
+              Request Assessment
+            </button>
           </div>
         </div>
 
@@ -163,19 +159,12 @@ export default function TalentCard({
             </span>
           </Button>
 
-          <Button
-            variant="outline"
-            className="h-8 px-3 rounded-lg border border-primary-500 flex items-center justify-center gap-2 hover:bg-primary-50 bg-white"
+          <button
+            className="text-primary-500 text-sm font-medium hover:underline transition-all"
             onClick={() => onRequestAssessment()}
           >
-            <Icon
-              icon="mdi:help-box-multiple-outline"
-              className="w-4.5 h-4.5 text-primary-500"
-            />
-            <span className="text-center text-primary-500 text-sm font-normal font-sans">
-              Request Assessment
-            </span>
-          </Button>
+            Request Assessment
+          </button>
         </div>
       </div>
 
@@ -190,9 +179,14 @@ export default function TalentCard({
                   Total Score
                 </span>
               </TalentScoreSheet>
-              <span className="text-primary-500 text-lg font-semibold font-sans">
-                {totalScore}%
-              </span>
+              <div className="flex items-center gap-2">
+                <span className="text-primary-500 text-lg font-semibold font-sans">
+                  {totalScore}%
+                </span>
+                <span className="text-gray-600 text-sm font-medium font-sans">
+                  - {getScoreInterpretation(totalScore)}
+                </span>
+              </div>
             </div>
           </div>
 
