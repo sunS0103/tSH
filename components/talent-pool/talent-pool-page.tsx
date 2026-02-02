@@ -65,7 +65,7 @@ const mapCandidateToTalentCard = (
     location: candidate.location || "",
     assessmentTaken,
     assessments: candidate.assessments_taken, // Pass full assessment details
-    about: candidate.about || "",
+    about: candidate.bio || "",
     isFavorite,
   };
 };

@@ -186,7 +186,9 @@ export default function CandidateDashboard() {
             {profileCompletionPercentage.total_percentage < 100 && (
               <Button
                 className="bg-primary-500 text-white hover:bg-primary-600 w-full text-sm"
-                onClick={() => router.push("/profile-details/edit-account-and-identity")}
+                onClick={() =>
+                  router.push("/profile-details/edit-account-and-identity")
+                }
               >
                 Complete Your Profile
                 <Icon icon="mdi:arrow-top-right" className="ml-2 size-4" />
@@ -500,7 +502,7 @@ export default function CandidateDashboard() {
             </h2>
             {appliedJobs.length > 0 && (
               <Link
-                href="/jobs"
+                href="/jobs?tab=applied"
                 className="text-xs text-gray-900 underline hover:text-primary-500"
               >
                 View All

@@ -29,6 +29,7 @@ export default function ApplicantsList({
           application_status={applicant?.application_status}
           additionalDetailsStatus={applicant?.additionalDetailsStatus}
           notice_period={applicant?.notice_period}
+          is_invited={applicant?.is_invited}
         />
       ))}
     </div>

@@ -276,7 +276,7 @@ export default function Header() {
               </PopoverTrigger>
             </NotificationPopover>
 
-            <Logout data={userDetails} />
+            <Logout data={userDetails} role={role as string} />
           </div>
         </div>
       </header>
@@ -330,6 +330,7 @@ export default function Header() {
 
 function Logout({
   data,
+  role,
 }: {
   data?: {
     account_type: string;
@@ -341,6 +342,7 @@ function Logout({
     last_name: string;
     mobile_number: string;
   };
+  role: string;
 }) {
   const router = useRouter();
 
@@ -375,7 +377,13 @@ function Logout({
           <DropdownMenuItem
             className="cursor-pointer rounded-b-none"
             onClick={() => {
-              router.push("/profile-details/edit-account-and-identity");
+              if (role === "CANDIDATE") {
+                router.push("/profile-details/edit-account-and-identity");
+              }
+
+              if (role === "RECRUITER") {
+                router.push("/profile");
+              }
             }}
           >
             <Icon

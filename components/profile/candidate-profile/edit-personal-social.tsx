@@ -11,10 +11,8 @@ import {
   FormMessage,
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { getCookie } from "cookies-next/client";
 import { useRouter } from "next/navigation";
 import { useForm } from "react-hook-form";
 import { toast } from "sonner";
@@ -46,10 +44,16 @@ const editPersonalSocialSchema = z.object({
 
 type EditPersonalSocialFormData = z.infer<typeof editPersonalSocialSchema>;
 
-export default function EditPersonalSocial() {
+export default function EditPersonalSocial({
+  personalSocialData,
+}: {
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  personalSocialData: any;
+}) {
   const router = useRouter();
-  const cookieValue = getCookie("candidate_social_data");
-  const socialData = cookieValue ? JSON.parse(cookieValue as string) : null;
+  // const cookieValue = getCookie("candidate_social_data");
+  // const socialData = cookieValue ? JSON.parse(cookieValue as string) : null;
+  const socialData = personalSocialData;
 
   const form = useForm<EditPersonalSocialFormData>({
     resolver: zodResolver(editPersonalSocialSchema),
@@ -194,17 +198,29 @@ export default function EditPersonalSocial() {
                             </span>
                           </div>
                         </FormControl>
-                        <div className="text-xs text-gray-600 leading-relaxed space-y-1 -mt-3">
-                          <p>Use this space to briefly describe who you are as a professional — your experience level, core strengths, and the types of roles you're interested in.</p>
-                          <p className="font-medium mt-2">This is the only free-text section recruiters will see.</p>
-                          <p>All other profile insights are driven by your assessment scores.</p>
+                        <div className="text-xs text-gray-600 leading-relaxed space-y-1">
+                          <p>
+                            Use this space to briefly describe who you are as a
+                            professional — your experience level, core
+                            strengths, and the types of roles you're interested
+                            in.
+                          </p>
+                          <p className="font-medium mt-2">
+                            This is the only free-text section recruiters will
+                            see.
+                          </p>
+                          <p>
+                            All other profile insights are driven by your
+                            assessment scores.
+                          </p>
                           <div className="flex items-start gap-1.5 mt-2 p-2 bg-amber-50 border border-amber-200 rounded">
-                            <Icon 
-                              icon="mdi:alert-circle-outline" 
-                              className="size-3.5 text-amber-600 mt-0.5 shrink-0" 
+                            <Icon
+                              icon="mdi:alert-circle-outline"
+                              className="size-3.5 text-amber-600 mt-0.5 shrink-0"
                             />
                             <p className="text-amber-800">
-                              Please do not include contact details, email IDs, phone numbers, or external links.
+                              Please do not include contact details, email IDs,
+                              phone numbers, or external links.
                             </p>
                           </div>
                         </div>

@@ -67,6 +67,7 @@ interface StepContentProps {
   onPackageSelect?: (
     packageType: "FREE" | "BASIC" | "PREMIUM" | "PLATINUM"
   ) => void;
+  onCurrencyChange?: (currency: "INR" | "USD") => void;
 }
 
 export default function StepContent({
@@ -79,6 +80,7 @@ export default function StepContent({
   assessmentPayment,
   hasError,
   onPackageSelect,
+  onCurrencyChange,
 }: StepContentProps) {
   return (
     <div className={cn("flex flex-col gap-6", className)}>
@@ -122,11 +124,12 @@ export default function StepContent({
         {currentStep === 5 && (
           <FinalStartSection
             assessment_id={assessment.assessment_id}
-            payment={assessmentPayment || assessment.payment}
+            payment={assessmentPayment || (assessment.payment as Payment)}
             onUserAssessmentIdChange={onUserAssessmentIdChange}
             candidate_status={assessment.candidate_status}
             is_free_plan_available={assessment.is_free_plan_available}
             onPackageSelect={onPackageSelect}
+            onCurrencyChange={onCurrencyChange}
           />
         )}
       </div>

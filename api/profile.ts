@@ -43,8 +43,15 @@ export const updateCandidateProfile = async (data: {
   return response.data;
 };
 
-export const getCandidateSocial = async () => {
-  const response = await axios.get("/candidate/profile/social");
+export const getCandidateSocial = async (token?: string) => {
+  const config = token
+    ? {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      }
+    : {};
+  const response = await axios.get("/candidate/profile/social", config);
   return response.data;
 };
 
@@ -58,8 +65,15 @@ export const updateCandidateSocial = async (data: {
   return response.data;
 };
 
-export const getCurrentEmploymentDetails = async () => {
-  const response = await axios.get("/candidate/profile/employment");
+export const getCurrentEmploymentDetails = async (token?: string) => {
+  const config = token
+    ? {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      }
+    : {};
+  const response = await axios.get("/candidate/profile/employment", config);
   return response.data;
 };
 
@@ -143,8 +157,15 @@ export const updateBetweenJobsStatus = async (data: {
   return response.data;
 };
 
-export const getLocationAndWorkPreferences = async () => {
-  const response = await axios.get("candidate/profile/location");
+export const getLocationAndWorkPreferences = async (token?: string) => {
+  const config = token
+    ? {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      }
+    : {};
+  const response = await axios.get("candidate/profile/location", config);
   return response.data;
 };
 
@@ -163,8 +184,15 @@ export const updateLocationAndWorkPreferences = async (data: {
   return response.data;
 };
 
-export const getEducation = async () => {
-  const response = await axios.get("/candidate/profile/education");
+export const getEducation = async (token?: string) => {
+  const config = token
+    ? {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      }
+    : {};
+  const response = await axios.get("/candidate/profile/education", config);
   return response.data;
 };
 
@@ -179,8 +207,15 @@ export const updateEducation = async (data: {
   return response.data;
 };
 
-export const getSkills = async () => {
-  const response = await axios.get("/candidate/profile/skills");
+export const getSkills = async (token?: string) => {
+  const config = token
+    ? {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      }
+    : {};
+  const response = await axios.get("/candidate/profile/skills", config);
   return response.data;
 };
 

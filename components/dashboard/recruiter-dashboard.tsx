@@ -191,7 +191,7 @@ export default function RecruiterDashboard() {
     return {
       id: candidate.user_id,
       role: candidate.expertise || "N/A",
-      expertise: candidate.bio || "N/A",
+      expertise: candidate.about || "N/A",
       location_code: candidate.location || "N/A",
       totalScore: candidate.score || 0,
       skillsAssessed: candidate.skills_assessed?.map((s) => s.skill_name) || [],
@@ -202,7 +202,7 @@ export default function RecruiterDashboard() {
       assessmentTaken:
         candidate.assessments_taken?.map((a) => a.assessment_title) || [],
       assessments: candidate.assessments_taken || [],
-      about: candidate.about || "",
+      about: candidate.bio || "",
       isFavorite: candidate.is_favorite || false,
     };
   };

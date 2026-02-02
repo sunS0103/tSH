@@ -5,17 +5,17 @@ type PackageType = "FREE" | "BASIC" | "PREMIUM" | "PLATINUM";
 export const initiatePurchase = async ({
   assessment_id,
   packageType,
-}: // currency,
-{
+  currency,
+}: {
   assessment_id: string;
   packageType: PackageType;
-  // currency: "INR" | "USD";
+  currency: "INR" | "USD";
 }) => {
   const res = await axios.post(
     `/assessment/${assessment_id}/initiate-purchase`,
     {
       package_type: packageType,
-      // currency,
+      currency,
     }
   );
 
