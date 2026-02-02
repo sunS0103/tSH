@@ -38,12 +38,14 @@ import { toast } from "sonner";
 import z from "zod";
 import { useRouter } from "next/navigation";
 
-export default function EditIdentityAndAccount() {
-  const cookieValue = getCookie("profile_data");
-
+export default function EditIdentityAndAccount({
+  profileData,
+}: {
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  profileData: any;
+}) {
   const router = useRouter();
 
-  const profileData = cookieValue ? JSON.parse(cookieValue as string) : null;
   const initialDialCode = profileData?.mobile_details?.dial_code || "+91";
   const [selectedCountryCode, setSelectedCountryCode] =
     useState<string>(initialDialCode);

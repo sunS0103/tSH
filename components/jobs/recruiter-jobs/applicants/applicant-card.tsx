@@ -28,6 +28,8 @@ import {
   TooltipTrigger,
 } from "@/components/ui/tooltip";
 import { useRouter } from "next/navigation";
+import { getScoreInterpretation } from "@/lib/utils";
+import TalentScoreSheet from "@/components/talent-pool/talent-score-sheet";
 
 export interface ApplicantCardProps {
   jobId: string;
@@ -118,14 +120,14 @@ export default function ApplicantCard({
       .then((response) => {
         if (response.success) {
           toast.success(
-            response.message || "Applicant thumbs down successfully",
+            response.message || "Applicant thumbs down successfully"
           );
         }
         window.location.reload();
       })
       .catch((error) => {
         toast.error(
-          error.response.data.message || "Failed to thumbs down applicant",
+          error.response.data.message || "Failed to thumbs down applicant"
         );
       });
   };
@@ -138,14 +140,14 @@ export default function ApplicantCard({
       .then((response) => {
         if (response.success) {
           toast.success(
-            response.message || "Applicant thumbs down successfully",
+            response.message || "Applicant thumbs down successfully"
           );
           window.location.reload();
         }
       })
       .catch((error) => {
         toast.error(
-          error.response.data.message || "Failed to thumbs down applicant",
+          error.response.data.message || "Failed to thumbs down applicant"
         );
       });
   };
@@ -167,7 +169,7 @@ export default function ApplicantCard({
       })
       .catch((error) => {
         toast.error(
-          error.response.data.message || "Failed to handshake applicant",
+          error.response.data.message || "Failed to handshake applicant"
         );
       });
   };
@@ -212,30 +214,25 @@ export default function ApplicantCard({
                 className="w-5 h-5 text-primary-500"
               />
             )}
-            {/* <Button
-              variant="secondary"
-              size="icon"
-              onClick={onDownload}
-              aria-label="Download"
-              className="group"
-            >
-              <Icon
-                icon="material-symbols:download-rounded"
-                className="w-4 h-4 text-primary-500 group-hover:text-white"
-              />
-            </Button> */}
-            <Button
-              type="button"
-              variant="secondary"
-              onClick={handleAdditionalDetails}
-              disabled={additionalDetailsStatus === "REQUESTED"}
-            >
-              {additionalDetailsStatus === "REQUESTED"
-                ? "Pending Additional Details"
-                : additionalDetailsStatus === "SUBMITTED"
+
+            {!(
+              additionalDetailsStatus === "NOT_REQUESTED" &&
+              application_status === "HANDSHAKE"
+            ) && (
+              <Button
+                type="button"
+                variant="secondary"
+                onClick={handleAdditionalDetails}
+                disabled={additionalDetailsStatus === "REQUESTED"}
+              >
+                {additionalDetailsStatus === "REQUESTED"
+                  ? "Pending Additional Details"
+                  : additionalDetailsStatus === "SUBMITTED"
                   ? "View Additional Details"
                   : "Additional Details"}
-            </Button>
+              </Button>
+            )}
+
             <Button
               type="button"
               variant="secondary"
@@ -280,21 +277,32 @@ export default function ApplicantCard({
                   />
                   Download
                 </DropdownMenuItem> */}
-                <DropdownMenuItem
-                  onClick={handleAdditionalDetails}
-                  disabled={additionalDetailsStatus === "REQUESTED"}
-                  className="cursor-pointer"
-                >
-                  <Icon
-                    icon="material-symbols:info-outline-rounded"
-                    className="w-4 h-4 mr-2 text-gray-700"
-                  />
-                  {additionalDetailsStatus === "REQUESTED"
+
+                {/* {additionalDetailsStatus === "REQUESTED"
                     ? "Pending Additional Details"
                     : additionalDetailsStatus === "SUBMITTED"
+                    ? "View Additional Details"
+                    : "Additional Details"} */}
+
+                {!(
+                  additionalDetailsStatus === "NOT_REQUESTED" &&
+                  application_status === "HANDSHAKE"
+                ) && (
+                  <DropdownMenuItem
+                    onClick={handleAdditionalDetails}
+                    className="cursor-pointer"
+                  >
+                    <Icon
+                      icon="material-symbols:info-outline-rounded"
+                      className="w-4 h-4 mr-2 text-gray-700"
+                    />
+                    {additionalDetailsStatus === "REQUESTED"
+                      ? "Pending Additional Details"
+                      : additionalDetailsStatus === "SUBMITTED"
                       ? "View Additional Details"
                       : "Additional Details"}
-                </DropdownMenuItem>
+                  </DropdownMenuItem>
+                )}
                 <DropdownMenuItem
                   onClick={handleViewCustomForm}
                   className="cursor-pointer"
@@ -359,12 +367,20 @@ export default function ApplicantCard({
           <div className="flex flex-col gap-3 md:w-3/10">
             {/* Total Score */}
             <div className="flex flex-col gap-2">
-              <p className="text-xs font-medium text-gray-900 underline">
-                Total Score
-              </p>
-              <p className="text-lg font-semibold text-primary-500">
-                {score !== undefined ? `${score}%` : "-"}
-              </p>
+              <TalentScoreSheet assessments={[]}>
+                <p className="text-xs font-medium text-gray-900 underline">
+                  Total Score
+                </p>
+              </TalentScoreSheet>
+
+              <div className="flex items-center gap-2">
+                <p className="text-lg font-semibold text-primary-500">
+                  {score !== undefined ? `${score}%` : "-"}
+                </p>
+                <span className="text-gray-600 text-sm font-medium font-sans">
+                  - {getScoreInterpretation(score || 0)}
+                </span>
+              </div>
             </div>
 
             {/* Skill Assessed */}
