@@ -52,6 +52,7 @@ export interface ApplicantCardProps {
   onAdditionalDetails?: () => void;
   onViewCustomForm?: () => void;
   notice_period?: string;
+  is_invited?: boolean;
   // onThumbUp?: () => void;
   // onHandshake?: () => void;
   // onThumbDown?: () => void;
@@ -80,6 +81,7 @@ export default function ApplicantCard({
   onAdditionalDetails,
   onViewCustomForm,
   notice_period,
+  is_invited,
 }: ApplicantCardProps) {
   const [isCustomFormOpen, setIsCustomFormOpen] = useState(false);
   const [isAdditionalDetailsOpen, setIsAdditionalDetailsOpen] = useState(false);
@@ -111,14 +113,14 @@ export default function ApplicantCard({
       .then((response) => {
         if (response.success) {
           toast.success(
-            response.message || "Applicant thumbs down successfully"
+            response.message || "Applicant thumbs down successfully",
           );
         }
         window.location.reload();
       })
       .catch((error) => {
         toast.error(
-          error.response.data.message || "Failed to thumbs down applicant"
+          error.response.data.message || "Failed to thumbs down applicant",
         );
       });
   };
@@ -131,14 +133,14 @@ export default function ApplicantCard({
       .then((response) => {
         if (response.success) {
           toast.success(
-            response.message || "Applicant thumbs down successfully"
+            response.message || "Applicant thumbs down successfully",
           );
           window.location.reload();
         }
       })
       .catch((error) => {
         toast.error(
-          error.response.data.message || "Failed to thumbs down applicant"
+          error.response.data.message || "Failed to thumbs down applicant",
         );
       });
   };
@@ -160,7 +162,7 @@ export default function ApplicantCard({
       })
       .catch((error) => {
         toast.error(
-          error.response.data.message || "Failed to handshake applicant"
+          error.response.data.message || "Failed to handshake applicant",
         );
       });
   };
@@ -182,6 +184,11 @@ export default function ApplicantCard({
             {last_name && (
               <span className="text-xl font-bold text-gray-900">
                 {last_name}
+              </span>
+            )}
+            {is_invited && (
+              <span className="text-xs text-lime-600">
+                - Invited by recruiter
               </span>
             )}
           </div>
@@ -221,8 +228,8 @@ export default function ApplicantCard({
               {additionalDetailsStatus === "REQUESTED"
                 ? "Pending Additional Details"
                 : additionalDetailsStatus === "SUBMITTED"
-                ? "View Additional Details"
-                : "Additional Details"}
+                  ? "View Additional Details"
+                  : "Additional Details"}
             </Button>
             <Button
               type="button"
@@ -280,8 +287,8 @@ export default function ApplicantCard({
                   {additionalDetailsStatus === "REQUESTED"
                     ? "Pending Additional Details"
                     : additionalDetailsStatus === "SUBMITTED"
-                    ? "View Additional Details"
-                    : "Additional Details"}
+                      ? "View Additional Details"
+                      : "Additional Details"}
                 </DropdownMenuItem>
                 <DropdownMenuItem
                   onClick={handleViewCustomForm}
