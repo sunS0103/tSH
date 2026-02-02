@@ -1,3 +1,5 @@
+"use client";
+
 import Link from "next/link";
 import { Icon } from "@iconify/react";
 
@@ -5,6 +7,7 @@ import { Badge } from "@/components/ui/badge";
 import { cn, formatDuration } from "@/lib/utils";
 import { Tooltip, TooltipContent, TooltipTrigger } from "../ui/tooltip";
 import { getCookie } from "cookies-next/client";
+import { useEffect, useState } from "react";
 
 interface Topics {
   id: string;
@@ -38,12 +41,21 @@ export default function AssessmentCard({
   const displayedTopics = topics.slice(0, 2);
   const remainingCount = topics.length - 2;
 
-  const userRole = getCookie("user_role");
-
-  const isCandidate = userRole === "CANDIDATE";
+  // const userRole = getCookie("user_role");
 
   const undisplayedTopics = topics.slice(2, topics.length);
   const isTaken = selectedTab === "taken";
+
+  const [userRole, setUserRole] = useState<string | undefined>();
+
+  useEffect(() => {
+    setUserRole(getCookie("user_role") as string | undefined);
+  }, []);
+
+  const isCandidate = userRole === "CANDIDATE";
+
+  console.log(isCandidate);
+  console.log(userRole);
 
   const cardContent = (
     <>
