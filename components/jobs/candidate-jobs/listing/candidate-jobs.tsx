@@ -79,7 +79,7 @@ export default function CandidateJobs() {
 
   const getFilterType = useCallback(
     (
-      filterId: string,
+      filterId: string
     ): "work_mode" | "assessments" | "primary_skills" | null => {
       for (const group of filterItems) {
         if ("work_mode" in group) {
@@ -100,20 +100,20 @@ export default function CandidateJobs() {
       }
       return null;
     },
-    [filterItems],
+    [filterItems]
   );
 
   useEffect(() => {
     const fetchJobs = async () => {
       try {
         const workModeFilters = selectedFilters.filter(
-          (filterId) => getFilterType(filterId) === "work_mode",
+          (filterId) => getFilterType(filterId) === "work_mode"
         );
         const primarySkillsFilters = selectedFilters.filter(
-          (filterId) => getFilterType(filterId) === "primary_skills",
+          (filterId) => getFilterType(filterId) === "primary_skills"
         );
         const assessmentsFilters = selectedFilters.filter(
-          (filterId) => getFilterType(filterId) === "assessments",
+          (filterId) => getFilterType(filterId) === "assessments"
         );
 
         setIsLoading(true);
@@ -140,6 +140,9 @@ export default function CandidateJobs() {
             sortBy: "created_at",
             sortDirection: "desc",
             applied_only: 1,
+            work_mode: workModeFilters,
+            primary_skills: primarySkillsFilters,
+            assessments: assessmentsFilters,
           });
 
           res = response;
