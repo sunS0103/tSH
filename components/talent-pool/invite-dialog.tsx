@@ -105,7 +105,7 @@ export default function InviteDialog({
       let data: any;
 
       if (isJob) {
-        data = await getRecruiterJobs({ status: ["active"] });
+        data = await getRecruiterJobs({ status: "active" });
         const list = Array.isArray(data) ? data : data?.data || [];
         setItems(list);
         setHasMore(false); // Jobs don't have pagination in this API
@@ -198,7 +198,7 @@ export default function InviteDialog({
     } catch (error: any) {
       console.error("Error submitting:", error);
       toast.error(
-        error?.response?.data?.message || "An error occurred while submitting"
+        error?.response?.data?.message || "An error occurred while submitting",
       );
     } finally {
       setIsSubmitting(false);
@@ -235,7 +235,7 @@ export default function InviteDialog({
     const timeoutId = setTimeout(() => {
       // For assessments, we now use a custom scroll container in PopoverContent
       const scrollContainer = document.getElementById(
-        "assessment-scroll-container"
+        "assessment-scroll-container",
       );
 
       if (!scrollContainer) return;
@@ -386,7 +386,7 @@ export default function InviteDialog({
                               key={value}
                               className={cn(
                                 "flex items-center gap-3 px-4 py-2 hover:bg-gray-50 cursor-pointer border-b border-gray-100 last:border-0",
-                                isSelected && "bg-primary-50/50"
+                                isSelected && "bg-primary-50/50",
                               )}
                               onClick={() => handleToggle(value)}
                             >
