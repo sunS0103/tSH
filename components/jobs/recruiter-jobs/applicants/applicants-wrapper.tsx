@@ -49,21 +49,21 @@ export default function ApplicantsWrapper({ jobId }: { jobId: string }) {
 
   const [applicants, setApplicants] = useState<ApplicantCardProps[]>([]);
   const [searchQuery, setSearchQuery] = useState(
-    searchParams.get("query") || "",
+    searchParams.get("query") || ""
   );
   const [debouncedSearchQuery, setDebouncedSearchQuery] = useState(
-    searchParams.get("query") || "",
+    searchParams.get("query") || ""
   );
   const [selectedFilters, setSelectedFilters] = useState<string[]>(
-    searchParams.getAll("status"),
+    searchParams.getAll("status")
   );
   const [currentPage, setCurrentPage] = useState(
-    Number(searchParams.get("page")) || 1,
+    Number(searchParams.get("page")) || 1
   );
   const [totalPages, setTotalPages] = useState(1);
   const [isLoading, setIsLoading] = useState(false);
   const [sortValue, setSortValue] = useState(
-    searchParams.get("sort") || "applied_at",
+    searchParams.get("sort") || "applied_at"
   );
   const debounceTimerRef = useRef<NodeJS.Timeout | null>(null);
 
@@ -129,7 +129,7 @@ export default function ApplicantsWrapper({ jobId }: { jobId: string }) {
         setTotalPages(
           pagination?.totalPages ||
             Math.ceil((pagination?.total || 0) / ITEMS_PER_PAGE) ||
-            1,
+            1
         );
       }
     } catch (error) {

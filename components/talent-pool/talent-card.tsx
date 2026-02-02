@@ -106,7 +106,7 @@ export default function TalentCard({
                 }
                 className={cn(
                   "w-4.5 h-4.5",
-                  isFavorite ? "text-primary-500" : "text-primary-500"
+                  isFavorite ? "text-primary-500" : "text-primary-500",
                 )}
               />
             </Button>
@@ -140,7 +140,7 @@ export default function TalentCard({
               icon={isFavorite ? "mdi:cards-heart" : "mdi:cards-heart-outline"}
               className={cn(
                 "w-4.5 h-4.5",
-                isFavorite ? "text-primary-500" : "text-primary-500"
+                isFavorite ? "text-primary-500" : "text-primary-500",
               )}
             />
           </Button>
@@ -195,16 +195,20 @@ export default function TalentCard({
               Skill Assessed
             </span>
             <div className="flex w-full flex-wrap gap-2 content-center items-center">
-              {skillsAssessed.slice(0, 3).map((skill, index) => (
-                <div
-                  key={index}
-                  className="px-2 py-1 rounded-full border border-gray-600 flex justify-center items-center gap-2"
-                >
-                  <span className="text-center text-black text-xs font-medium font-sans capitalize">
-                    {skill}
-                  </span>
-                </div>
-              ))}
+              {skillsAssessed.length > 0 ? (
+                skillsAssessed.slice(0, 3).map((skill, index) => (
+                  <div
+                    key={index}
+                    className="px-2 py-1 rounded-full border border-gray-600 flex justify-center items-center gap-2"
+                  >
+                    <span className="text-center text-black text-xs font-medium font-sans capitalize">
+                      {skill}
+                    </span>
+                  </div>
+                ))
+              ) : (
+                <span className="text-gray-500 text-sm font-sans">-</span>
+              )}
               {skillsAssessed.length > 3 && (
                 <TooltipProvider>
                   <Tooltip>
@@ -236,50 +240,42 @@ export default function TalentCard({
 
         {/* Middle Column: Details (Responsive Grid on Mobile, Column on Desktop) */}
         <div className="w-full xl:w-52 grid grid-cols-2 xl:flex xl:flex-col xl:justify-center items-start gap-x-4 gap-y-4 shrink-0">
-          {experience && (
-            <div className="flex justify-start items-center gap-2">
-              <Icon
-                icon="mdi:card-account-details-outline"
-                className="w-4.5 h-4.5 text-gray-900"
-              />
-              <span className="text-center text-gray-900 text-base font-normal font-sans">
-                {experience} years
-              </span>
-            </div>
-          )}
-          {company && (
-            <div className="flex justify-start items-center gap-2 min-w-0">
-              <Icon
-                icon="mdi:office-building-outline"
-                className="w-4.5 h-4.5 text-gray-900 shrink-0"
-              />
-              <span className="text-gray-900 text-base font-normal font-sans truncate">
-                {company}
-              </span>
-            </div>
-          )}
-          {availability && (
-            <div className="flex justify-start items-center gap-2">
-              <Icon
-                icon="mdi:timer-outline"
-                className="w-4.5 h-4.5 text-gray-900"
-              />
-              <span className="text-center text-gray-900 text-base font-normal font-sans">
-                {availability}
-              </span>
-            </div>
-          )}
-          {location && (
-            <div className="flex justify-start items-start gap-2">
-              <Icon
-                icon="mdi:map-marker-outline"
-                className="w-4.5 h-4.5 text-gray-900 mt-0.5"
-              />
-              <span className="text-gray-900 text-base font-normal font-sans">
-                {location}
-              </span>
-            </div>
-          )}
+          <div className="flex justify-start items-center gap-2">
+            <Icon
+              icon="mdi:card-account-details-outline"
+              className="w-4.5 h-4.5 text-gray-900"
+            />
+            <span className="text-center text-gray-900 text-base font-normal font-sans">
+              {experience ? `${experience} years` : "-"}
+            </span>
+          </div>
+          <div className="flex justify-start items-center gap-2 min-w-0">
+            <Icon
+              icon="mdi:office-building-outline"
+              className="w-4.5 h-4.5 text-gray-900 shrink-0"
+            />
+            <span className="text-gray-900 text-base font-normal font-sans truncate">
+              {company ?? "-"}
+            </span>
+          </div>
+          <div className="flex justify-start items-center gap-2">
+            <Icon
+              icon="mdi:timer-outline"
+              className="w-4.5 h-4.5 text-gray-900"
+            />
+            <span className="text-center text-gray-900 text-base font-normal font-sans">
+              {availability ?? "-"}
+            </span>
+          </div>
+          <div className="flex justify-start items-start gap-2">
+            <Icon
+              icon="mdi:map-marker-outline"
+              className="w-4.5 h-4.5 text-gray-900 mt-0.5"
+            />
+            <span className="text-gray-900 text-base font-normal font-sans">
+              {location ?? "-"}
+            </span>
+          </div>
         </div>
 
         {/* Right Column: Assessments & About */}
@@ -289,21 +285,25 @@ export default function TalentCard({
               Assessment Taken
             </span>
             <div className="flex justify-start items-center gap-2 flex-wrap">
-              {assessments?.map((assessment, index) => (
-                <Link
-                  key={index}
-                  href={`/assessment/${assessment.assessment_slug}`}
-                  target="_blank"
-                  className="h-6 px-3 py-1 rounded-full border border-primary-500 bg-primary-50 flex flex-col justify-center items-start gap-2.5 transition-colors cursor-pointer"
-                >
-                  <span
-                    className="text-center text-xs italic font-medium font-sans text-primary-500 underline transition-colors max-w-52 truncate"
-                    title={assessment.assessment_title}
+              {assessments && assessments?.length > 0 ? (
+                assessments?.map((assessment, index) => (
+                  <Link
+                    key={index}
+                    href={`/assessment/${assessment.assessment_slug}`}
+                    target="_blank"
+                    className="h-6 px-3 py-1 rounded-full border border-primary-500 bg-primary-50 flex flex-col justify-center items-start gap-2.5 transition-colors cursor-pointer"
                   >
-                    {assessment.assessment_title}
-                  </span>
-                </Link>
-              ))}
+                    <span
+                      className="text-center text-xs italic font-medium font-sans text-primary-500 underline transition-colors max-w-52 truncate"
+                      title={assessment.assessment_title}
+                    >
+                      {assessment.assessment_title}
+                    </span>
+                  </Link>
+                ))
+              ) : (
+                <span className="text-gray-500 text-sm font-sans">-</span>
+              )}
             </div>
           </div>
           <div className="w-full flex flex-col justify-start items-start gap-1">
@@ -311,18 +311,26 @@ export default function TalentCard({
               About
             </span>
             <div className="self-stretch">
-              <span className="text-gray-800 text-sm font-normal font-sans leading-relaxed">
-                {about.length <= 200 ? about : `${about.substring(0, 200)}... `}
-              </span>
-              {about.length > 200 && (
-                <TalentAboutModal
-                  about={about}
-                  trigger={
-                    <span className="text-primary-500 text-sm cursor-pointer font-normal underline ml-1 hover:text-primary-600 font-sans ">
-                      Learn More
-                    </span>
-                  }
-                />
+              {about && about.length > 0 ? (
+                <>
+                  <span className="text-gray-800 text-sm font-normal font-sans leading-relaxed">
+                    {about.length <= 200
+                      ? about
+                      : `${about.substring(0, 200)}... `}
+                  </span>
+                  {about.length > 200 && (
+                    <TalentAboutModal
+                      about={about}
+                      trigger={
+                        <span className="text-primary-500 text-sm cursor-pointer font-normal underline ml-1 hover:text-primary-600 font-sans ">
+                          Learn More
+                        </span>
+                      }
+                    />
+                  )}
+                </>
+              ) : (
+                <span className="text-gray-500 text-sm font-sans">-</span>
               )}
             </div>
           </div>

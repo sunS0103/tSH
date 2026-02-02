@@ -120,14 +120,14 @@ export default function ApplicantCard({
       .then((response) => {
         if (response.success) {
           toast.success(
-            response.message || "Applicant thumbs down successfully"
+            response.message || "Applicant thumbs down successfully",
           );
         }
         window.location.reload();
       })
       .catch((error) => {
         toast.error(
-          error.response.data.message || "Failed to thumbs down applicant"
+          error.response.data.message || "Failed to thumbs down applicant",
         );
       });
   };
@@ -140,14 +140,14 @@ export default function ApplicantCard({
       .then((response) => {
         if (response.success) {
           toast.success(
-            response.message || "Applicant thumbs down successfully"
+            response.message || "Applicant thumbs down successfully",
           );
           window.location.reload();
         }
       })
       .catch((error) => {
         toast.error(
-          error.response.data.message || "Failed to thumbs down applicant"
+          error.response.data.message || "Failed to thumbs down applicant",
         );
       });
   };
@@ -169,7 +169,7 @@ export default function ApplicantCard({
       })
       .catch((error) => {
         toast.error(
-          error.response.data.message || "Failed to handshake applicant"
+          error.response.data.message || "Failed to handshake applicant",
         );
       });
   };
@@ -228,8 +228,8 @@ export default function ApplicantCard({
                 {additionalDetailsStatus === "REQUESTED"
                   ? "Pending Additional Details"
                   : additionalDetailsStatus === "SUBMITTED"
-                  ? "View Additional Details"
-                  : "Additional Details"}
+                    ? "View Additional Details"
+                    : "Additional Details"}
               </Button>
             )}
 
@@ -267,23 +267,6 @@ export default function ApplicantCard({
                 </Button>
               </DropdownMenuTrigger>
               <DropdownMenuContent align="end" className="w-56">
-                {/* <DropdownMenuItem
-                  onClick={onDownload}
-                  className="cursor-pointer"
-                >
-                  <Icon
-                    icon="material-symbols:download-rounded"
-                    className="w-4 h-4 mr-2 text-gray-700"
-                  />
-                  Download
-                </DropdownMenuItem> */}
-
-                {/* {additionalDetailsStatus === "REQUESTED"
-                    ? "Pending Additional Details"
-                    : additionalDetailsStatus === "SUBMITTED"
-                    ? "View Additional Details"
-                    : "Additional Details"} */}
-
                 {!(
                   additionalDetailsStatus === "NOT_REQUESTED" &&
                   application_status === "HANDSHAKE"
@@ -299,8 +282,8 @@ export default function ApplicantCard({
                     {additionalDetailsStatus === "REQUESTED"
                       ? "Pending Additional Details"
                       : additionalDetailsStatus === "SUBMITTED"
-                      ? "View Additional Details"
-                      : "Additional Details"}
+                        ? "View Additional Details"
+                        : "Additional Details"}
                   </DropdownMenuItem>
                 )}
                 <DropdownMenuItem
@@ -367,7 +350,26 @@ export default function ApplicantCard({
           <div className="flex flex-col gap-3 md:w-3/10">
             {/* Total Score */}
             <div className="flex flex-col gap-2">
-              <TalentScoreSheet assessments={[]}>
+              <TalentScoreSheet
+                assessments={
+                  score !== undefined
+                    ? [
+                        {
+                          assessment_id: application_id || "generated-id",
+                          assessment_title: "Skill Assessment",
+                          assessment_slug: "skill-assessment",
+                          completed_at: new Date().toISOString(),
+                          score_percentage: score,
+                          skills_assessed: skills.map((skill) => ({
+                            skill_id: skill.id,
+                            skill_name: skill.name,
+                            count: 1,
+                          })),
+                        },
+                      ]
+                    : []
+                }
+              >
                 <p className="text-xs font-medium text-gray-900 underline">
                   Total Score
                 </p>

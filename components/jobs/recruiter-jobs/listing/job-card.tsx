@@ -57,7 +57,7 @@ export default function JobCard({
     }
   };
 
-  const experienceRange = experience_range || "N/A";
+  const experienceRange = experience_range || "-";
 
   const visibleSkills = skills.slice(0, 2);
   const remainingSkills = skills.length - 2;
@@ -82,7 +82,7 @@ export default function JobCard({
           <div
             className={cn(
               "px-2 py-0.5 rounded-full flex justify-center items-center",
-              getStatusColor(status),
+              getStatusColor(status)
             )}
           >
             <span className="text-xs italic font-normal font-sans text-center">

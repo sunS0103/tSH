@@ -41,14 +41,14 @@ export default function AssessmentRecruiterRequestedGrid({
       {assessments.map((assessment) => {
         // Handle different possible field names from API
         const assessmentName = assessment.assessment_title || "Assessment name";
-        const name = assessment.name || "N/A";
-        const companyEmail = assessment.company_email || "N/A";
-        const skillsToAssess = assessment.skills_to_assess || "N/A";
-        const phoneNumber = assessment.mobile_number || "N/A";
+        const name = assessment.name || "-";
+        const companyEmail = assessment.company_email || "-";
+        const skillsToAssess = assessment.skills_to_assess || "-";
+        const phoneNumber = assessment.mobile_number || "-";
         const assessmentCreationPreference =
-          assessment.assessment_creation_preference || "N/A";
-        const jobDescription = assessment.job_description || "N/A";
-        const customInstructions = assessment.custom_instructions || "N/A";
+          assessment.assessment_creation_preference || "-";
+        const jobDescription = assessment.job_description || "-";
+        const customInstructions = assessment.custom_instructions || "-";
 
         return (
           <AssessmentRecruiterRequestedCard
