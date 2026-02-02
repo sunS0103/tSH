@@ -22,6 +22,11 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipTrigger,
+} from "@/components/ui/tooltip";
 import { useRouter } from "next/navigation";
 
 export interface ApplicantCardProps {
@@ -89,9 +94,9 @@ export default function ApplicantCard({
 
   const router = useRouter();
 
-  // Display first 10 skills, show +N for remaining
-  const displayedSkills = skills.slice(0, 10);
-  const remainingSkillsCount = skills.length - 10;
+  // Display first 3 skills, show +N for remaining
+  const displayedSkills = skills.slice(0, 3);
+  const remainingSkillsCount = skills.length - 3;
 
   const handleViewCustomForm = () => {
     setIsCustomFormOpen(true);
@@ -379,12 +384,23 @@ export default function ApplicantCard({
                     </Badge>
                   ))}
                   {remainingSkillsCount > 0 && (
-                    <Badge
-                      variant="outline"
-                      className="border-gray-700 text-black text-xs font-normal px-2 py-1 rounded-full"
-                    >
-                      +{remainingSkillsCount}
-                    </Badge>
+                    <Tooltip>
+                      <TooltipTrigger asChild>
+                        <Badge
+                          variant="outline"
+                          className="border-gray-700 text-black text-xs font-normal px-2 py-1 rounded-full cursor-pointer"
+                        >
+                          +{remainingSkillsCount}
+                        </Badge>
+                      </TooltipTrigger>
+                      <TooltipContent className="bg-white text-black border-gray-200">
+                        <ul className="list-disc list-inside">
+                          {skills.slice(3).map((skill) => (
+                            <li key={skill.id}>{skill.name}</li>
+                          ))}
+                        </ul>
+                      </TooltipContent>
+                    </Tooltip>
                   )}
                 </div>
               ) : (

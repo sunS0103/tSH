@@ -60,7 +60,7 @@ export default function AssessmentRecruiterRequestedCard({
               <p className="text-gray-900 text-xs font-medium text-center">
                 Company Email
               </p>
-              <p className="text-black text-sm font-medium w-full">
+              <p className="text-black text-sm font-medium w-full truncate">
                 {companyEmail}
               </p>
             </div>
@@ -72,7 +72,7 @@ export default function AssessmentRecruiterRequestedCard({
               <p className="text-gray-900 text-xs font-medium text-center">
                 Skills to Assess
               </p>
-              <p className="text-black text-sm font-medium w-full">
+              <p className="text-black text-sm font-medium w-full truncate">
                 {skillsToAssess}
               </p>
             </div>
