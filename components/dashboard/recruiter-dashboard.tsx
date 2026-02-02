@@ -96,10 +96,10 @@ export default function RecruiterDashboard() {
               job.status === "published"
                 ? "Active"
                 : job.status === "in_review"
-                  ? "In Review"
-                  : job.status === "draft"
-                    ? "Draft"
-                    : job.status,
+                ? "In Review"
+                : job.status === "draft"
+                ? "Draft"
+                : job.status,
             experience_range: job.experience_range || "",
             companyName: job.company_name,
             skills: skillsArray,
@@ -118,7 +118,7 @@ export default function RecruiterDashboard() {
         });
         if (talentsRes?.data) {
           const mappedTalents = talentsRes.data.map((candidate: Candidate) =>
-            mapCandidateToTalentCard(candidate),
+            mapCandidateToTalentCard(candidate)
           );
           setFavoriteTalents(mappedTalents.slice(0, 2));
         }
@@ -158,14 +158,14 @@ export default function RecruiterDashboard() {
 
   const handleToggleFavorite = async (
     candidateId: string,
-    currentStatus: boolean,
+    currentStatus: boolean
   ) => {
     try {
       // Optimistically update the UI to toggle the state immediately
       setFavoriteTalents((prev) =>
         prev.map((t) =>
-          t.id === candidateId ? { ...t, isFavorite: !currentStatus } : t,
-        ),
+          t.id === candidateId ? { ...t, isFavorite: !currentStatus } : t
+        )
       );
 
       if (currentStatus) {
@@ -180,8 +180,8 @@ export default function RecruiterDashboard() {
       // Revert the optimistic update on error
       setFavoriteTalents((prev) =>
         prev.map((t) =>
-          t.id === candidateId ? { ...t, isFavorite: currentStatus } : t,
-        ),
+          t.id === candidateId ? { ...t, isFavorite: currentStatus } : t
+        )
       );
     }
   };
@@ -190,15 +190,15 @@ export default function RecruiterDashboard() {
   const mapCandidateToTalentCard = (candidate: Candidate) => {
     return {
       id: candidate.user_id,
-      role: candidate.expertise || "N/A",
-      expertise: candidate.about || "N/A",
-      location_code: candidate.location || "N/A",
+      role: candidate.expertise || "-",
+      expertise: candidate.about || "-",
+      location_code: candidate.location || "-",
       totalScore: candidate.score || 0,
       skillsAssessed: candidate.skills_assessed?.map((s) => s.skill_name) || [],
       experience: candidate.years_of_experience || 0,
-      company: candidate.company || "N/A",
-      availability: candidate.availability || "N/A",
-      location: candidate.location || "N/A",
+      company: candidate.company || "-",
+      availability: candidate.availability || "-",
+      location: candidate.location || "-",
       assessmentTaken:
         candidate.assessments_taken?.map((a) => a.assessment_title) || [],
       assessments: candidate.assessments_taken || [],
@@ -592,28 +592,24 @@ export default function RecruiterDashboard() {
                     assessmentName={
                       assessment.assessment_title ||
                       assessment.assessmentName ||
-                      "N/A"
+                      "-"
                     }
-                    name={assessment.name || "N/A"}
+                    name={assessment.name || "-"}
                     companyEmail={
-                      assessment.company_email ||
-                      assessment.companyEmail ||
-                      "N/A"
+                      assessment.company_email || assessment.companyEmail || "-"
                     }
                     skillsToAssess={
                       assessment.skills_to_assess ||
                       assessment.skillsToAssess ||
-                      "N/A"
+                      "-"
                     }
                     phoneNumber={
-                      assessment.mobile_number ||
-                      assessment.phoneNumber ||
-                      "N/A"
+                      assessment.mobile_number || assessment.phoneNumber || "-"
                     }
                     assessmentCreationPreference={
                       assessment.assessment_creation_preference ||
                       assessment.assessmentCreationPreference ||
-                      "N/A"
+                      "-"
                     }
                     jobDescription={
                       assessment.job_description || assessment.jobDescription
