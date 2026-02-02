@@ -303,7 +303,7 @@ export default function TalentPoolPage() {
 
   // Initialize state from URL params on mount
   useEffect(() => {
-    const query = searchParams.get("query") || "";
+    const query = searchParams.get("search") || "";
     const page = searchParams.get("page");
     const filters = searchParams.get("filters");
     const sortByParam = searchParams.get("sortBy");
