@@ -6,7 +6,12 @@ import { Icon } from "@iconify/react";
 import { Button } from "@/components/ui/button";
 import { getDashboardStatistics } from "@/api/recruiter/dashboard";
 import { getRecruiterJobs } from "@/api/jobs/recruiter";
-import { getRecruiterTalentPool, Candidate } from "@/api/recruiter/talent-pool";
+import {
+  Candidate,
+  getRecruiterTalentPool,
+  addFavoriteTalent,
+  removeFavoriteTalent,
+} from "@/api/recruiter/talent-pool";
 import {
   getAssessmentList,
   getRequestedAssessmentsList,
@@ -150,6 +155,36 @@ export default function RecruiterDashboard() {
 
     fetchDashboardData();
   }, []);
+
+  const handleToggleFavorite = async (
+    candidateId: string,
+    currentStatus: boolean,
+  ) => {
+    try {
+      // Optimistically update the UI to toggle the state immediately
+      setFavoriteTalents((prev) =>
+        prev.map((t) =>
+          t.id === candidateId ? { ...t, isFavorite: !currentStatus } : t,
+        ),
+      );
+
+      if (currentStatus) {
+        await removeFavoriteTalent(candidateId);
+        // Remove from the list as the view is for favorites only
+        setFavoriteTalents((prev) => prev.filter((t) => t.id !== candidateId));
+      } else {
+        await addFavoriteTalent(candidateId);
+      }
+    } catch (error) {
+      console.error("Error toggling favorite:", error);
+      // Revert the optimistic update on error
+      setFavoriteTalents((prev) =>
+        prev.map((t) =>
+          t.id === candidateId ? { ...t, isFavorite: currentStatus } : t,
+        ),
+      );
+    }
+  };
 
   // Helper function to map candidate to talent card format
   const mapCandidateToTalentCard = (candidate: Candidate) => {
@@ -433,7 +468,7 @@ export default function RecruiterDashboard() {
                     key={talent.id}
                     id={talent.id}
                     role={talent.role}
-                    expertise={talent.expertise}
+                    expertise={talent.about}
                     location_code={talent.location_code}
                     totalScore={talent.totalScore}
                     skillsAssessed={talent.skillsAssessed}
@@ -445,7 +480,9 @@ export default function RecruiterDashboard() {
                     assessments={talent.assessments}
                     about={talent.about}
                     isFavorite={talent.isFavorite}
-                    onToggleFavorite={() => {}}
+                    onToggleFavorite={() =>
+                      handleToggleFavorite(talent.id, talent.isFavorite)
+                    }
                   />
                 ))}
               </div>
