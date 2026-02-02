@@ -1,5 +1,6 @@
 "use client";
 
+import Link from "next/link";
 import {
   Accordion,
   AccordionContent,
@@ -24,7 +25,7 @@ import { Checkbox } from "@/components/ui/checkbox";
 import { Label } from "@/components/ui/label";
 import { UseFormReturn } from "react-hook-form";
 import { type JobFormData } from "@/validation/job";
-import { useState, useEffect, useRef } from "react";
+import { useState, useEffect, useRef, MouseEvent } from "react";
 import { getAssessmentList } from "@/api/assessments";
 import { Search } from "lucide-react";
 import { Icon } from "@iconify/react";
@@ -105,7 +106,7 @@ export default function AssessmentAccordion({
           // Avoid duplicates
           const existingIds = new Set(prev.map((a) => a.id));
           const newAssessments = assessmentsData.filter(
-            (a: Assessment) => !existingIds.has(a.id)
+            (a: Assessment) => !existingIds.has(a.id),
           );
           return [...prev, ...newAssessments];
         });
@@ -118,7 +119,7 @@ export default function AssessmentAccordion({
       if (response?.meta?.pagination) {
         setHasMore(
           response.meta.pagination.currentPage <
-            response.meta.pagination.totalPages
+            response.meta.pagination.totalPages,
         );
       } else {
         setHasMore(assessmentsData.length === 3);
@@ -155,7 +156,7 @@ export default function AssessmentAccordion({
   useEffect(() => {
     const assessmentIds = Array.isArray(mandateAssessment)
       ? mandateAssessment.map((item) =>
-          typeof item === "string" ? String(item) : String(item.id)
+          typeof item === "string" ? String(item) : String(item.id),
         )
       : [];
 
@@ -242,12 +243,12 @@ export default function AssessmentAccordion({
 
                   // Extract IDs for matching
                   const selectedIds = selectedAssessmentsArray.map((item) =>
-                    typeof item === "string" ? item : item.id
+                    typeof item === "string" ? item : item.id,
                   );
 
                   // Get selected assessments from the loaded assessments list
                   const selectedAssessments = assessments.filter((assessment) =>
-                    selectedIds.includes(String(assessment.id))
+                    selectedIds.includes(String(assessment.id)),
                   );
 
                   // Toggle assessment selection
@@ -261,12 +262,12 @@ export default function AssessmentAccordion({
                         currentValue.filter((item) => {
                           const id = typeof item === "string" ? item : item.id;
                           return id !== assessmentId;
-                        })
+                        }),
                       );
                     } else {
                       // Find the assessment to add
                       const assessmentToAdd = assessments.find(
-                        (a) => String(a.id) === assessmentId
+                        (a) => String(a.id) === assessmentId,
                       );
                       if (assessmentToAdd) {
                         // Add as object with id and title
@@ -307,7 +308,7 @@ export default function AssessmentAccordion({
                               className={cn(
                                 "min-h-8 h-fit w-2/4 justify-between bg-transparent text-left font-normal",
                                 "border-input hover:bg-transparent",
-                                "text-sm"
+                                "text-sm",
                               )}
                               disabled={isLoadingAssessments}
                             >
@@ -316,7 +317,7 @@ export default function AssessmentAccordion({
                                   "flex-1 text-wrap wrap-break-word pr-2 text-sm ",
                                   hasValue
                                     ? "text-foreground"
-                                    : "text-muted-foreground"
+                                    : "text-muted-foreground",
                                 )}
                               >
                                 {isLoadingAssessments
@@ -352,7 +353,7 @@ export default function AssessmentAccordion({
                                       e.preventDefault();
                                       const firstButton =
                                         scrollContainerRef.current?.querySelector(
-                                          "button"
+                                          "button",
                                         ) as HTMLButtonElement;
                                       if (firstButton) firstButton.focus();
                                     }
@@ -379,7 +380,7 @@ export default function AssessmentAccordion({
                                 <>
                                   {assessments.map((assessment, index) => {
                                     const isSelected = selectedIds.includes(
-                                      String(assessment.id)
+                                      String(assessment.id),
                                     );
                                     return (
                                       <div
@@ -389,7 +390,7 @@ export default function AssessmentAccordion({
                                           isSelected && "bg-gray-50",
                                           index === 0 &&
                                             assessments.length > 0 &&
-                                            "rounded-t-2xl"
+                                            "rounded-t-2xl",
                                         )}
                                         onClick={() =>
                                           handleToggle(String(assessment.id))
@@ -400,12 +401,27 @@ export default function AssessmentAccordion({
                                           onCheckedChange={() =>
                                             handleToggle(String(assessment.id))
                                           }
-                                          className="size-5"
-                                          onClick={(e) => e.stopPropagation()}
+                                          className="size-5 cursor-pointer"
+                                          onClick={(e: MouseEvent) =>
+                                            e.stopPropagation()
+                                          }
                                         />
-                                        <Label className="text-base font-normal text-black cursor-pointer flex-1">
-                                          {assessment.title}
-                                        </Label>
+                                        {assessment.slug ? (
+                                          <Link
+                                            href={`/assessment/${assessment.slug}`}
+                                            target="_blank"
+                                            onClick={(e: MouseEvent) =>
+                                              e.stopPropagation()
+                                            }
+                                            className="text-base font-normal text-black cursor-pointer flex-1 hover:underline hover:text-primary-600"
+                                          >
+                                            {assessment.title}
+                                          </Link>
+                                        ) : (
+                                          <Label className="text-base font-normal text-black cursor-pointer flex-1">
+                                            {assessment.title}
+                                          </Label>
+                                        )}
                                       </div>
                                     );
                                   })}

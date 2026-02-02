@@ -296,7 +296,10 @@ export default function TalentCard({
                   target="_blank"
                   className="h-6 px-3 py-1 rounded-full border border-primary-500 bg-primary-50 flex flex-col justify-center items-start gap-2.5 transition-colors cursor-pointer"
                 >
-                  <span className="text-center text-xs italic font-medium font-sans text-primary-500 underline transition-colors">
+                  <span
+                    className="text-center text-xs italic font-medium font-sans text-primary-500 underline transition-colors max-w-52 truncate"
+                    title={assessment.assessment_title}
+                  >
                     {assessment.assessment_title}
                   </span>
                 </Link>
