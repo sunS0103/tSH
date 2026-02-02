@@ -353,7 +353,7 @@ export default function TalentPoolPage() {
     const params = new URLSearchParams();
 
     if (debouncedSearchQuery) {
-      params.set("query", debouncedSearchQuery);
+      params.set("search", debouncedSearchQuery);
     }
     if (currentPage > 1) {
       params.set("page", currentPage.toString());
