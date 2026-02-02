@@ -22,10 +22,14 @@ const employmentStatusOptions = [
   { label: "Between Jobs", value: "Between Jobs" },
 ];
 
-export default function EditEmployment() {
+export default function EditEmployment({
+  currentEmploymentData,
+}: {
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  currentEmploymentData: any;
+}) {
   const router = useRouter();
-  const cookieValue = getCookie("current_employment_details_data");
-  const employmentData = cookieValue ? JSON.parse(cookieValue as string) : null;
+  const employmentData = currentEmploymentData;
 
   const [employmentStatus, setEmploymentStatus] = React.useState<
     "Employed" | "Student" | "Fresher" | "Between Jobs"
@@ -59,7 +63,7 @@ export default function EditEmployment() {
             <Select
               onValueChange={(value) =>
                 setEmploymentStatus(
-                  value as "Employed" | "Student" | "Fresher" | "Between Jobs",
+                  value as "Employed" | "Student" | "Fresher" | "Between Jobs"
                 )
               }
               value={employmentStatus}

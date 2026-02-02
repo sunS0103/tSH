@@ -74,14 +74,12 @@ interface CategoryOption {
   name: string;
 }
 
-export default function EditSkills() {
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+export default function EditSkills({ skillsData }: { skillsData: any }) {
   const [skills, setSkills] = useState<SkillOption[]>([]);
   const [categories, setCategories] = useState<CategoryOption[]>([]);
   const router = useRouter();
   const isFormInitialized = useRef(false);
-
-  const cookieValue = getCookie("skills_data");
-  const skillsData = cookieValue ? JSON.parse(cookieValue as string) : null;
 
   // Helper function to validate and filter IDs
   const validateIds = (

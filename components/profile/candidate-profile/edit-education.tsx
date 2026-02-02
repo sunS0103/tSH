@@ -33,7 +33,12 @@ interface EditEducationFormData {
   academic_status: "Completed" | "Final Year" | "Pursuing" | null;
 }
 
-export default function EditEducation() {
+export default function EditEducation({
+  educationData,
+}: {
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  educationData: any;
+}) {
   const router = useRouter();
 
   // const educationSchema = z
@@ -75,9 +80,6 @@ export default function EditEducation() {
 
     academic_status: z.enum(["Completed", "Final Year", "Pursuing"]).nullable(),
   });
-
-  const cookieValue = getCookie("education_data");
-  const educationData = cookieValue ? JSON.parse(cookieValue as string) : null;
 
   const form = useForm<EditEducationFormData>({
     resolver: zodResolver(educationSchema),
@@ -218,12 +220,12 @@ export default function EditEducation() {
                           // Remove any non-numeric characters
                           const numericValue = e.target.value.replace(
                             /\D/g,
-                            "",
+                            ""
                           );
                           e.target.value = numericValue;
                           // Set to null if empty, otherwise convert to number
                           field.onChange(
-                            numericValue === "" ? null : Number(numericValue),
+                            numericValue === "" ? null : Number(numericValue)
                           );
                         }}
                         onKeyDown={(e) => {
@@ -266,7 +268,7 @@ export default function EditEducation() {
                     <Select
                       onValueChange={(value) => {
                         field.onChange(
-                          value as "Completed" | "Final Year" | "Pursuing",
+                          value as "Completed" | "Final Year" | "Pursuing"
                         );
                       }}
                       value={field.value || undefined}
