@@ -9,6 +9,7 @@ export default function FinalStartSection({
   candidate_status,
   is_free_plan_available,
   onPackageSelect,
+  onCurrencyChange,
 }: {
   assessment_id: string;
   is_free_plan_available: boolean;
@@ -30,6 +31,7 @@ export default function FinalStartSection({
   onPackageSelect?: (
     packageType: "FREE" | "BASIC" | "PREMIUM" | "PLATINUM"
   ) => void;
+  onCurrencyChange?: (currency: "INR" | "USD") => void;
 }) {
   const [selectedPackage, setSelectedPackage] = useState<
     "FREE" | "BASIC" | "PREMIUM" | "PLATINUM" | null
@@ -59,9 +61,10 @@ export default function FinalStartSection({
         is_free_plan_available={is_free_plan_available}
         onPackageSelect={handlePackageSelect}
         selectedPackage={selectedPackage}
+        onCurrencyChange={onCurrencyChange}
       />
-      {candidate_status === "INVITED" && (
-        <p className="text-xs text-gray-700 mt-4">
+      {candidate_status !== "COMPLETED" && candidate_status !== null && (
+        <p className="text-base text-black mt-4">
           *Note: You have already invited to the assessment. Please check your
           email for the assessment link.
         </p>

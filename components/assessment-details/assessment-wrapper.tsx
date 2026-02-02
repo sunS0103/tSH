@@ -87,12 +87,16 @@ export default function AssessmentWrapper({
   );
 
   const [assessmentPayment, setAssessmentPayment] = useState<Payment | null>(
-    assessment?.payment || null
+    assessment && assessment.payment ? (assessment.payment as Payment) : null
   );
 
   const [selectedPackageType, setSelectedPackageType] = useState<
     "FREE" | "BASIC" | "PREMIUM" | "PLATINUM" | null
   >(assessment?.payment?.package_type || null);
+
+  const [selectedCurrency, setSelectedCurrency] = useState<"INR" | "USD">(
+    "INR"
+  );
 
   const [isStartNowDialogOpen, setIsStartNowDialogOpen] = useState(false);
   const [isStartLaterDialogOpen, setIsStartLaterDialogOpen] = useState(false);
@@ -302,6 +306,10 @@ export default function AssessmentWrapper({
     setSelectedPackageType(packageType);
   };
 
+  const handleCurrencyChange = (currency: "INR" | "USD") => {
+    setSelectedCurrency(currency);
+  };
+
   // Get user data from cookies for payment
   const getProfileData = () => {
     try {
@@ -390,6 +398,7 @@ export default function AssessmentWrapper({
     const orderData = await initiatePurchase({
       assessment_id: assessmentId,
       packageType,
+      currency: selectedCurrency,
     });
 
     // Open Razorpay checkout for paid packages
@@ -679,6 +688,7 @@ export default function AssessmentWrapper({
             assessmentPayment={assessmentPayment}
             hasError={Boolean(stepErrors[currentStep])}
             onPackageSelect={handlePackageSelect}
+            onCurrencyChange={handleCurrencyChange}
           />
         </div>
       </div>
@@ -705,13 +715,16 @@ export default function AssessmentWrapper({
             </Button>
 
             {currentStep === totalSteps && (
-              <div className="flex flex-row gap-2 md:gap-6 items-center justify-end w-fit">
+              <div className="flex flex-row gap-2 items-center justify-end w-fit">
                 {/* Start Assessment Later */}
                 <div className="flex flex-col items-center gap-2 max-w-xs">
                   <Button
-                    disabled={assessment.candidate_status === "INVITED"}
+                    disabled={
+                      assessment.candidate_status !== "COMPLETED" &&
+                      assessment.candidate_status !== null
+                    }
                     variant="secondary"
-                    className="text-xs sm:text-sm px-1 py-2 w-fit"
+                    className="text-xs sm:text-sm px-1 md:px-4 py-2 w-fit"
                     onClick={handleStartLaterButtonClick}
                   >
                     Start Assessment Later
@@ -759,8 +772,11 @@ export default function AssessmentWrapper({
                 {/* Start Assessment Now */}
                 <div className="flex flex-col items-center gap-2 max-w-xs">
                   <Button
-                    disabled={assessment.candidate_status === "INVITED"}
-                    className="text-xs px-1 py-2 w-fit"
+                    disabled={
+                      assessment.candidate_status !== "COMPLETED" &&
+                      assessment.candidate_status !== null
+                    }
+                    className="text-xs sm:text-sm px-1 md:px-4 py-2 w-fit"
                     onClick={handleStartNowButtonClick}
                   >
                     Start Assessment Now

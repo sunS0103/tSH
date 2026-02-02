@@ -76,10 +76,11 @@ type LocationAndWorkPreferenceFormData = z.infer<
   typeof locationAndWorkPreferenceSchema
 >;
 
-export default function EditLocationAndWorkPreference() {
+export default function EditLocationAndWorkPreference(
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  { locationData }: { locationData: any }
+) {
   const router = useRouter();
-  const cookieValue = getCookie("location_and_work_preferences_data");
-  const locationData = cookieValue ? JSON.parse(cookieValue as string) : null;
 
   const [workModeOptions, setWorkModeOptions] = useState<
     { id: number; name: string }[]

@@ -1,13 +1,17 @@
 import ProfileOnboardingWrapper from "@/components/profile/profile-onboarding-wrapper";
+import { cookies } from "next/headers";
+import { redirect } from "next/navigation";
 
-export default function ProfileDetailsLayout({
+export default async function ProfileDetailsLayout({
   children,
 }: Readonly<{
   children: React.ReactNode;
 }>) {
-  return (
-    <ProfileOnboardingWrapper>
-      {children}
-    </ProfileOnboardingWrapper>
-  );
+  const cookieStore = await cookies();
+  const role = cookieStore.get("user_role")?.value;
+
+  if (role === "RECRUITER") {
+    redirect("/profile");
+  }
+  return <ProfileOnboardingWrapper>{children}</ProfileOnboardingWrapper>;
 }

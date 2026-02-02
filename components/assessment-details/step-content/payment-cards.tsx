@@ -24,6 +24,7 @@ export interface Payment {
   package_type: "FREE" | "BASIC" | "PREMIUM" | "PLATINUM";
   purchase_status: "ACTIVE" | "INACTIVE" | "NOT_PURCHASED";
   purchased_at: number | null;
+  currency: "INR" | "USD";
 }
 
 export default function PaymentCards({
@@ -33,6 +34,7 @@ export default function PaymentCards({
   onUserAssessmentIdChange,
   onPackageSelect,
   selectedPackage,
+  onCurrencyChange,
 }: {
   assessment_id: string;
   payment: Payment | null;
@@ -49,6 +51,7 @@ export default function PaymentCards({
     packageType: "FREE" | "BASIC" | "PREMIUM" | "PLATINUM"
   ) => void;
   selectedPackage?: "FREE" | "BASIC" | "PREMIUM" | "PLATINUM" | null;
+  onCurrencyChange?: (currency: "INR" | "USD") => void;
 }) {
   const [paymentSuccessData, setPaymentSuccessData] = useState<Payment | null>(
     payment || null
@@ -60,29 +63,39 @@ export default function PaymentCards({
   // Detect user's currency based on location
   const getDefaultCurrency = (): "INR" | "USD" => {
     try {
-      // Method 1: Try to get timezone
-      const timezone = Intl.DateTimeFormat().resolvedOptions().timeZone;
-      if (
-        timezone.includes("Asia/Kolkata") ||
-        timezone.includes("Asia/Calcutta")
-      ) {
-        return "INR";
-      }
+      if (payment?.currency) {
+        return payment?.currency;
+      } else {
+        // Method 1: Try to get timezone
+        const timezone = Intl.DateTimeFormat().resolvedOptions().timeZone;
+        if (
+          timezone.includes("Asia/Kolkata") ||
+          timezone.includes("Asia/Calcutta")
+        ) {
+          return "INR";
+        }
 
-      // Method 2: Try to get locale
-      const locale = navigator.language || (navigator as any).userLanguage;
-      if (locale && locale.toLowerCase().includes("in")) {
-        return "INR";
-      }
+        // Method 2: Try to get locale
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        const locale = navigator.language || (navigator as any).userLanguage;
+        if (locale && locale.toLowerCase().includes("in")) {
+          return "INR";
+        }
 
-      // Default to USD for all other countries
-      return "USD";
+        // Default to USD for all other countries
+        return "USD";
+      }
     } catch {
       return "USD"; // Default fallback
     }
   };
 
   const [currency, setCurrency] = useState<"INR" | "USD">(getDefaultCurrency());
+
+  // Notify parent of currency changes
+  useEffect(() => {
+    onCurrencyChange?.(currency);
+  }, [currency, onCurrencyChange]);
 
   // Pricing maps for different currencies
   const pricingMap = {
@@ -103,6 +116,7 @@ export default function PaymentCards({
   // Sync local selection with prop when it changes
   useEffect(() => {
     if (selectedPackage !== undefined) {
+      // eslint-disable-next-line react-hooks/set-state-in-effect
       setLocalSelectedPackage(selectedPackage);
     }
   }, [selectedPackage]);
@@ -169,6 +183,7 @@ export default function PaymentCards({
                   package_type: res.data.payment.package_type,
                   purchase_status: res.data.payment.purchase_status,
                   purchased_at: res.data.payment.purchased_at,
+                  currency: res.data.payment.currency,
                 });
               }
             });
@@ -266,6 +281,7 @@ export default function PaymentCards({
       const orderData = await initiatePurchase({
         assessment_id: assessment_id,
         packageType,
+        currency,
       });
 
       if (packageType === "FREE") {

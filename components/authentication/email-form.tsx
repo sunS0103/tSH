@@ -120,7 +120,7 @@ export default function EmailForm({ role }: EmailFormProps) {
       .then((response) => {
         if (response.success) {
           toast.success(
-            response.message || "OTP sent successfully to your email",
+            response.message || "OTP sent successfully to your email"
           );
           setStep("otp");
           setTimer(59);
@@ -142,7 +142,7 @@ export default function EmailForm({ role }: EmailFormProps) {
       .then((response) => {
         if (response.success) {
           toast.success(
-            response.message || "OTP sent successfully to your email",
+            response.message || "OTP sent successfully to your email"
           );
           setTimer(59);
           setCanResend(false);
@@ -239,10 +239,13 @@ export default function EmailForm({ role }: EmailFormProps) {
 
       if ((error as { code?: string })?.code === "auth/popup-closed-by-user") {
         errorMessage = "Google sign-in popup window closed by user";
-      } else if ((error as unknown as { message?: string })?.message) {
+      } else if (
+        (error as unknown as { response?: { data?: { message?: string } } })
+          ?.response?.data?.message
+      ) {
         errorMessage =
-          (error as unknown as { message?: string })?.message ||
-          "Failed to sign in with Google";
+          (error as unknown as { response?: { data?: { message?: string } } })
+            ?.response?.data?.message || "Failed to sign in with Google";
       }
 
       toast.error(errorMessage);
@@ -320,8 +323,8 @@ export default function EmailForm({ role }: EmailFormProps) {
             <div className="space-y-2">
               <div className="flex items-end justify-between">
                 <div className="space-y-2">
-                  <Label>
-                    OTP <span className="text-destructive ms-1">*</span>
+                  <Label className="gap-0">
+                    OTP<span className="text-destructive ms-1">*</span>
                   </Label>
                   <InputOTP
                     maxLength={4}
