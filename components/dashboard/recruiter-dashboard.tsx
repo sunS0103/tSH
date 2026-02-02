@@ -198,7 +198,7 @@ export default function RecruiterDashboard() {
       experience: candidate.years_of_experience || 0,
       company: candidate.company || "N/A",
       availability: candidate.availability || "N/A",
-      location: candidate.city || candidate.location || "N/A",
+      location: candidate.location || "N/A",
       assessmentTaken:
         candidate.assessments_taken?.map((a) => a.assessment_title) || [],
       assessments: candidate.assessments_taken || [],
@@ -468,7 +468,7 @@ export default function RecruiterDashboard() {
                     key={talent.id}
                     id={talent.id}
                     role={talent.role}
-                    expertise={talent.about}
+                    expertise={talent.expertise}
                     location_code={talent.location_code}
                     totalScore={talent.totalScore}
                     skillsAssessed={talent.skillsAssessed}
