@@ -77,6 +77,35 @@ function FAQAccordion({ onDownloadGuideClick }: { onDownloadGuideClick: () => vo
 
   const faqs: FAQItem[] = [
     {
+      icon: Users,
+      question: "Is this skill assessment only for candidates who are actively looking for a job change?",
+      answer: `Not at all.
+
+Once you take an assessment, your score and profile remain active on the platform for over a year.
+
+So even if you're not planning a job switch right now, recruiters can still discover your profile when:
+• Your skills match their requirements, and
+• The opportunity aligns with your expected salary and preferences.
+
+Who knows — a great opportunity you simply can't ignore might knock on your door when you're present on the platform with your skills at the core.
+
+You're always in control and can choose to respond only when the right opportunity comes along.`
+    },
+    {
+      icon: Award,
+      question: "Is the skill score useful only for jobs, or can it help with freelancing and side-hustle opportunities too?",
+      answer: `It goes beyond full-time jobs.
+
+Your assessment score is a verified proof of your skill level, and we plan to use it for more than just hiring.
+
+In Phase 2 of TechSmartHire, we will introduce a freelance and job-support marketplace where:
+• Professionals and teams needing short-term help can search for talent based on skill scores
+• They can invite suitable candidates for freelance tasks, job support, or short projects
+• Once you connect, you're free to take the discussion offline and complete the work independently.
+
+A strong score today can unlock both career opportunities and side-income opportunities tomorrow.`
+    },
+    {
       icon: Lock,
       question: "Will my score and personal details be visible to everyone?",
       answer: `Absolutely not. Recruiters can only see masked profiles with scores — no name, no email, no phone number.
@@ -385,7 +414,7 @@ export default function DynamicAssessmentPageClient({ config }: DynamicAssessmen
   const [timeLeft, setTimeLeft] = useState({ days: 0, hours: 0, minutes: 0 });
 
   useEffect(() => {
-    const launchDate = new Date('2026-02-05T00:00:00').getTime();
+    const launchDate = new Date('2026-02-06T18:00:00').getTime();
 
     const timer = setInterval(() => {
       const now = new Date().getTime();
@@ -921,7 +950,7 @@ export default function DynamicAssessmentPageClient({ config }: DynamicAssessmen
         <div className="absolute inset-0 bg-[linear-gradient(to_right,#ffffff10_1px,transparent_1px),linear-gradient(to_bottom,#ffffff10_1px,transparent_1px)] bg-size-[64px_64px]"></div>
 
         <div className="relative max-w-4xl mx-auto px-6 text-center">
-          {new Date() >= new Date('2026-02-05T00:00:00') ? (
+          {new Date() >= new Date('2026-02-06T18:00:00') ? (
             // PHASE 2: Assessments Are Open - UNLOCKED
             <>
               <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-white/20 border border-white/30 text-sm font-semibold mb-4 animate-pulse">
@@ -1009,7 +1038,7 @@ export default function DynamicAssessmentPageClient({ config }: DynamicAssessmen
                 </div>
 
                 <p className="text-sm text-emerald-200 mt-3">
-                  Button will unlock automatically on Feb 6 at 12:00 AM
+                  Button will unlock automatically on Feb 6 at 6:00 PM
                 </p>
               </div>
 
