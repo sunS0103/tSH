@@ -22,8 +22,15 @@ export const updateRecruiterProfile = async (data: {
   return response.data;
 };
 
-export const getCandidateProfile = async () => {
-  const response = await axios.get("/candidate/profile/basic-details");
+export const getCandidateProfile = async (token?: string) => {
+  const config = token
+    ? {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      }
+    : {};
+  const response = await axios.get("/candidate/profile/basic-details", config);
   return response.data;
 };
 

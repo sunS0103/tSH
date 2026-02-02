@@ -123,14 +123,14 @@ export default function EditPersonalSocial({
               className="flex flex-col gap-4"
             >
               {/* First Row: Short Headline and Describe Yourself */}
-              <div className="flex items-start flex-col md:flex-row gap-4">
+              <div className="grid grid-cols-1 md:grid-cols-2 items-start gap-4">
                 <FormField
                   control={form.control}
                   name="headline"
                   render={({ field }) => {
                     const charCount = field.value?.length || 0;
                     return (
-                      <FormItem className="w-full md:w-1/2">
+                      <FormItem className="w-full">
                         <FormLabel
                           required
                           className="text-sm font-medium text-black"
@@ -177,7 +177,7 @@ export default function EditPersonalSocial({
                   render={({ field }) => {
                     const charCount = field.value?.length || 0;
                     return (
-                      <FormItem className="w-full md:w-1/2">
+                      <FormItem className="w-full">
                         <FormLabel
                           required
                           className="text-sm font-medium text-black"
@@ -202,8 +202,8 @@ export default function EditPersonalSocial({
                           <p>
                             Use this space to briefly describe who you are as a
                             professional — your experience level, core
-                            strengths, and the types of roles you're interested
-                            in.
+                            strengths, and the types of roles you&apos;re
+                            interested in.
                           </p>
                           <p className="font-medium mt-2">
                             This is the only free-text section recruiters will
