@@ -40,10 +40,10 @@ export default function CandidateJobCard({
     city && country
       ? `${city.name}, ${country.name}`
       : city
-        ? city.name
-        : country
-          ? country.name
-          : "-";
+      ? city.name
+      : country
+      ? country.name
+      : "-";
 
   const assessments = relevant_assessments || [];
 
@@ -81,7 +81,7 @@ export default function CandidateJobCard({
                 className="text-xs  font-sans text-gray-900 font-medium truncate w-full"
                 title={company_name || ""}
               >
-                {company_name || "N/A"}
+                {company_name || "-"}
               </span>
             </div>
 
@@ -120,7 +120,7 @@ export default function CandidateJobCard({
                       href={`/assessments/${assessment.slug}`}
                       key={assessment.id || index}
                       className={cn(
-                        "text-xs font-medium px-3 py-1 rounded-full border-none underline bg-primary-50 transition-all duration-300",
+                        "text-xs font-medium px-3 py-1 rounded-full border-none underline bg-primary-50 transition-all duration-300"
                       )}
                       onClick={(e) => e.stopPropagation()}
                     >
@@ -128,7 +128,7 @@ export default function CandidateJobCard({
                         key={assessment.id || index}
                         variant="outline"
                         className={cn(
-                          "text-xs font-medium italic px-3 py-1 rounded-full border-none underline text-primary-500 transition-all duration-300",
+                          "text-xs font-medium italic px-3 py-1 rounded-full border-none underline text-primary-500 transition-all duration-300"
                         )}
                       >
                         {assessment.title || `EXAM-${assessment.id}`}

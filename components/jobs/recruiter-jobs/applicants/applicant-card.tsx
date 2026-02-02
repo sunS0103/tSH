@@ -267,23 +267,6 @@ export default function ApplicantCard({
                 </Button>
               </DropdownMenuTrigger>
               <DropdownMenuContent align="end" className="w-56">
-                {/* <DropdownMenuItem
-                  onClick={onDownload}
-                  className="cursor-pointer"
-                >
-                  <Icon
-                    icon="material-symbols:download-rounded"
-                    className="w-4 h-4 mr-2 text-gray-700"
-                  />
-                  Download
-                </DropdownMenuItem> */}
-
-                {/* {additionalDetailsStatus === "REQUESTED"
-                    ? "Pending Additional Details"
-                    : additionalDetailsStatus === "SUBMITTED"
-                    ? "View Additional Details"
-                    : "Additional Details"} */}
-
                 {!(
                   additionalDetailsStatus === "NOT_REQUESTED" &&
                   application_status === "HANDSHAKE"
