@@ -30,7 +30,7 @@ interface EditEducationFormData {
   specialization: string;
   university_name?: string;
   graduation_year: number | null;
-  academic_status: "Completed" | "Final Year" | "Pursuing" | null;
+  academic_status: "Completed" | "Final Year" | "Pursuing";
 }
 
 export default function EditEducation({
@@ -78,7 +78,9 @@ export default function EditEducation({
       .max(2100, "Invalid graduation year")
       .nullable(),
 
-    academic_status: z.enum(["Completed", "Final Year", "Pursuing"]).nullable(),
+    academic_status: z.enum(["Completed", "Final Year", "Pursuing"], {
+      message: "Academic status is required",
+    }),
   });
 
   const form = useForm<EditEducationFormData>({
@@ -88,7 +90,7 @@ export default function EditEducation({
       specialization: educationData?.specialization || "",
       university_name: educationData?.university_name || "",
       graduation_year: educationData?.graduation_year || null,
-      academic_status: educationData?.academic_status || null,
+      academic_status: educationData?.academic_status,
     },
   });
 

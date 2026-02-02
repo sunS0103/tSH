@@ -333,7 +333,7 @@ export default function JobApplyForm({
               return (
                 <div
                   key={fieldId}
-                  className="flex flex-col gap-2 w-full relative"
+                  className="grid grid-cols-1 gap-2 w-full relative"
                 >
                   <Label className="text-sm font-medium text-gray-900">
                     {field.title}{" "}

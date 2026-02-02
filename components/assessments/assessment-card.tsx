@@ -49,13 +49,11 @@ export default function AssessmentCard({
   const [userRole, setUserRole] = useState<string | undefined>();
 
   useEffect(() => {
+    // eslint-disable-next-line react-hooks/set-state-in-effect
     setUserRole(getCookie("user_role") as string | undefined);
   }, []);
 
   const isCandidate = userRole === "CANDIDATE";
-
-  console.log(isCandidate);
-  console.log(userRole);
 
   const cardContent = (
     <>
@@ -173,7 +171,7 @@ export default function AssessmentCard({
       <div
         className={cn(
           "bg-white border border-gray-200 flex flex-col items-start justify-between rounded-2xl w-full min-h-57",
-          className,
+          className
         )}
       >
         {cardContent}
@@ -188,7 +186,7 @@ export default function AssessmentCard({
       aria-label="Start assessment"
       className={cn(
         "bg-white border border-gray-200 flex flex-col items-start justify-between rounded-2xl w-full group hover:shadow-lg duration-500 min-h-57 h-full",
-        className,
+        className
       )}
     >
       {cardContent}
