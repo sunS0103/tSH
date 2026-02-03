@@ -11,6 +11,7 @@ import {
   DialogTitle,
   DialogTrigger,
 } from "@/components/ui/dialog";
+import { Loader } from "@/components/ui/loader";
 import { cn } from "@/lib/utils";
 import { Icon } from "@iconify/react";
 import { getCookie } from "cookies-next/client";
@@ -59,6 +60,7 @@ export default function PaymentCards({
   const [localSelectedPackage, setLocalSelectedPackage] = useState<
     "FREE" | "BASIC" | "PREMIUM" | "PLATINUM" | null
   >(selectedPackage || payment?.package_type || null);
+  const [isPaymentLoading, setIsPaymentLoading] = useState(false);
 
   // Detect user's currency based on location
   const getDefaultCurrency = (): "INR" | "USD" => {
@@ -276,6 +278,7 @@ export default function PaymentCards({
   const handlePurchase = async (
     packageType: "FREE" | "BASIC" | "PREMIUM" | "PLATINUM"
   ) => {
+    setIsPaymentLoading(true);
     try {
       // 1️⃣ Create Order
       const orderData = await initiatePurchase({
@@ -291,7 +294,7 @@ export default function PaymentCards({
           .then((res) => {
             if (res.success) {
               window.open(res.data.invite_link, "_blank");
-              router.push(`/assessments?tab=taken`);
+              router.push(`/assessments`);
             }
           })
           .catch((err) => {
@@ -303,7 +306,7 @@ export default function PaymentCards({
         return;
       }
 
-      // 2️⃣ Open Razorpay and wait for completion
+      // 2️⃣ Open Razorpay and wait for completion (verifyPayment runs in handler)
       await openRazorpayCheckout({
         orderData,
         user,
@@ -321,6 +324,8 @@ export default function PaymentCards({
     } catch (err: any) {
       toast.error(err.response?.data?.message || "Payment failed");
       throw err; // Re-throw to let parent handler know
+    } finally {
+      setIsPaymentLoading(false);
     }
   };
 
@@ -349,6 +354,7 @@ export default function PaymentCards({
 
   return (
     <div>
+      <Loader show={isPaymentLoading} />
       {/* Currency Switcher */}
       <div className="flex items-center justify-between mb-6 mt-4">
         <div className="flex items-center gap-2">
