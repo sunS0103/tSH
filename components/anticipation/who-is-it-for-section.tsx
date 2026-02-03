@@ -3,6 +3,7 @@
 import { motion } from "framer-motion";
 import { UserCircle, Briefcase, CheckCircle2 } from "lucide-react";
 import { useRouter } from "next/navigation";
+import { useSession } from "next-auth/react";
 
 interface WhoIsItForSectionProps {
   onRoleSelect: (role: "candidate" | "recruiter") => void;
@@ -12,6 +13,19 @@ const WhoIsItForSection: React.FC<WhoIsItForSectionProps> = ({
   onRoleSelect,
 }) => {
   const router = useRouter();
+  const { data: session, status } = useSession();
+  
+  const handleButtonClick = (role: "candidate" | "recruiter") => {
+    // If user is logged in, go to dashboard
+    if (status === "authenticated" && session) {
+      router.push("/dashboard");
+    } else {
+      // If not logged in, go to authentication with appropriate tab
+      const tab = role === "candidate" ? "candidate" : "recruiter";
+      router.push(`/authentication?tab=${tab}`);
+    }
+  };
+  
   const personas = [
     {
       icon: UserCircle,
@@ -138,13 +152,7 @@ const WhoIsItForSection: React.FC<WhoIsItForSectionProps> = ({
                   className="mt-auto"
                 >
                   <button
-                    onClick={() => {
-                      if (persona.role === "recruiter") {
-                        router.push("/qa-job-fair-feb");
-                      } else {
-                        onRoleSelect(persona.role);
-                      }
-                    }}
+                    onClick={() => handleButtonClick(persona.role)}
                     className={`w-full py-3 px-6 rounded-xl font-semibold transition-all duration-300 ${
                       persona.role === "candidate"
                         ? "bg-primary text-primary-foreground hover:bg-primary/90 hover:shadow-glow"

@@ -3,6 +3,7 @@ import { Plus_Jakarta_Sans } from "next/font/google";
 import "./globals.css";
 import Header from "@/components/landing/Header";
 import Footer from "@/components/landing/Footer";
+import WelcomePopup from "@/components/WelcomePopup";
 import { Toaster } from "sonner";
 import Script from "next/script";
 import { RouteLoader } from "@/components/route-loader";
@@ -71,6 +72,7 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
         )}
         <NextAuthSessionProvider>
           <RouteLoader />
+          <WelcomePopup />
           {/* <Header /> */}
           <main>{children}</main>
           {/* <Footer /> */}

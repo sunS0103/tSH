@@ -330,41 +330,71 @@ export default function JobFormBase({
               )}
             />
 
-            {/* Employment Gaps and Contract to Hire Toggles */}
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-              <FormField
-                control={form.control}
-                name="employment_gaps"
-                render={({ field }) => (
-                  <FormItem className="flex flex-row items-center justify-between space-y-0">
-                    <FormLabel className="flex-1">Employment Gaps</FormLabel>
-                    <FormControl>
-                      <Switch
-                        checked={field.value}
-                        onCheckedChange={field.onChange}
-                      />
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-              <FormField
-                control={form.control}
-                name="contract_to_hire"
-                render={({ field }) => (
-                  <FormItem className="flex flex-row items-center justify-between space-y-0">
-                    <FormLabel className="flex-1">Contract to Hire</FormLabel>
-                    <FormControl>
-                      <Switch
-                        checked={field.value}
-                        onCheckedChange={field.onChange}
-                      />
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-            </div>
+            {/* Employment Gaps */}
+            <FormField
+              control={form.control}
+              name="employment_gaps"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>
+                    Is employment gap allowed if there is a valid reason?
+                  </FormLabel>
+                  <FormControl>
+                    <RadioGroup
+                      value={field.value ? "yes" : "no"}
+                      onValueChange={(value) => field.onChange(value === "yes")}
+                      className="flex flex-row gap-6 mt-2"
+                    >
+                      <div className="flex items-center gap-2">
+                        <RadioGroupItem
+                          value="yes"
+                          id="employment_gaps_yes"
+                          className="cursor-pointer"
+                        />
+                        <Label
+                          htmlFor="employment_gaps_yes"
+                          className="cursor-pointer"
+                        >
+                          Yes
+                        </Label>
+                      </div>
+                      <div className="flex items-center gap-2">
+                        <RadioGroupItem
+                          value="no"
+                          id="employment_gaps_no"
+                          className="cursor-pointer"
+                        />
+                        <Label
+                          htmlFor="employment_gaps_no"
+                          className="cursor-pointer"
+                        >
+                          No
+                        </Label>
+                      </div>
+                    </RadioGroup>
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+
+            {/* Contract to Hire Toggle */}
+            <FormField
+              control={form.control}
+              name="contract_to_hire"
+              render={({ field }) => (
+                <FormItem className="flex flex-row items-center justify-between space-y-0">
+                  <FormLabel className="flex-1">Contract to Hire</FormLabel>
+                  <FormControl>
+                    <Switch
+                      checked={field.value}
+                      onCheckedChange={field.onChange}
+                    />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
 
             {/* Contract to Hire Additional Fields */}
             {contractToHire && (
