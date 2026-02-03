@@ -35,6 +35,7 @@ import { CalendarIcon } from "lucide-react";
 import { cn } from "@/lib/utils";
 import z from "zod";
 import { setCookie } from "cookies-next/client";
+import { useEffect } from "react";
 
 const noticePeriodOptions = [
   { label: "Immediate", value: "Immediate" },
@@ -89,7 +90,7 @@ const employedSchema = z
     {
       message: "Last working day is required when serving notice",
       path: ["last_working_day"],
-    },
+    }
   );
 
 type EmployedFormData = z.infer<typeof employedSchema>;
@@ -124,6 +125,27 @@ export default function EmployedForm({
     },
   });
 
+  const currentCurrency = form.watch("current_ctc_currency");
+  const expectedCurrency = form.watch("expected_ctc_currency");
+
+  useEffect(() => {
+    if (currentCurrency && currentCurrency !== expectedCurrency) {
+      form.setValue("expected_ctc_currency", currentCurrency, {
+        shouldDirty: true,
+        shouldValidate: true,
+      });
+    }
+  }, [currentCurrency]);
+
+  useEffect(() => {
+    if (expectedCurrency && expectedCurrency !== currentCurrency) {
+      form.setValue("current_ctc_currency", expectedCurrency, {
+        shouldDirty: true,
+        shouldValidate: true,
+      });
+    }
+  }, [expectedCurrency]);
+
   const isServingNotice = form.watch("is_serving_notice");
 
   const handleSubmit = async (data: EmployedFormData) => {
@@ -143,7 +165,7 @@ export default function EmployedForm({
         notice_period_type: data.notice_period_type,
         is_serving_notice: data.is_serving_notice,
         last_working_day: data.is_serving_notice
-          ? (data.last_working_day ?? null)
+          ? data.last_working_day ?? null
           : null,
       };
       const response = await updateEmployedStatus(payload);
@@ -151,7 +173,7 @@ export default function EmployedForm({
       if (response.success) {
         setCookie("current_employment_details_data", JSON.stringify(payload));
         toast.success(
-          response.message || "Employment details updated successfully",
+          response.message || "Employment details updated successfully"
         );
         // Navigate to next section in onboarding flow
         router.push("/profile-details/edit-education");
@@ -434,7 +456,7 @@ export default function EmployedForm({
                           variant="outline"
                           className={cn(
                             "h-8 w-full justify-start text-left font-normal border-gray-900",
-                            !field.value && "text-muted-foreground",
+                            !field.value && "text-muted-foreground"
                           )}
                         >
                           <CalendarIcon className="mr-2 h-4 w-4" />

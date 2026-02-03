@@ -20,7 +20,7 @@ export default function JobsWrapper() {
 
   const role = getCookie("user_role");
 
-  if (jobFairStatus) return <JobFair />;
+  if (jobFairStatus && role === "CANDIDATE") return <JobFair />;
 
   if (role === "RECRUITER") return <RecruiterJobs />;
 

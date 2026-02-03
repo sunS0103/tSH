@@ -159,6 +159,7 @@ export default function EditEmployment({
                     duration_years: employmentData?.duration_years,
                     upskilling_activities:
                       employmentData?.upskilling_activities,
+                    current_ctc_currency: employmentData?.current_ctc_currency,
                   }
                 : undefined
             }

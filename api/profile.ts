@@ -152,6 +152,7 @@ export const updateBetweenJobsStatus = async (data: {
   duration_years: number | null;
   duration_months: number | null;
   last_drawn_ctc_amount: number;
+  last_drawn_ctc_currency: string;
   // duration_description: string;
   reason: string;
   upskilling_activities: string;

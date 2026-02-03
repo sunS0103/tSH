@@ -106,7 +106,7 @@ export default function TalentCard({
                 }
                 className={cn(
                   "w-4.5 h-4.5",
-                  isFavorite ? "text-primary-500" : "text-primary-500",
+                  isFavorite ? "text-primary-500" : "text-primary-500"
                 )}
               />
             </Button>
@@ -140,7 +140,7 @@ export default function TalentCard({
               icon={isFavorite ? "mdi:cards-heart" : "mdi:cards-heart-outline"}
               className={cn(
                 "w-4.5 h-4.5",
-                isFavorite ? "text-primary-500" : "text-primary-500",
+                isFavorite ? "text-primary-500" : "text-primary-500"
               )}
             />
           </Button>
@@ -249,13 +249,13 @@ export default function TalentCard({
               {experience ? `${experience} years` : "-"}
             </span>
           </div>
-          <div className="flex justify-start items-center gap-2 min-w-0">
+          <div className="flex justify-start items-start gap-2 min-w-0">
             <Icon
               icon="mdi:office-building-outline"
               className="w-4.5 h-4.5 text-gray-900 shrink-0"
             />
-            <span className="text-gray-900 text-base font-normal font-sans truncate">
-              {company ?? "-"}
+            <span className="text-gray-900 text-base font-normal font-sans truncate whitespace-normal -mt-1">
+              {company || "-"}
             </span>
           </div>
           <div className="flex justify-start items-center gap-2">
@@ -264,7 +264,7 @@ export default function TalentCard({
               className="w-4.5 h-4.5 text-gray-900"
             />
             <span className="text-center text-gray-900 text-base font-normal font-sans">
-              {availability ?? "-"}
+              {availability || "-"}
             </span>
           </div>
           <div className="flex justify-start items-start gap-2">
@@ -273,7 +273,7 @@ export default function TalentCard({
               className="w-4.5 h-4.5 text-gray-900 mt-0.5"
             />
             <span className="text-gray-900 text-base font-normal font-sans">
-              {location ?? "-"}
+              {location || "-"}
             </span>
           </div>
         </div>
