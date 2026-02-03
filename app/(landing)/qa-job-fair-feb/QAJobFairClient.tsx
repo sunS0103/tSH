@@ -2,6 +2,7 @@
 
 import React, { useState, useEffect, useRef } from "react";
 import { useRouter } from "next/navigation";
+import Link from "next/link";
 import {
   Calendar,
   Globe,
@@ -15,6 +16,8 @@ import {
   MapPin,
   Building2,
   FileText,
+  Briefcase,
+  MessageSquare,
 } from "lucide-react";
 import config from "./config.json";
 import RecruiterForm from "@/components/qa-job-fair-feb/recruiter-form";
@@ -531,10 +534,12 @@ export default function QAJobFairClient() {
                 </div>
 
                 <div className="shrink-0">
-                  <button className="group/cta relative inline-flex items-center gap-3 px-8 py-4 rounded-xl bg-linear-to-r from-blue-600 to-emerald-600 font-bold text-lg text-white hover:shadow-xl hover:shadow-blue-500/50 transition-all hover:scale-105 cursor-pointer">
-                    <span>{config.cta.recruiterButton}</span>
-                    <ArrowRight className="w-5 h-5 group-hover/cta:translate-x-1 transition-transform" />
-                  </button>
+                  <Link href="/authentication?tab=recruiter">
+                    <button className="group/cta relative inline-flex items-center gap-3 px-8 py-4 rounded-xl bg-linear-to-r from-blue-600 to-emerald-600 font-bold text-lg text-white hover:shadow-xl hover:shadow-blue-500/50 transition-all hover:scale-105 cursor-pointer">
+                      <span>{config.cta.recruiterButton}</span>
+                      <ArrowRight className="w-5 h-5 group-hover/cta:translate-x-1 transition-transform" />
+                    </button>
+                  </Link>
 
                   <p className="mt-3 text-center text-sm text-slate-600">
                     <span className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-red-100 border border-red-300 text-red-700 font-semibold">
@@ -548,6 +553,44 @@ export default function QAJobFairClient() {
                 </div>
               </div>
             </div>
+          </div>
+        </div>
+      </section>
+
+      {/* FAQ Section */}
+      <section className="py-16 bg-white">
+        <div className="max-w-4xl mx-auto px-6">
+          <div className="text-center mb-12">
+            <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-blue-100 border-2 border-blue-300 text-blue-700 font-bold mb-4 text-sm">
+              <MessageSquare className="w-4 h-4" />
+              FAQs
+            </div>
+            <h2 className="text-4xl md:text-5xl font-bold text-slate-900 mb-4">
+              Your Questions, <span className="bg-linear-to-r from-blue-600 to-emerald-600 bg-clip-text text-transparent">Answered</span>
+            </h2>
+            <p className="text-lg text-slate-600 max-w-2xl mx-auto mb-8">
+              Everything you need to know about getting hired and hiring for full-time and freelancing roles on TechSmartHire.
+            </p>
+          </div>
+
+          <div className="flex flex-wrap items-center justify-center gap-4">
+            <button
+              onClick={() => router.push('/faqs?tab=candidate')}
+              className="group cursor-pointer inline-flex items-center gap-3 px-8 py-4 rounded-xl bg-blue-600 text-white font-bold text-lg hover:bg-blue-700 hover:shadow-xl transition-all hover:scale-105"
+            >
+              <Users className="w-6 h-6" />
+              <span>Candidate FAQs</span>
+              <ArrowRight className="w-5 h-5 group-hover:translate-x-1 transition-transform" />
+            </button>
+
+            <button
+              onClick={() => router.push('/faqs?tab=recruiter')}
+              className="group cursor-pointer inline-flex items-center gap-3 px-8 py-4 rounded-xl bg-emerald-600 text-white font-bold text-lg hover:bg-emerald-700 hover:shadow-xl transition-all hover:scale-105"
+            >
+              <Briefcase className="w-6 h-6" />
+              <span>Recruiter FAQs</span>
+              <ArrowRight className="w-5 h-5 group-hover:translate-x-1 transition-transform" />
+            </button>
           </div>
         </div>
       </section>
