@@ -42,6 +42,20 @@ export default function FAQsClient() {
   const [openIndex, setOpenIndex] = useState<number | null>(null);
 
   const candidateFAQs: FAQItem[] = [
+    // Platform Understanding
+    {
+      icon: Briefcase,
+      question: "How is this skill-first hiring platform different from traditional hiring portals?",
+      answer: `TechSmartHire replaces resume-based shortlisting with skill-based evaluation.
+
+Instead of recruiters spending hours scanning resumes filled with keywords, they can directly see:
+
+• Your verified skill score
+• The exact areas you were assessed on
+• Your readiness for the role
+
+This saves time for recruiters and gives genuine candidates a fair chance to be noticed for what they can actually do — not how well their resume is written.`
+    },
     {
       icon: Users,
       question: "Is this skill assessment only for candidates who are actively looking for a job change?",
@@ -72,58 +86,115 @@ In Phase 2 of TechSmartHire, we will introduce a freelance and job-support marke
 A strong score today can unlock both career opportunities and side-income opportunities tomorrow.`
     },
     {
-      icon: Lock,
-      question: "Will my score and personal details be visible to everyone?",
-      answer: `Absolutely not. Recruiters can only see masked profiles with scores — no name, no email, no phone number.
+      icon: Search,
+      question: "As a candidate, can I apply for jobs using my skill score?",
+      answer: `Yes.
 
-Your identity and contact details are revealed only when:
-• A recruiter shows interest in your profile, and
-• You explicitly accept to share your details with that recruiter.
+Our Jobs module will be live in March.
 
-Even then, your details are shared only with that specific recruiter, not publicly. Your privacy is fully in your control.`
+This will make the platform bidirectional:
+
+• Recruiters can discover you by viewing your profile and skill score
+and
+• You can find relevant job openings and apply by showcasing your verified skill score along with your profile
+
+Your score becomes your strongest proof while applying for jobs.`
+    },
+    // Assessment Process
+    {
+      icon: FileText,
+      question: "How do I know what topics are covered and how to prepare?",
+      answer: `We provide a complete Exam Guide that includes:
+• Topics covered
+• Sample questions
+• Preparation tips
+
+👉 Download the Exam Guide to know exactly what to expect before taking the test. No surprises. Full transparency.`
     },
     {
-      icon: Zap,
-      question: "Do I get any advantage by taking the assessment early on the platform?",
-      answer: `Absolutely. Profile ranking is partially influenced by the assessment completion date.
+      icon: GraduationCap,
+      question: "Do I get mentorship support to prepare and clear this assessment?",
+      answer: `Yes. Once you sign up on TechSmartHire, you will see an option in the Assessment window to enroll in a Mentorship Guidance + Exam package.
 
-For example, if two candidates achieve the same score for the same assessment, the candidate who completed the assessment earlier will rank higher in recruiter search results.
-
-Early participation gives you a visibility advantage.`
+This package is designed to help you prepare effectively, strengthen your skills, and confidently attempt the assessment.`
     },
     {
-      icon: Globe,
-      question: "I don't see job postings for my location yet. What's the benefit of taking the assessment now?",
-      answer: `TechSmartHire is a newly launched platform, and we are actively onboarding recruiters from across the globe.
+      icon: Award,
+      question: "Why is there a fee to take the assessment?",
+      answer: `Each assessment actually costs us around ₹999 / $10 to conduct due to:
+• Proctoring infrastructure
+• Identity verification
+• Secure exam systems
 
-If your profile already has a validated score, future recruiters will immediately see your profile higher in search results when they join the platform.
+But to keep this accessible for everyone, we charge only ₹100 / $1 to write the exam.
 
-Being an early mover gives you a strong advantage in visibility and opportunities as the platform grows.`
+👉 The remaining amount is paid only if a recruiter contacts you and invites you for a job process.
+
+So you invest very little upfront — and pay more only when there is real hiring interest. This keeps the system fair, serious, and focused on genuine job seekers.`
     },
     {
-      icon: CheckCircle,
-      question: "Can I retake the exam if I'm not satisfied with my score?",
-      answer: `Yes. You can retake the assessment after a 30-day cooling period.
+      icon: Code,
+      question: "I see one coding question in each assessment. Do I need to write everything from scratch?",
+      answer: `Not necessarily. The coding editor is preconfigured with all required imports and basic setup.
 
-If you attempt the assessment multiple times, we will always consider your best score.`
+You only need to focus on implementing the correct logic to solve the problem.`
     },
     {
-      icon: Users,
-      question: "When and how will recruiters see my score?",
-      answer: `Recruiters receive daily updates of new candidate scores for the roles they are hiring.
+      icon: CheckSquare,
+      question: "Will everyone get the same questions in the assessment?",
+      answer: `No. Every candidate gets a different set of questions.
 
-They can log in anytime to:
-• Filter candidates by skills, score range, experience, and location
-• Shortlist profiles that match their job requirements
-• Send interview requests to selected candidates
+We use a large, continuously updated question pool, and for each attempt:
+• Questions are randomly selected
+• The order of questions is also shuffled
 
-Once you accept, your profile is unlocked only for that recruiter.`
+We also regularly:
+• Retire old questions
+• Add new questions to the pool
+
+This ensures:
+• No sharing of question papers
+• Fair evaluation for all candidates
+• Strong protection of exam integrity
+
+While the topics and difficulty level remain consistent, the exact questions differ for each candidate.`
+    },
+    // Security & Proctoring
+    {
+      icon: Camera,
+      question: "How do you verify that I am the person taking the exam?",
+      answer: `We use multiple identity checks, including:
+• Government photo ID verification
+• Face match during the exam
+• First name, last name, and date of birth validation
+
+This helps prevent:
+• Fake profiles
+• Multiple attempts using different emails
+
+Our goal is simple: one real person = one real score.`
     },
     {
-      icon: Clock,
-      question: "How long is my score valid?",
-      answer: `Your score is valid for 365 days from the date you take the assessment.`
+      icon: Shield,
+      question: "How strict are the proctoring and anti-cheating standards?",
+      answer: `Very strict — because recruiters trust these scores for hiring.
+
+Our proctoring system can detect:
+• Looking away from the screen
+• Multiple faces
+• Phone usage
+• Tab switching
+• Suspicious behavior patterns
+
+All violations are marked with red flags in your score report.
+
+⚠️ If more than two serious violations are detected:
+• Your exam will be terminated immediately
+• You may be blocked from taking future assessments
+
+This protects honest candidates and keeps scores credible.`
     },
+    // Scoring & Results
     {
       icon: BarChart3,
       question: "How will my score be interpreted?",
@@ -146,136 +217,114 @@ Indicates deep technical expertise and strong problem-solving ability.
 Suitable for senior roles, lead engineers, and critical projects.`
     },
     {
-      icon: Award,
+      icon: CheckCircle,
       question: "Will I receive any Professional certificate?",
       answer: `Yes. If you score above 60%, you will be eligible to receive a certification.
 
 This certificate can serve as a strong credential when applying for jobs.`
     },
     {
-      icon: Code,
-      question: "I see one coding question in each assessment. Do I need to write everything from scratch?",
-      answer: `Not necessarily. The coding editor is preconfigured with all required imports and basic setup.
+      icon: Clock,
+      question: "How long is my assessment score valid on the platform?",
+      answer: `Your score remains valid and visible to recruiters for a full 365 days from the date of assessment.
 
-You only need to focus on implementing the correct logic to solve the problem.`
+After that period:
+• Your score will expire
+• You will need to retake the assessment if you wish to remain visible to recruiters
+
+This ensures that scores reflect current, up-to-date skill levels — not outdated credentials.`
+    },
+    {
+      icon: CheckCircle,
+      question: "Can I retake the assessment if I'm not happy with my score?",
+      answer: `Yes, but with conditions to maintain fairness:
+
+You can retake the assessment:
+• Only after a 2-month cooling period from your last attempt
+
+However:
+• Recruiters will see both your scores — the old one and the new one
+• Multiple low attempts may raise concerns with recruiters
+
+We recommend using the cooling period to upskill rather than attempting blindly.`
+    },
+    // Privacy & Control
+    {
+      icon: Lock,
+      question: "Will my score and personal details be visible to everyone?",
+      answer: `Absolutely not. Recruiters can only see masked profiles with scores — no name, no email, no phone number.
+
+Your identity and contact details are revealed only when:
+• A recruiter shows interest in your profile, and
+• You explicitly accept to share your details with that recruiter.
+
+Even then, your details are shared only with that specific recruiter, not publicly. Your privacy is fully in your control.`
+    },
+    {
+      icon: EyeOff,
+      question: "Can recruiters see my profile and score even if I'm currently working and don't want my employer to know?",
+      answer: `Absolutely. Your profile remains discoverable by recruiters based on your skills and preferences — but your identity (name, email, phone) stays hidden.
+
+A recruiter can only see:
+• Your masked profile
+• Your skill score
+• Your assessment name and date
+
+They cannot know who you are unless you choose to reveal your details.
+
+So even if you're employed or not actively looking, recruiters can still discover you based on your skills and reach out. You decide if you want to engage.`
+    },
+    // Career Benefits & Opportunities
+    {
+      icon: Search,
+      question: "How will recruiters find my profile?",
+      answer: `Recruiters can discover you by:
+• Searching for specific skills
+• Filtering by score ranges
+• Reviewing top performers in particular assessments
+
+If your profile matches their search criteria and your score aligns with what they're looking for, you'll show up in their talent pool.`
+    },
+    {
+      icon: Zap,
+      question: "Do I get any advantage by taking the assessment early on the platform?",
+      answer: `Absolutely. Profile ranking is partially influenced by the assessment completion date.
+
+For example, if two candidates achieve the same score for the same assessment, the candidate who completed the assessment earlier will rank higher in recruiter search results.
+
+Early participation gives you a visibility advantage.`
     },
     {
       icon: Globe,
-      question: "Can I apply for international positions?",
-      answer: `For most international roles, you need valid work authorization for that country.
+      question: "I don't see job postings for my location yet. What's the benefit of taking the assessment now?",
+      answer: `TechSmartHire is a newly launched platform, and we are actively onboarding recruiters from across the globe.
 
-UAE Exception:
-Dubai/UAE companies actively recruit from India for exceptional profiles and do not require prior work authorization. Indian candidates can apply directly.
+If your profile already has a validated score, future recruiters will immediately see your profile higher in search results when they join the platform.
 
-Other Countries:
-You must hold a valid work visa or permit for that specific country before applying.`
+Being an early mover gives you a strong advantage in visibility and opportunities as the platform grows.`
     },
     {
-      icon: Award,
-      question: "Why is there a fee to take the assessment?",
-      answer: `Each assessment actually costs us around ₹999 / $10 to conduct due to:
-• Proctoring infrastructure
-• Identity verification
-• Secure exam systems
+      icon: Globe,
+      question: "Can candidates from outside India take this assessment and be eligible for international positions?",
+      answer: `Yes. TechSmartHire welcomes candidates from all over the world.
 
-But to keep this accessible for everyone, we charge only ₹100 / $1 to write the exam.
+However, we are currently launching job postings in the UAE only. If your location is UAE or if you're open to opportunities in the UAE, you'll see relevant job postings.
 
-👉 The remaining amount is paid only if a recruiter contacts you and invites you for a job process.
-
-So you invest very little upfront — and pay more only when there is real hiring interest. This keeps the system fair, serious, and focused on genuine job seekers.`
+For other regions, we will expand job postings gradually as we onboard more recruiters from different geographies.`
     },
     {
-      icon: FileText,
-      question: "How do I know what topics are covered and how to prepare?",
-      answer: `We provide a complete Exam Guide that includes:
-• Topics covered
-• Sample questions
-• Preparation tips
+      icon: Brain,
+      question: "Is my assessment score the only factor recruiters consider?",
+      answer: `No. Your score is a strong foundation, but it's not the only factor.
 
-👉 Download the Exam Guide to know exactly what to expect before taking the test. No surprises. Full transparency.`
-    },
-    {
-      icon: GraduationCap,
-      question: "Do I get mentorship support to prepare and clear this assessment?",
-      answer: `Yes. Once you sign up on TechSmartHire, you will see an option in the Assessment window to enroll in a Mentorship Guidance + Exam package.
+Recruiters also look at:
+• Your overall profile details
+• Your educational background
+• Your work experience
+• Your expected salary
+• How well your profile aligns with the role they're hiring for
 
-This package is designed to help you prepare effectively, strengthen your skills, and confidently attempt the assessment.`
-    },
-    {
-      icon: CheckSquare,
-      question: "Will everyone get the same questions in the assessment?",
-      answer: `No. Every candidate gets a different set of questions.
-
-We use a large, continuously updated question pool, and for each attempt:
-• Questions are randomly selected
-• The order of questions is also shuffled
-
-We also regularly:
-• Retire old questions
-• Add new questions to the pool
-
-This ensures:
-• No sharing of question papers
-• Fair evaluation for all candidates
-• Strong protection of exam integrity
-
-While the topics and difficulty level remain consistent, the exact questions differ for each candidate.`
-    },
-    {
-      icon: Shield,
-      question: "How strict are the proctoring and anti-cheating standards?",
-      answer: `Very strict — because recruiters trust these scores for hiring.
-
-Our proctoring system can detect:
-• Looking away from the screen
-• Multiple faces
-• Phone usage
-• Tab switching
-• Suspicious behavior patterns
-
-All violations are marked with red flags in your score report.
-
-⚠️ If more than two serious violations are detected:
-• Your exam will be terminated immediately
-• You may be blocked from taking future assessments
-
-This protects honest candidates and keeps scores credible.`
-    },
-    {
-      icon: Camera,
-      question: "How do you verify that I am the person taking the exam?",
-      answer: `We use multiple identity checks, including:
-• Government photo ID verification
-• Face match during the exam
-• First name, last name, and date of birth validation
-
-This helps prevent:
-• Fake profiles
-• Multiple attempts using different emails
-
-Our goal is simple: one real person = one real score.`
-    },
-    {
-      icon: BarChart3,
-      question: "Is score the only factor recruiters look at?",
-      answer: `Not at all. Your score is important — but it's not the only factor.
-
-Recruiters also consider:
-• Experience level
-• Salary expectations
-• Role requirements
-• Location and local hiring market
-
-For example:
-• A candidate with 8/10 score and 7 years experience may not fit a junior-level role budget
-• A candidate with 6/10 score and the right experience may be a better match
-
-Also, what is considered a strong score can vary by:
-• City
-• Skill demand vs supply
-• Role complexity
-
-👉 Your score is a signal of skill — not a judgment of your career.`
+A good score opens the door — but your complete profile helps you stand out.`
     }
   ];
 
