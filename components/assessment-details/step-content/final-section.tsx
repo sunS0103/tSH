@@ -10,6 +10,8 @@ export default function FinalStartSection({
   is_free_plan_available,
   onPackageSelect,
   onCurrencyChange,
+  can_repurchase,
+  can_purchase_in_days,
 }: {
   assessment_id: string;
   is_free_plan_available: boolean;
@@ -32,6 +34,8 @@ export default function FinalStartSection({
     packageType: "FREE" | "BASIC" | "PREMIUM" | "PLATINUM"
   ) => void;
   onCurrencyChange?: (currency: "INR" | "USD") => void;
+  can_repurchase: boolean;
+  can_purchase_in_days: string;
 }) {
   const [selectedPackage, setSelectedPackage] = useState<
     "FREE" | "BASIC" | "PREMIUM" | "PLATINUM" | null
@@ -62,6 +66,8 @@ export default function FinalStartSection({
         onPackageSelect={handlePackageSelect}
         selectedPackage={selectedPackage}
         onCurrencyChange={onCurrencyChange}
+        can_repurchase={can_repurchase}
+        can_purchase_in_days={can_purchase_in_days}
       />
       {candidate_status !== "COMPLETED" && candidate_status !== null && (
         <p className="text-base text-black mt-4">

@@ -58,6 +58,7 @@ interface AssessmentWrapperProps {
 export default function AssessmentWrapper({
   assessment,
 }: AssessmentWrapperProps) {
+  console.log(assessment);
   const pathname = usePathname();
   const assessmentId = assessment.assessment_id;
   const router = useRouter();
@@ -503,35 +504,29 @@ export default function AssessmentWrapper({
       try {
         const res = await changeAssessmentStatus(userAssessmentId, "ON_GOING");
         if (res.success && res.data.invite_link) {
-          // Try to open the assessment link
-          const newWindow = window.open(res.data.invite_link, "_blank");
-
-          // Check if popup was blocked
-          if (
-            !newWindow ||
-            newWindow.closed ||
-            typeof newWindow.closed === "undefined"
-          ) {
-            toast.info(
-              <div>
-                <p>Please click the link below to start your assessment:</p>
-                <a
-                  href={res.data.invite_link}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="text-primary-600 underline font-medium"
-                >
-                  Open Assessment
-                </a>
-              </div>,
-              { duration: 10000 }
-            );
-          }
-
-          setUserAssessmentId(null);
-          setAssessmentPayment(null);
-          setIsStartNowDialogOpen(false);
-          router.push(`/assessments`);
+          setTimeout(() => {
+            const w = window.open(res.data.invite_link, "_blank");
+            if (w == null || w.closed) {
+              toast.info(
+                <div>
+                  <p>Please click the link below to start your assessment:</p>
+                  <a
+                    href={res.data.invite_link}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="text-primary-600 underline font-medium"
+                  >
+                    Open Assessment
+                  </a>
+                </div>,
+                { duration: 15000 }
+              );
+            }
+            setUserAssessmentId(null);
+            setAssessmentPayment(null);
+            setIsStartNowDialogOpen(false);
+            router.push(`/assessments`);
+          }, 1000);
         }
       } catch (err: unknown) {
         const error = err as { response?: { data?: { message?: string } } };
@@ -552,36 +547,31 @@ export default function AssessmentWrapper({
         "ON_GOING"
       );
       if (res.success && res.data.invite_link) {
-        // Try to open the assessment link
-        const newWindow = window.open(res.data.invite_link, "_blank");
-
-        // Check if popup was blocked
-        if (
-          !newWindow ||
-          newWindow.closed ||
-          typeof newWindow.closed === "undefined"
-        ) {
-          // Popup was blocked - show toast with link
-          toast.info(
-            <div>
-              <p>Please click the link below to start your assessment:</p>
-              <a
-                href={res.data.invite_link}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="text-primary-600 underline font-medium"
-              >
-                Open Assessment
-              </a>
-            </div>,
-            { duration: 10000 }
-          );
-        }
-
-        setUserAssessmentId(null);
-        setAssessmentPayment(null);
-        setIsStartNowDialogOpen(false);
-        router.push(`/assessments`);
+        setTimeout(() => {
+          const w = window.open(res.data.invite_link, "_blank");
+          if (w == null || w.closed) {
+            toast.info(
+              <div>
+                <p>Please click the link below to start your assessment:</p>
+                <a
+                  href={res.data.invite_link}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="text-primary-600 underline font-medium"
+                >
+                  Open Assessment
+                </a>
+              </div>,
+              { duration: 15000 }
+            );
+          }
+          setUserAssessmentId(null);
+          setAssessmentPayment(null);
+          setIsStartNowDialogOpen(false);
+          router.push(`/assessments`);
+        }, 1000);
+      } else if (res.data.invite_link) {
+        toast.error(res.message || "Assessment link not found");
       }
     } catch (err: unknown) {
       // Error might be from handlePurchase (payment cancelled) or changeAssessmentStatus

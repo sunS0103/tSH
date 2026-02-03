@@ -36,6 +36,8 @@ export default function PaymentCards({
   onPackageSelect,
   selectedPackage,
   onCurrencyChange,
+  can_repurchase,
+  can_purchase_in_days,
 }: {
   assessment_id: string;
   payment: Payment | null;
@@ -53,6 +55,8 @@ export default function PaymentCards({
   ) => void;
   selectedPackage?: "FREE" | "BASIC" | "PREMIUM" | "PLATINUM" | null;
   onCurrencyChange?: (currency: "INR" | "USD") => void;
+  can_repurchase: boolean;
+  can_purchase_in_days: string;
 }) {
   const [paymentSuccessData, setPaymentSuccessData] = useState<Payment | null>(
     payment || null
