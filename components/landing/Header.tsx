@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from "react";
 import { motion } from "framer-motion";
-import { Menu, X, Users, Briefcase, Rocket } from "lucide-react";
+import { Menu, X, Users, Briefcase, Rocket, MessageSquare } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import Link from "next/link";
 import Image from "next/image";
@@ -105,6 +105,12 @@ const Header = () => {
 
           {/* Desktop CTA */}
           <div className="flex items-center gap-4">
+            <Link href="/faqs">
+              <Button className="cursor-pointer" variant="outline" size="sm">
+                <MessageSquare className="w-4 h-4 mr-2" />
+                FAQs
+              </Button>
+            </Link>
             <Button
               className="cursor-pointer"
               variant="default"
