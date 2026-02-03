@@ -1,16 +1,23 @@
 'use client';
 
 import { useEffect, useState } from 'react';
+import { usePathname } from 'next/navigation';
 import { X, MessageSquare, ArrowRight } from 'lucide-react';
 import Link from 'next/link';
 
 export default function WelcomePopup() {
   const [isVisible, setIsVisible] = useState(false);
+  const pathname = usePathname();
 
   useEffect(() => {
+    // Don't show popup on FAQ page since user is already on target page
+    if (pathname === '/faqs') {
+      return;
+    }
+
     // Check if popup has been shown in this session
     const hasSeenPopup = sessionStorage.getItem('tsh-welcome-popup-seen');
-    
+
     if (!hasSeenPopup) {
       // Show popup after 8 seconds of user activity on page
       const timer = setTimeout(() => {
@@ -19,7 +26,7 @@ export default function WelcomePopup() {
 
       return () => clearTimeout(timer);
     }
-  }, []);
+  }, [pathname]);
 
   const handleClose = () => {
     setIsVisible(false);

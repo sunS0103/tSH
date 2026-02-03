@@ -610,6 +610,29 @@ export default function TalentPoolPage() {
   return (
     <>
       <Loader show={isLoading} />
+      {/* Beta Banner */}
+      <div className="mb-6">
+        <div className="bg-amber-50 border border-amber-200 rounded-xl p-4">
+          <p className="text-amber-800 font-semibold text-sm text-center">
+            🚀 Talent Pool Recently Launched
+          </p>
+          <div className="text-amber-700 text-xs text-center mt-2 space-y-2">
+            <p>
+              As product is recently launched, you may currently see a limited
+              number of profiles.
+            </p>
+            <p>
+              Many candidates are preparing to take assessments in the coming
+              weeks. As they complete their exams, new skill-verified profiles
+              will be added to this pool every day.
+            </p>
+            <p>
+              Please check back soon to discover a growing list of verified,
+              skill-assessed talent.
+            </p>
+          </div>
+        </div>
+      </div>
       <div className="flex flex-col lg:flex-row gap-8 min-h-screen bg-gray-50/50 mb-4">
         {/* Sidebar */}
         <div className="shrink-0 lg:w-72">

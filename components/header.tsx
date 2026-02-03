@@ -199,6 +199,12 @@ export default function Header() {
                 pathname === item.href ||
                 (item.href !== "/" && pathname?.startsWith(`${item.href}/`));
 
+              // Show credits count for Credits nav item (recruiter only)
+              const displayLabel =
+                item.label === "Credits" && role === "RECRUITER"
+                  ? `Credits: ${userDetails?.available_credits ?? 0}`
+                  : item.label;
+
               return (
                 <Link
                   key={item.href}
@@ -216,7 +222,7 @@ export default function Header() {
                         : "text-slate-700 font-normal"
                     )}
                   >
-                    {item.label}
+                    {displayLabel}
                   </span>
                 </Link>
               );
@@ -227,28 +233,35 @@ export default function Header() {
             {mounted && role ? (
               <>
                 {role === "RECRUITER" && (
-                  <>
-                    <div className="text-sm text-gray-900 font-semibold">
-                      Credits: {userDetails?.available_credits}
-                    </div>
+                  <Button
+                    variant="outline"
+                    className="md:hidden bg-primary-50 border border-primary-500 flex items-center justify-center rounded-full size-8 hover:bg-primary-100 transition-colors p-0"
+                    onClick={() => router.push("/jobs/create")}
+                  >
+                    <Icon icon="mdi:plus" className="text-primary-500 size-5" />
+                  </Button>
+                )}
+                {/* Create Job & Contact Support - Desktop */}
+                <div className="hidden md:flex items-center gap-4">
+                  {role === "RECRUITER" && !jobFairStatus && (
                     <Button
-                      variant="outline"
-                      className="md:hidden bg-primary-50 border border-primary-500 flex items-center justify-center rounded-full size-8 hover:bg-primary-100 transition-colors p-0"
+                      className="bg-primary-500 hover:bg-primary-600 text-white rounded-full px-4 h-9 text-sm font-medium gap-0"
                       onClick={() => router.push("/jobs/create")}
                     >
-                      <Icon icon="mdi:plus" className="text-primary-500 size-5" />
+                      <Icon icon="mdi:plus" className="mr-2 size-4" />
+                      Create Job
                     </Button>
-                    {!jobFairStatus && (
-                      <Button
-                        className="hidden md:flex bg-primary-500 hover:bg-primary-600 text-white rounded-full px-4 h-9 text-sm font-medium gap-0"
-                        onClick={() => router.push("/jobs/create")}
-                      >
-                        <Icon icon="mdi:plus" className="mr-2 size-4" />
-                        Create Job
-                      </Button>
-                    )}
-                  </>
-                )}
+                  )}
+                  <Link
+                    href="/contact"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="flex items-center gap-1.5 text-sm text-primary-600 hover:text-primary-700 font-medium transition-colors"
+                  >
+                    <Icon icon="mdi:headset" className="size-4" />
+                    <span>Contact Support</span>
+                  </Link>
+                </div>
                 {/* Notification Bell */}
                 <NotificationPopover
               open={notificationDialogOpen}

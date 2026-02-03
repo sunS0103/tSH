@@ -174,7 +174,7 @@ export default function CandidateDashboard() {
             </div>
           </div>
           <Link
-            href="/faqs"
+            href="/faqs?tab=candidates"
             target="_blank"
             rel="noopener noreferrer"
             className="w-full"
