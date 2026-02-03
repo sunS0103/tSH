@@ -39,7 +39,7 @@ export default function EditEmployment({
     // Check if user is in onboarding flow or editing from profile
     const isOnboarding = window.location.pathname.includes("/profile-details/");
     router.push(
-      isOnboarding ? "/profile-details/edit-personal-social" : "/profile",
+      isOnboarding ? "/profile-details/edit-personal-social" : "/profile"
     );
   };
 
@@ -63,7 +63,7 @@ export default function EditEmployment({
             <Select
               onValueChange={(value) =>
                 setEmploymentStatus(
-                  value as "Employed" | "Student" | "Fresher" | "Between Jobs",
+                  value as "Employed" | "Student" | "Fresher" | "Between Jobs"
                 )
               }
               value={employmentStatus}
@@ -159,7 +159,8 @@ export default function EditEmployment({
                     duration_years: employmentData?.duration_years,
                     upskilling_activities:
                       employmentData?.upskilling_activities,
-                    current_ctc_currency: employmentData?.current_ctc_currency,
+                    last_drawn_ctc_currency:
+                      employmentData?.last_drawn_ctc_currency,
                   }
                 : undefined
             }
