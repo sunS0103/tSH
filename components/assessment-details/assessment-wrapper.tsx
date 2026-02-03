@@ -58,7 +58,6 @@ interface AssessmentWrapperProps {
 export default function AssessmentWrapper({
   assessment,
 }: AssessmentWrapperProps) {
-  console.log(assessment);
   const pathname = usePathname();
   const assessmentId = assessment.assessment_id;
   const router = useRouter();
@@ -103,7 +102,8 @@ export default function AssessmentWrapper({
   const [isStartNowDialogOpen, setIsStartNowDialogOpen] = useState(false);
   const [isStartLaterDialogOpen, setIsStartLaterDialogOpen] = useState(false);
   const [isPaymentLoading, setIsPaymentLoading] = useState(false);
-  const [isPopupBlockedDialogOpen, setIsPopupBlockedDialogOpen] = useState(false);
+  const [isPopupBlockedDialogOpen, setIsPopupBlockedDialogOpen] =
+    useState(false);
   const [popupBlockedLink, setPopupBlockedLink] = useState<string | null>(null);
 
   const totalSteps = STEPS.length;
@@ -690,8 +690,9 @@ export default function AssessmentWrapper({
                 <div className="flex flex-col items-center gap-2 max-w-xs">
                   <Button
                     disabled={
-                      assessment.candidate_status !== "COMPLETED" &&
-                      assessment.candidate_status !== null
+                      (assessment.candidate_status !== "COMPLETED" &&
+                        assessment.candidate_status !== null) ||
+                      !assessment.can_repurchase
                     }
                     variant="secondary"
                     className="text-xs sm:text-sm px-1 md:px-4 py-2 w-fit"
@@ -743,8 +744,9 @@ export default function AssessmentWrapper({
                 <div className="flex flex-col items-center gap-2 max-w-xs">
                   <Button
                     disabled={
-                      assessment.candidate_status !== "COMPLETED" &&
-                      assessment.candidate_status !== null
+                      (assessment.candidate_status !== "COMPLETED" &&
+                        assessment.candidate_status !== null) ||
+                      !assessment.can_repurchase
                     }
                     className="text-xs sm:text-sm px-1 md:px-4 py-2 w-fit"
                     onClick={handleStartNowButtonClick}

@@ -1,6 +1,7 @@
 import { Icon } from "@iconify/react";
 import PaymentCards, { Payment } from "./payment-cards";
 import { useState } from "react";
+import { Button } from "@/components/ui/button";
 
 export default function FinalStartSection({
   assessment_id,
@@ -59,6 +60,51 @@ export default function FinalStartSection({
         />
         <h1 className="text-lg md:text-xl font-bold">Final Start Section</h1>
       </div>
+
+      {/* Freeze Period Banner - shown when user has purchased and cannot repurchase */}
+      {!can_repurchase && (
+        <div className="bg-red-50 border border-red-200 rounded-xl p-4 my-4">
+          <div className="flex items-start gap-3">
+            <div className="shrink-0 mt-0.5">
+              <Icon
+                icon="material-symbols:lock-clock-outline-rounded"
+                className="w-6 h-6 text-red-600"
+              />
+            </div>
+            <div className="flex-1">
+              <h3 className="text-sm md:text-base font-semibold text-red-800 mb-1">
+                Assessment Currently Unavailable
+              </h3>
+              <p className="text-xs md:text-sm text-red-700 mb-3">
+                You have already purchased this assessment. A{" "}
+                <span className="font-semibold">30-day freeze period</span> is
+                required before you can retake the exam.
+                {can_purchase_in_days && (
+                  <>
+                    {" "}
+                    <span className="font-semibold">
+                      {can_purchase_in_days}
+                    </span>{" "}
+                    to retake this assessment.
+                  </>
+                )}
+              </p>
+              <Button
+                variant="outline"
+                size="sm"
+                className="border-red-300 text-red-700 hover:bg-red-100 hover:text-red-800"
+                onClick={() => window.open("/contact", "_blank")}
+              >
+                <Icon
+                  icon="material-symbols:contact-support-outline-rounded"
+                  className="w-4 h-4 mr-1.5"
+                />
+                Contact Us for Queries
+              </Button>
+            </div>
+          </div>
+        </div>
+      )}
 
       <PaymentCards
         assessment_id={assessment_id}
