@@ -38,6 +38,7 @@ export default function PaymentCards({
   onCurrencyChange,
   can_repurchase,
   can_purchase_in_days,
+  validateSteps,
 }: {
   assessment_id: string;
   payment: Payment | null;
@@ -57,6 +58,7 @@ export default function PaymentCards({
   onCurrencyChange?: (currency: "INR" | "USD") => void;
   can_repurchase: boolean;
   can_purchase_in_days: string;
+  validateSteps?: () => boolean;
 }) {
   const [paymentSuccessData, setPaymentSuccessData] = useState<Payment | null>(
     payment || null
@@ -284,6 +286,12 @@ export default function PaymentCards({
   ) => {
     setIsPaymentLoading(true);
     try {
+      if (packageType === "FREE" && validateSteps) {
+        if (!validateSteps()) {
+          return;
+        }
+      }
+
       // 1️⃣ Create Order
       const orderData = await initiatePurchase({
         assessment_id: assessment_id,

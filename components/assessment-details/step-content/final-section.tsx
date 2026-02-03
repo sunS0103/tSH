@@ -12,6 +12,7 @@ export default function FinalStartSection({
   onCurrencyChange,
   can_repurchase,
   can_purchase_in_days,
+  validateSteps,
 }: {
   assessment_id: string;
   is_free_plan_available: boolean;
@@ -36,6 +37,7 @@ export default function FinalStartSection({
   onCurrencyChange?: (currency: "INR" | "USD") => void;
   can_repurchase: boolean;
   can_purchase_in_days: string;
+  validateSteps?: () => boolean;
 }) {
   const [selectedPackage, setSelectedPackage] = useState<
     "FREE" | "BASIC" | "PREMIUM" | "PLATINUM" | null
@@ -68,6 +70,7 @@ export default function FinalStartSection({
         onCurrencyChange={onCurrencyChange}
         can_repurchase={can_repurchase}
         can_purchase_in_days={can_purchase_in_days}
+        validateSteps={validateSteps}
       />
       {candidate_status !== "COMPLETED" && candidate_status !== null && (
         <p className="text-base text-black mt-4">

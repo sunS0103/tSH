@@ -437,9 +437,7 @@ export default function AssessmentWrapper({
     }
   };
 
-  // Handler for "Start Assessment Now" button click
-  const handleStartNowButtonClick = async () => {
-    // Validate all checkboxes are confirmed for steps 1-4
+  const validateSteps = (): boolean => {
     const unconfirmedStepNumbers = [1, 2, 3, 4].filter(
       (stepNum) => !stepConfirmations[stepNum]
     );
@@ -453,8 +451,15 @@ export default function AssessmentWrapper({
       toast.error(
         "Please confirm all required sections before starting the assessment."
       );
-      return;
+      return false;
     }
+    return true;
+  };
+
+  // Handler for "Start Assessment Now" button click
+  const handleStartNowButtonClick = async () => {
+    // Validate all checkboxes are confirmed for steps 1-4
+    if (!validateSteps()) return;
 
     setIsStartNowDialogOpen(true);
   };
@@ -462,21 +467,7 @@ export default function AssessmentWrapper({
   // Handler for "Start Assessment Later" button click
   const handleStartLaterButtonClick = async () => {
     // Validate all checkboxes are confirmed for steps 1-4
-    const unconfirmedStepNumbers = [1, 2, 3, 4].filter(
-      (stepNum) => !stepConfirmations[stepNum]
-    );
-
-    if (unconfirmedStepNumbers.length > 0) {
-      const newErrors: Record<number, boolean> = {};
-      unconfirmedStepNumbers.forEach((stepNum) => {
-        newErrors[stepNum] = true;
-      });
-      setStepErrors((prev) => ({ ...prev, ...newErrors }));
-      toast.error(
-        "Please confirm all required sections before starting the assessment."
-      );
-      return;
-    }
+    if (!validateSteps()) return;
 
     setIsStartLaterDialogOpen(true);
   };
@@ -687,6 +678,7 @@ export default function AssessmentWrapper({
             hasError={Boolean(stepErrors[currentStep])}
             onPackageSelect={handlePackageSelect}
             onCurrencyChange={handleCurrencyChange}
+            validateSteps={validateSteps}
           />
         </div>
       </div>
