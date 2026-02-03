@@ -454,8 +454,8 @@ export default function PaymentCards({
                   currentPayment?.initial_payment_status === "PAID")
                 ? "border-primary-500 bg-primary-50/30"
                 : "border-gray-200 hover:border-primary-200",
-              // Disable interaction if already paid
-              (currentPayment?.initial_payment_status !== "PAID" ||
+              // Disable interaction if already paid or in freeze period
+              (currentPayment?.initial_payment_status === "PAID" ||
                 !can_repurchase) &&
                 "cursor-not-allowed opacity-70"
             )}
