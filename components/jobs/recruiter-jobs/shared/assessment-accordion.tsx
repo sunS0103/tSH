@@ -413,7 +413,7 @@ export default function AssessmentAccordion({
                                             onClick={(e: MouseEvent) =>
                                               e.stopPropagation()
                                             }
-                                            className="text-base font-normal text-black cursor-pointer flex-1 hover:underline hover:text-primary-600"
+                                            className="text-base font-normal text-black cursor-pointer flex-1 underline hover:text-primary-600"
                                           >
                                             {assessment.title}
                                           </Link>
