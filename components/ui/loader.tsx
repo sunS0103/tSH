@@ -14,7 +14,7 @@ export function Loader({ className, show = true }: LoaderProps) {
   return (
     <div
       className={cn(
-        "fixed inset-0 z-[100] flex items-center justify-center bg-background/20 backdrop-blur-md",
+        "fixed inset-0 z-100 flex items-center justify-center bg-background/20 backdrop-blur-md",
         className
       )}
     >
