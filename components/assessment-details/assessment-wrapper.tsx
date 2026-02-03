@@ -103,6 +103,8 @@ export default function AssessmentWrapper({
   const [isStartNowDialogOpen, setIsStartNowDialogOpen] = useState(false);
   const [isStartLaterDialogOpen, setIsStartLaterDialogOpen] = useState(false);
   const [isPaymentLoading, setIsPaymentLoading] = useState(false);
+  const [isPopupBlockedDialogOpen, setIsPopupBlockedDialogOpen] = useState(false);
+  const [popupBlockedLink, setPopupBlockedLink] = useState<string | null>(null);
 
   const totalSteps = STEPS.length;
 
@@ -497,26 +499,15 @@ export default function AssessmentWrapper({
         if (res.success && res.data.invite_link) {
           setTimeout(() => {
             const w = window.open(res.data.invite_link, "_blank");
-            if (w == null || w.closed) {
-              toast.info(
-                <div>
-                  <p>Please click the link below to start your assessment:</p>
-                  <a
-                    href={res.data.invite_link}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="text-primary-600 underline font-medium"
-                  >
-                    Open Assessment
-                  </a>
-                </div>,
-                { duration: 15000 }
-              );
-            }
             setUserAssessmentId(null);
             setAssessmentPayment(null);
             setIsStartNowDialogOpen(false);
-            router.push(`/assessments`);
+            if (w == null || w.closed) {
+              setPopupBlockedLink(res.data.invite_link);
+              setIsPopupBlockedDialogOpen(true);
+            } else {
+              router.push(`/assessments`);
+            }
           }, 1000);
         }
       } catch (err: unknown) {
@@ -540,26 +531,15 @@ export default function AssessmentWrapper({
       if (res.success && res.data.invite_link) {
         setTimeout(() => {
           const w = window.open(res.data.invite_link, "_blank");
-          if (w == null || w.closed) {
-            toast.info(
-              <div>
-                <p>Please click the link below to start your assessment:</p>
-                <a
-                  href={res.data.invite_link}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="text-primary-600 underline font-medium"
-                >
-                  Open Assessment
-                </a>
-              </div>,
-              { duration: 15000 }
-            );
-          }
           setUserAssessmentId(null);
           setAssessmentPayment(null);
           setIsStartNowDialogOpen(false);
-          router.push(`/assessments`);
+          if (w == null || w.closed) {
+            setPopupBlockedLink(res.data.invite_link);
+            setIsPopupBlockedDialogOpen(true);
+          } else {
+            router.push(`/assessments`);
+          }
         }, 1000);
       } else if (res.data.invite_link) {
         toast.error(res.message || "Assessment link not found");
@@ -832,6 +812,51 @@ export default function AssessmentWrapper({
           </div>
         </FluidLayout>
       </div>
+
+      {/* Popup Blocked Dialog */}
+      <Dialog
+        open={isPopupBlockedDialogOpen}
+        onOpenChange={(open) => {
+          setIsPopupBlockedDialogOpen(open);
+          if (!open) {
+            setPopupBlockedLink(null);
+            router.push(`/assessments`);
+          }
+        }}
+      >
+        <DialogContent className="py-6 px-6 md:max-w-md!">
+          <DialogHeader>
+            <DialogTitle className="text-center text-base md:text-lg">
+              Your Assessment is Ready!
+            </DialogTitle>
+          </DialogHeader>
+          <div className="flex flex-col items-center gap-4 py-4">
+            <Icon
+              icon="material-symbols:rocket-launch-outline-rounded"
+              className="size-12 text-primary"
+            />
+            <p className="text-sm md:text-base text-gray-600 text-center">
+              Click the button below to start your assessment:
+            </p>
+            {popupBlockedLink && (
+              <a
+                href={popupBlockedLink}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="inline-flex items-center gap-2 bg-primary text-white px-6 py-3 rounded-lg font-medium hover:bg-primary/90 transition-colors"
+              >
+                <Icon icon="material-symbols:open-in-new" className="size-5" />
+                Start Assessment
+              </a>
+            )}
+          </div>
+          <div className="flex justify-center">
+            <DialogClose asChild>
+              <Button variant="secondary">Close</Button>
+            </DialogClose>
+          </div>
+        </DialogContent>
+      </Dialog>
     </div>
   );
 }
