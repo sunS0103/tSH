@@ -255,10 +255,18 @@ export default function EmailForm({ role }: EmailFormProps) {
 
   return (
     <div className="flex flex-col items-center max-w-105 mx-auto">
-      <h1 className="text-xl text-primary-500 font-bold">Start Your Journey</h1>
-      <p className="text-gray-600 text-xs text-center mt-1">
-        Set up your account to begin your journey and <br /> manage your
-        assessments.
+      <h1 className="text-xl text-primary-500 font-bold text-center">
+        {role === "CANDIDATE"
+          ? "Turn Your Skills Into Real Opportunities"
+          : "Find Skilled Talent Without Screening Resumes"}
+      </h1>
+      <p className="text-slate-600 text-xs text-center mt-1">
+        {role === "CANDIDATE"
+          ? "Take assessments. Get discovered by recruiters."
+          : "Access verified candidates filtered by skills & experience."}
+      </p>
+      <p className="text-slate-600 text-[10px] text-center mt-2">
+        Set up your account to begin. It takes less than a minute.
       </p>
 
       <Button

@@ -189,7 +189,7 @@ export default function JobCard({
             <Link
               href={`/jobs/${slug}/applicants-list`}
               onClick={(e) => e.stopPropagation()}
-              className="h-8 px-3 rounded-lg border border-primary-600 text-primary-600 hover:bg-primary-600 hover:text-white flex items-center gap-2 bg-transparent ml-auto sm:ml-0"
+              className="h-8 px-3 rounded-lg bg-primary-600 text-white hover:bg-primary-700 flex items-center gap-2 ml-auto sm:ml-0 transition-colors"
             >
               <span className="text-xs sm:text-sm font-medium font-sans">
                 View applicants

@@ -217,29 +217,82 @@ export default function RecruiterDashboard() {
 
   return (
     <div className="flex flex-col lg:grid lg:grid-cols-4 gap-4 md:gap-6">
-      {/* Did You Know Card */}
-      <div className="w-full lg:col-span-1 h-fit bg-primary-50 border border-primary-500 rounded-2xl p-4 flex flex-col gap-4">
-        <div className="flex items-center gap-2">
-          <Icon
-            icon="material-symbols:lightbulb-outline-rounded"
-            className="size-6 text-primary-500"
-          />
-          <h3 className="font-semibold text-base md:text-lg text-black">
-            You are on Free Plan
-          </h3>
+      {/* Left Sidebar */}
+      <div className="w-full lg:col-span-1 flex flex-col gap-4">
+        {/* FAQ Card */}
+        <div className="bg-blue-50 border border-blue-300 rounded-2xl p-4 flex flex-col gap-4">
+          <div className="flex flex-col gap-2">
+            <div className="flex items-center gap-2">
+              <Icon
+                icon="mdi:help-circle-outline"
+                className="size-6 text-blue-600"
+              />
+              <h3 className="font-semibold text-base md:text-lg text-black">
+                Have Questions?
+              </h3>
+            </div>
+            <p className="text-xs font-medium text-gray-700">
+              New to skill-based hiring? Our FAQ page covers everything you need
+              to know.
+            </p>
+          </div>
+          <div className="flex flex-col gap-2">
+            <div className="flex gap-2 items-start">
+              <div className="size-1.5 bg-blue-500 rounded-full mt-1.5 shrink-0" />
+              <p className="text-sm font-medium text-gray-800">
+                How to post jobs
+              </p>
+            </div>
+            <div className="flex gap-2 items-start">
+              <div className="size-1.5 bg-blue-500 rounded-full mt-1.5 shrink-0" />
+              <p className="text-sm font-medium text-gray-800">
+                How talent pool works
+              </p>
+            </div>
+            <div className="flex gap-2 items-start">
+              <div className="size-1.5 bg-blue-500 rounded-full mt-1.5 shrink-0" />
+              <p className="text-sm font-medium text-gray-800">
+                Understanding candidate scores
+              </p>
+            </div>
+          </div>
+          <Link
+            href="/faqs?tab=recruiters"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="w-full"
+          >
+            <Button className="bg-blue-600 text-white hover:bg-blue-700 w-full text-sm">
+              Visit FAQ Page
+              <Icon icon="mdi:open-in-new" className="ml-2 size-4" />
+            </Button>
+          </Link>
         </div>
-        <p className="text-sm font-medium text-slate-700">
-          Unlock up to 10 candidate profiles and discover amazing talent waiting
-          for opportunities.
-        </p>
-        <Button
-          variant="outline"
-          className="border-primary-500 text-primary-500 hover:bg-primary-100 w-full md:w-auto"
-          onClick={() => router.push("/credits")}
-        >
-          See Plans
-          <Icon icon="mdi:arrow-top-right" className="ml-2 size-4" />
-        </Button>
+
+        {/* Free Plan Card */}
+        <div className="h-fit bg-primary-50 border border-primary-500 rounded-2xl p-4 flex flex-col gap-4">
+          <div className="flex items-center gap-2">
+            <Icon
+              icon="material-symbols:lightbulb-outline-rounded"
+              className="size-6 text-primary-500"
+            />
+            <h3 className="font-semibold text-base md:text-lg text-black">
+              You are on Free Plan
+            </h3>
+          </div>
+          <p className="text-sm font-medium text-slate-700">
+            Unlock up to 10 candidate profiles and discover amazing talent
+            waiting for opportunities.
+          </p>
+          <Button
+            variant="outline"
+            className="border-primary-500 text-primary-500 hover:bg-primary-100 w-full md:w-auto"
+            onClick={() => router.push("/credits")}
+          >
+            See Plans
+            <Icon icon="mdi:arrow-top-right" className="ml-2 size-4" />
+          </Button>
+        </div>
       </div>
       <div className="flex flex-col gap-4 md:gap-6 pb-8 w-full lg:col-span-3">
         {/* Hello + Statistics */}

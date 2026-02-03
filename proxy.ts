@@ -12,6 +12,8 @@ const publicRoutes = [
   "/qa-job-fair-feb",
   "/assessment",
   "/assessment/*",
+  "/faqs",
+  "/contact",
 ];
 
 const ROLE_ONLY_ROUTES = {
