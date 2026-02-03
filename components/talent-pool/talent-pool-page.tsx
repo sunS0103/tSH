@@ -73,14 +73,49 @@ const mapCandidateToTalentCard = (
 export default function TalentPoolPage() {
   const searchParams = useSearchParams();
   const router = useRouter();
-  const [searchQuery, setSearchQuery] = useState("");
-  const [debouncedSearchQuery, setDebouncedSearchQuery] = useState("");
-  const [selectedFilters, setSelectedFilters] = useState<string[]>([]);
-  const [currentPage, setCurrentPage] = useState(1);
+  const [searchQuery, setSearchQuery] = useState(
+    () => searchParams.get("search") || "",
+  );
+  const [debouncedSearchQuery, setDebouncedSearchQuery] = useState(
+    () => searchParams.get("search") || "",
+  );
+  const [selectedFilters, setSelectedFilters] = useState<string[]>(() => {
+    const filters = searchParams.get("filters");
+    if (filters) {
+      try {
+        const parsedFilters = JSON.parse(decodeURIComponent(filters));
+        if (Array.isArray(parsedFilters)) {
+          return parsedFilters;
+        }
+      } catch {
+        // Invalid filters in URL, ignore
+      }
+    }
+    return [];
+  });
+  const [currentPage, setCurrentPage] = useState(() => {
+    const page = searchParams.get("page");
+    if (page) {
+      const pageNum = parseInt(page, 10);
+      return !isNaN(pageNum) && pageNum > 0 ? pageNum : 1;
+    }
+    return 1;
+  });
   const [sortBy, setSortBy] = useState<
     "score" | "experience" | "recently_assessed"
-  >("score");
-  const [sortDirection, setSortDirection] = useState<"asc" | "desc">("desc");
+  >(() => {
+    const sortByParam = searchParams.get("sortBy");
+    return sortByParam &&
+      ["score", "experience", "recently_assessed"].includes(sortByParam)
+      ? (sortByParam as "score" | "experience" | "recently_assessed")
+      : "score";
+  });
+  const [sortDirection, setSortDirection] = useState<"asc" | "desc">(() => {
+    const sortDirectionParam = searchParams.get("sortDirection");
+    return sortDirectionParam && ["asc", "desc"].includes(sortDirectionParam)
+      ? (sortDirectionParam as "asc" | "desc")
+      : "desc";
+  });
   const [selectedTalents, setSelectedTalents] = useState<string[]>([]);
   const [favoriteTalents, setFavoriteTalents] = useState<string[]>([]);
   const [bulkInviteDialog, setBulkInviteDialog] = useState<{
@@ -301,50 +336,10 @@ export default function TalentPoolPage() {
     return params;
   };
 
-  // Initialize state from URL params on mount
+  // Handle initial mount state
   useEffect(() => {
-    const query = searchParams.get("search") || "";
-    const page = searchParams.get("page");
-    const filters = searchParams.get("filters");
-    const sortByParam = searchParams.get("sortBy");
-    const sortDirectionParam = searchParams.get("sortDirection");
-
-    if (query) {
-      setSearchQuery(query);
-      // Set debounced query immediately on mount (no delay needed)
-      setDebouncedSearchQuery(query);
-    }
-    if (page) {
-      const pageNum = parseInt(page, 10);
-      if (!isNaN(pageNum) && pageNum > 0) {
-        setCurrentPage(pageNum);
-      }
-    }
-    if (filters) {
-      try {
-        const parsedFilters = JSON.parse(decodeURIComponent(filters));
-        if (Array.isArray(parsedFilters)) {
-          setSelectedFilters(parsedFilters);
-        }
-      } catch {
-        // Invalid filters in URL, ignore
-      }
-    }
-    if (
-      sortByParam &&
-      ["score", "experience", "recently_assessed"].includes(sortByParam)
-    ) {
-      setSortBy(sortByParam as "score" | "experience" | "recently_assessed");
-    }
-    if (sortDirectionParam && ["asc", "desc"].includes(sortDirectionParam)) {
-      setSortDirection(sortDirectionParam as "asc" | "desc");
-    }
-    // Mark as no longer initial mount after a brief delay to allow state to settle
-    setTimeout(() => {
-      isInitialMount.current = false;
-    }, 100);
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []); // Only run on mount
+    isInitialMount.current = false;
+  }, []);
 
   // Update URL params when state changes (but not on initial mount)
   useEffect(() => {
