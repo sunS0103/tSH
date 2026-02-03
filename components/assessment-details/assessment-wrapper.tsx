@@ -3,6 +3,7 @@
 import { useState, useEffect, useLayoutEffect, useRef } from "react";
 import { usePathname, useRouter } from "next/navigation";
 import { Button } from "@/components/ui/button";
+import { Loader } from "@/components/ui/loader";
 import { cn } from "@/lib/utils";
 import AssessmentStepper from "./assessment-stepper";
 import StepContent, { type Assessment } from "./step-content-wrapper";
@@ -100,6 +101,7 @@ export default function AssessmentWrapper({
 
   const [isStartNowDialogOpen, setIsStartNowDialogOpen] = useState(false);
   const [isStartLaterDialogOpen, setIsStartLaterDialogOpen] = useState(false);
+  const [isPaymentLoading, setIsPaymentLoading] = useState(false);
 
   const totalSteps = STEPS.length;
 
@@ -394,39 +396,44 @@ export default function AssessmentWrapper({
   const handlePurchase = async (
     packageType: "BASIC" | "PREMIUM" | "PLATINUM",
   ): Promise<{ user_assessment_id: string; payment: Payment }> => {
-    // Call initiate purchase API
-    const orderData = await initiatePurchase({
-      assessment_id: assessmentId,
-      packageType,
-      currency: selectedCurrency,
-    });
+    setIsPaymentLoading(true);
+    try {
+      // Call initiate purchase API
+      const orderData = await initiatePurchase({
+        assessment_id: assessmentId,
+        packageType,
+        currency: selectedCurrency,
+      });
 
-    // Open Razorpay checkout for paid packages
-    const user = getProfileData();
-    let paymentResult: {
-      user_assessment_id: string;
-      payment: Payment;
-    } | null = null;
+      // Open Razorpay checkout for paid packages (verifyPayment runs in handler)
+      const user = getProfileData();
+      let paymentResult: {
+        user_assessment_id: string;
+        payment: Payment;
+      } | null = null;
 
-    await openRazorpayCheckout({
-      orderData,
-      user,
-      onSuccess: (paymentData) => {
-        paymentResult = paymentData;
-        setUserAssessmentId(paymentData.user_assessment_id);
-        setAssessmentPayment(paymentData.payment);
-        setSelectedPackageType(paymentData.payment.package_type);
-        toast.success(
-          "Assessment purchased successfully 🎉 You can now start the assessment.",
-        );
-      },
-    });
+      await openRazorpayCheckout({
+        orderData,
+        user,
+        onSuccess: (paymentData) => {
+          paymentResult = paymentData;
+          setUserAssessmentId(paymentData.user_assessment_id);
+          setAssessmentPayment(paymentData.payment);
+          setSelectedPackageType(paymentData.payment.package_type);
+          toast.success(
+            "Assessment purchased successfully 🎉 You can now start the assessment.",
+          );
+        },
+      });
 
-    if (!paymentResult) {
-      throw new Error("Payment was not completed");
+      if (!paymentResult) {
+        throw new Error("Payment was not completed");
+      }
+
+      return paymentResult;
+    } finally {
+      setIsPaymentLoading(false);
     }
-
-    return paymentResult;
   };
 
   const validateSteps = (): boolean => {
@@ -515,7 +522,7 @@ export default function AssessmentWrapper({
           setUserAssessmentId(null);
           setAssessmentPayment(null);
           setIsStartNowDialogOpen(false);
-          router.push(`/assessments?tab=taken`);
+          router.push(`/assessments`);
         }
       } catch (err: unknown) {
         const error = err as { response?: { data?: { message?: string } } };
@@ -565,7 +572,7 @@ export default function AssessmentWrapper({
         setUserAssessmentId(null);
         setAssessmentPayment(null);
         setIsStartNowDialogOpen(false);
-        router.push(`/assessments?tab=taken`);
+        router.push(`/assessments`);
       }
     } catch (err: unknown) {
       // Error might be from handlePurchase (payment cancelled) or changeAssessmentStatus
@@ -637,6 +644,7 @@ export default function AssessmentWrapper({
 
   return (
     <div className="flex flex-col mt-4 lg:mt-6 pb-17">
+      <Loader show={isPaymentLoading} />
       <div className="flex flex-col lg:flex-row gap-6 flex-1">
         {/* Mobile Stepper - Horizontal (Fluid Layout) */}
         <div

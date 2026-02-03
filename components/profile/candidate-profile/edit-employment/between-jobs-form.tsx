@@ -12,6 +12,13 @@ import {
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 import { Textarea } from "@/components/ui/textarea";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useRouter } from "next/navigation";
@@ -56,6 +63,7 @@ const betweenJobsSchema = z.object({
     .refine((val) => !isNaN(parseFloat(val)) && parseFloat(val) >= 0, {
       message: "Please enter a valid number",
     }),
+  last_drawn_ctc_currency: z.string(),
   // duration_description: z.string().min(1, "Reason is required")
   reason: z.string(),
   // .min(1, "Reason is required"),
@@ -92,6 +100,7 @@ export default function BetweenJobsForm({
       reason: defaultValues?.reason || "",
       upskilling_activities: defaultValues?.upskilling_activities || "",
       current_ctc_period_type: "LPA",
+      last_drawn_ctc_currency: defaultValues?.last_drawn_ctc_currency || "INR",
     },
   });
 
@@ -103,6 +112,7 @@ export default function BetweenJobsForm({
         duration_months: data.duration_months,
         last_drawn_ctc_amount: parseFloat(data.last_drawn_ctc_amount),
         current_ctc_period_type: data.current_ctc_period_type,
+        last_drawn_ctc_currency: data.last_drawn_ctc_currency || "INR",
         // duration_description: data.duration_description,
         reason: data.reason,
         upskilling_activities: data.upskilling_activities,
@@ -110,7 +120,7 @@ export default function BetweenJobsForm({
 
       if (response.success) {
         toast.success(
-          response.message || "Employment details updated successfully",
+          response.message || "Employment details updated successfully"
         );
         // Navigate to next section in onboarding flow
         router.push("/profile-details/edit-education");
@@ -154,7 +164,7 @@ export default function BetweenJobsForm({
               </FormItem>
             )}
           />
-          <div className="w-full md:w-1/2">
+          <div className="w-full md:w-1/2 flex flex-row gap-2 items-end">
             <FormField
               control={form.control}
               name="last_drawn_ctc_amount"
@@ -174,6 +184,29 @@ export default function BetweenJobsForm({
                       className="h-8 border-gray-900 "
                       {...field}
                     />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+            <FormField
+              control={form.control}
+              name="last_drawn_ctc_currency"
+              render={({ field }) => (
+                <FormItem className="w-24">
+                  <FormControl>
+                    <Select onValueChange={field.onChange} value={field.value}>
+                      <SelectTrigger className="h-8! border-gray-900">
+                        <SelectValue placeholder="INR" />
+                      </SelectTrigger>
+                      <SelectContent>
+                        <SelectItem value="INR">INR</SelectItem>
+                        <SelectItem value="USD">USD</SelectItem>
+                        <SelectItem value="CAD">CAD</SelectItem>
+                        <SelectItem value="AED">AED</SelectItem>
+                        <SelectItem value="GBP">GBP</SelectItem>
+                      </SelectContent>
+                    </Select>
                   </FormControl>
                   <FormMessage />
                 </FormItem>
@@ -202,7 +235,7 @@ export default function BetweenJobsForm({
                       value={field.value || ""}
                       onChange={(e) =>
                         field.onChange(
-                          e.target.value ? parseFloat(e.target.value) : null,
+                          e.target.value ? parseFloat(e.target.value) : null
                         )
                       }
                     />
