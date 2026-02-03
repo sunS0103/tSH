@@ -39,7 +39,7 @@ export default function EditEmployment({
     // Check if user is in onboarding flow or editing from profile
     const isOnboarding = window.location.pathname.includes("/profile-details/");
     router.push(
-      isOnboarding ? "/profile-details/edit-personal-social" : "/profile"
+      isOnboarding ? "/profile-details/edit-personal-social" : "/profile",
     );
   };
 
@@ -58,12 +58,12 @@ export default function EditEmployment({
         <div className="flex flex-col md:flex-row gap-4 mb-4">
           <div className="w-full md:w-1/2">
             <Label className="text-sm font-medium text-black">
-              Current Status <span className="text-destructive -ml-1.5">*</span>
+              Current Status <span className="text-destructive">*</span>
             </Label>
             <Select
               onValueChange={(value) =>
                 setEmploymentStatus(
-                  value as "Employed" | "Student" | "Fresher" | "Between Jobs"
+                  value as "Employed" | "Student" | "Fresher" | "Between Jobs",
                 )
               }
               value={employmentStatus}

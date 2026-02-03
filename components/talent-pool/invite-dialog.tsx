@@ -396,7 +396,8 @@ export default function InviteDialog({
                               />
                               <Link
                                 href={`/assessment/${item.slug}`}
-                                className="text-sm text-gray-900 font-sans flex-1 underline"
+                                target="_blank"
+                                className="text-sm text-gray-900 font-sans flex-1 underline hover:text-primary-500"
                               >
                                 {item.title}
                               </Link>

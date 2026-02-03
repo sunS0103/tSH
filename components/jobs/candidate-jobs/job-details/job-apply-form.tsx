@@ -160,7 +160,7 @@ export default function JobApplyForm({
       toast.error(
         axiosError.response?.data?.message ||
           axiosError.message ||
-          "Failed to submit application"
+          "Failed to submit application",
       );
     } finally {
       setIsSubmitting(false);
@@ -292,8 +292,8 @@ export default function JobApplyForm({
                   return (
                     <div key={fieldId} className="flex-1 flex flex-col gap-2">
                       <Label className="text-sm font-medium text-gray-900">
-                        {field.title}{" "}
-                        <span className="text-destructive ms-1">*</span>
+                        {field.title}
+                        <span className="text-destructive">*</span>
                       </Label>
                       <Input
                         type="text"
