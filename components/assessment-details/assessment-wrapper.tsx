@@ -58,6 +58,7 @@ interface AssessmentWrapperProps {
 export default function AssessmentWrapper({
   assessment,
 }: AssessmentWrapperProps) {
+  console.log(assessment);
   const pathname = usePathname();
   const assessmentId = assessment.assessment_id;
   const router = useRouter();
@@ -84,11 +85,11 @@ export default function AssessmentWrapper({
   const [isHydrated, setIsHydrated] = useState(false);
   const previousPathnameRef = useRef<string | null>(null);
   const [userAssessmentId, setUserAssessmentId] = useState<string | null>(
-    assessment?.user_assessment_id || null,
+    assessment?.user_assessment_id || null
   );
 
   const [assessmentPayment, setAssessmentPayment] = useState<Payment | null>(
-    assessment && assessment.payment ? (assessment.payment as Payment) : null,
+    assessment && assessment.payment ? (assessment.payment as Payment) : null
   );
 
   const [selectedPackageType, setSelectedPackageType] = useState<
@@ -96,7 +97,7 @@ export default function AssessmentWrapper({
   >(assessment?.payment?.package_type || null);
 
   const [selectedCurrency, setSelectedCurrency] = useState<"INR" | "USD">(
-    "INR",
+    "INR"
   );
 
   const [isStartNowDialogOpen, setIsStartNowDialogOpen] = useState(false);
@@ -166,7 +167,7 @@ export default function AssessmentWrapper({
       }
 
       const confirmationsValue = localStorage.getItem(
-        STORAGE_KEY_CONFIRMATIONS,
+        STORAGE_KEY_CONFIRMATIONS
       );
       if (confirmationsValue) {
         try {
@@ -202,7 +203,7 @@ export default function AssessmentWrapper({
     if (isHydrated && typeof window !== "undefined" && isAssessmentRoute) {
       localStorage.setItem(
         STORAGE_KEY_CONFIRMATIONS,
-        JSON.stringify(stepConfirmations),
+        JSON.stringify(stepConfirmations)
       );
     }
   }, [
@@ -278,7 +279,7 @@ export default function AssessmentWrapper({
 
   // Calculate unconfirmed steps with errors (only show red when user has tried to proceed without confirming)
   const unconfirmedSteps = Object.keys(stepErrors).map((stepNum) =>
-    parseInt(stepNum),
+    parseInt(stepNum)
   );
 
   // Handle navigation click from stepper
@@ -303,7 +304,7 @@ export default function AssessmentWrapper({
   };
 
   const handlePackageSelect = (
-    packageType: "FREE" | "BASIC" | "PREMIUM" | "PLATINUM",
+    packageType: "FREE" | "BASIC" | "PREMIUM" | "PLATINUM"
   ) => {
     setSelectedPackageType(packageType);
   };
@@ -394,7 +395,7 @@ export default function AssessmentWrapper({
   // Returns the user_assessment_id and payment data after successful payment
   // Note: FREE packages are handled separately by the "Start Assessment - Free" button in PaymentCards
   const handlePurchase = async (
-    packageType: "BASIC" | "PREMIUM" | "PLATINUM",
+    packageType: "BASIC" | "PREMIUM" | "PLATINUM"
   ): Promise<{ user_assessment_id: string; payment: Payment }> => {
     setIsPaymentLoading(true);
     try {
@@ -421,7 +422,7 @@ export default function AssessmentWrapper({
           setAssessmentPayment(paymentData.payment);
           setSelectedPackageType(paymentData.payment.package_type);
           toast.success(
-            "Assessment purchased successfully 🎉 You can now start the assessment.",
+            "Assessment purchased successfully 🎉 You can now start the assessment."
           );
         },
       });
@@ -438,7 +439,7 @@ export default function AssessmentWrapper({
 
   const validateSteps = (): boolean => {
     const unconfirmedStepNumbers = [1, 2, 3, 4].filter(
-      (stepNum) => !stepConfirmations[stepNum],
+      (stepNum) => !stepConfirmations[stepNum]
     );
 
     if (unconfirmedStepNumbers.length > 0) {
@@ -448,7 +449,7 @@ export default function AssessmentWrapper({
       });
       setStepErrors((prev) => ({ ...prev, ...newErrors }));
       toast.error(
-        "Please confirm all required sections before starting the assessment.",
+        "Please confirm all required sections before starting the assessment."
       );
       return false;
     }
@@ -482,7 +483,7 @@ export default function AssessmentWrapper({
     // FREE packages should use the "Start Assessment - Free" button in PaymentCards
     if (selectedPackageType === "FREE") {
       toast.error(
-        "Please use the 'Start Assessment - Free' button for free packages.",
+        "Please use the 'Start Assessment - Free' button for free packages."
       );
       setIsStartNowDialogOpen(false);
       return;
@@ -494,40 +495,34 @@ export default function AssessmentWrapper({
       try {
         const res = await changeAssessmentStatus(userAssessmentId, "ON_GOING");
         if (res.success && res.data.invite_link) {
-          // Try to open the assessment link
-          const newWindow = window.open(res.data.invite_link, "_blank");
-
-          // Check if popup was blocked
-          if (
-            !newWindow ||
-            newWindow.closed ||
-            typeof newWindow.closed === "undefined"
-          ) {
-            toast.info(
-              <div>
-                <p>Please click the link below to start your assessment:</p>
-                <a
-                  href={res.data.invite_link}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="text-primary-600 underline font-medium"
-                >
-                  Open Assessment
-                </a>
-              </div>,
-              { duration: 10000 },
-            );
-          }
-
-          setUserAssessmentId(null);
-          setAssessmentPayment(null);
-          setIsStartNowDialogOpen(false);
-          router.push(`/assessments`);
+          setTimeout(() => {
+            const w = window.open(res.data.invite_link, "_blank");
+            if (w == null || w.closed) {
+              toast.info(
+                <div>
+                  <p>Please click the link below to start your assessment:</p>
+                  <a
+                    href={res.data.invite_link}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="text-primary-600 underline font-medium"
+                  >
+                    Open Assessment
+                  </a>
+                </div>,
+                { duration: 15000 }
+              );
+            }
+            setUserAssessmentId(null);
+            setAssessmentPayment(null);
+            setIsStartNowDialogOpen(false);
+            router.push(`/assessments`);
+          }, 1000);
         }
       } catch (err: unknown) {
         const error = err as { response?: { data?: { message?: string } } };
         toast.error(
-          error?.response?.data?.message || "Failed to start assessment",
+          error?.response?.data?.message || "Failed to start assessment"
         );
       }
       return;
@@ -540,39 +535,34 @@ export default function AssessmentWrapper({
       // After successful payment, call changeAssessmentStatus with ON_GOING
       const res = await changeAssessmentStatus(
         paymentResult.user_assessment_id,
-        "ON_GOING",
+        "ON_GOING"
       );
       if (res.success && res.data.invite_link) {
-        // Try to open the assessment link
-        const newWindow = window.open(res.data.invite_link, "_blank");
-
-        // Check if popup was blocked
-        if (
-          !newWindow ||
-          newWindow.closed ||
-          typeof newWindow.closed === "undefined"
-        ) {
-          // Popup was blocked - show toast with link
-          toast.info(
-            <div>
-              <p>Please click the link below to start your assessment:</p>
-              <a
-                href={res.data.invite_link}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="text-primary-600 underline font-medium"
-              >
-                Open Assessment
-              </a>
-            </div>,
-            { duration: 10000 },
-          );
-        }
-
-        setUserAssessmentId(null);
-        setAssessmentPayment(null);
-        setIsStartNowDialogOpen(false);
-        router.push(`/assessments`);
+        setTimeout(() => {
+          const w = window.open(res.data.invite_link, "_blank");
+          if (w == null || w.closed) {
+            toast.info(
+              <div>
+                <p>Please click the link below to start your assessment:</p>
+                <a
+                  href={res.data.invite_link}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="text-primary-600 underline font-medium"
+                >
+                  Open Assessment
+                </a>
+              </div>,
+              { duration: 15000 }
+            );
+          }
+          setUserAssessmentId(null);
+          setAssessmentPayment(null);
+          setIsStartNowDialogOpen(false);
+          router.push(`/assessments`);
+        }, 1000);
+      } else if (res.data.invite_link) {
+        toast.error(res.message || "Assessment link not found");
       }
     } catch (err: unknown) {
       // Error might be from handlePurchase (payment cancelled) or changeAssessmentStatus
@@ -594,7 +584,7 @@ export default function AssessmentWrapper({
     // FREE packages should use the "Start Assessment - Free" button in PaymentCards
     if (selectedPackageType === "FREE") {
       toast.error(
-        "Please use the 'Start Assessment - Free' button for free packages.",
+        "Please use the 'Start Assessment - Free' button for free packages."
       );
       setIsStartLaterDialogOpen(false);
       return;
@@ -613,7 +603,7 @@ export default function AssessmentWrapper({
       } catch (err: unknown) {
         const error = err as { response?: { data?: { message?: string } } };
         toast.error(
-          error?.response?.data?.message || "Failed to schedule assessment",
+          error?.response?.data?.message || "Failed to schedule assessment"
         );
       }
       return;
@@ -626,7 +616,7 @@ export default function AssessmentWrapper({
       // After successful payment, call changeAssessmentStatus with LATER
       const res = await changeAssessmentStatus(
         paymentResult.user_assessment_id,
-        "LATER",
+        "LATER"
       );
       if (res.success) {
         toast.success(res.message || "Exam link will send via email");
@@ -651,7 +641,7 @@ export default function AssessmentWrapper({
           className={cn(
             "lg:hidden bg-white border border-gray-200 py-4 -mx-4 md:mx-0",
             lastTwoSteps && "rounded-r-2xl mr-2",
-            firstTwoSteps && "rounded-l-2xl ml-0",
+            firstTwoSteps && "rounded-l-2xl ml-0"
           )}
         >
           <AssessmentStepper

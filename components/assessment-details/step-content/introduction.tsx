@@ -146,68 +146,71 @@ export default function AssessmentIntroduction({
         </div>
       </div>
 
-      <div className="flex flex-col mt-8">
-        <div>
-          <div className="flex gap-2">
-            <Icon
-              icon="material-symbols:menu-book-outline"
-              className="text-primary-500 size-6"
-            />
-            <h1 className="text-lg font-semibold text-gray-900 mb-4">
-              Syllabus and Topics Covered
-            </h1>
-          </div>
-          <div className="grid grid-cols-2 md:grid-cols-3 gap-2">
-            {topics?.map((item) => (
-              <div
-                key={item.id}
-                className="text-center bg-primary-50 text-primary-500 text-xs px-4 py-3 rounded-lg"
-              >
-                <span>{item.value}</span>
-              </div>
-            ))}
-          </div>
-          {sample_question_pdf_link && (
-            <Button
-              variant="secondary"
-              className="mt-3 group text-xs md:text-sm"
-              onClick={() => {
-                window.open(
-                  sample_question_pdf_link,
-                  "_blank",
-                  "noopener noreferrer"
-                );
-              }}
-            >
+      {topics.length > 0 && (
+        <div className="flex flex-col mt-8">
+          <div>
+            <div className="flex gap-2">
               <Icon
-                icon="humbleicons:download-alt"
-                className="text-primary-500 size-4.5 group-hover:text-white"
+                icon="material-symbols:menu-book-outline"
+                className="text-primary-500 size-6"
               />
-              Download Sample Questions.
-            </Button>
-          )}
-        </div>
-        <div ref={checkboxRef} className="flex flex-col gap-2 mt-10">
-          <div className="flex items-center gap-2">
-            <Checkbox
-              id="syllabus-and-topics"
-              checked={isConfirmed}
-              onCheckedChange={(checked) => onConfirmChange(Boolean(checked))}
-              className="border border-black cursor-pointer"
-            />
-            <Label
-              htmlFor="syllabus-and-topics"
-              className="inline font-normal cursor-pointer"
-            >
-              I have reviewed and understood the syllabus.
-            </Label>
+              <h1 className="text-lg font-semibold text-gray-900 mb-4">
+                Syllabus and Topics Covered
+              </h1>
+            </div>
+            <div className="grid grid-cols-2 md:grid-cols-3 gap-2">
+              {topics?.map((item) => (
+                <div
+                  key={item.id}
+                  className="text-center bg-primary-50 text-primary-500 text-xs px-4 py-3 rounded-lg"
+                >
+                  <span>{item.value}</span>
+                </div>
+              ))}
+            </div>
+            {sample_question_pdf_link && (
+              <Button
+                variant="secondary"
+                className="mt-3 group text-xs md:text-sm"
+                onClick={() => {
+                  window.open(
+                    sample_question_pdf_link,
+                    "_blank",
+                    "noopener noreferrer"
+                  );
+                }}
+              >
+                <Icon
+                  icon="humbleicons:download-alt"
+                  className="text-primary-500 size-4.5 group-hover:text-white"
+                />
+                Download Sample Questions.
+              </Button>
+            )}
           </div>
-          {hasError && (
-            <p className="text-sm text-red-500 ml-7">
-              Please mark this checkbox to proceed to the next step
-            </p>
-          )}
         </div>
+      )}
+
+      <div ref={checkboxRef} className="flex flex-col gap-2 mt-10">
+        <div className="flex items-center gap-2">
+          <Checkbox
+            id="syllabus-and-topics"
+            checked={isConfirmed}
+            onCheckedChange={(checked) => onConfirmChange(Boolean(checked))}
+            className="border border-black cursor-pointer"
+          />
+          <Label
+            htmlFor="syllabus-and-topics"
+            className="inline font-normal cursor-pointer"
+          >
+            I have reviewed and understood the syllabus.
+          </Label>
+        </div>
+        {hasError && (
+          <p className="text-sm text-red-500 ml-7">
+            Please mark this checkbox to proceed to the next step
+          </p>
+        )}
       </div>
     </div>
   );
