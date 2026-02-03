@@ -36,6 +36,7 @@ export default function PaymentCards({
   onPackageSelect,
   selectedPackage,
   onCurrencyChange,
+  validateSteps,
 }: {
   assessment_id: string;
   payment: Payment | null;
@@ -49,13 +50,14 @@ export default function PaymentCards({
     message?: string;
   }) => void;
   onPackageSelect?: (
-    packageType: "FREE" | "BASIC" | "PREMIUM" | "PLATINUM"
+    packageType: "FREE" | "BASIC" | "PREMIUM" | "PLATINUM",
   ) => void;
   selectedPackage?: "FREE" | "BASIC" | "PREMIUM" | "PLATINUM" | null;
   onCurrencyChange?: (currency: "INR" | "USD") => void;
+  validateSteps?: () => boolean;
 }) {
   const [paymentSuccessData, setPaymentSuccessData] = useState<Payment | null>(
-    payment || null
+    payment || null,
   );
   const [localSelectedPackage, setLocalSelectedPackage] = useState<
     "FREE" | "BASIC" | "PREMIUM" | "PLATINUM" | null
@@ -276,10 +278,16 @@ export default function PaymentCards({
   };
 
   const handlePurchase = async (
-    packageType: "FREE" | "BASIC" | "PREMIUM" | "PLATINUM"
+    packageType: "FREE" | "BASIC" | "PREMIUM" | "PLATINUM",
   ) => {
     setIsPaymentLoading(true);
     try {
+      if (packageType === "FREE" && validateSteps) {
+        if (!validateSteps()) {
+          return;
+        }
+      }
+
       // 1️⃣ Create Order
       const orderData = await initiatePurchase({
         assessment_id: assessment_id,
@@ -314,7 +322,7 @@ export default function PaymentCards({
         token,
         onSuccess: () => {
           toast.success(
-            "Assessment purchased successfully 🎉 You can now start the assessment."
+            "Assessment purchased successfully 🎉 You can now start the assessment.",
           );
           // Don't refresh - let the state update flow through
         },
@@ -330,7 +338,7 @@ export default function PaymentCards({
   };
 
   const handlePackageCardClick = (
-    packageType: "FREE" | "BASIC" | "PREMIUM" | "PLATINUM"
+    packageType: "FREE" | "BASIC" | "PREMIUM" | "PLATINUM",
   ) => {
     // Don't allow changing if already purchased
     if (currentPayment?.initial_payment_status === "PAID") {
@@ -373,7 +381,7 @@ export default function PaymentCards({
               "px-4 py-1.5 rounded-md text-sm font-medium transition-all",
               currency === "INR"
                 ? "bg-white text-gray-900 shadow-sm"
-                : "text-gray-600 hover:text-gray-900"
+                : "text-gray-600 hover:text-gray-900",
             )}
           >
             ₹ INR
@@ -384,7 +392,7 @@ export default function PaymentCards({
               "px-4 py-1.5 rounded-md text-sm font-medium transition-all",
               currency === "USD"
                 ? "bg-white text-gray-900 shadow-sm"
-                : "text-gray-600 hover:text-gray-900"
+                : "text-gray-600 hover:text-gray-900",
             )}
           >
             $ USD
@@ -430,7 +438,7 @@ export default function PaymentCards({
             key={card.title}
             onClick={() =>
               handlePackageCardClick(
-                card.packageType as "FREE" | "BASIC" | "PREMIUM" | "PLATINUM"
+                card.packageType as "FREE" | "BASIC" | "PREMIUM" | "PLATINUM",
               )
             }
             className={cn(
@@ -443,7 +451,7 @@ export default function PaymentCards({
                 : "border-gray-200 hover:border-primary-200",
               // Disable interaction if already paid
               currentPayment?.initial_payment_status === "PAID" &&
-                "cursor-not-allowed opacity-70"
+                "cursor-not-allowed opacity-70",
             )}
           >
             <div>
@@ -459,7 +467,7 @@ export default function PaymentCards({
                       (currentPayment?.package_type === card.packageType &&
                         currentPayment?.initial_payment_status === "PAID")
                       ? "border-primary-500 bg-primary-500"
-                      : "border-gray-300"
+                      : "border-gray-300",
                   )}
                 >
                   {(localSelectedPackage === card.packageType ||

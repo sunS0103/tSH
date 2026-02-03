@@ -180,13 +180,13 @@ export default function TalentPoolPage() {
               items: [{ id: "favorites", value: "Show Favorites Only" }],
             },
             // Technology filter
-            {
-              title: "Technology",
-              items: response.data.technology.map((tech) => ({
-                id: tech.value,
-                value: tech.title,
-              })),
-            },
+            // {
+            //   title: "Technology",
+            //   items: response.data.technology.map((tech) => ({
+            //     id: tech.value,
+            //     value: tech.title,
+            //   })),
+            // },
             // Years of Experience filter (client-side only)
             {
               title: "Years of Experience",
