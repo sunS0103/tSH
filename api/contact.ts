@@ -4,11 +4,11 @@ interface ContactFormData {
   name: string;
   email: string;
   phone: string;
-  countryCode: string;
-  userType: "candidate" | "recruiter";
+  country_code: string;
+  user_type: "candidate" | "recruiter";
   company?: string;
   message: string;
-  recaptchaToken: string;
+  recaptcha_token: string;
 }
 
 export const submitContactForm = async (data: ContactFormData) => {
