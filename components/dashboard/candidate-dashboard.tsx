@@ -140,62 +140,53 @@ export default function CandidateDashboard() {
     <div className="flex flex-col lg:grid lg:grid-cols-4 gap-4 md:gap-6">
       {/* Left Sidebar */}
       <div className="w-full lg:col-span-1 flex flex-col gap-4">
-        {/* Profile Completion Card */}
-        {profileCompletionPercentage && (
-          <div className="bg-warning-50 border border-warning-500 rounded-2xl p-4 flex flex-col gap-4">
-            <div className="flex flex-col gap-2">
+        {/* FAQ Card */}
+        <div className="bg-blue-50 border border-blue-300 rounded-2xl p-4 flex flex-col gap-4">
+          <div className="flex flex-col gap-2">
+            <div className="flex items-center gap-2">
+              <Icon icon="mdi:help-circle-outline" className="size-6 text-blue-600" />
               <h3 className="font-semibold text-base md:text-lg text-black">
-                Complete your profile
+                Have Questions?
               </h3>
-              <p className="text-xs font-medium text-gray-700">
-                Complete your profile to get more relevant job matches.
+            </div>
+            <p className="text-xs font-medium text-gray-700">
+              New to skill-based hiring? Our FAQ page covers everything you need to know.
+            </p>
+          </div>
+          <div className="flex flex-col gap-2">
+            <div className="flex gap-2 items-start">
+              <div className="size-1.5 bg-blue-500 rounded-full mt-1.5 shrink-0" />
+              <p className="text-sm font-medium text-gray-800">
+                How assessments work
               </p>
             </div>
-            <div className="flex items-center gap-2">
-              <Progress
-                value={profileCompletionPercentage.total_percentage}
-                className="flex-1"
-              />
-              <span className="text-xs font-medium text-gray-900">
-                {profileCompletionPercentage.total_percentage}%
-              </span>
+            <div className="flex gap-2 items-start">
+              <div className="size-1.5 bg-blue-500 rounded-full mt-1.5 shrink-0" />
+              <p className="text-sm font-medium text-gray-800">
+                How recruiters find you
+              </p>
             </div>
-            <div className="flex flex-col gap-2">
-              {Object.entries(profileCompletionPercentage.sections).map(
-                ([sectionName, isCompleted]) => (
-                  <div key={sectionName} className="flex items-center gap-2">
-                    {isCompleted ? (
-                      <Icon
-                        icon="mdi:check-circle"
-                        className="size-5 text-success-500 shrink-0"
-                      />
-                    ) : (
-                      <div className="size-5 rounded-full border-2 border-gray-300 shrink-0" />
-                    )}
-                    <span
-                      className={`text-sm font-medium ${
-                        isCompleted ? "text-success-600" : "text-gray-500"
-                      }`}
-                    >
-                      {sectionName}
-                    </span>
-                  </div>
-                ),
-              )}
+            <div className="flex gap-2 items-start">
+              <div className="size-1.5 bg-blue-500 rounded-full mt-1.5 shrink-0" />
+              <p className="text-sm font-medium text-gray-800">
+                Score validity & retakes
+              </p>
             </div>
-            {profileCompletionPercentage.total_percentage < 100 && (
-              <Button
-                className="bg-primary-500 text-white hover:bg-primary-600 w-full text-sm"
-                onClick={() =>
-                  router.push("/profile-details/edit-account-and-identity")
-                }
-              >
-                Complete Your Profile
-                <Icon icon="mdi:arrow-top-right" className="ml-2 size-4" />
-              </Button>
-            )}
           </div>
-        )}
+          <Link
+            href="/faqs"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="w-full"
+          >
+            <Button
+              className="bg-blue-600 text-white hover:bg-blue-700 w-full text-sm"
+            >
+              Visit FAQ Page
+              <Icon icon="mdi:open-in-new" className="ml-2 size-4" />
+            </Button>
+          </Link>
+        </div>
 
         {/* Did You Know Card */}
         <div className="w-full h-fit bg-primary-50 border border-primary-500 rounded-2xl p-4 flex flex-col gap-4">

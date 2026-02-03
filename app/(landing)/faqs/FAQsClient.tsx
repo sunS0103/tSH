@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import {
   Users,
   Award,
@@ -28,7 +28,7 @@ import {
   UserPlus,
   Building2,
 } from 'lucide-react';
-import { useRouter } from 'next/navigation';
+import { useRouter, useSearchParams } from 'next/navigation';
 
 interface FAQItem {
   icon: React.ElementType;
@@ -38,8 +38,17 @@ interface FAQItem {
 
 export default function FAQsClient() {
   const router = useRouter();
+  const searchParams = useSearchParams();
   const [activeTab, setActiveTab] = useState<'candidate' | 'recruiter'>('candidate');
   const [openIndex, setOpenIndex] = useState<number | null>(null);
+
+  // Set active tab from URL parameter on mount
+  useEffect(() => {
+    const tab = searchParams.get('tab');
+    if (tab === 'recruiter' || tab === 'candidate') {
+      setActiveTab(tab);
+    }
+  }, [searchParams]);
 
   const candidateFAQs: FAQItem[] = [
     // Platform Understanding
@@ -486,21 +495,16 @@ Skill scores make your referral far more credible.`
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-50 via-white to-blue-50">
       {/* Hero Section */}
-      <section className="relative overflow-hidden bg-gradient-to-br from-blue-600 via-blue-700 to-emerald-600 text-white py-16">
+      <section className="relative overflow-hidden bg-gradient-to-br from-purple-600 via-violet-600 to-purple-700 text-white py-16 mt-16 md:mt-20">
         <div className="absolute inset-0 bg-[linear-gradient(to_right,#ffffff10_1px,transparent_1px),linear-gradient(to_bottom,#ffffff10_1px,transparent_1px)] bg-[size:64px_64px]"></div>
 
         <div className="relative max-w-7xl mx-auto px-6">
           <div className="text-center">
-            <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-white/20 border border-white/30 text-sm font-semibold mb-4 backdrop-blur-sm">
-              <MessageSquare className="w-4 h-4" />
-              Help Center
-            </div>
-
             <h1 className="text-4xl md:text-5xl font-bold mb-4 leading-tight">
               Frequently Asked Questions
             </h1>
 
-            <p className="text-xl text-blue-100 max-w-3xl mx-auto">
+            <p className="text-xl text-purple-100 max-w-3xl mx-auto">
               Find answers to common questions about assessments, hiring, and the TechSmartHire platform
             </p>
           </div>

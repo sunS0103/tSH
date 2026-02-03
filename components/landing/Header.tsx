@@ -2,17 +2,21 @@
 
 import { useState, useEffect } from "react";
 import { motion } from "framer-motion";
-import { Menu, X, Users, Briefcase, Rocket, MessageSquare } from "lucide-react";
+import { Menu, X, Users, Briefcase, Rocket, MessageSquare, Home, LogIn, Calendar, Mail, FileText, ChevronDown } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import Link from "next/link";
 import Image from "next/image";
 import { usePathname, useRouter } from "next/navigation";
+import { useSession } from "next-auth/react";
+import jobFairConfig from "@/app/(landing)/qa-job-fair-feb/config.json";
 
 const Header = () => {
   const [isScrolled, setIsScrolled] = useState(false);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+  const [isAssessmentsOpen, setIsAssessmentsOpen] = useState(false);
   const pathname = usePathname();
   const router = useRouter();
+  const { data: session, status } = useSession();
 
   useEffect(() => {
     const handleScroll = () => {
@@ -55,69 +59,152 @@ const Header = () => {
               height={150}
             />
           </Link>
-
           {/* Desktop Navigation */}
-          {/* <div className="hidden md:flex items-center gap-8">
+          <div className="hidden md:flex items-center gap-8">
             <Link
               href="/"
-              className={`text-sm font-medium transition-colors ${
+              className={`text-base font-semibold transition-all flex items-center gap-2 ${
                 pathname === "/"
-                  ? "text-primary"
-                  : "text-muted-foreground hover:text-foreground"
+                  ? "text-blue-600 scale-105"
+                  : "text-slate-700 hover:text-blue-600 hover:scale-105"
               }`}
             >
+              <Home className="w-5 h-5" />
               Home
             </Link>
             <Link
-              href="/"
-              className={`text-sm font-medium transition-colors flex items-center gap-1.5 ${
-                pathname === "/for-candidates"
-                  ? "text-primary"
-                  : "text-muted-foreground hover:text-foreground"
+              href="/qa-job-fair-feb"
+              className={`text-base font-semibold transition-all flex items-center gap-2 ${
+                pathname === "/qa-job-fair-feb"
+                  ? "text-blue-600 scale-105"
+                  : "text-slate-700 hover:text-blue-600 hover:scale-105"
               }`}
             >
-              <Users className="w-4 h-4" />
-              For Candidates
+              <Calendar className="w-5 h-5" />
+              Job Fair
+            </Link>
+            
+            {/* Assessments Dropdown */}
+            <div 
+              className="relative"
+              onMouseEnter={() => setIsAssessmentsOpen(true)}
+              onMouseLeave={() => setIsAssessmentsOpen(false)}
+            >
+              <button
+                onClick={() => setIsAssessmentsOpen(!isAssessmentsOpen)}
+                className={`text-base font-semibold transition-all flex items-center gap-2 ${
+                  pathname.startsWith("/assessment") || isAssessmentsOpen
+                    ? "text-blue-600 scale-105"
+                    : "text-slate-700 hover:text-blue-600 hover:scale-105"
+                }`}
+              >
+                <FileText className="w-5 h-5" />
+                <span>Assessments</span>
+                <ChevronDown className={`w-4 h-4 transition-transform ${isAssessmentsOpen ? "rotate-180" : ""}`} />
+              </button>
+
+              {/* Dropdown Menu */}
+              {isAssessmentsOpen && (
+                <div
+                  className="absolute top-full left-0 pt-2 z-50"
+                  onMouseEnter={() => setIsAssessmentsOpen(true)}
+                  onMouseLeave={() => setIsAssessmentsOpen(false)}
+                >
+                  <motion.div
+                    initial={{ opacity: 0, y: -10 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    exit={{ opacity: 0, y: -10 }}
+                    transition={{ duration: 0.2 }}
+                    className="w-80 bg-white rounded-xl shadow-2xl border-2 border-slate-200 overflow-hidden"
+                  >
+                    <div className="py-2">
+                      {jobFairConfig.jobs.map((job) => {
+                        const isComingSoon = job.status === "coming soon";
+                        
+                        if (isComingSoon) {
+                          return (
+                            <div
+                              key={job.jobId}
+                              className="px-4 py-3 cursor-not-allowed opacity-50 bg-slate-50 border-b border-slate-100 last:border-b-0 pointer-events-none select-none"
+                            >
+                              <div className="flex items-start justify-between gap-3">
+                                <div className="flex-1">
+                                  <div className="font-semibold text-sm text-slate-500 mb-1 line-clamp-2">
+                                    {job.title}
+                                  </div>
+                                </div>
+                                <span className="shrink-0 px-2 py-1 rounded-md bg-yellow-100 text-yellow-700 text-xs font-bold border border-yellow-300">
+                                  Coming Soon
+                                </span>
+                              </div>
+                            </div>
+                          );
+                        }
+
+                        return (
+                          <Link
+                            key={job.jobId}
+                            href={job.route}
+                            className="block px-4 py-3 hover:bg-blue-50 transition-colors border-b border-slate-100 last:border-b-0"
+                            onClick={() => setIsAssessmentsOpen(false)}
+                          >
+                            <div className="flex items-start justify-between gap-3">
+                              <div className="flex-1">
+                                <div className="font-semibold text-sm text-slate-900 mb-1 line-clamp-2 hover:text-blue-600">
+                                  {job.title}
+                                </div>
+                                <div className="flex items-center gap-2 text-xs text-slate-600">
+                                  <span className="px-2 py-0.5 rounded bg-green-100 text-green-700 font-medium border border-green-300">
+                                    Live
+                                  </span>
+                                </div>
+                              </div>
+                            </div>
+                          </Link>
+                        );
+                      })}
+                    </div>
+                  </motion.div>
+                </div>
+              )}
+            </div>
+
+            <Link
+              href="/faqs"
+              className={`text-base font-semibold transition-all flex items-center gap-2 ${
+                pathname === "/faqs"
+                  ? "text-blue-600 scale-105"
+                  : "text-slate-700 hover:text-blue-600 hover:scale-105"
+              }`}
+            >
+              <MessageSquare className="w-5 h-5" />
+              FAQs
             </Link>
             <Link
-              href="/"
-              className={`text-sm font-medium transition-colors flex items-center gap-1.5 ${
-                pathname === "/for-recruiters"
-                  ? "text-primary"
-                  : "text-muted-foreground hover:text-foreground"
+              href="/contact"
+              className={`text-base font-semibold transition-all flex items-center gap-2 ${
+                pathname === "/contact"
+                  ? "text-blue-600 scale-105"
+                  : "text-slate-700 hover:text-blue-600 hover:scale-105"
               }`}
             >
-              <Briefcase className="w-4 h-4" />
-              For Recruiters
+              <Mail className="w-5 h-5" />
+              Contact Us
             </Link>
-            <Link
-              href="/"
-              className={`text-sm font-medium transition-colors flex items-center gap-1.5 ${
-                pathname === "/anticipation"
-                  ? "text-primary"
-                  : "text-muted-foreground hover:text-foreground"
-              }`}
-            >
-              <Rocket className="w-4 h-4" />
-              Anticipation
-            </Link>
-          </div> */}
+          </div>
 
           {/* Desktop CTA */}
-          <div className="flex items-center gap-4">
-            <Link href="/faqs">
-              <Button className="cursor-pointer" variant="outline" size="sm">
-                <MessageSquare className="w-4 h-4 mr-2" />
-                FAQs
-              </Button>
-            </Link>
+          <div className="hidden md:flex items-center gap-4">
             <Button
-              className="cursor-pointer"
+              className="cursor-pointer bg-gradient-to-r from-purple-600 via-violet-600 to-purple-700 hover:from-purple-700 hover:via-violet-700 hover:to-purple-800 text-white font-semibold shadow-md hover:shadow-lg transition-all"
               variant="default"
-              size="sm"
-              onClick={scrollToForm}
+              size="default"
+              asChild
             >
-              Product Vision
+              <Link href={status === "authenticated" && session ? "/dashboard" : "/authentication"}>
+                <LogIn className="w-5 h-5 mr-1" />
+                {status === "authenticated" && session ? "Dashboard" : "Signup/Signin"}
+              </Link>
             </Button>
           </div>
 

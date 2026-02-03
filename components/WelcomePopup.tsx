@@ -12,10 +12,10 @@ export default function WelcomePopup() {
     const hasSeenPopup = sessionStorage.getItem('tsh-welcome-popup-seen');
     
     if (!hasSeenPopup) {
-      // Show popup after 5 seconds of user activity on page
+      // Show popup after 8 seconds of user activity on page
       const timer = setTimeout(() => {
         setIsVisible(true);
-      }, 5000);
+      }, 8000);
 
       return () => clearTimeout(timer);
     }
@@ -100,24 +100,17 @@ export default function WelcomePopup() {
               Everything is explained clearly, step by step.
             </p>
 
-            {/* CTA Buttons */}
-            <div className="flex flex-col sm:flex-row gap-3">
-              <Link 
+            {/* CTA Button */}
+            <div className="flex justify-center">
+              <Link
                 href="/faqs"
                 onClick={handleFAQClick}
-                className="flex-1 cursor-pointer inline-flex items-center justify-center gap-2 px-6 py-3 rounded-lg bg-gradient-to-r from-blue-600 to-emerald-600 text-white font-bold hover:shadow-lg transition-all hover:scale-105"
+                className="cursor-pointer inline-flex items-center justify-center gap-2 px-6 py-3 rounded-lg bg-gradient-to-r from-blue-600 to-emerald-600 text-white font-bold hover:shadow-lg transition-all hover:scale-105"
               >
                 <MessageSquare className="w-5 h-5" />
                 <span>Visit FAQ Page</span>
                 <ArrowRight className="w-4 h-4" />
               </Link>
-              
-              <button
-                onClick={handleClose}
-                className="px-6 py-3 rounded-lg border-2 border-slate-200 text-slate-700 font-semibold hover:bg-slate-50 transition-colors cursor-pointer"
-              >
-                Explore Now
-              </button>
             </div>
           </div>
         </div>
