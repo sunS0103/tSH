@@ -47,6 +47,8 @@ export interface Assessment {
     | "PENDING";
   is_free_plan_available: boolean;
   sample_question_pdf_link?: string;
+  can_repurchase: boolean;
+  can_purchase_in_days: string;
 }
 
 interface StepContentProps {
@@ -65,7 +67,7 @@ interface StepContentProps {
   assessmentPayment?: Payment | null;
   hasError?: boolean;
   onPackageSelect?: (
-    packageType: "FREE" | "BASIC" | "PREMIUM" | "PLATINUM",
+    packageType: "FREE" | "BASIC" | "PREMIUM" | "PLATINUM"
   ) => void;
   onCurrencyChange?: (currency: "INR" | "USD") => void;
   validateSteps?: () => boolean;
@@ -132,6 +134,8 @@ export default function StepContent({
             is_free_plan_available={assessment.is_free_plan_available}
             onPackageSelect={onPackageSelect}
             onCurrencyChange={onCurrencyChange}
+            can_repurchase={assessment.can_repurchase}
+            can_purchase_in_days={assessment.can_purchase_in_days}
             validateSteps={validateSteps}
           />
         )}

@@ -10,6 +10,8 @@ export default function FinalStartSection({
   is_free_plan_available,
   onPackageSelect,
   onCurrencyChange,
+  can_repurchase,
+  can_purchase_in_days,
   validateSteps,
 }: {
   assessment_id: string;
@@ -30,9 +32,11 @@ export default function FinalStartSection({
     | "ENROLLED"
     | "PENDING";
   onPackageSelect?: (
-    packageType: "FREE" | "BASIC" | "PREMIUM" | "PLATINUM",
+    packageType: "FREE" | "BASIC" | "PREMIUM" | "PLATINUM"
   ) => void;
   onCurrencyChange?: (currency: "INR" | "USD") => void;
+  can_repurchase: boolean;
+  can_purchase_in_days: string;
   validateSteps?: () => boolean;
 }) {
   const [selectedPackage, setSelectedPackage] = useState<
@@ -40,7 +44,7 @@ export default function FinalStartSection({
   >(payment?.package_type || null);
 
   const handlePackageSelect = (
-    packageType: "FREE" | "BASIC" | "PREMIUM" | "PLATINUM",
+    packageType: "FREE" | "BASIC" | "PREMIUM" | "PLATINUM"
   ) => {
     setSelectedPackage(packageType);
     onPackageSelect?.(packageType);
@@ -64,6 +68,8 @@ export default function FinalStartSection({
         onPackageSelect={handlePackageSelect}
         selectedPackage={selectedPackage}
         onCurrencyChange={onCurrencyChange}
+        can_repurchase={can_repurchase}
+        can_purchase_in_days={can_purchase_in_days}
         validateSteps={validateSteps}
       />
       {candidate_status !== "COMPLETED" && candidate_status !== null && (
