@@ -329,6 +329,38 @@ A good score opens the door — but your complete profile helps you stand out.`
   ];
 
   const recruiterFAQs: FAQItem[] = [
+    // Platform Understanding
+    {
+      icon: Briefcase,
+      question: "How is this skill-first hiring platform different from traditional hiring portals?",
+      answer: `TechSmartHire replaces resume-based shortlisting with skill-based evaluation.
+
+Instead of spending hours reviewing resumes filled with keywords, you get instant access to:
+
+• Verified skill scores of candidates
+• The exact skills they were assessed on
+• Their readiness for the role based on real performance
+
+This allows you to shortlist candidates based on proven ability, not resume formatting.
+
+The result: faster screening, better quality candidates, and significantly reduced hiring time.`
+    },
+    {
+      icon: Search,
+      question: "As a recruiter, can I post a job and allow candidates to apply using their skill scores?",
+      answer: `Yes.
+
+With the Jobs module going live in March, you will be able to post job openings directly on TechSmartHire.
+
+This makes the platform bidirectional:
+
+• You can discover candidates from the Talent Pool based on their skill scores
+and
+• Candidates can apply to your posted jobs by submitting their profile along with their verified assessment score
+
+This means you don't receive resumes — you receive applications backed by proven skill scores, making shortlisting faster and far more reliable.`
+    },
+    // Finding & Filtering Talent
     {
       icon: Search,
       question: "How do I find the best talent for my requirement?",
@@ -341,20 +373,6 @@ A good score opens the door — but your complete profile helps you stand out.`
 Once filtered, you can instantly see candidate scores and the skills they were assessed on — helping you quickly decide whom to reach out to.
 
 No resumes. No guesswork. Just skill-based filtering.`
-    },
-    {
-      icon: EyeOff,
-      question: "I don't see candidate contact details. Do I need to invite them first?",
-      answer: `Yes.
-
-For privacy reasons, candidate contact details are hidden by default.
-
-To unlock them:
-• Create a job on the portal
-• Invite the candidate to apply
-• If the candidate is interested and applies, their contact details are revealed to you
-
-This ensures candidates feel safe and you connect only with interested profiles.`
     },
     {
       icon: Brain,
@@ -376,6 +394,31 @@ You can request a detailed assessment report, which includes:
 Just reach out to us, and we'll share the full report.`
     },
     {
+      icon: Bell,
+      question: "I can't log in every day to check the Talent Pool. Is there a better way?",
+      answer: `Absolutely.
+
+Share your hiring criteria with us, and we will set up smart notifications.
+
+You'll receive an email alert whenever a candidate matching your filters appears on the platform.`
+    },
+    // Connecting with Candidates
+    {
+      icon: EyeOff,
+      question: "I don't see candidate contact details. Do I need to invite them first?",
+      answer: `Yes.
+
+For privacy reasons, candidate contact details are hidden by default.
+
+To unlock them:
+• Create a job on the portal
+• Invite the candidate to apply
+• If the candidate is interested and applies, their contact details are revealed to you
+
+This ensures candidates feel safe and you connect only with interested profiles.`
+    },
+    // Custom Requirements & Scaling
+    {
       icon: Puzzle,
       question: "What if my job requirement doesn't match any existing assessments?",
       answer: `No problem.
@@ -385,15 +428,6 @@ Share your custom requirement with us, and we will:
 • Provide you with a dedicated assessment link to share with candidates
 
 You can then evaluate candidates based on that custom test.`
-    },
-    {
-      icon: Bell,
-      question: "I can't log in every day to check the Talent Pool. Is there a better way?",
-      answer: `Absolutely.
-
-Share your hiring criteria with us, and we will set up smart notifications.
-
-You'll receive an email alert whenever a candidate matching your filters appears on the platform.`
     },
     {
       icon: Globe,
@@ -418,6 +452,7 @@ For multiple openings, our team can:
 
 You get a ready list of qualified candidates without spending hours screening.`
     },
+    // Additional Use Cases
     {
       icon: Briefcase,
       question: "I am an employee and need job support for short-term tasks. Can I use this platform?",
