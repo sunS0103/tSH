@@ -65,7 +65,7 @@ export default function FinalStartSection({
       {!can_repurchase && (
         <div className="bg-red-50 border border-red-200 rounded-xl p-4 my-4">
           <div className="flex items-start gap-3">
-            <div className="flex-shrink-0 mt-0.5">
+            <div className="shrink-0 mt-0.5">
               <Icon
                 icon="material-symbols:lock-clock-outline-rounded"
                 className="w-6 h-6 text-red-600"
