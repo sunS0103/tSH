@@ -10,6 +10,7 @@ export default function FinalStartSection({
   is_free_plan_available,
   onPackageSelect,
   onCurrencyChange,
+  validateSteps,
 }: {
   assessment_id: string;
   is_free_plan_available: boolean;
@@ -29,16 +30,17 @@ export default function FinalStartSection({
     | "ENROLLED"
     | "PENDING";
   onPackageSelect?: (
-    packageType: "FREE" | "BASIC" | "PREMIUM" | "PLATINUM"
+    packageType: "FREE" | "BASIC" | "PREMIUM" | "PLATINUM",
   ) => void;
   onCurrencyChange?: (currency: "INR" | "USD") => void;
+  validateSteps?: () => boolean;
 }) {
   const [selectedPackage, setSelectedPackage] = useState<
     "FREE" | "BASIC" | "PREMIUM" | "PLATINUM" | null
   >(payment?.package_type || null);
 
   const handlePackageSelect = (
-    packageType: "FREE" | "BASIC" | "PREMIUM" | "PLATINUM"
+    packageType: "FREE" | "BASIC" | "PREMIUM" | "PLATINUM",
   ) => {
     setSelectedPackage(packageType);
     onPackageSelect?.(packageType);
@@ -62,6 +64,7 @@ export default function FinalStartSection({
         onPackageSelect={handlePackageSelect}
         selectedPackage={selectedPackage}
         onCurrencyChange={onCurrencyChange}
+        validateSteps={validateSteps}
       />
       {candidate_status !== "COMPLETED" && candidate_status !== null && (
         <p className="text-base text-black mt-4">
