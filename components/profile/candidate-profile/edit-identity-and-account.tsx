@@ -19,6 +19,7 @@ import {
   PopoverTrigger,
 } from "@/components/ui/popover";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
+import { Checkbox } from "@/components/ui/checkbox";
 import {
   Select,
   SelectContent,
@@ -64,7 +65,7 @@ export default function EditIdentityAndAccount({
       .min(1, "Phone number is required")
       .regex(/^\d+$/, "Phone number must contain only numbers")
       .length(10, "Phone number must be exactly 10 digits"),
-    date_of_birth: z.string().optional(),
+    date_of_birth: z.string().min(1, "Date of birth is required"),
     account_type: z.enum(
       ["Student", "Working Professional", "Fresher", "Other", ""],
       {
@@ -72,6 +73,12 @@ export default function EditIdentityAndAccount({
       }
     ),
     country_code: z.string().optional(),
+    identity_confirmation: z
+      .boolean()
+      .refine((val) => val === true, {
+        message:
+          "You must confirm that your details match your government ID",
+      }),
   });
 
   const form = useForm<z.infer<typeof editAccountSchema>>({
@@ -106,8 +113,7 @@ export default function EditIdentityAndAccount({
         : "",
       account_type: profileData?.account_type,
       country_code: profileData?.mobile_details?.dial_code || "+91",
-      // countryCode: profileData?.dial_code,
-      // country: profileData?.country,
+      identity_confirmation: !!profileData?.date_of_birth,
     },
   });
 
@@ -373,12 +379,7 @@ export default function EditIdentityAndAccount({
                 name="date_of_birth"
                 render={({ field }) => (
                   <FormItem className="w-full md:w-1/2">
-                    <Label>
-                      Date of Birth{" "}
-                      <span className="text-[10px] text-gray-500">
-                        - optional
-                      </span>
-                    </Label>
+                    <FormLabel required>Date of Birth</FormLabel>
                     <Popover>
                       <PopoverTrigger asChild>
                         <FormControl className="border border-black">
@@ -467,6 +468,32 @@ export default function EditIdentityAndAccount({
                 )}
               />
             </div>
+            {/* Identity Confirmation Checkbox */}
+            <FormField
+              control={form.control}
+              name="identity_confirmation"
+              render={({ field }) => (
+                <FormItem className="flex flex-row items-start space-x-3 space-y-0 rounded-lg border border-amber-200 bg-amber-50 p-4">
+                  <FormControl>
+                    <Checkbox
+                      checked={field.value}
+                      onCheckedChange={field.onChange}
+                    />
+                  </FormControl>
+                  <div className="space-y-1 leading-none">
+                    <label className="text-sm font-medium text-amber-900 cursor-pointer">
+                      <span className="text-red-500 mr-1">*</span>
+                      I confirm that the Last Name and Date of Birth provided
+                      are accurate and understand that my exam may be voided if
+                      these details do not match the valid government ID I
+                      submit while taking the exam.
+                    </label>
+                    <FormMessage />
+                  </div>
+                </FormItem>
+              )}
+            />
+
             {/* Buttons */}
             <div className="flex gap-3 pt-2 justify-end">
               <Button

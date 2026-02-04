@@ -224,7 +224,7 @@ const WaitlistForm: React.FC<WaitlistFormProps> = ({ initialRole = null }) => {
                       Skill-first hiring • No resume screening • Feb 5-27
                     </p>
                     <Link
-                      href="/qa-job-fair-feb"
+                      href="/qa-job-fair"
                       className="inline-flex items-center gap-2 px-6 py-3 rounded-lg bg-primary text-primary-foreground font-bold hover:bg-primary/90 transition-all w-full justify-center"
                     >
                       <span>Explore Job Fair for Recruiters</span>
@@ -274,7 +274,7 @@ const WaitlistForm: React.FC<WaitlistFormProps> = ({ initialRole = null }) => {
                       22 Positions • 7 Companies • Feb 5-27
                     </p>
                     <Link
-                      href="/qa-job-fair-feb"
+                      href="/qa-job-fair"
                       className="inline-flex items-center gap-2 px-6 py-3 rounded-lg bg-primary text-primary-foreground font-bold hover:bg-primary/90 transition-all w-full justify-center"
                     >
                       <span>View Job Fair Details</span>

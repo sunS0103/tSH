@@ -8,7 +8,7 @@ import Link from "next/link";
 import Image from "next/image";
 import { usePathname, useRouter } from "next/navigation";
 import { useSession } from "next-auth/react";
-import jobFairConfig from "@/app/(landing)/qa-job-fair-feb/config.json";
+import jobFairConfig from "@/app/(landing)/qa-job-fair/config.json";
 
 const Header = () => {
   const [isScrolled, setIsScrolled] = useState(false);
@@ -73,9 +73,9 @@ const Header = () => {
               Home
             </Link>
             <Link
-              href="/qa-job-fair-feb"
+              href="/qa-job-fair"
               className={`text-base font-semibold transition-all flex items-center gap-2 ${
-                pathname === "/qa-job-fair-feb"
+                pathname === "/qa-job-fair"
                   ? "text-blue-600 scale-105"
                   : "text-slate-700 hover:text-blue-600 hover:scale-105"
               }`}

@@ -9,6 +9,7 @@ const publicRoutes = [
   "/anticipation",
   "/for-candidates",
   "/for-recruiters",
+  "/qa-job-fair",
   "/qa-job-fair-feb",
   "/assessment",
   "/assessment/*",
