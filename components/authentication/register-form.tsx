@@ -97,11 +97,9 @@ interface CountryCode {
 }
 
 const jobCategories = [
-  { value: "IT & Software", label: "IT & Software" },
-  { value: "Finance & Accounting", label: "Finance & Accounting" },
-  { value: "Marketing & Sales", label: "Marketing & Sales" },
-  { value: "Human Resources", label: "Human Resources" },
-  { value: "Operations", label: "Operations" },
+  { value: "Software Development", label: "Software Development" },
+  { value: "Software Testing", label: "Software Testing" },
+  { value: "DevOps", label: "DevOps" },
 ];
 
 const platformRoles = [

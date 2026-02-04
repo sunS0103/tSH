@@ -36,6 +36,8 @@ export default function PaymentCards({
   onPackageSelect,
   selectedPackage,
   onCurrencyChange,
+  can_repurchase,
+  can_purchase_in_days,
   validateSteps,
 }: {
   assessment_id: string;
@@ -50,14 +52,16 @@ export default function PaymentCards({
     message?: string;
   }) => void;
   onPackageSelect?: (
-    packageType: "FREE" | "BASIC" | "PREMIUM" | "PLATINUM",
+    packageType: "FREE" | "BASIC" | "PREMIUM" | "PLATINUM"
   ) => void;
   selectedPackage?: "FREE" | "BASIC" | "PREMIUM" | "PLATINUM" | null;
   onCurrencyChange?: (currency: "INR" | "USD") => void;
+  can_repurchase: boolean;
+  can_purchase_in_days: string;
   validateSteps?: () => boolean;
 }) {
   const [paymentSuccessData, setPaymentSuccessData] = useState<Payment | null>(
-    payment || null,
+    payment || null
   );
   const [localSelectedPackage, setLocalSelectedPackage] = useState<
     "FREE" | "BASIC" | "PREMIUM" | "PLATINUM" | null
@@ -214,8 +218,8 @@ export default function PaymentCards({
   };
 
   const basicPackageIncludedItems = [
-    "Unlock assessment",
-    "Masked profile + score visibility to 100+ verified recruiters",
+    "Free exam re-take after 30 days freeze period.",
+    "Skilled Certification issued if you score > 60%",
     "Custom job notifications based on your assessed skill set",
   ];
 
@@ -227,6 +231,7 @@ export default function PaymentCards({
   ];
 
   const platinumPackageIncludedItems = [
+    "All Basic Package features plus",
     "Mentorship to strengthen the core skills covered in the assessment",
     "Learning resources, online training, and hands-on projects with a 6–8 week plan",
     "Detailed 1:1 analysis and personalized guidance for your retake (if required)",
@@ -237,23 +242,23 @@ export default function PaymentCards({
     {
       packageType: "BASIC",
       title: "Basic Package",
-      description:
-        "Get started at a minimal cost, pay the remaining when hiring interest is confirmed.",
+      description:"",
       price: pricingMap[currency].BASIC,
       includedItems: basicPackageIncludedItems,
       buttonText: "Activate for ₹99",
       icon: "material-symbols:star-shine-outline-rounded",
     },
-    {
-      packageType: "PREMIUM",
-      title: "Premium Package",
-      description:
-        "Best value for professionals who want certification + improvement feedback",
-      price: pricingMap[currency].PREMIUM,
-      includedItems: premiumPackageIncludedItems,
-      buttonText: "Upgrade to Premium",
-      icon: "material-symbols:diamond-outline-rounded",
-    },
+    // TODO: Temporarily hidden - uncomment to restore Premium package
+    // {
+    //   packageType: "PREMIUM",
+    //   title: "Premium Package",
+    //   description:
+    //     "Best value for professionals who want certification + improvement feedback",
+    //   price: pricingMap[currency].PREMIUM,
+    //   includedItems: premiumPackageIncludedItems,
+    //   buttonText: "Upgrade to Premium",
+    //   icon: "material-symbols:diamond-outline-rounded",
+    // },
     {
       packageType: "PLATINUM",
       title: "Platinum Package",
@@ -278,7 +283,7 @@ export default function PaymentCards({
   };
 
   const handlePurchase = async (
-    packageType: "FREE" | "BASIC" | "PREMIUM" | "PLATINUM",
+    packageType: "FREE" | "BASIC" | "PREMIUM" | "PLATINUM"
   ) => {
     setIsPaymentLoading(true);
     try {
@@ -322,7 +327,7 @@ export default function PaymentCards({
         token,
         onSuccess: () => {
           toast.success(
-            "Assessment purchased successfully 🎉 You can now start the assessment.",
+            "Assessment purchased successfully 🎉 You can now start the assessment."
           );
           // Don't refresh - let the state update flow through
         },
@@ -338,7 +343,7 @@ export default function PaymentCards({
   };
 
   const handlePackageCardClick = (
-    packageType: "FREE" | "BASIC" | "PREMIUM" | "PLATINUM",
+    packageType: "FREE" | "BASIC" | "PREMIUM" | "PLATINUM"
   ) => {
     // Don't allow changing if already purchased
     if (currentPayment?.initial_payment_status === "PAID") {
@@ -381,7 +386,7 @@ export default function PaymentCards({
               "px-4 py-1.5 rounded-md text-sm font-medium transition-all",
               currency === "INR"
                 ? "bg-white text-gray-900 shadow-sm"
-                : "text-gray-600 hover:text-gray-900",
+                : "text-gray-600 hover:text-gray-900"
             )}
           >
             ₹ INR
@@ -392,7 +397,7 @@ export default function PaymentCards({
               "px-4 py-1.5 rounded-md text-sm font-medium transition-all",
               currency === "USD"
                 ? "bg-white text-gray-900 shadow-sm"
-                : "text-gray-600 hover:text-gray-900",
+                : "text-gray-600 hover:text-gray-900"
             )}
           >
             $ USD
@@ -419,7 +424,7 @@ export default function PaymentCards({
           {/* CTA Button */}
           <div className="flex flex-col items-center gap-2">
             <Button
-              disabled={!!currentPayment}
+              disabled={!!currentPayment || !can_repurchase}
               className="w-fit px-10"
               onClick={() => handlePurchase("FREE")}
             >
@@ -438,7 +443,7 @@ export default function PaymentCards({
             key={card.title}
             onClick={() =>
               handlePackageCardClick(
-                card.packageType as "FREE" | "BASIC" | "PREMIUM" | "PLATINUM",
+                card.packageType as "FREE" | "BASIC" | "PREMIUM" | "PLATINUM"
               )
             }
             className={cn(
@@ -449,9 +454,10 @@ export default function PaymentCards({
                   currentPayment?.initial_payment_status === "PAID")
                 ? "border-primary-500 bg-primary-50/30"
                 : "border-gray-200 hover:border-primary-200",
-              // Disable interaction if already paid
-              currentPayment?.initial_payment_status === "PAID" &&
-                "cursor-not-allowed opacity-70",
+              // Disable interaction if already paid or in freeze period
+              (currentPayment?.initial_payment_status === "PAID" ||
+                !can_repurchase) &&
+                "cursor-not-allowed opacity-70"
             )}
           >
             <div>
@@ -467,7 +473,7 @@ export default function PaymentCards({
                       (currentPayment?.package_type === card.packageType &&
                         currentPayment?.initial_payment_status === "PAID")
                       ? "border-primary-500 bg-primary-500"
-                      : "border-gray-300",
+                      : "border-gray-300"
                   )}
                 >
                   {(localSelectedPackage === card.packageType ||

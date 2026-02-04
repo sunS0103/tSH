@@ -81,11 +81,9 @@ export default function EditProfilePage() {
   ];
 
   const jobCategoryOptions = [
-    "IT & Software",
-    "Finance & Accounting",
-    "Marketing & Sales",
-    "Human Resources",
-    "Operations",
+    "Software Development",
+    "Software Testing",
+    "DevOps",
   ];
 
   const form = useForm<EditProfileFormData>({

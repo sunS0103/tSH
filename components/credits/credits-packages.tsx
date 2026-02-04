@@ -324,8 +324,9 @@ export default function CreditsPackages() {
             variant="secondary"
             onClick={() => handlePurchase(card.packageType)}
             disabled={
-              currentPlan?.plan_type === card?.packageType &&
-              card.packageType !== "TIER_1"
+              (currentPlan?.plan_type === card?.packageType &&
+                card.packageType !== "TIER_1") ||
+              card.packageType === "TIER_3"
             }
           >
             {currentPlan?.plan_type === card?.packageType

@@ -35,9 +35,8 @@ export default function Footer({ className }: FooterProps) {
   ];
 
   const socialLinks = [
-    { icon: "mdi:facebook", href: "#", label: "Facebook" },
-    { icon: "mdi:instagram", href: "#", label: "Instagram" },
-    { icon: "ri:twitter-x-fill", href: "#", label: "Twitter" },
+    { icon: "mdi:linkedin", href: "https://www.linkedin.com/company/techsmarthire", label: "LinkedIn" },
+    { icon: "mdi:instagram", href: "https://www.instagram.com/rahulshettyacademy_qa/", label: "Instagram" },
   ];
 
   return (
@@ -106,6 +105,8 @@ export default function Footer({ className }: FooterProps) {
                   <Link
                     key={groupIndex + "-" + index}
                     href={link.href}
+                    target="_blank"
+                    rel="noopener noreferrer"
                     className="text-white text-xs md:text-sm font-normal hover:text-gray-300 transition-colors whitespace-nowrap"
                   >
                     {link.label}
@@ -129,6 +130,8 @@ export default function Footer({ className }: FooterProps) {
               <Link
                 key={index}
                 href={social.href}
+                target="_blank"
+                rel="noopener noreferrer"
                 className="border border-gray-400 flex items-center justify-center rounded size-8 hover:border-gray-400 transition-colors"
                 aria-label={social.label}
               >

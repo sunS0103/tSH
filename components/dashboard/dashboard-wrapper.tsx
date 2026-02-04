@@ -68,12 +68,35 @@ export default function DashboardWrapper() {
     );
   }
 
+  const BetaBanner = () => (
+    <div className="max-w-7xl mx-auto px-4 md:px-6 pt-4 mb-6">
+      <div className="bg-amber-50 border border-amber-200 rounded-xl p-4">
+        <p className="text-amber-800 font-semibold text-sm text-center">
+          🚧 TechSmartHire is currently in Beta
+        </p>
+        <p className="text-amber-700 text-xs text-center mt-1">
+          We're rolling out features in phases. Join our programs now and enjoy early-bird advantage with higher profile visibility and ranking in the Talent Pool.
+        </p>
+      </div>
+    </div>
+  );
+
   if (role === "RECRUITER") {
-    return <RecruiterDashboard />;
+    return (
+      <>
+        <BetaBanner />
+        <RecruiterDashboard />
+      </>
+    );
   }
 
   if (role === "CANDIDATE") {
-    return <CandidateDashboard />;
+    return (
+      <>
+        <BetaBanner />
+        <CandidateDashboard />
+      </>
+    );
   }
 
   return (

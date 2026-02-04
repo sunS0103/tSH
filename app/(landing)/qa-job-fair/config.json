@@ -30,7 +30,8 @@
       "experience": ["2-5 Years", "6-20 Years"],
       "location": ["Multiple Indian Cities", "USA", "UK"],
       "examId": "TSH-SDETJAVA-101",
-      "route": "/assessment/TSH-SDETJAVA-101"
+      "route": "/assessment/TSH-SDETJAVA-101",
+      "status" : "live"
     },
     {
       "jobId": "TSH-JOB-002",
@@ -39,7 +40,8 @@
       "experience": ["3-20 Years"],
       "location": ["Multiple Indian Cities", "Dubai", "USA"],
       "examId": "TSH-SDETJS-101",
-      "route": "/assessment/TSH-SDETJS-101"
+      "route": "/assessment/TSH-SDETJS-101",
+      "status" : "live"
     },
     {
       "jobId": "TSH-JOB-003",
@@ -48,7 +50,8 @@
       "experience": ["10+ Years"],
       "location": ["Multiple Indian Cities", "Dubai", "USA"],
       "examId": "TSH-SDETFULLSTACK-101",
-      "route": "/assessment/TSH-SDETFULLSTACK-101"
+      "route": "/assessment/TSH-SDETFULLSTACK-101",
+      "status" : "coming soon"
     }
   ],
   "selectionSteps": [

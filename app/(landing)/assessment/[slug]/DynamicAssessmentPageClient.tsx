@@ -29,6 +29,7 @@ import {
   Loader2,
   FileDown,
   GraduationCap,
+  Briefcase
 } from "lucide-react";
 import { useRouter } from "next/navigation";
 import ReCAPTCHA from "react-google-recaptcha";
@@ -63,330 +64,6 @@ interface ProctorRule {
   title: string;
   description: string;
   severity: "critical" | "high" | "medium";
-}
-
-interface FAQItem {
-  icon: React.ElementType;
-  question: string;
-  answer: string;
-}
-
-// FAQ Accordion Component
-function FAQAccordion({
-  onDownloadGuideClick,
-}: {
-  onDownloadGuideClick: () => void;
-}) {
-  const [openIndex, setOpenIndex] = useState<number | null>(null);
-
-  const faqs: FAQItem[] = [
-    {
-      icon: Lock,
-      question: "Will my score and personal details be visible to everyone?",
-      answer: `Absolutely not. Recruiters can only see masked profiles with scores — no name, no email, no phone number.
-
-Your identity and contact details are revealed only when:
-• A recruiter shows interest in your profile, and
-• You explicitly accept to share your details with that recruiter.
-
-Even then, your details are shared only with that specific recruiter, not publicly. Your privacy is fully in your control.`,
-    },
-    {
-      icon: Zap,
-      question:
-        "Do I get any advantage by taking the assessment early on the platform?",
-      answer: `Absolutely. Profile ranking is partially influenced by the assessment completion date.
-
-For example, if two candidates achieve the same score for the same assessment, the candidate who completed the assessment earlier will rank higher in recruiter search results.
-
-Early participation gives you a visibility advantage.`,
-    },
-    {
-      icon: Globe,
-      question:
-        "I don't see job postings for my location yet. What's the benefit of taking the assessment now?",
-      answer: `TechSmartHire is a newly launched platform, and we are actively onboarding recruiters from across the globe.
-
-If your profile already has a validated score, future recruiters will immediately see your profile higher in search results when they join the platform.
-
-Being an early mover gives you a strong advantage in visibility and opportunities as the platform grows.`,
-    },
-    {
-      icon: CheckCircle,
-      question: "Can I retake the exam if I'm not satisfied with my score?",
-      answer: `Yes. You can retake the assessment after a 30-day cooling period.
-
-If you attempt the assessment multiple times, we will always consider your best score.`,
-    },
-    {
-      icon: Users,
-      question: "When and how will recruiters see my score?",
-      answer: `Recruiters receive daily updates of new candidate scores for the roles they are hiring.
-
-They can log in anytime to:
-• Filter candidates by skills, score range, experience, and location
-• Shortlist profiles that match their job requirements
-• Send interview requests to selected candidates
-
-Once you accept, your profile is unlocked only for that recruiter.`,
-    },
-    {
-      icon: Clock,
-      question: "How long is my score valid?",
-      answer: `Your score is valid for 365 days from the date you take the assessment.`,
-    },
-    {
-      icon: BarChart3,
-      question: "How will my score be interpreted?",
-      answer: `Your assessment score represents a signal of your practical experience level, not just how many questions you answered correctly.
-
-Recruiters use this score to quickly understand how ready you are for real-world projects and job responsibilities.
-
-📊 Score Bands:
-
-Intermediate (40.01 – 60)
-Indicates foundational knowledge with growing hands-on skills.
-Suitable for junior roles, trainees, and early career positions.
-
-Experienced (60.01 – 75)
-Indicates strong working knowledge and good practical exposure.
-Suitable for mid-level roles and independent contributors.
-
-Expert (75.01 – 90)
-Indicates deep technical expertise and strong problem-solving ability.
-Suitable for senior roles, lead engineers, and critical projects.`,
-    },
-    {
-      icon: Award,
-      question: "Will I receive any Professional certificate?",
-      answer: `Yes. If you score above 60%, you will be eligible to receive a certification.
-
-This certificate can serve as a strong credential when applying for jobs.`,
-    },
-    {
-      icon: Code,
-      question:
-        "I see one coding question in each assessment. Do I need to write everything from scratch?",
-      answer: `Not necessarily. The coding editor is preconfigured with all required imports and basic setup.
-
-You only need to focus on implementing the correct logic to solve the problem.`,
-    },
-    {
-      icon: Globe,
-      question: "Can I apply for international positions?",
-      answer: `For most international roles, you need valid work authorization for that country.
-
-UAE Exception:
-Dubai/UAE companies actively recruit from India for exceptional profiles and do not require prior work authorization. Indian candidates can apply directly.
-
-Other Countries:
-You must hold a valid work visa or permit for that specific country before applying.`,
-    },
-    {
-      icon: Award,
-      question: "Why is there a fee to take the assessment?",
-      answer: `Each assessment actually costs us around ₹999 / $10 to conduct due to:
-• Proctoring infrastructure
-• Identity verification
-• Secure exam systems
-
-But to keep this accessible for everyone, we charge only ₹100 / $1 to write the exam.
-
-👉 The remaining amount is paid only if a recruiter contacts you and invites you for a job process.
-
-So you invest very little upfront — and pay more only when there is real hiring interest. This keeps the system fair, serious, and focused on genuine job seekers.`,
-    },
-    {
-      icon: FileText,
-      question: "How do I know what topics are covered and how to prepare?",
-      answer: `We provide a complete Exam Guide that includes:
-• Topics covered
-• Sample questions
-• Preparation tips
-
-👉 Download the Exam Guide to know exactly what to expect before taking the test. No surprises. Full transparency.`,
-    },
-    {
-      icon: GraduationCap,
-      question:
-        "Do I get mentorship support to prepare and clear this assessment?",
-      answer: `Yes. Once you sign up on TechSmartHire, you will see an option in the Assessment window to enroll in a Mentorship Guidance + Exam package.
-
-This package is designed to help you prepare effectively, strengthen your skills, and confidently attempt the assessment.`,
-    },
-    {
-      icon: CheckSquare,
-      question: "Will everyone get the same questions in the assessment?",
-      answer: `No. Every candidate gets a different set of questions.
-
-We use a large, continuously updated question pool, and for each attempt:
-• Questions are randomly selected
-• The order of questions is also shuffled
-
-We also regularly:
-• Retire old questions
-• Add new questions to the pool
-
-This ensures:
-• No sharing of question papers
-• Fair evaluation for all candidates
-• Strong protection of exam integrity
-
-While the topics and difficulty level remain consistent, the exact questions differ for each candidate.`,
-    },
-    {
-      icon: Shield,
-      question: "How strict are the proctoring and anti-cheating standards?",
-      answer: `Very strict — because recruiters trust these scores for hiring.
-
-Our proctoring system can detect:
-• Looking away from the screen
-• Multiple faces
-• Phone usage
-• Tab switching
-• Suspicious behavior patterns
-
-All violations are marked with red flags in your score report.
-
-⚠️ If more than two serious violations are detected:
-• Your exam will be terminated immediately
-• You may be blocked from taking future assessments
-
-This protects honest candidates and keeps scores credible.`,
-    },
-    {
-      icon: Camera,
-      question: "How do you verify that I am the person taking the exam?",
-      answer: `We use multiple identity checks, including:
-• Government photo ID verification
-• Face match during the exam
-• First name, last name, and date of birth validation
-
-This helps prevent:
-• Fake profiles
-• Multiple attempts using different emails
-
-Our goal is simple: one real person = one real score.`,
-    },
-    {
-      icon: Clock,
-      question: "Can I retake the same assessment multiple times?",
-      answer: `No. There is a 30-day lock period before you can retake the same assessment.
-
-This prevents trial-and-error attempts and ensures scores reflect real skill readiness.
-
-We strongly recommend using the Exam Guide and preparing well before attempting.`,
-    },
-    {
-      icon: BarChart3,
-      question: "Is score the only factor recruiters look at?",
-      answer: `Not at all. Your score is important — but it's not the only factor.
-
-Recruiters also consider:
-• Experience level
-• Salary expectations
-• Role requirements
-• Location and local hiring market
-
-For example:
-• A candidate with 8/10 score and 7 years experience may not fit a junior-level role budget
-• A candidate with 6/10 score and the right experience may be a better match
-
-Also, what is considered a strong score can vary by:
-• City
-• Skill demand vs supply
-• Role complexity
-
-👉 Your score is a signal of skill — not a judgment of your career.`,
-    },
-  ];
-
-  const toggleFAQ = (index: number) => {
-    setOpenIndex(openIndex === index ? null : index);
-  };
-
-  return (
-    <div className="space-y-4">
-      {faqs.map((faq, index) => (
-        <div
-          key={index}
-          className={`rounded-xl border-2 transition-all ${
-            openIndex === index
-              ? "border-blue-400 bg-blue-50 shadow-lg"
-              : "border-slate-200 bg-white hover:border-slate-300"
-          }`}
-        >
-          <button
-            onClick={() => toggleFAQ(index)}
-            className="w-full px-6 py-5 flex items-start gap-4 text-left cursor-pointer"
-          >
-            <div
-              className={`p-2 rounded-lg shrink-0 transition-colors ${
-                openIndex === index
-                  ? "bg-blue-100 border-2 border-blue-300"
-                  : "bg-slate-100 border-2 border-slate-200"
-              }`}
-            >
-              <faq.icon
-                className={`w-5 h-5 transition-colors ${
-                  openIndex === index ? "text-blue-600" : "text-slate-600"
-                }`}
-              />
-            </div>
-
-            <div className="flex-1">
-              <h3
-                className={`font-bold text-lg leading-tight transition-colors ${
-                  openIndex === index ? "text-blue-900" : "text-slate-900"
-                }`}
-              >
-                {faq.question}
-              </h3>
-            </div>
-
-            <div
-              className={`p-2 rounded-full shrink-0 transition-all ${
-                openIndex === index ? "bg-blue-200 rotate-180" : "bg-slate-100"
-              }`}
-            >
-              <ArrowRight
-                className={`w-5 h-5 transition-colors transform rotate-90 ${
-                  openIndex === index ? "text-blue-700" : "text-slate-600"
-                }`}
-              />
-            </div>
-          </button>
-
-          {openIndex === index && (
-            <div className="px-6 pb-6 pt-2 animate-fade-in">
-              <div className="pl-14">
-                <div className="prose prose-sm text-slate-700 leading-relaxed whitespace-pre-line">
-                  {faq.answer
-                    .split("Download the Exam Guide")
-                    .map((part, i, arr) => (
-                      <React.Fragment key={i}>
-                        {part}
-                        {i < arr.length - 1 && (
-                          <button
-                            onClick={(e) => {
-                              e.stopPropagation();
-                              onDownloadGuideClick();
-                            }}
-                            className="inline-flex items-center gap-1 text-blue-600 hover:text-blue-700 font-semibold hover:underline cursor-pointer"
-                          >
-                            Download the Exam Guide
-                          </button>
-                        )}
-                      </React.Fragment>
-                    ))}
-                </div>
-              </div>
-            </div>
-          )}
-        </div>
-      ))}
-    </div>
-  );
 }
 
 // This component accepts assessment configuration as props
@@ -652,7 +329,7 @@ export default function DynamicAssessmentPageClient({
   return (
     <div className="min-h-screen bg-linear-to-br from-slate-50 via-white to-blue-50">
       {/* Hero Section */}
-      <section className="relative overflow-hidden bg-linear-to-br from-blue-600 via-blue-700 to-emerald-600 text-white py-20">
+      <section className="relative overflow-hidden bg-gradient-to-br from-purple-600 via-violet-600 to-purple-700 text-white py-20 mt-16 md:mt-20">
         <div className="absolute inset-0 bg-[linear-gradient(to_right,#ffffff10_1px,transparent_1px),linear-gradient(to_bottom,#ffffff10_1px,transparent_1px)] bg-size-[64px_64px]"></div>
 
         <div className="relative max-w-7xl mx-auto px-6">
@@ -1034,22 +711,35 @@ export default function DynamicAssessmentPageClient({
           <div className="text-center mb-12">
             <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-blue-100 border-2 border-blue-300 text-blue-700 font-bold mb-4 text-sm">
               <MessageSquare className="w-4 h-4" />
-              Candidate FAQs
+              FAQs
             </div>
             <h2 className="text-4xl md:text-5xl font-bold text-slate-900 mb-4">
-              Your Questions{" "}
-              <span className="bg-linear-to-r from-blue-600 to-emerald-600 bg-clip-text text-transparent">
-                Answered
-              </span>
+              Your Questions, <span className="bg-linear-to-r from-blue-600 to-emerald-600 bg-clip-text text-transparent">Answered</span>
             </h2>
-            <p className="text-lg text-slate-600">
-              Everything you need to know about the assessment process
+            <p className="text-lg text-slate-600 max-w-2xl mx-auto mb-8">
+              Everything you need to know about getting hired and hiring for full-time and freelancing roles on TechSmartHire.
             </p>
           </div>
 
-          <FAQAccordion
-            onDownloadGuideClick={() => setIsSampleModalOpen(true)}
-          />
+          <div className="flex flex-wrap items-center justify-center gap-4">
+            <button
+              onClick={() => router.push('/faqs?tab=candidate')}
+              className="group cursor-pointer inline-flex items-center gap-3 px-8 py-4 rounded-xl bg-blue-600 text-white font-bold text-lg hover:bg-blue-700 hover:shadow-xl transition-all hover:scale-105"
+            >
+              <Users className="w-6 h-6" />
+              <span>Candidate FAQs</span>
+              <ArrowRight className="w-5 h-5 group-hover:translate-x-1 transition-transform" />
+            </button>
+
+            <button
+              onClick={() => router.push('/faqs?tab=recruiter')}
+              className="group cursor-pointer inline-flex items-center gap-3 px-8 py-4 rounded-xl bg-emerald-600 text-white font-bold text-lg hover:bg-emerald-700 hover:shadow-xl transition-all hover:scale-105"
+            >
+              <Briefcase className="w-6 h-6" />
+              <span>Recruiter FAQs</span>
+              <ArrowRight className="w-5 h-5 group-hover:translate-x-1 transition-transform" />
+            </button>
+          </div>
         </div>
       </section>
 

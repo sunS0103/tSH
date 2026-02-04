@@ -73,37 +73,61 @@ export default function ScoreVisibilityAndPrivacy({
           className="text-primary-500 size-4.5"
         />
         <h3 className="text-sm md:text-base font-semibold text-primary-500">
-          No Fixed Benchmark
+          How do recruiters interpret my score?
         </h3>
       </div>
-      <p className="text-xs md:text-sm text-gray-600 mb-4 font-medium">
-        Performance is evaluated relative to market context.
+      <p className="text-xs md:text-sm text-gray-600 mt-2 mb-4 font-medium">
+        Your score is not judged in isolation. It is evaluated in the context of
+        the hiring market and the specific role requirement.
       </p>
 
-      {listingSection({
-        title: "Skill Competitiveness",
-        items: [
-          "Highly saturated skills (e.g., Java + Selenium) require stronger scores.",
-          "Niche skills (e.g., Playwright + API) may attract recruiters even with moderate scoring.",
-        ],
-      })}
+      <p className="text-xs md:text-sm text-black font-semibold mb-3">
+        Recruiters interpret scores based on several factors, including:
+      </p>
 
-      {listingSection({
-        title: "Geographical Competitiveness",
-        items: [
-          "A 50% score may be excellent in a Tier-2 city.",
-          "The same score may be average in a highly competitive metro.",
-        ],
-      })}
+      <div className="space-y-4">
+        <div>
+          <h5 className="text-xs md:text-sm font-semibold text-gray-800">
+            Skill demand and availability
+          </h5>
+          <p className="text-xs md:text-sm text-gray-600 font-medium mt-1">
+            Some skills have a larger talent pool, while others have fewer
+            specialists. Recruiters consider how your score compares within that
+            skill landscape.
+          </p>
+        </div>
 
-      {listingSection({
-        title: "Recruiters interpret your score based on:",
-        items: [
-          "City-wise hiring demand",
-          "Skill supply-demand balance",
-          "Role complexity",
-        ],
-      })}
+        <div>
+          <h5 className="text-xs md:text-sm font-semibold text-gray-800">
+            Geographical hiring trends
+          </h5>
+          <p className="text-xs md:text-sm text-gray-600 font-medium mt-1">
+            A score that stands out in one city or region may be viewed
+            differently in another, depending on local competition and hiring
+            demand.
+          </p>
+        </div>
+
+        <div>
+          <h5 className="text-xs md:text-sm font-semibold text-gray-800">
+            Role complexity and expectations
+          </h5>
+          <p className="text-xs md:text-sm text-gray-600 font-medium mt-1">
+            Different roles require different depth of expertise. Recruiters
+            align your score with the expectations of the role they are hiring
+            for.
+          </p>
+        </div>
+      </div>
+
+      <div className="mt-4 p-3 bg-primary-50 rounded-lg border border-primary-100">
+        <p className="text-xs md:text-sm text-gray-700 font-medium">
+          <span className="mr-1">👉</span>
+          Your score is a strong indicator of your capability, and recruiters
+          evaluate it thoughtfully in relation to market context, not as a
+          standalone number.
+        </p>
+      </div>
 
       <hr className="border-gray-200 my-4" />
 

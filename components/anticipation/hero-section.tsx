@@ -13,7 +13,7 @@ const HeroSection = () => {
   };
 
   const handleJoinJobFair = () => {
-    router.push("/qa-job-fair-feb");
+    router.push("/qa-job-fair");
   };
 
   return (

@@ -45,6 +45,7 @@ interface Item {
   id: string;
   slug: string;
   title: string;
+  status?: string;
 }
 
 export default function InviteDialog({
@@ -57,6 +58,7 @@ export default function InviteDialog({
   const [loading, setLoading] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [items, setItems] = useState<Item[]>([]);
+  const [inReviewCount, setInReviewCount] = useState(0); // Count of jobs in review
   const [selectedItem, setSelectedItem] = useState<string>(""); // For Job (Single Select)
   const [selectedItems, setSelectedItems] = useState<string[]>([]); // For Assessment (Multi Select)
   const [currentPage, setCurrentPage] = useState(1);
@@ -79,6 +81,7 @@ export default function InviteDialog({
     if (open) {
       setSelectedItem("");
       setSelectedItems([]);
+      setInReviewCount(0);
       loadedPagesRef.current.clear();
       setCurrentPage(1);
       setHasMore(true);
@@ -87,6 +90,7 @@ export default function InviteDialog({
     } else {
       setSelectedItem("");
       setSelectedItems([]);
+      setInReviewCount(0);
       setItems([]);
       setCurrentPage(1);
       setHasMore(true);
@@ -105,9 +109,22 @@ export default function InviteDialog({
       let data: any;
 
       if (isJob) {
-        data = await getRecruiterJobs({ status: "active" });
+        // Fetch both active and in_review jobs
+        data = await getRecruiterJobs({
+          status: ["active", "in_review"],
+        });
         const list = Array.isArray(data) ? data : data?.data || [];
-        setItems(list);
+
+        // Separate active jobs from in_review jobs
+        const activeJobs = list.filter(
+          (job: any) => job.status === "active",
+        );
+        const reviewJobs = list.filter(
+          (job: any) => job.status === "in_review",
+        );
+
+        setItems(activeJobs);
+        setInReviewCount(reviewJobs.length);
         setHasMore(false); // Jobs don't have pagination in this API
       } else {
         data = await getAssessmentList({
@@ -288,6 +305,36 @@ export default function InviteDialog({
               Checking active {mode}s...
             </p>
           </div>
+        ) : !hasItems && isJob && inReviewCount > 0 ? (
+          // All Jobs in Review State
+          <div className="px-10 py-6 flex flex-col items-center justify-center gap-4">
+            <div className="w-30 h-30 relative overflow-hidden">
+              <div className="w-full h-full flex items-center justify-center bg-amber-50 rounded-full">
+                <Icon
+                  icon="mdi:clock-outline"
+                  className="text-amber-500 w-16 h-16"
+                />
+              </div>
+            </div>
+
+            <div className="w-full flex flex-col items-center gap-2">
+              <h3 className="text-xl font-bold text-gray-900 font-sans text-center">
+                {inReviewCount} Job{inReviewCount > 1 ? "s" : ""} in Review
+              </h3>
+              <p className="text-gray-600 text-sm font-medium font-sans text-center">
+                You will be able to select{" "}
+                {inReviewCount > 1 ? "them" : "it"} once approved by admin.
+              </p>
+            </div>
+
+            <Button
+              variant="outline"
+              className="h-8 px-4 border-primary-500 text-primary-500 hover:bg-primary-50 rounded-lg text-sm font-normal font-sans mt-2"
+              onClick={() => onOpenChange(false)}
+            >
+              Close
+            </Button>
+          </div>
         ) : !hasItems ? (
           // No Data State
           <div className="px-16 py-6 flex flex-col items-center justify-center gap-4">
@@ -330,29 +377,48 @@ export default function InviteDialog({
                   {label}
                 </label>
                 {isJob ? (
-                  <Select value={selectedItem} onValueChange={setSelectedItem}>
-                    <SelectTrigger className="w-full h-8 px-3 border-gray-200 rounded-lg text-gray-600 text-sm font-normal font-sans bg-white focus:ring-0 focus:ring-offset-0">
-                      <SelectValue placeholder={selectPlaceholder} />
-                    </SelectTrigger>
-                    <SelectContent
-                      className="max-h-[300px]"
-                      data-slot="select-content"
+                  <>
+                    <Select
+                      value={selectedItem}
+                      onValueChange={setSelectedItem}
                     >
-                      {items.map((item) => (
-                        <SelectItem
-                          key={item.slug || item.id}
-                          value={item.slug || item.id}
-                        >
-                          {item.title}
-                        </SelectItem>
-                      ))}
-                      {loadingMore && (
-                        <div className="flex items-center justify-center py-2">
-                          <Loader2 className="h-4 w-4 animate-spin text-primary-500" />
-                        </div>
-                      )}
-                    </SelectContent>
-                  </Select>
+                      <SelectTrigger className="w-full h-8 px-3 border-gray-200 rounded-lg text-gray-600 text-sm font-normal font-sans bg-white focus:ring-0 focus:ring-offset-0">
+                        <SelectValue placeholder={selectPlaceholder} />
+                      </SelectTrigger>
+                      <SelectContent
+                        className="max-h-[300px]"
+                        data-slot="select-content"
+                      >
+                        {items.map((item) => (
+                          <SelectItem
+                            key={item.slug || item.id}
+                            value={item.slug || item.id}
+                          >
+                            {item.title}
+                          </SelectItem>
+                        ))}
+                        {loadingMore && (
+                          <div className="flex items-center justify-center py-2">
+                            <Loader2 className="h-4 w-4 animate-spin text-primary-500" />
+                          </div>
+                        )}
+                      </SelectContent>
+                    </Select>
+                    {inReviewCount > 0 && (
+                      <div className="flex items-start gap-2 p-3 bg-amber-50 border border-amber-200 rounded-lg">
+                        <Icon
+                          icon="mdi:information-outline"
+                          className="w-4 h-4 text-amber-600 mt-0.5 shrink-0"
+                        />
+                        <p className="text-xs text-amber-700 font-medium">
+                          {inReviewCount} job{inReviewCount > 1 ? "s are" : " is"}{" "}
+                          in review mode. You will be able to select{" "}
+                          {inReviewCount > 1 ? "them" : "it"} once approved by
+                          admin.
+                        </p>
+                      </div>
+                    )}
+                  </>
                 ) : (
                   <Popover>
                     <PopoverTrigger asChild>
