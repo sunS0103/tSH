@@ -50,6 +50,10 @@ const Header = () => {
     setIsMobileMenuOpen(false);
   };
 
+  const isVisible =
+    process.env.NODE_ENV !== "production" ||
+    new Date() >= new Date("2026-02-06T18:00:00Z");
+
   return (
     <motion.nav
       initial={{ y: -100 }}
@@ -212,8 +216,7 @@ const Header = () => {
 
           {/* Desktop CTA */}
           <div className="hidden md:flex items-center gap-4">
-            {(process.env.NODE_ENV !== "production" ||
-              new Date() >= new Date("2026-02-06T18:00:00Z")) && (
+            {isVisible && (
               <Link
                 className="flex gap-2 items-center rounded-md px-4 py-2 cursor-pointer bg-linear-to-r from-purple-600 via-violet-600 to-purple-700 hover:from-purple-700 hover:via-violet-700 hover:to-purple-800 text-white font-semibold shadow-md hover:shadow-lg transition-all"
                 href={
