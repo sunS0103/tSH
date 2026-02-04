@@ -4,7 +4,6 @@ import React, { useState, useRef, useEffect } from "react";
 import {
   CheckCircle,
   Clock,
-  Globe,
   FileText,
   Shield,
   AlertTriangle,
@@ -25,11 +24,9 @@ import {
   XCircle,
   Zap,
   X,
-  Calendar,
   Loader2,
   FileDown,
-  GraduationCap,
-  Briefcase
+  Briefcase,
 } from "lucide-react";
 import { useRouter } from "next/navigation";
 import ReCAPTCHA from "react-google-recaptcha";
@@ -85,29 +82,10 @@ export default function DynamicAssessmentPageClient({
   const recaptchaRef = useRef<ReCAPTCHA>(null);
 
   const [timeLeft, setTimeLeft] = useState({ days: 0, hours: 0, minutes: 0 });
-  const [isLive, setIsLive] = useState(false);
-  const [launchDateDisplay, setLaunchDateDisplay] = useState("February 6");
+  const [launchDateDisplay] = useState("February 6");
 
   useEffect(() => {
-    const env = process.env.NEXT_PUBLIC_ENV;
-    let launchDateStr = "2026-02-05T00:00:00"; // Production default
-
-    if (env === "staging") {
-      launchDateStr = "2026-01-28T00:00:00";
-    } else if (env === "development") {
-      launchDateStr = "2024-01-01T00:00:00"; // Creating a past date to open immediately
-    }
-
-    const launchDate = new Date(launchDateStr).getTime();
-
-    // Format display date (e.g., "February 6" or "January 28")
-    const dateObj = new Date(launchDateStr);
-    const month = dateObj.toLocaleString("default", { month: "long" });
-    const day = dateObj.getDate();
-    setLaunchDateDisplay(`${month} ${day}`);
-
-    // Check immediately to avoid delay
-    setIsLive(new Date().getTime() >= launchDate);
+    const launchDate = new Date("2026-02-06T18:00:00").getTime();
 
     const timer = setInterval(() => {
       const now = new Date().getTime();
@@ -117,12 +95,11 @@ export default function DynamicAssessmentPageClient({
         setTimeLeft({
           days: Math.floor(distance / (1000 * 60 * 60 * 24)),
           hours: Math.floor(
-            (distance % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60),
+            (distance % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60)
           ),
           minutes: Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60)),
         });
       }
-      setIsLive(now >= launchDate);
     }, 1000);
 
     return () => clearInterval(timer);
@@ -278,6 +255,7 @@ export default function DynamicAssessmentPageClient({
 
           await getImports({ data: importBody });
         }
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
       } catch (error: any) {
         if (error.response?.status !== 404 && error.response?.status !== 400) {
           throw error;
@@ -298,7 +276,7 @@ export default function DynamicAssessmentPageClient({
       console.error("Sample Questions Error:", error);
       toast.error(
         error.response?.data?.message ||
-          "Failed to process your request. Please try again.",
+          "Failed to process your request. Please try again."
       );
     } finally {
       setIsSubmitting(false);
@@ -329,7 +307,7 @@ export default function DynamicAssessmentPageClient({
   return (
     <div className="min-h-screen bg-linear-to-br from-slate-50 via-white to-blue-50">
       {/* Hero Section */}
-      <section className="relative overflow-hidden bg-gradient-to-br from-purple-600 via-violet-600 to-purple-700 text-white py-20 mt-16 md:mt-20">
+      <section className="relative overflow-hidden bg-linear-to-br from-purple-600 via-violet-600 to-purple-700 text-white py-20 mt-16 md:mt-20">
         <div className="absolute inset-0 bg-[linear-gradient(to_right,#ffffff10_1px,transparent_1px),linear-gradient(to_bottom,#ffffff10_1px,transparent_1px)] bg-size-[64px_64px]"></div>
 
         <div className="relative max-w-7xl mx-auto px-6">
@@ -404,8 +382,8 @@ export default function DynamicAssessmentPageClient({
                     skill.level === "Advanced"
                       ? "bg-purple-100 text-purple-700 border border-purple-300"
                       : skill.level === "Intermediate"
-                        ? "bg-blue-100 text-blue-700 border border-blue-300"
-                        : "bg-emerald-100 text-emerald-700 border border-emerald-300"
+                      ? "bg-blue-100 text-blue-700 border border-blue-300"
+                      : "bg-emerald-100 text-emerald-700 border border-emerald-300"
                   }`}
                 >
                   {skill.level}
@@ -714,16 +692,20 @@ export default function DynamicAssessmentPageClient({
               FAQs
             </div>
             <h2 className="text-4xl md:text-5xl font-bold text-slate-900 mb-4">
-              Your Questions, <span className="bg-linear-to-r from-blue-600 to-emerald-600 bg-clip-text text-transparent">Answered</span>
+              Your Questions,{" "}
+              <span className="bg-linear-to-r from-blue-600 to-emerald-600 bg-clip-text text-transparent">
+                Answered
+              </span>
             </h2>
             <p className="text-lg text-slate-600 max-w-2xl mx-auto mb-8">
-              Everything you need to know about getting hired and hiring for full-time and freelancing roles on TechSmartHire.
+              Everything you need to know about getting hired and hiring for
+              full-time and freelancing roles on TechSmartHire.
             </p>
           </div>
 
           <div className="flex flex-wrap items-center justify-center gap-4">
             <button
-              onClick={() => router.push('/faqs?tab=candidate')}
+              onClick={() => router.push("/faqs?tab=candidate")}
               className="group cursor-pointer inline-flex items-center gap-3 px-8 py-4 rounded-xl bg-blue-600 text-white font-bold text-lg hover:bg-blue-700 hover:shadow-xl transition-all hover:scale-105"
             >
               <Users className="w-6 h-6" />
@@ -732,7 +714,7 @@ export default function DynamicAssessmentPageClient({
             </button>
 
             <button
-              onClick={() => router.push('/faqs?tab=recruiter')}
+              onClick={() => router.push("/faqs?tab=recruiter")}
               className="group cursor-pointer inline-flex items-center gap-3 px-8 py-4 rounded-xl bg-emerald-600 text-white font-bold text-lg hover:bg-emerald-700 hover:shadow-xl transition-all hover:scale-105"
             >
               <Briefcase className="w-6 h-6" />
@@ -748,7 +730,7 @@ export default function DynamicAssessmentPageClient({
         <div className="absolute inset-0 bg-[linear-gradient(to_right,#ffffff10_1px,transparent_1px),linear-gradient(to_bottom,#ffffff10_1px,transparent_1px)] bg-size-[64px_64px]"></div>
 
         <div className="relative max-w-4xl mx-auto px-6 text-center">
-          {isLive ? (
+          {new Date() >= new Date("2026-02-06T18:00:00") ? (
             // PHASE 2: Assessments Are Open - UNLOCKED
             <>
               <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-white/20 border border-white/30 text-sm font-semibold mb-4 animate-pulse">
@@ -757,7 +739,7 @@ export default function DynamicAssessmentPageClient({
               </div>
 
               <h2 className="text-4xl md:text-5xl font-bold mb-4">
-                Ready to Get into Top Recruiters' Attention?
+                Ready to Get into Top Recruiters&apos; Attention?
               </h2>
 
               <p className="text-xl text-emerald-100 mb-8 max-w-3xl mx-auto">
@@ -806,13 +788,13 @@ export default function DynamicAssessmentPageClient({
           ) : (
             // PHASE 1: Pre-Launch - LOCKED
             <>
-              <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-yellow-400/20 border border-yellow-400/50 text-yellow-100 text-sm font-semibold mb-4">
+              {/* <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-yellow-400/20 border border-yellow-400/50 text-yellow-100 text-sm font-semibold mb-4">
                 <Calendar className="w-4 h-4" />
                 Open Window: {launchDateDisplay}–27, 2026
-              </div>
+              </div> */}
 
               <h2 className="text-4xl md:text-5xl font-bold mb-4">
-                Ready to Get into Top Recruiters' Attention?
+                Ready to Get into Top Recruiters&apos; Attention?
               </h2>
 
               {/* Dynamic Countdown */}
@@ -841,8 +823,7 @@ export default function DynamicAssessmentPageClient({
                 </div>
 
                 <p className="text-sm text-emerald-200 mt-3">
-                  Button will unlock automatically on {launchDateDisplay} at
-                  12:00 AM
+                  Button will unlock automatically on Feb 6 at 6:00 PM
                 </p>
               </div>
 
@@ -862,7 +843,7 @@ export default function DynamicAssessmentPageClient({
                   className="group cursor-pointer inline-flex items-center justify-center gap-3 px-8 py-4 rounded-xl bg-yellow-400 text-slate-900 font-bold text-lg hover:bg-yellow-300 hover:shadow-2xl transition-all hover:scale-105 whitespace-nowrap"
                 >
                   <span className="text-wrap">
-                    🔔 Join the List to Get Notified When It's Live!
+                    🔔 Join the List to Get Notified When It&apos;s Live!
                   </span>
                   <ArrowRight className="w-5 h-5 group-hover:translate-x-1 transition-transform" />
                 </button>
@@ -977,13 +958,13 @@ export default function DynamicAssessmentPageClient({
                         onExpired={() => {
                           setRecaptchaToken(null);
                           setRecaptchaError(
-                            "reCAPTCHA expired. Please complete the challenge again.",
+                            "reCAPTCHA expired. Please complete the challenge again."
                           );
                         }}
                         onErrored={() => {
                           setRecaptchaToken(null);
                           setRecaptchaError(
-                            "reCAPTCHA error. Please try again.",
+                            "reCAPTCHA error. Please try again."
                           );
                         }}
                         theme="light"

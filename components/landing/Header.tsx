@@ -2,7 +2,20 @@
 
 import { useState, useEffect } from "react";
 import { motion } from "framer-motion";
-import { Menu, X, Users, Briefcase, Rocket, MessageSquare, Home, LogIn, Calendar, Mail, FileText, ChevronDown } from "lucide-react";
+import {
+  Menu,
+  X,
+  Users,
+  Briefcase,
+  Rocket,
+  MessageSquare,
+  Home,
+  LogIn,
+  Calendar,
+  Mail,
+  FileText,
+  ChevronDown,
+} from "lucide-react";
 import { Button } from "@/components/ui/button";
 import Link from "next/link";
 import Image from "next/image";
@@ -83,9 +96,9 @@ const Header = () => {
               <Calendar className="w-5 h-5" />
               Job Fair
             </Link>
-            
+
             {/* Assessments Dropdown */}
-            <div 
+            <div
               className="relative"
               onMouseEnter={() => setIsAssessmentsOpen(true)}
               onMouseLeave={() => setIsAssessmentsOpen(false)}
@@ -100,7 +113,11 @@ const Header = () => {
               >
                 <FileText className="w-5 h-5" />
                 <span>Assessments</span>
-                <ChevronDown className={`w-4 h-4 transition-transform ${isAssessmentsOpen ? "rotate-180" : ""}`} />
+                <ChevronDown
+                  className={`w-4 h-4 transition-transform ${
+                    isAssessmentsOpen ? "rotate-180" : ""
+                  }`}
+                />
               </button>
 
               {/* Dropdown Menu */}
@@ -120,7 +137,7 @@ const Header = () => {
                     <div className="py-2">
                       {jobFairConfig.jobs.map((job) => {
                         const isComingSoon = job.status === "coming soon";
-                        
+
                         if (isComingSoon) {
                           return (
                             <div
@@ -195,17 +212,22 @@ const Header = () => {
 
           {/* Desktop CTA */}
           <div className="hidden md:flex items-center gap-4">
-            <Button
-              className="cursor-pointer bg-gradient-to-r from-purple-600 via-violet-600 to-purple-700 hover:from-purple-700 hover:via-violet-700 hover:to-purple-800 text-white font-semibold shadow-md hover:shadow-lg transition-all"
-              variant="default"
-              size="default"
-              asChild
-            >
-              <Link href={status === "authenticated" && session ? "/dashboard" : "/authentication"}>
+            {(process.env.NODE_ENV !== "production" ||
+              new Date() >= new Date("2026-02-06T18:00:00Z")) && (
+              <Link
+                className="flex gap-2 items-center rounded-md px-4 py-2 cursor-pointer bg-linear-to-r from-purple-600 via-violet-600 to-purple-700 hover:from-purple-700 hover:via-violet-700 hover:to-purple-800 text-white font-semibold shadow-md hover:shadow-lg transition-all"
+                href={
+                  status === "authenticated" && session
+                    ? "/dashboard"
+                    : "/authentication"
+                }
+              >
                 <LogIn className="w-5 h-5 mr-1" />
-                {status === "authenticated" && session ? "Dashboard" : "Signup/Signin"}
+                {status === "authenticated" && session
+                  ? "Dashboard"
+                  : "Signup/Signin"}
               </Link>
-            </Button>
+            )}
           </div>
 
           {/* Mobile Menu Button */}

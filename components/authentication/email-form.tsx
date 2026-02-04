@@ -269,7 +269,7 @@ export default function EmailForm({ role }: EmailFormProps) {
         Set up your account to begin. It takes less than a minute.
       </p>
 
-      <Button
+      {/* <Button
         variant="outline"
         className="mt-6 px-5"
         onClick={handleGoogleSignIn}
@@ -285,7 +285,7 @@ export default function EmailForm({ role }: EmailFormProps) {
         <div className="bg-gray-400 w-full h-px" />
         <span>OR</span>
         <div className="bg-gray-400 w-full h-px" />
-      </div>
+      </div> */}
 
       <Form {...form}>
         <form
