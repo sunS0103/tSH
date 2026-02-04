@@ -23,6 +23,7 @@ interface CandidateJob
     duration: number;
     total_questions: number;
     score: number;
+    percentage: number;
   }>;
   custom_fields: CustomField[];
   customFieldsStatus: "NOT_REQUESTED" | "REQUESTED" | "SUBMITTED";
@@ -121,7 +122,7 @@ export default async function CandidateJobDetails({
               topics={assessment.topics}
               duration={assessment.duration}
               questionCount={assessment.total_questions}
-              score={assessment.score}
+              score={assessment.percentage}
               selectedTab={assessment?.is_assessment_complete ? "taken" : "all"}
             />
           ))}
