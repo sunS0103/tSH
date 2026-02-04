@@ -22,6 +22,7 @@ export default function AuthForm() {
   // Update role when URL parameter changes
   useEffect(() => {
     if (tabParam === "recruiter") {
+      // eslint-disable-next-line react-hooks/set-state-in-effect
       setRole("RECRUITER");
     } else if (tabParam === "candidate") {
       setRole("CANDIDATE");
@@ -29,14 +30,16 @@ export default function AuthForm() {
   }, [tabParam]);
 
   return (
-    <div className="flex flex-col justify-start md:justify-center items-center w-full max-w-md mx-auto md:h-[calc(100vh-60px)] overflow-hidden">
+    <div className="flex flex-col justify-start md:justify-center items-center w-full max-w-md mx-auto md:min-h-[calc(100vh-60px)]">
       {/* Beta Notice Banner */}
       <div className="w-full bg-amber-50 border border-amber-200 rounded-xl p-4 mb-4">
         <p className="text-amber-800 font-semibold text-sm text-center">
           🚧 TechSmartHire is currently in Beta
         </p>
         <p className="text-amber-700 text-xs text-center mt-1">
-          We're rolling out features in phases. Join our programs now and enjoy early-bird advantage with higher profile visibility and ranking in the Talent Pool.
+          We&apos;re rolling out features in phases. Join our programs now and
+          enjoy early-bird advantage with higher profile visibility and ranking
+          in the Talent Pool.
         </p>
       </div>
 
