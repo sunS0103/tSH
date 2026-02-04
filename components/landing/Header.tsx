@@ -51,7 +51,7 @@ const Header = () => {
   };
 
   const isVisible =
-    process.env.NODE_ENV !== "production" ||
+    process.env.NEXT_PUBLIC_ENV !== "production" ||
     new Date() >= new Date("2026-02-06T18:00:00Z");
 
   return (
