@@ -388,7 +388,7 @@ export default function CandidateProfile({
                 className="size-6 text-primary-500"
               />
               <h3 className="text-lg md:text-xl font-bold">
-                Accountant & Identity
+                Account & Identity
               </h3>
             </div>
             <Button
