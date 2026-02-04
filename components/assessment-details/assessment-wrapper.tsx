@@ -13,6 +13,7 @@ import {
   Dialog,
   DialogClose,
   DialogContent,
+  DialogDescription,
   DialogHeader,
   DialogTitle,
 } from "../ui/dialog";
@@ -105,6 +106,7 @@ export default function AssessmentWrapper({
   const [isPopupBlockedDialogOpen, setIsPopupBlockedDialogOpen] =
     useState(false);
   const [popupBlockedLink, setPopupBlockedLink] = useState<string | null>(null);
+  const [isEmailSentDialogOpen, setIsEmailSentDialogOpen] = useState(false);
 
   const totalSteps = STEPS.length;
 
@@ -576,9 +578,8 @@ export default function AssessmentWrapper({
       try {
         const res = await changeAssessmentStatus(userAssessmentId, "LATER");
         if (res.success) {
-          toast.success(res.message || "Exam link will send via email");
           setIsStartLaterDialogOpen(false);
-          router.push(`/assessments`);
+          setIsEmailSentDialogOpen(true);
         }
       } catch (err: unknown) {
         const error = err as { response?: { data?: { message?: string } } };
@@ -599,9 +600,8 @@ export default function AssessmentWrapper({
         "LATER"
       );
       if (res.success) {
-        toast.success(res.message || "Exam link will send via email");
         setIsStartLaterDialogOpen(false);
-        router.push(`/assessments`);
+        setIsEmailSentDialogOpen(true);
       }
     } catch (err: unknown) {
       // Error might be from handlePurchase (payment cancelled) or changeAssessmentStatus
@@ -709,11 +709,14 @@ export default function AssessmentWrapper({
                         <DialogTitle className="text-left text-base md:text-lg">
                           Start Assessment Later
                         </DialogTitle>
+                        <DialogDescription className="sr-only">
+                          Options for starting the assessment at a later time
+                        </DialogDescription>
                       </DialogHeader>
                       <hr className="border-gray-200" />
-                      <div className="pl-6">
+                      <div className="pl-6 pr-6">
                         <div className="text-xs md:text-sm font-semibold">
-                          If You’re Not Ready to Start Now
+                          If You're Not Ready to Start Now
                         </div>
 
                         <ul className="list-disc list-outside text-gray-600 px-2 mt-2 marker:text-primary-100 pl-4">
@@ -726,6 +729,45 @@ export default function AssessmentWrapper({
                             </li>
                           ))}
                         </ul>
+
+                        {/* Basic package link validity note */}
+                        {(selectedPackageType === "BASIC" ||
+                          assessmentPayment?.package_type === "BASIC") && (
+                          <div className="mt-4 p-3 bg-blue-50 border border-blue-200 rounded-lg">
+                            <p className="text-xs md:text-sm text-blue-800">
+                              <span className="font-semibold">
+                                Please Note:
+                              </span>{" "}
+                              Your assessment link will remain valid for{" "}
+                              <span className="font-semibold">30 days</span>{" "}
+                              from the date of purchase. After this period, the
+                              link will expire and you&apos;ll need to
+                              repurchase to access the assessment.
+                            </p>
+                          </div>
+                        )}
+
+                        {/* Platinum package mentorship note */}
+                        {(selectedPackageType === "PLATINUM" ||
+                          assessmentPayment?.package_type === "PLATINUM") && (
+                          <div className="mt-4 p-3 bg-amber-50 border border-amber-200 rounded-lg">
+                            <p className="text-xs md:text-sm text-amber-800">
+                              <span className="font-semibold">
+                                Platinum Package:
+                              </span>{" "}
+                              One of our experts will reach out to you within
+                              24–48 hours to kickstart your personalized
+                              mentorship program. For any queries, feel free to
+                              contact us at{" "}
+                              <a
+                                href="mailto:info@techsmarthire.com"
+                                className="font-semibold text-amber-700 hover:underline"
+                              >
+                                info@techsmarthire.com
+                              </a>
+                            </p>
+                          </div>
+                        )}
                       </div>
                       <div className="flex gap-2 justify-end px-6">
                         <DialogClose asChild>
@@ -762,6 +804,9 @@ export default function AssessmentWrapper({
                         <DialogTitle className="text-left text-base md:text-lg">
                           Start Assessment Now
                         </DialogTitle>
+                        <DialogDescription className="sr-only">
+                          Information about starting the assessment immediately
+                        </DialogDescription>
                       </DialogHeader>
                       <hr className="border-gray-200" />
                       <div className="pl-6">
@@ -774,29 +819,70 @@ export default function AssessmentWrapper({
                           </p>
                         ) : (
                           <>
-                            <div className="text-xs md:text-sm font-semibold">
-                              Prepare Before You Start
+                            <div className="text-xs md:text-sm font-semibold mb-3">
+                              What happens next?
                             </div>
 
-                            <ul className="list-disc list-outside text-gray-600 px-2 mt-2 marker:text-primary-100 pl-4">
-                              {assessmentNowDetails?.map((item: string) => (
-                                <li
-                                  key={item}
-                                  className="text-xs md:text-sm text-gray-600 font-medium"
-                                >
-                                  {item}
-                                </li>
-                              ))}
-                            </ul>
+                            <div className="space-y-3">
+                              <div className="flex items-start gap-3">
+                                <div className="flex-shrink-0 w-6 h-6 rounded-full bg-primary-100 text-primary-600 flex items-center justify-center text-xs font-semibold">
+                                  1
+                                </div>
+                                <p className="text-xs md:text-sm text-gray-600">
+                                  You&apos;ll be redirected to a{" "}
+                                  <span className="font-semibold text-gray-700">
+                                    secure payment window
+                                  </span>{" "}
+                                  to complete your purchase.
+                                </p>
+                              </div>
+
+                              <div className="flex items-start gap-3">
+                                <div className="flex-shrink-0 w-6 h-6 rounded-full bg-primary-100 text-primary-600 flex items-center justify-center text-xs font-semibold">
+                                  2
+                                </div>
+                                <p className="text-xs md:text-sm text-gray-600">
+                                  Once payment is successful, you&apos;ll be{" "}
+                                  <span className="font-semibold text-gray-700">
+                                    automatically taken to the assessment
+                                  </span>{" "}
+                                  to begin.
+                                </p>
+                              </div>
+
+                              <div className="flex items-start gap-3">
+                                <div className="flex-shrink-0 w-6 h-6 rounded-full bg-primary-100 text-primary-600 flex items-center justify-center text-xs font-semibold">
+                                  3
+                                </div>
+                                <p className="text-xs md:text-sm text-gray-600">
+                                  <span className="font-semibold text-gray-700">
+                                    Not redirected?
+                                  </span>{" "}
+                                  No worries — we&apos;ll instantly send a
+                                  secure assessment link to your registered
+                                  email.
+                                </p>
+                              </div>
+                            </div>
                           </>
                         )}
                       </div>
                       <div className="flex gap-2 justify-end px-6">
-                        <DialogClose asChild>
-                          <Button variant="secondary">Cancel</Button>
-                        </DialogClose>
-
-                        <Button onClick={handleProceedStartNow}>Proceed</Button>
+                        {selectedPackageType === "PLATINUM" ||
+                        assessmentPayment?.package_type === "PLATINUM" ? (
+                          <DialogClose asChild>
+                            <Button>OK</Button>
+                          </DialogClose>
+                        ) : (
+                          <>
+                            <DialogClose asChild>
+                              <Button variant="secondary">Cancel</Button>
+                            </DialogClose>
+                            <Button onClick={handleProceedStartNow}>
+                              Proceed
+                            </Button>
+                          </>
+                        )}
                       </div>
                     </DialogContent>
                   </Dialog>
@@ -831,6 +917,9 @@ export default function AssessmentWrapper({
             <DialogTitle className="text-center text-base md:text-lg">
               Your Assessment is Ready!
             </DialogTitle>
+            <DialogDescription className="sr-only">
+              Your assessment is ready to start
+            </DialogDescription>
           </DialogHeader>
           <div className="flex flex-col items-center gap-4 py-4">
             <Icon
@@ -856,6 +945,56 @@ export default function AssessmentWrapper({
             <DialogClose asChild>
               <Button variant="secondary">Close</Button>
             </DialogClose>
+          </div>
+        </DialogContent>
+      </Dialog>
+
+      {/* Email Sent Success Dialog */}
+      <Dialog
+        open={isEmailSentDialogOpen}
+        onOpenChange={(open) => {
+          setIsEmailSentDialogOpen(open);
+          if (!open) {
+            router.push(`/assessments`);
+          }
+        }}
+      >
+        <DialogContent className="py-6 px-6 md:max-w-md!">
+          <DialogHeader>
+            <DialogTitle className="text-center text-base md:text-lg">
+              You&apos;re All Set!
+            </DialogTitle>
+            <DialogDescription className="sr-only">
+              Assessment link has been sent to your email
+            </DialogDescription>
+          </DialogHeader>
+          <div className="flex flex-col items-center gap-4 py-4">
+            <div className="w-16 h-16 rounded-full bg-success-50 flex items-center justify-center">
+              <Icon
+                icon="material-symbols:mark-email-read-outline-rounded"
+                className="size-8 text-success-600"
+              />
+            </div>
+            <div className="text-center">
+              <p className="text-sm md:text-base text-gray-700 font-medium mb-2">
+                Assessment Link Sent Successfully
+              </p>
+              <p className="text-xs md:text-sm text-gray-500">
+                We&apos;ve sent a secure assessment link to your registered
+                email address. Check your inbox and start the assessment
+                whenever you&apos;re ready.
+              </p>
+            </div>
+          </div>
+          <div className="flex justify-center">
+            <Button
+              onClick={() => {
+                setIsEmailSentDialogOpen(false);
+                router.push(`/assessments`);
+              }}
+            >
+              OK
+            </Button>
           </div>
         </DialogContent>
       </Dialog>

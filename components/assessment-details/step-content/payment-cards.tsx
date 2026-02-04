@@ -218,8 +218,8 @@ export default function PaymentCards({
   };
 
   const basicPackageIncludedItems = [
-    "Unlock assessment",
-    "Masked profile + score visibility to 100+ verified recruiters",
+    "Free exam re-take after 30 days freeze period.",
+    "Skilled Certification issued if you score > 60%",
     "Custom job notifications based on your assessed skill set",
   ];
 
@@ -231,6 +231,7 @@ export default function PaymentCards({
   ];
 
   const platinumPackageIncludedItems = [
+    "All Basic Package features plus",
     "Mentorship to strengthen the core skills covered in the assessment",
     "Learning resources, online training, and hands-on projects with a 6–8 week plan",
     "Detailed 1:1 analysis and personalized guidance for your retake (if required)",
@@ -241,23 +242,23 @@ export default function PaymentCards({
     {
       packageType: "BASIC",
       title: "Basic Package",
-      description:
-        "Get started at a minimal cost, pay the remaining when hiring interest is confirmed.",
+      description:"",
       price: pricingMap[currency].BASIC,
       includedItems: basicPackageIncludedItems,
       buttonText: "Activate for ₹99",
       icon: "material-symbols:star-shine-outline-rounded",
     },
-    {
-      packageType: "PREMIUM",
-      title: "Premium Package",
-      description:
-        "Best value for professionals who want certification + improvement feedback",
-      price: pricingMap[currency].PREMIUM,
-      includedItems: premiumPackageIncludedItems,
-      buttonText: "Upgrade to Premium",
-      icon: "material-symbols:diamond-outline-rounded",
-    },
+    // TODO: Temporarily hidden - uncomment to restore Premium package
+    // {
+    //   packageType: "PREMIUM",
+    //   title: "Premium Package",
+    //   description:
+    //     "Best value for professionals who want certification + improvement feedback",
+    //   price: pricingMap[currency].PREMIUM,
+    //   includedItems: premiumPackageIncludedItems,
+    //   buttonText: "Upgrade to Premium",
+    //   icon: "material-symbols:diamond-outline-rounded",
+    // },
     {
       packageType: "PLATINUM",
       title: "Platinum Package",
@@ -453,8 +454,8 @@ export default function PaymentCards({
                   currentPayment?.initial_payment_status === "PAID")
                 ? "border-primary-500 bg-primary-50/30"
                 : "border-gray-200 hover:border-primary-200",
-              // Disable interaction if already paid
-              (currentPayment?.initial_payment_status !== "PAID" ||
+              // Disable interaction if already paid or in freeze period
+              (currentPayment?.initial_payment_status === "PAID" ||
                 !can_repurchase) &&
                 "cursor-not-allowed opacity-70"
             )}

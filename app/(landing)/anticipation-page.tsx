@@ -61,7 +61,7 @@ export default function AnticipationPage() {
           </p>
           
           <button
-            onClick={() => router.push('/qa-job-fair-feb')}
+            onClick={() => router.push('/qa-job-fair')}
             className="group inline-flex items-center gap-3 px-10 py-5 rounded-xl bg-white text-emerald-600 font-bold text-lg md:text-xl hover:bg-yellow-300 hover:text-slate-900 hover:shadow-2xl transition-all hover:scale-105 cursor-pointer"
           >
             <span>👉 Explore the QA Job Fair</span>

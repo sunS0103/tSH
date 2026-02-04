@@ -20,7 +20,7 @@ import {
   MessageSquare,
 } from "lucide-react";
 import config from "./config.json";
-import RecruiterForm from "@/components/qa-job-fair-feb/recruiter-form";
+import RecruiterForm from "@/components/qa-job-fair/recruiter-form";
 
 // Icon mapping for config icons
 const iconMap: Record<string, React.ElementType> = {
@@ -40,6 +40,7 @@ interface Job {
   location: string[];
   examId: string;
   route: string;
+  status: string;
 }
 
 interface SelectionStep {
@@ -282,10 +283,30 @@ export default function QAJobFairClient() {
                 <div className="absolute top-0 right-0 w-32 h-32 bg-linear-to-br from-emerald-100 to-blue-100 rounded-full -mr-16 -mt-16 opacity-50 group-hover:scale-150 transition-transform duration-500"></div>
 
                 <div className="relative flex flex-col grow">
-                  {/* Job ID Badge */}
-                  <div className="w-max inline-flex items-center gap-2 px-3 py-1.5 rounded-lg bg-slate-100 border border-slate-300 text-xs font-mono text-slate-700 mb-4">
-                    <FileText className="w-3.5 h-3.5" />
-                    {job.jobId}
+                  {/* Job ID Badge & Coming Soon Badge */}
+                  <div className="flex items-center gap-2 mb-4 flex-wrap">
+                    <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-lg bg-slate-100 border border-slate-300 text-xs font-mono text-slate-700">
+                      <FileText className="w-3.5 h-3.5" />
+                      {job.jobId}
+                    </div>
+                    {job.status === "live" && (
+                      <div className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-emerald-100 border-2 border-emerald-400 text-xs font-bold text-emerald-700">
+                        <span className="relative flex h-2 w-2">
+                          <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-500 opacity-75"></span>
+                          <span className="relative inline-flex rounded-full h-2 w-2 bg-emerald-600"></span>
+                        </span>
+                        Live
+                      </div>
+                    )}
+                    {job.status === "coming soon" && (
+                      <div className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-amber-100 border-2 border-amber-400 text-xs font-bold text-amber-700">
+                        <span className="relative flex h-2 w-2">
+                          <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-amber-500 opacity-75"></span>
+                          <span className="relative inline-flex rounded-full h-2 w-2 bg-amber-600"></span>
+                        </span>
+                        Coming Soon
+                      </div>
+                    )}
                   </div>
 
                   {/* Job Title */}

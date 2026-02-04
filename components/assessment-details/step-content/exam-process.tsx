@@ -88,7 +88,7 @@ const questionTypes = [
   "Multiple-choice questions (MCQ)",
   "Fill-in-the-blanks (evaluated using answer-relevancy algorithms)",
   "Multi-select questions",
-  "Coding exercises",
+  "1 Coding exercise",
   "Video Interview Round (candidate speaks answers on camera)",
 ];
 
