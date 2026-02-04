@@ -32,7 +32,7 @@ export default function TalentAboutModal({
             <span className="text-gray-900 text-sm font-medium font-sans">
               About
             </span>
-            <p className="text-gray-900 text-base font-normal font-sans leading-relaxed whitespace-pre-wrap">
+            <p className="text-gray-900 text-base font-normal font-sans leading-relaxed whitespace-pre-wrap wrap-break-word">
               {about}
             </p>
           </div>
