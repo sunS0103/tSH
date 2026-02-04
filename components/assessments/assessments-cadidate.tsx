@@ -53,6 +53,7 @@ export interface Assessment {
   job_role_name: string;
   topics: Topics[];
   score: number;
+  percentage: number;
 }
 
 import { useRouter, useSearchParams, usePathname } from "next/navigation";
@@ -122,7 +123,7 @@ export default function AssessmentCandidate() {
       }
       return null;
     },
-    [filterItems],
+    [filterItems]
   );
 
   useEffect(() => {
@@ -131,10 +132,10 @@ export default function AssessmentCandidate() {
       try {
         // Separate technology and skills filters
         const technologyFilters = selectedFilters.filter(
-          (filterId) => getFilterType(filterId) === "technology",
+          (filterId) => getFilterType(filterId) === "technology"
         );
         const skillsFilters = selectedFilters.filter(
-          (filterId) => getFilterType(filterId) === "skills",
+          (filterId) => getFilterType(filterId) === "skills"
         );
 
         // Technology can be multiple values (same as skills)
