@@ -65,7 +65,7 @@ export default function ContactRecruiterFormDetails({
               className="flex flex-col gap-1 w-full"
             >
               <p className="text-xs text-gray-900 font-normal">{field.title}</p>
-              <p className="text-base text-gray-950 font-normal leading-normal">
+              <p className="text-base text-gray-950 font-normal leading-normal wrap-break-word">
                 {displayValue}
               </p>
             </div>

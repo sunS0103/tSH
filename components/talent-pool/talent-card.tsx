@@ -106,7 +106,7 @@ export default function TalentCard({
                 }
                 className={cn(
                   "w-4.5 h-4.5",
-                  isFavorite ? "text-primary-500" : "text-primary-500"
+                  isFavorite ? "text-primary-500" : "text-primary-500",
                 )}
               />
             </Button>
@@ -140,7 +140,7 @@ export default function TalentCard({
               icon={isFavorite ? "mdi:cards-heart" : "mdi:cards-heart-outline"}
               className={cn(
                 "w-4.5 h-4.5",
-                isFavorite ? "text-primary-500" : "text-primary-500"
+                isFavorite ? "text-primary-500" : "text-primary-500",
               )}
             />
           </Button>
@@ -313,7 +313,7 @@ export default function TalentCard({
             <div className="self-stretch">
               {about && about.length > 0 ? (
                 <>
-                  <span className="text-gray-800 text-sm font-normal font-sans leading-relaxed">
+                  <span className="text-gray-800 text-sm font-normal font-sans leading-relaxed wrap-break-word">
                     {about.length <= 200
                       ? about
                       : `${about.substring(0, 200)}... `}
