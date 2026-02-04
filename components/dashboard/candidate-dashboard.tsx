@@ -14,6 +14,12 @@ import { getProfileCompletionPercentage } from "@/api/profile";
 import { getTakenAssessmentsList, getAssessmentList } from "@/api/assessments";
 import AssessmentCard from "@/components/assessments/assessment-card";
 import CandidateJobCard from "@/components/jobs/candidate-jobs/listing/candidate-job-card";
+import ScoreInterpretationPopover from "@/components/talent-pool/score-interpretation-popover";
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipTrigger,
+} from "@/components/ui/tooltip";
 
 interface CandidateDashboardStats {
   applied_jobs: number;
@@ -285,6 +291,7 @@ export default function CandidateDashboard() {
               {
                 value: `${stats.average_score}%`,
                 label: "Average Score",
+                tooltip: "It's an average score of all completed assessments",
                 svg: (
                   <svg
                     width="32"
@@ -355,9 +362,29 @@ export default function CandidateDashboard() {
                   <p className="text-2xl md:text-3xl font-bold text-black">
                     {stat.value}
                   </p>
-                  <p className="text-xs md:text-sm font-medium text-gray-900">
-                    {stat.label}
-                  </p>
+                  {"tooltip" in stat && stat.tooltip ? (
+                    <Tooltip>
+                      <TooltipTrigger asChild>
+                        <p className="text-xs md:text-sm font-medium text-gray-900 flex items-center gap-1 cursor-help">
+                          {stat.label}
+                          <Icon
+                            icon="mdi:information-outline"
+                            className="size-4 text-gray-500"
+                          />
+                        </p>
+                      </TooltipTrigger>
+                      <TooltipContent
+                        className="bg-gray-900 text-white text-xs max-w-48"
+                        side="bottom"
+                      >
+                        {stat.tooltip}
+                      </TooltipContent>
+                    </Tooltip>
+                  ) : (
+                    <p className="text-xs md:text-sm font-medium text-gray-900">
+                      {stat.label}
+                    </p>
+                  )}
                 </div>
                 <div className="relative overflow-hidden shrink-0 h-full">
                   {stat.svg}
@@ -367,12 +394,15 @@ export default function CandidateDashboard() {
           </div>
         </div>
 
-        {/* Your Assessments Section */}
+        {/* Completed Assessments Section */}
         <div className="bg-white border border-gray-200 rounded-2xl overflow-hidden">
           <div className="bg-primary-50 px-4 py-3 border-b border-gray-200 flex items-center justify-between">
-            <h2 className="font-semibold text-base md:text-lg text-black">
-              Your Assessments
-            </h2>
+            <div className="flex items-center gap-3">
+              <h2 className="font-semibold text-base md:text-lg text-black">
+                Completed Assessments
+              </h2>
+              <ScoreInterpretationPopover />
+            </div>
             {takenAssessments.length > 0 && (
               <Link
                 href="/assessments?tab=taken"
@@ -434,11 +464,11 @@ export default function CandidateDashboard() {
           </div>
         </div>
 
-        {/* Recommended for You Section */}
+        {/* Recommended Assessments Section */}
         <div className="bg-white border border-gray-200 rounded-2xl overflow-hidden">
           <div className="bg-primary-50 px-4 py-3 border-b border-gray-200 flex items-center justify-between">
             <h2 className="font-semibold text-base md:text-lg text-black">
-              Recommended for You
+              Recommended Assessments
             </h2>
             {recommendedAssessments.length > 0 && (
               <Link
