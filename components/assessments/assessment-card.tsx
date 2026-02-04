@@ -149,8 +149,8 @@ export default function AssessmentCard({
 
           {isTaken ? (
             <div className="bg-transparent size-8 rounded-lg flex items-center justify-center">
-              <span className="text-gray-900 text-xs font-semibold">
-                # {score}
+              <span className="text-gray-900 text-xs font-semibold flex flex-row">
+                {score}%
               </span>
             </div>
           ) : (

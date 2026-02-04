@@ -32,7 +32,7 @@ export default function CandidateDashboard() {
   const [isLoading, setIsLoading] = useState(true);
   const [takenAssessments, setTakenAssessments] = useState<any[]>([]);
   const [recommendedAssessments, setRecommendedAssessments] = useState<any[]>(
-    [],
+    []
   );
   const [appliedJobs, setAppliedJobs] = useState<any[]>([]);
   const [profileCompletionPercentage, setProfileCompletionPercentage] =
@@ -144,13 +144,17 @@ export default function CandidateDashboard() {
         <div className="bg-blue-50 border border-blue-300 rounded-2xl p-4 flex flex-col gap-4">
           <div className="flex flex-col gap-2">
             <div className="flex items-center gap-2">
-              <Icon icon="mdi:help-circle-outline" className="size-6 text-blue-600" />
+              <Icon
+                icon="mdi:help-circle-outline"
+                className="size-6 text-blue-600"
+              />
               <h3 className="font-semibold text-base md:text-lg text-black">
                 Have Questions?
               </h3>
             </div>
             <p className="text-xs font-medium text-gray-700">
-              New to skill-based hiring? Our FAQ page covers everything you need to know.
+              New to skill-based hiring? Our FAQ page covers everything you need
+              to know.
             </p>
           </div>
           <div className="flex flex-col gap-2">
@@ -179,9 +183,7 @@ export default function CandidateDashboard() {
             rel="noopener noreferrer"
             className="w-full"
           >
-            <Button
-              className="bg-blue-600 text-white hover:bg-blue-700 w-full text-sm"
-            >
+            <Button className="bg-blue-600 text-white hover:bg-blue-700 w-full text-sm">
               Visit FAQ Page
               <Icon icon="mdi:open-in-new" className="ml-2 size-4" />
             </Button>
@@ -281,7 +283,7 @@ export default function CandidateDashboard() {
                 ),
               },
               {
-                value: stats.average_score,
+                value: `${stats.average_score}%`,
                 label: "Average Score",
                 svg: (
                   <svg
@@ -423,7 +425,7 @@ export default function CandidateDashboard() {
                     }
                     duration={assessment.duration || 0}
                     questionCount={assessment.total_questions || 0}
-                    score={assessment.score || 0}
+                    score={assessment.percentage || 0}
                     selectedTab="taken"
                   />
                 ))}
@@ -476,7 +478,7 @@ export default function CandidateDashboard() {
                     }
                     duration={assessment.duration || 0}
                     questionCount={assessment.total_questions || 0}
-                    score={assessment.score || 0}
+                    score={assessment.percentage || 0}
                     selectedTab="all"
                   />
                 ))}

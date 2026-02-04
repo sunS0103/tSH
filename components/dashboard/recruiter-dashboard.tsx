@@ -585,7 +585,7 @@ export default function RecruiterDashboard() {
                     }
                     duration={assessment.duration || 0}
                     questionCount={assessment.total_questions || 0}
-                    score={assessment.score || 0}
+                    score={assessment.percentage || 0}
                     selectedTab="all"
                   />
                 ))}

@@ -18,6 +18,7 @@ interface Assessment {
   job_role_name: string;
   topics: Topics[];
   score: number;
+  percentage: number;
 }
 
 interface AssessmentGridProps {
@@ -39,19 +40,22 @@ export default function AssessmentGrid({
 
   return (
     <>
-      {assessments.map((assessment, index) => (
-        <AssessmentCard
-          key={`${assessment.title}-${index}`}
-          category={assessment.category}
-          title={assessment.title}
-          topics={assessment.topics}
-          duration={assessment.duration}
-          questionCount={assessment.total_questions}
-          slug={assessment.slug}
-          score={assessment.score}
-          selectedTab={selectedTab}
-        />
-      ))}
+      {assessments.map((assessment, index) => {
+        console.log(assessment);
+        return (
+          <AssessmentCard
+            key={`${assessment.title}-${index}`}
+            category={assessment.category}
+            title={assessment.title}
+            topics={assessment.topics}
+            duration={assessment.duration}
+            questionCount={assessment.total_questions}
+            slug={assessment.slug}
+            score={assessment.percentage || 0}
+            selectedTab={selectedTab}
+          />
+        );
+      })}
     </>
   );
 }
