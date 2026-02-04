@@ -61,8 +61,8 @@ const Header = () => {
       transition={{ duration: 0.5 }}
       className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 ${
         isScrolled
-          ? "bg-card/80 backdrop-blur-xl border-b border-border/50 shadow-sm"
-          : "bg-transparent"
+          ? "bg-white/95 backdrop-blur-xl border-b border-slate-200 shadow-sm"
+          : "bg-white border-b border-slate-200"
       }`}
     >
       <div className="container mx-auto px-4 md:px-6">
@@ -234,7 +234,7 @@ const Header = () => {
           </div>
 
           {/* Mobile Menu Button */}
-          {/* <button
+          <button
             className="md:hidden p-2"
             onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
           >
@@ -243,25 +243,119 @@ const Header = () => {
             ) : (
               <Menu className="w-6 h-6" />
             )}
-          </button> */}
+          </button>
         </div>
       </div>
 
       {/* Mobile Menu */}
-      {/* {isMobileMenuOpen && (
+      {isMobileMenuOpen && (
         <motion.div
           initial={{ opacity: 0, y: -10 }}
           animate={{ opacity: 1, y: 0 }}
           exit={{ opacity: 0, y: -10 }}
-          className="md:hidden bg-card border-b border-border"
+          className="md:hidden bg-white border-b border-slate-200 shadow-lg"
         >
-          <div className="pt-4 border-t border-border">
-            <Button variant="default" className="w-full" onClick={scrollToForm}>
-              Join Waitlist
-            </Button>
+          <div className="container mx-auto px-4 py-4 flex flex-col gap-3">
+            <Link
+              href="/"
+              className={`text-base font-semibold transition-all flex items-center gap-2 py-2 ${
+                pathname === "/"
+                  ? "text-blue-600"
+                  : "text-slate-700 hover:text-blue-600"
+              }`}
+              onClick={() => setIsMobileMenuOpen(false)}
+            >
+              <Home className="w-5 h-5" />
+              Home
+            </Link>
+            <Link
+              href="/qa-job-fair"
+              className={`text-base font-semibold transition-all flex items-center gap-2 py-2 ${
+                pathname === "/qa-job-fair"
+                  ? "text-blue-600"
+                  : "text-slate-700 hover:text-blue-600"
+              }`}
+              onClick={() => setIsMobileMenuOpen(false)}
+            >
+              <Calendar className="w-5 h-5" />
+              Job Fair
+            </Link>
+            {/* Mobile Assessments Links */}
+            <div className="flex flex-col gap-1">
+              <span className="text-base font-semibold text-slate-700 flex items-center gap-2 py-2">
+                <FileText className="w-5 h-5" />
+                Assessments
+              </span>
+              <div className="pl-7 flex flex-col gap-2">
+                {jobFairConfig.jobs.map((job) => {
+                  const isComingSoon = job.status === "coming soon";
+                  if (isComingSoon) {
+                    return (
+                      <span
+                        key={job.jobId}
+                        className="text-sm text-slate-400 py-1"
+                      >
+                        {job.title} (Coming Soon)
+                      </span>
+                    );
+                  }
+                  return (
+                    <Link
+                      key={job.jobId}
+                      href={job.route}
+                      className="text-sm text-slate-600 hover:text-blue-600 py-1"
+                      onClick={() => setIsMobileMenuOpen(false)}
+                    >
+                      {job.title}
+                    </Link>
+                  );
+                })}
+              </div>
+            </div>
+            <Link
+              href="/faqs"
+              className={`text-base font-semibold transition-all flex items-center gap-2 py-2 ${
+                pathname === "/faqs"
+                  ? "text-blue-600"
+                  : "text-slate-700 hover:text-blue-600"
+              }`}
+              onClick={() => setIsMobileMenuOpen(false)}
+            >
+              <MessageSquare className="w-5 h-5" />
+              FAQs
+            </Link>
+            <Link
+              href="/contact"
+              className={`text-base font-semibold transition-all flex items-center gap-2 py-2 ${
+                pathname === "/contact"
+                  ? "text-blue-600"
+                  : "text-slate-700 hover:text-blue-600"
+              }`}
+              onClick={() => setIsMobileMenuOpen(false)}
+            >
+              <Mail className="w-5 h-5" />
+              Contact Us
+            </Link>
+            {(process.env.NODE_ENV !== "production" ||
+              new Date() >= new Date("2026-02-06T18:00:00Z")) && (
+              <Link
+                className="flex gap-2 items-center justify-center rounded-md px-4 py-3 mt-2 cursor-pointer bg-linear-to-r from-purple-600 via-violet-600 to-purple-700 hover:from-purple-700 hover:via-violet-700 hover:to-purple-800 text-white font-semibold shadow-md"
+                href={
+                  status === "authenticated" && session
+                    ? "/dashboard"
+                    : "/authentication"
+                }
+                onClick={() => setIsMobileMenuOpen(false)}
+              >
+                <LogIn className="w-5 h-5 mr-1" />
+                {status === "authenticated" && session
+                  ? "Dashboard"
+                  : "Signup/Signin"}
+              </Link>
+            )}
           </div>
         </motion.div>
-      )} */}
+      )}
     </motion.nav>
   );
 };
