@@ -41,7 +41,6 @@ export default function AssessmentGrid({
   return (
     <>
       {assessments.map((assessment, index) => {
-        console.log(assessment);
         return (
           <AssessmentCard
             key={`${assessment.title}-${index}`}
