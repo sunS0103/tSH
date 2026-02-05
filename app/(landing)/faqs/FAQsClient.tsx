@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef, useCallback } from "react";
 import {
   Users,
   Award,
@@ -42,6 +42,8 @@ export default function FAQsClient() {
     "candidate"
   );
   const [openIndex, setOpenIndex] = useState<number | null>(null);
+  const faqRefs = useRef<(HTMLDivElement | null)[]>([]);
+  const faqSectionRef = useRef<HTMLDivElement>(null);
 
   // Set active tab from URL parameter on mount
   useEffect(() => {
@@ -495,9 +497,21 @@ Skill scores make your referral far more credible.`,
 
   const currentFAQs = activeTab === "candidate" ? candidateFAQs : recruiterFAQs;
 
-  const toggleFAQ = (index: number) => {
-    setOpenIndex(openIndex === index ? null : index);
-  };
+  const toggleFAQ = useCallback(
+    (index: number) => {
+      const newIndex = openIndex === index ? null : index;
+      setOpenIndex(newIndex);
+      if (newIndex !== null) {
+        setTimeout(() => {
+          faqRefs.current[newIndex]?.scrollIntoView({
+            behavior: "smooth",
+            block: "start",
+          });
+        }, 100);
+      }
+    },
+    [openIndex]
+  );
 
   return (
     <div className="min-h-screen bg-linear-to-br from-slate-50 via-white to-blue-50">
@@ -520,13 +534,14 @@ Skill scores make your referral far more credible.`,
       </section>
 
       {/* Tabs Section */}
-      <section className="sticky top-0 z-40 bg-white border-b-2 border-slate-200 shadow-sm">
+      <section className="sticky top-16 md:top-20 z-40 bg-white border-b-2 border-slate-200 shadow-sm">
         <div className="max-w-7xl mx-auto px-6">
           <div className="flex items-center justify-center gap-4 py-4">
             <button
               onClick={() => {
                 setActiveTab("candidate");
                 setOpenIndex(null);
+                faqSectionRef.current?.scrollIntoView({ behavior: "smooth", block: "start" });
               }}
               className={`px-8 py-3 rounded-lg font-bold text-lg transition-all ${
                 activeTab === "candidate"
@@ -544,6 +559,7 @@ Skill scores make your referral far more credible.`,
               onClick={() => {
                 setActiveTab("recruiter");
                 setOpenIndex(null);
+                faqSectionRef.current?.scrollIntoView({ behavior: "smooth", block: "start" });
               }}
               className={`px-8 py-3 rounded-lg font-bold text-lg transition-all ${
                 activeTab === "recruiter"
@@ -561,7 +577,7 @@ Skill scores make your referral far more credible.`,
       </section>
 
       {/* FAQs Content */}
-      <section className="py-16 bg-white">
+      <section ref={faqSectionRef} className="scroll-mt-36 md:scroll-mt-40 py-16 bg-white">
         <div className="max-w-4xl mx-auto px-6">
           <div className="mb-8 text-center">
             <h2 className="text-3xl font-bold text-slate-900 mb-2">
@@ -580,7 +596,10 @@ Skill scores make your referral far more credible.`,
             {currentFAQs.map((faq, index) => (
               <div
                 key={index}
-                className={`rounded-xl border-2 transition-all ${
+                ref={(el) => {
+                  faqRefs.current[index] = el;
+                }}
+                className={`scroll-mt-44 md:scroll-mt-48 rounded-xl border-2 transition-all ${
                   openIndex === index
                     ? "border-blue-400 bg-blue-50 shadow-lg"
                     : "border-slate-200 bg-white hover:border-slate-300"
@@ -656,7 +675,7 @@ Skill scores make your referral far more credible.`,
             is here to help.
           </p>
           <a
-            href="mailto:info@techsmarthire.com"
+            href="/contact"
             className="inline-flex items-center gap-2 px-8 py-4 rounded-xl bg-linear-to-r from-blue-600 to-emerald-600 text-white font-bold text-lg hover:shadow-2xl hover:scale-105 transition-all"
           >
             <MessageSquare className="w-5 h-5" />
