@@ -194,39 +194,41 @@ export default function Header() {
 
           {/* Desktop Navigation - Hidden on mobile */}
           <nav className="hidden md:flex items-center gap-6 h-16">
-            {mounted && role && navItems.map((item) => {
-              const isActive =
-                pathname === item.href ||
-                (item.href !== "/" && pathname?.startsWith(`${item.href}/`));
+            {mounted &&
+              role &&
+              navItems.map((item) => {
+                const isActive =
+                  pathname === item.href ||
+                  (item.href !== "/" && pathname?.startsWith(`${item.href}/`));
 
-              // Show credits count for Credits nav item (recruiter only)
-              const displayLabel =
-                item.label === "Credits" && role === "RECRUITER"
-                  ? `Credits: ${userDetails?.available_credits ?? 0}`
-                  : item.label;
+                // Show credits count for Credits nav item (recruiter only)
+                const displayLabel =
+                  item.label === "Credits" && role === "RECRUITER"
+                    ? `Credits: ${userDetails?.available_credits ?? 0}`
+                    : item.label;
 
-              return (
-                <Link
-                  key={item.href}
-                  href={item.href}
-                  className={cn(
-                    "flex flex-col h-16 items-start justify-center relative",
-                    isActive && "border-b-2 border-primary-500"
-                  )}
-                >
-                  <span
+                return (
+                  <Link
+                    key={item.href}
+                    href={item.href}
                     className={cn(
-                      "text-base text-center whitespace-nowrap",
-                      isActive
-                        ? "text-primary-500 font-semibold"
-                        : "text-slate-700 font-normal"
+                      "flex flex-col h-16 items-start justify-center relative",
+                      isActive && "border-b-2 border-primary-500"
                     )}
                   >
-                    {displayLabel}
-                  </span>
-                </Link>
-              );
-            })}
+                    <span
+                      className={cn(
+                        "text-base text-center whitespace-nowrap",
+                        isActive
+                          ? "text-primary-500 font-semibold"
+                          : "text-slate-700 font-normal"
+                      )}
+                    >
+                      {displayLabel}
+                    </span>
+                  </Link>
+                );
+              })}
           </nav>
 
           <div className="flex items-center gap-3">
@@ -264,33 +266,33 @@ export default function Header() {
                 </div>
                 {/* Notification Bell */}
                 <NotificationPopover
-              open={notificationDialogOpen}
-              onOpenChange={setNotificationDialogOpen}
-              onNotificationRead={() => {
-                // Refresh unread count when notification is read
-                refreshUnreadCount();
-              }}
-            >
-              <PopoverTrigger asChild>
-                <Button
-                  variant="outline"
-                  className="bg-primary-50 border border-primary-500 flex items-center justify-center rounded-full size-8 hover:bg-primary-100 transition-colors relative"
-                  aria-label="Notifications"
+                  open={notificationDialogOpen}
+                  onOpenChange={setNotificationDialogOpen}
+                  onNotificationRead={() => {
+                    // Refresh unread count when notification is read
+                    refreshUnreadCount();
+                  }}
                 >
-                  <Icon
-                    icon="material-symbols:notifications-outline-rounded"
-                    className="text-primary-500 size-5"
-                  />
-                  {unreadCount > 0 && (
-                    <div className="absolute -top-1 -right-1 size-4 bg-red-500 rounded-full flex items-center justify-center">
-                      <span className="text-white text-[10px] font-bold">
-                        {unreadCount > 9 ? "9+" : unreadCount}
-                      </span>
-                    </div>
-                  )}
-                </Button>
-              </PopoverTrigger>
-            </NotificationPopover>
+                  <PopoverTrigger asChild>
+                    <Button
+                      variant="outline"
+                      className="bg-primary-50 border border-primary-500 flex items-center justify-center rounded-full size-8 hover:bg-primary-100 transition-colors relative"
+                      aria-label="Notifications"
+                    >
+                      <Icon
+                        icon="material-symbols:notifications-outline-rounded"
+                        className="text-primary-500 size-5"
+                      />
+                      {unreadCount > 0 && (
+                        <div className="absolute -top-1 -right-1 size-4 bg-red-500 rounded-full flex items-center justify-center">
+                          <span className="text-white text-[10px] font-bold">
+                            {unreadCount > 9 ? "9+" : unreadCount}
+                          </span>
+                        </div>
+                      )}
+                    </Button>
+                  </PopoverTrigger>
+                </NotificationPopover>
 
                 <Logout data={userDetails} role={role as string} />
               </>
@@ -419,18 +421,21 @@ function Logout({
             />
             My Profile
           </DropdownMenuItem>
-          {/* <DropdownMenuItem
-            className="cursor-pointer rounded-b-none"
-            onClick={() => {
-              router.push("/settings");
-            }}
-          >
-            <Icon
-              icon="material-symbols:settings-outline-rounded"
-              className="size-4 text-inherit!"
-            />
-            Settings
-          </DropdownMenuItem> */}
+          {role === "RECRUITER" && (
+            <DropdownMenuItem
+              className="cursor-pointer rounded-b-none"
+              onClick={() => {
+                router.push("/settings");
+              }}
+            >
+              <Icon
+                icon="material-symbols:settings-outline-rounded"
+                className="size-4 text-inherit!"
+              />
+              Settings
+            </DropdownMenuItem>
+          )}
+
           <DropdownMenuItem
             className="cursor-pointer text-red-500 hover:text-red-500!"
             onSelect={(e) => {
