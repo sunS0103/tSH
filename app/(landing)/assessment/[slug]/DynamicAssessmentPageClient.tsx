@@ -798,33 +798,33 @@ export default function DynamicAssessmentPageClient({
               </h2>
 
               {/* Dynamic Countdown */}
-              <p className="text-xl text-emerald-100 mb-8 max-w-3xl mx-auto">
+              {/* <p className="text-xl text-emerald-100 mb-8 max-w-3xl mx-auto">
                 Registration opens in{" "}
                 <strong className="text-yellow-300">
                   {timeLeft.days} days, {timeLeft.hours} hours
                 </strong>
-              </p>
+              </p> */}
 
               {/* LOCKED BUTTON */}
               <div className="mb-8">
                 <div className="relative inline-block">
                   <button
-                    disabled
-                    className="px-12 py-5 rounded-xl bg-slate-700/50 text-slate-300 font-bold text-xl cursor-not-allowed border-2 border-slate-600 backdrop-blur-sm flex items-center gap-3"
+                    className="cursor-pointer px-12 py-5 rounded-xl bg-slate-700 text-slate-300 font-bold text-xl border-2 border-slate-600 backdrop-blur-sm flex items-center gap-3"
+                    onClick={() => router.push("/authentication")}
                   >
-                    <Lock className="w-6 h-6" />
-                    <span>Signup Opens {launchDateDisplay}</span>
+                    {/* <Lock className="w-6 h-6" /> */}
+                    <span>Sign up</span>
                   </button>
 
                   {/* Lock Badge */}
-                  <div className="absolute -top-3 -right-3 px-3 py-1 rounded-full bg-yellow-400 text-slate-900 text-xs font-black shadow-lg animate-pulse">
+                  {/* <div className="absolute -top-3 -right-3 px-3 py-1 rounded-full bg-yellow-400 text-slate-900 text-xs font-black shadow-lg animate-pulse">
                     🔒 LOCKED
-                  </div>
+                  </div> */}
                 </div>
 
-                <p className="text-sm text-emerald-200 mt-3">
+                {/* <p className="text-sm text-emerald-200 mt-3">
                   Button will unlock automatically on Feb 6 at 6:00 PM
-                </p>
+                </p> */}
               </div>
 
               {/* Divider */}
