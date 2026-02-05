@@ -813,7 +813,7 @@ export default function DynamicAssessmentPageClient({
                     onClick={() => router.push("/authentication")}
                   >
                     {/* <Lock className="w-6 h-6" /> */}
-                    <span>Sign up</span>
+                    <span>Signup/Signin</span>
                   </button>
 
                   {/* Lock Badge */}
@@ -828,16 +828,16 @@ export default function DynamicAssessmentPageClient({
               </div>
 
               {/* Divider */}
-              <div className="flex items-center gap-4 max-w-md mx-auto mb-8">
+              {/* <div className="flex items-center gap-4 max-w-md mx-auto mb-8">
                 <div className="flex-1 h-px bg-white/20"></div>
                 <span className="text-sm font-semibold text-emerald-200">
                   Meanwhile
                 </span>
                 <div className="flex-1 h-px bg-white/20"></div>
-              </div>
+              </div> */}
 
               {/* Email Capture Button */}
-              <div className="max-w-2xl mx-auto mb-8">
+              {/* <div className="max-w-2xl mx-auto mb-8">
                 <button
                   onClick={handleNotifyMe}
                   className="group cursor-pointer inline-flex items-center justify-center gap-3 px-8 py-4 rounded-xl bg-yellow-400 text-slate-900 font-bold text-lg hover:bg-yellow-300 hover:shadow-2xl transition-all hover:scale-105 whitespace-nowrap"
@@ -847,13 +847,13 @@ export default function DynamicAssessmentPageClient({
                   </span>
                   <ArrowRight className="w-5 h-5 group-hover:translate-x-1 transition-transform" />
                 </button>
-              </div>
+              </div> */}
 
               {/* Trust Indicators */}
 
               <p className="text-sm text-emerald-200">
                 Take the assessment anytime between {launchDateDisplay}-27, 2026
-                • Be first in line when it opens
+                {/* • Be first in line when it opens */}
               </p>
             </>
           )}
