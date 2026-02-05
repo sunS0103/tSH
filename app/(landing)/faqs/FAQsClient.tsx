@@ -123,7 +123,7 @@ Your score becomes your strongest proof while applying for jobs.`,
 • Sample questions
 • Preparation tips
 
-👉 Download the Exam Guide to know exactly what to expect before taking the test. No surprises. Full transparency.`,
+👉 Go to the respective Assessment page and download the Sample questions Guide. No surprises. Full transparency.`,
     },
     {
       icon: GraduationCap,
@@ -132,20 +132,6 @@ Your score becomes your strongest proof while applying for jobs.`,
       answer: `Yes. Once you sign up on TechSmartHire, you will see an option in the Assessment window to enroll in a Mentorship Guidance + Exam package.
 
 This package is designed to help you prepare effectively, strengthen your skills, and confidently attempt the assessment.`,
-    },
-    {
-      icon: Award,
-      question: "Why is there a fee to take the assessment?",
-      answer: `Each assessment actually costs us around ₹999 / $10 to conduct due to:
-• Proctoring infrastructure
-• Identity verification
-• Secure exam systems
-
-But to keep this accessible for everyone, we charge only ₹100 / $1 to write the exam.
-
-👉 The remaining amount is paid only if a recruiter contacts you and invites you for a job process.
-
-So you invest very little upfront — and pay more only when there is real hiring interest. This keeps the system fair, serious, and focused on genuine job seekers.`,
     },
     {
       icon: Code,
