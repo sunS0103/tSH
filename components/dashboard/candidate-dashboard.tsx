@@ -75,7 +75,7 @@ export default function CandidateDashboard() {
         try {
           const takenRes = await getTakenAssessmentsList({
             page: 1,
-            pageSize: 3,
+            pageSize: 2,
             sortBy: "created_at",
             sortDirection: "desc",
           });
@@ -440,7 +440,7 @@ export default function CandidateDashboard() {
                 </Button>
               </div>
             ) : (
-              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-2 gap-4">
                 {takenAssessments.map((assessment) => (
                   <AssessmentCard
                     key={assessment.id || assessment.slug}
