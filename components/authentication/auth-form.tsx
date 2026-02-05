@@ -2,10 +2,15 @@
 
 import { useState, useEffect } from "react";
 import { useSearchParams } from "next/navigation";
+import Link from "next/link";
 import { Tabs, TabsList, TabsTrigger } from "../ui/tabs";
 import { TabsContent } from "@radix-ui/react-tabs";
+import { Lock, ArrowRight } from "lucide-react";
 import Logo from "../logo";
 import EmailForm from "./email-form";
+
+// TEMPORARY: Flip to `false` to restore recruiter login
+const RECRUITER_INVITE_ONLY = true;
 
 export default function AuthForm() {
   const searchParams = useSearchParams();
@@ -70,7 +75,38 @@ export default function AuthForm() {
         </TabsContent>
 
         <TabsContent value="RECRUITER" className="mt-6 w-full">
-          <EmailForm role="RECRUITER" />
+          {/* TEMPORARY: Set to false to restore recruiter login */}
+          {RECRUITER_INVITE_ONLY ? (
+            <div className="flex flex-col items-center text-center py-6">
+              <div className="w-14 h-14 rounded-full bg-primary-50 flex items-center justify-center mb-4">
+                <Lock className="w-7 h-7 text-primary" />
+              </div>
+
+              <span className="text-xs font-semibold uppercase tracking-wider text-primary bg-primary-50 px-3 py-1 rounded-full mb-4">
+                Invite Only
+              </span>
+
+              <h2 className="text-xl font-bold text-gray-900 mb-2">
+                Recruiter Access is by Invitation
+              </h2>
+
+              <p className="text-sm text-gray-500 mb-6 max-w-xs leading-relaxed">
+                We&apos;re onboarding recruiters in phases during our beta to
+                ensure the best hiring experience. Request an invite to get
+                early access to our skill-verified talent pool.
+              </p>
+
+              <Link
+                href="/contact"
+                className="inline-flex items-center gap-2 bg-primary text-white font-semibold text-sm px-6 py-3 rounded-full hover:bg-primary/90 transition-colors"
+              >
+                Request invite and take early advantage
+                <ArrowRight className="w-4 h-4" />
+              </Link>
+            </div>
+          ) : (
+            <EmailForm role="RECRUITER" />
+          )}
         </TabsContent>
       </Tabs>
     </div>
