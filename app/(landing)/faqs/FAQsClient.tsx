@@ -102,6 +102,25 @@ In Phase 2 of TechSmartHire, we will introduce a freelance and job-support marke
 A strong score today can unlock both career opportunities and side-income opportunities tomorrow.`,
     },
     {
+      icon: CheckCircle,
+      question: "Can I retake the assessment if I'm not happy with my score?",
+      answer: `You may retake the assessment:
+• Only after a 30-day cooling period from your last attempt
+• Recruiters will see the best of your two scores
+
+We strongly recommend using the cooling period to upskill, rather than attempting the assessment again without preparation.`,
+    },
+    {
+      icon: Zap,
+      question:
+        "Do I get any advantage by taking the assessment early on the platform?",
+      answer: `Absolutely. Profile ranking is partially influenced by the assessment completion date.
+
+For example, if two candidates achieve the same score for the same assessment, the candidate who completed the assessment earlier will rank higher in recruiter search results.
+
+Early participation gives you a visibility advantage.`,
+    },
+    {
       icon: Search,
       question: "As a candidate, can I apply for jobs using my skill score?",
       answer: `Yes.
@@ -238,20 +257,6 @@ After that period:
 
 This ensures that scores reflect current, up-to-date skill levels — not outdated credentials.`,
     },
-    {
-      icon: CheckCircle,
-      question: "Can I retake the assessment if I'm not happy with my score?",
-      answer: `Yes, but with conditions to maintain fairness:
-
-You can retake the assessment:
-• Only after a 2-month cooling period from your last attempt
-
-However:
-• Recruiters will see both your scores — the old one and the new one
-• Multiple low attempts may raise concerns with recruiters
-
-We recommend using the cooling period to upskill rather than attempting blindly.`,
-    },
     // Privacy & Control
     {
       icon: Lock,
@@ -289,16 +294,6 @@ So even if you're employed or not actively looking, recruiters can still discove
 • Reviewing top performers in particular assessments
 
 If your profile matches their search criteria and your score aligns with what they're looking for, you'll show up in their talent pool.`,
-    },
-    {
-      icon: Zap,
-      question:
-        "Do I get any advantage by taking the assessment early on the platform?",
-      answer: `Absolutely. Profile ranking is partially influenced by the assessment completion date.
-
-For example, if two candidates achieve the same score for the same assessment, the candidate who completed the assessment earlier will rank higher in recruiter search results.
-
-Early participation gives you a visibility advantage.`,
     },
     {
       icon: Globe,
