@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef, useCallback } from "react";
 import {
   Users,
   Award,
@@ -42,6 +42,8 @@ export default function FAQsClient() {
     "candidate"
   );
   const [openIndex, setOpenIndex] = useState<number | null>(null);
+  const faqRefs = useRef<(HTMLDivElement | null)[]>([]);
+  const faqSectionRef = useRef<HTMLDivElement>(null);
 
   // Set active tab from URL parameter on mount
   useEffect(() => {
@@ -98,6 +100,25 @@ In Phase 2 of TechSmartHire, we will introduce a freelance and job-support marke
 • Once you connect, you're free to take the discussion offline and complete the work independently.
 
 A strong score today can unlock both career opportunities and side-income opportunities tomorrow.`,
+    },
+    {
+      icon: CheckCircle,
+      question: "Can I retake the assessment if I'm not happy with my score?",
+      answer: `You may retake the assessment:
+• Only after a 30-day cooling period from your last attempt
+• Recruiters will see the best of your two scores
+
+We strongly recommend using the cooling period to upskill, rather than attempting the assessment again without preparation.`,
+    },
+    {
+      icon: Zap,
+      question:
+        "Do I get any advantage by taking the assessment early on the platform?",
+      answer: `Absolutely. Profile ranking is partially influenced by the assessment completion date.
+
+For example, if two candidates achieve the same score for the same assessment, the candidate who completed the assessment earlier will rank higher in recruiter search results.
+
+Early participation gives you a visibility advantage.`,
     },
     {
       icon: Search,
@@ -236,20 +257,6 @@ After that period:
 
 This ensures that scores reflect current, up-to-date skill levels — not outdated credentials.`,
     },
-    {
-      icon: CheckCircle,
-      question: "Can I retake the assessment if I'm not happy with my score?",
-      answer: `Yes, but with conditions to maintain fairness:
-
-You can retake the assessment:
-• Only after a 2-month cooling period from your last attempt
-
-However:
-• Recruiters will see both your scores — the old one and the new one
-• Multiple low attempts may raise concerns with recruiters
-
-We recommend using the cooling period to upskill rather than attempting blindly.`,
-    },
     // Privacy & Control
     {
       icon: Lock,
@@ -287,16 +294,6 @@ So even if you're employed or not actively looking, recruiters can still discove
 • Reviewing top performers in particular assessments
 
 If your profile matches their search criteria and your score aligns with what they're looking for, you'll show up in their talent pool.`,
-    },
-    {
-      icon: Zap,
-      question:
-        "Do I get any advantage by taking the assessment early on the platform?",
-      answer: `Absolutely. Profile ranking is partially influenced by the assessment completion date.
-
-For example, if two candidates achieve the same score for the same assessment, the candidate who completed the assessment earlier will rank higher in recruiter search results.
-
-Early participation gives you a visibility advantage.`,
     },
     {
       icon: Globe,
@@ -495,9 +492,21 @@ Skill scores make your referral far more credible.`,
 
   const currentFAQs = activeTab === "candidate" ? candidateFAQs : recruiterFAQs;
 
-  const toggleFAQ = (index: number) => {
-    setOpenIndex(openIndex === index ? null : index);
-  };
+  const toggleFAQ = useCallback(
+    (index: number) => {
+      const newIndex = openIndex === index ? null : index;
+      setOpenIndex(newIndex);
+      if (newIndex !== null) {
+        setTimeout(() => {
+          faqRefs.current[newIndex]?.scrollIntoView({
+            behavior: "smooth",
+            block: "start",
+          });
+        }, 100);
+      }
+    },
+    [openIndex]
+  );
 
   return (
     <div className="min-h-screen bg-linear-to-br from-slate-50 via-white to-blue-50">
@@ -520,13 +529,14 @@ Skill scores make your referral far more credible.`,
       </section>
 
       {/* Tabs Section */}
-      <section className="sticky top-0 z-40 bg-white border-b-2 border-slate-200 shadow-sm">
+      <section className="sticky top-16 md:top-20 z-40 bg-white border-b-2 border-slate-200 shadow-sm">
         <div className="max-w-7xl mx-auto px-6">
           <div className="flex items-center justify-center gap-4 py-4">
             <button
               onClick={() => {
                 setActiveTab("candidate");
                 setOpenIndex(null);
+                faqSectionRef.current?.scrollIntoView({ behavior: "smooth", block: "start" });
               }}
               className={`px-8 py-3 rounded-lg font-bold text-lg transition-all ${
                 activeTab === "candidate"
@@ -544,6 +554,7 @@ Skill scores make your referral far more credible.`,
               onClick={() => {
                 setActiveTab("recruiter");
                 setOpenIndex(null);
+                faqSectionRef.current?.scrollIntoView({ behavior: "smooth", block: "start" });
               }}
               className={`px-8 py-3 rounded-lg font-bold text-lg transition-all ${
                 activeTab === "recruiter"
@@ -561,7 +572,7 @@ Skill scores make your referral far more credible.`,
       </section>
 
       {/* FAQs Content */}
-      <section className="py-16 bg-white">
+      <section ref={faqSectionRef} className="scroll-mt-36 md:scroll-mt-40 py-16 bg-white">
         <div className="max-w-4xl mx-auto px-6">
           <div className="mb-8 text-center">
             <h2 className="text-3xl font-bold text-slate-900 mb-2">
@@ -580,7 +591,10 @@ Skill scores make your referral far more credible.`,
             {currentFAQs.map((faq, index) => (
               <div
                 key={index}
-                className={`rounded-xl border-2 transition-all ${
+                ref={(el) => {
+                  faqRefs.current[index] = el;
+                }}
+                className={`scroll-mt-44 md:scroll-mt-48 rounded-xl border-2 transition-all ${
                   openIndex === index
                     ? "border-blue-400 bg-blue-50 shadow-lg"
                     : "border-slate-200 bg-white hover:border-slate-300"
@@ -656,7 +670,7 @@ Skill scores make your referral far more credible.`,
             is here to help.
           </p>
           <a
-            href="mailto:info@techsmarthire.com"
+            href="/contact"
             className="inline-flex items-center gap-2 px-8 py-4 rounded-xl bg-linear-to-r from-blue-600 to-emerald-600 text-white font-bold text-lg hover:shadow-2xl hover:scale-105 transition-all"
           >
             <MessageSquare className="w-5 h-5" />
