@@ -22,11 +22,14 @@ export default function WelcomePopup() {
       // Show popup after 8 seconds of user activity on page
       const timer = setTimeout(() => {
         setIsVisible(true);
+        // Mark as seen immediately so it won't show again on route changes
+        sessionStorage.setItem('tsh-welcome-popup-seen', 'true');
       }, 8000);
 
       return () => clearTimeout(timer);
     }
-  }, [pathname]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   const handleClose = () => {
     setIsVisible(false);
