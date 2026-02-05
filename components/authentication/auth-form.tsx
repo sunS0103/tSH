@@ -15,6 +15,7 @@ const RECRUITER_INVITE_ONLY = true;
 export default function AuthForm() {
   const searchParams = useSearchParams();
   const tabParam = searchParams.get("tab");
+  const hasAccess = searchParams.get("access") === "true";
 
   const getInitialRole = (): "CANDIDATE" | "RECRUITER" => {
     if (tabParam === "recruiter") return "RECRUITER";
@@ -76,7 +77,7 @@ export default function AuthForm() {
 
         <TabsContent value="RECRUITER" className="mt-6 w-full">
           {/* TEMPORARY: Set to false to restore recruiter login */}
-          {RECRUITER_INVITE_ONLY ? (
+          {RECRUITER_INVITE_ONLY && !hasAccess ? (
             <div className="flex flex-col items-center text-center py-6">
               <div className="w-14 h-14 rounded-full bg-primary-50 flex items-center justify-center mb-4">
                 <Lock className="w-7 h-7 text-primary" />
