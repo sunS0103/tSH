@@ -376,7 +376,7 @@ export default function EmailForm({ role }: EmailFormProps) {
           )}
 
           {step === "email" && (
-            <Button type="submit" className="w-full" disabled={true}>
+            <Button type="submit" className="w-full">
               Request OTP
             </Button>
           )}
