@@ -141,10 +141,14 @@ export function LocationMultiSelect({
   }, [locations, selectedLocationsCache]);
 
   // Combine search results with cached selected locations
+  const selectedCachedLocations = selectedLocationsCache.filter((cached) =>
+    value.includes(cached.id),
+  );
+
   const allLocations = [
-    ...selectedLocationsCache.filter((cached) => value.includes(cached.id)),
+    ...selectedCachedLocations,
     ...locations.filter(
-      (loc) => !selectedLocationsCache.find((c) => c.id === loc.id),
+      (loc) => !selectedCachedLocations.find((c) => c.id === loc.id),
     ),
   ];
 
