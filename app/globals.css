@@ -204,6 +204,16 @@
   * {
     @apply border-border outline-ring/50;
   }
+  /* Hide number input spin buttons */
+  input[type="number"]::-webkit-outer-spin-button,
+  input[type="number"]::-webkit-inner-spin-button {
+    -webkit-appearance: none;
+    margin: 0;
+  }
+  input[type="number"] {
+    -moz-appearance: textfield;
+  }
+
   body {
     @apply bg-background text-foreground font-sans;
   }
@@ -261,5 +271,14 @@
 
   .animate-fade-in {
     animation: fade-in 0.2s ease-out;
+  .number-input::-webkit-inner-spin-button,
+  .number-input::-webkit-outer-spin-button {
+    -webkit-appearance: none;
+    margin: 0;
   }
+
+  .number-input {
+    -moz-appearance: textfield;
+  }
+}
 }
