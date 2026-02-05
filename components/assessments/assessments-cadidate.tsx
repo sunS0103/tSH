@@ -57,6 +57,7 @@ export interface Assessment {
 }
 
 import { useRouter, useSearchParams, usePathname } from "next/navigation";
+import { cn } from "@/lib/utils";
 
 export default function AssessmentCandidate() {
   const router = useRouter();
@@ -254,7 +255,12 @@ export default function AssessmentCandidate() {
           onRefreshFilters={handleRefreshFilters}
           filterItem={filterItems}
         />
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-2 xl:grid-cols-3 gap-4 mt-1 md:mt-6">
+        <div
+          className={cn(
+            "grid grid-cols-1 md:grid-cols-2 lg:grid-cols-2 gap-4 mt-1 md:mt-6",
+            selectedTab === "taken" ? "xl:grid-cols-2" : "xl:grid-cols-3"
+          )}
+        >
           {isLoading ? (
             <div className="col-span-full text-center py-8 text-gray-500">
               Loading...
