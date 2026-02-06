@@ -1,0 +1,16 @@
+{
+  "title": "Python SDET Automation Engineer - Selenium & API Testing",
+  "seoTitle": "Python SDET Engineer Skill Assessment",
+  "seoDescription": "Take the Python SDET Engineer skill assessment. Prove your expertise in Selenium WebDriver, API Testing, Python, Pytest and Testing Fundamentals. AI-proctored, 20 questions, 25 minutes.",
+  "description": "Prove your expertise in Selenium WebDriver, API Testing, Python, and Testing Fundamentals through our comprehensive, AI-proctored assessment.",
+  "questions": 25,
+  "minutes": 30,
+  "level": "Intermediate",
+  "sampleQuestionsHref": "/assessments/TSH-SDETPYTHON-101.pdf",
+  "skills": [
+    { "name": "Selenium WebDriver", "level": "Advanced" },
+    { "name": "API Testing", "level": "Intermediate" },
+    { "name": "Python", "level": "Intermediate" },
+    { "name": "Testing Fundamentals", "level": "Intermediate" }
+  ]
+}

@@ -43,6 +43,16 @@
       "route": "/assessment/TSH-SDETJS-101",
       "status" : "live"
     },
+       {
+      "jobId": "TSH-JOB-004",
+      "title": "Python SDET Automation Engineer - Selenium & API Testing",
+      "companies": ["Cognizant", "Innocito", "Capgemini", "+ 4 More Companies"],
+      "experience": ["2-5 Years", "6-20 Years"],
+      "location": ["Multiple Indian Cities", "USA", "UK"],
+      "examId": "TSH-SDETPYTHON-101",
+      "route": "/assessment/TSH-SDETPYTHON-101",
+      "status" : "live"
+    },
     {
       "jobId": "TSH-JOB-003",
       "title": "FullStack QA Lead/Test Architect",
@@ -53,6 +63,8 @@
       "route": "/assessment/TSH-SDETFULLSTACK-101",
       "status" : "coming soon"
     }
+  
+    
   ],
   "selectionSteps": [
     {
