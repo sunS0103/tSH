@@ -7,18 +7,11 @@ import Link from 'next/link';
 
 export default function WelcomePopup() {
   const [isVisible, setIsVisible] = useState(false);
-  const [hasInitialized, setHasInitialized] = useState(false);
   const pathname = usePathname();
 
   useEffect(() => {
-    // Only run once on initial mount
-    if (hasInitialized) {
-      return;
-    }
-
     // Don't show popup on FAQ page since user is already on target page
     if (pathname === '/faqs') {
-      setHasInitialized(true);
       return;
     }
 
@@ -26,12 +19,8 @@ export default function WelcomePopup() {
     const hasSeenPopup = sessionStorage.getItem('tsh-welcome-popup-seen');
 
     if (hasSeenPopup) {
-      setHasInitialized(true);
       return;
     }
-
-    // Mark as initialized to prevent re-running
-    setHasInitialized(true);
 
     // Show popup after 8 seconds of user activity on page
     const timer = setTimeout(() => {
@@ -43,7 +32,8 @@ export default function WelcomePopup() {
     }, 8000);
 
     return () => clearTimeout(timer);
-  }, [pathname, hasInitialized]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   const handleClose = () => {
     setIsVisible(false);

@@ -3,14 +3,14 @@ import AnticipationPage from "./anticipation-page";
 
 export const metadata: Metadata = {
   title:
-    "techSmartHire – Skill-Based QA Hiring Platform | Early Access & Beta Program",
+    "techSmartHire – Skill-Based QA Hiring Platform | Hire by Skills, Not Resumes",
   description:
-    "techSmartHire is a skill-first hiring platform for QA roles. Get early access to role-based assessments, pre-vetted candidates, and faster hiring through our beta program",
+    "techSmartHire is a skill-first hiring platform for QA roles. Take role-based assessments, showcase your real skills, and connect with recruiters looking for verified talent.",
   openGraph: {
     title:
-      "techSmartHire – Skill-Based QA Hiring Platform | Early Access & Beta Program",
+      "techSmartHire – Skill-Based QA Hiring Platform | Hire by Skills, Not Resumes",
     description:
-      "techSmartHire is a skill-first hiring platform for QA roles. Get early access to role-based assessments, pre-vetted candidates, and faster hiring through our beta program",
+      "techSmartHire is a skill-first hiring platform for QA roles. Take role-based assessments, showcase your real skills, and connect with recruiters looking for verified talent.",
     url: process.env.NEXT_PUBLIC_APP_URL,
     siteName: "techSmartHire",
     locale: "en_US",
@@ -27,9 +27,9 @@ export const metadata: Metadata = {
   twitter: {
     card: "summary_large_image",
     title:
-      "techSmartHire – Skill-Based QA Hiring Platform | Early Access & Beta Program",
+      "techSmartHire – Skill-Based QA Hiring Platform | Hire by Skills, Not Resumes",
     description:
-      "techSmartHire is a skill-first hiring platform for QA roles. Get early access to role-based assessments, pre-vetted candidates, and faster hiring through our beta program",
+      "techSmartHire is a skill-first hiring platform for QA roles. Take role-based assessments, showcase your real skills, and connect with recruiters looking for verified talent.",
     images: ["/og-image.png"],
   },
 };

@@ -42,7 +42,7 @@ const HeroSection = () => {
           >
             <Sparkles className="w-4 h-4 text-primary" />
             <span className="text-sm font-medium text-primary">
-              Coming Soon
+              Beta Phase
             </span>
           </motion.div>
 
