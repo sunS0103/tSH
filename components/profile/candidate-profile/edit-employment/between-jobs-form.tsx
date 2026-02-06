@@ -108,7 +108,7 @@ export default function BetweenJobsForm({
     try {
       const response = await updateBetweenJobsStatus({
         total_years_of_experience: parseFloat(data.total_years_of_experience),
-        duration_years: data.duration_years ?? 0,
+        duration_years: data.duration_years || 0,
         duration_months: data.duration_months,
         last_drawn_ctc_amount: parseFloat(data.last_drawn_ctc_amount),
         current_ctc_period_type: data.current_ctc_period_type,
