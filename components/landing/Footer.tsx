@@ -27,7 +27,9 @@ const Footer = () => {
           {/* Status */}
           <div className="flex items-center gap-2">
             <div className="w-2 h-2 rounded-full bg-accent animate-pulse" />
-            <span className="text-sm text-subtle">Beta Version • Full Platform Launches March 2026</span>
+            <span className="text-sm text-subtle">
+              Beta Version • Full Platform Launches March 2026
+            </span>
           </div>
 
           {/* Copyright */}

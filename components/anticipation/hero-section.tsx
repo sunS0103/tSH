@@ -7,13 +7,13 @@ import { useRouter } from "next/navigation";
 
 const HeroSection = () => {
   const router = useRouter();
-  
+
   const scrollToForm = () => {
     document.getElementById("waitlist")?.scrollIntoView({ behavior: "smooth" });
   };
-  
+
   const handleJoinJobFair = () => {
-    router.push("/qa-job-fair-feb");
+    router.push("/qa-job-fair");
   };
 
   return (
@@ -53,7 +53,8 @@ const HeroSection = () => {
             transition={{ delay: 0.3, duration: 0.6 }}
             className="text-4xl md:text-6xl lg:text-7xl font-bold mb-6 leading-tight"
           >
-            Hire by Real Skills,<br />
+            Hire by Real Skills,
+            <br />
             <span className="gradient-text">Not Resumes</span>
           </motion.h1>
 
@@ -83,7 +84,7 @@ const HeroSection = () => {
             transition={{ delay: 0.5, duration: 0.6 }}
             className="mt-10 flex flex-col items-center gap-4"
           >
-            <button 
+            <button
               onClick={handleJoinJobFair}
               className="inline-flex cursor-pointer items-center gap-2 px-8 py-4 rounded-xl bg-gradient-to-r from-blue-600 to-emerald-600 text-white font-bold text-lg hover:shadow-2xl transition-all hover:scale-105"
             >
@@ -91,9 +92,9 @@ const HeroSection = () => {
               <ArrowRight className="w-5 h-5" />
             </button>
 
-<p className="text-sm text-slate-600 mt-3">
-  Feb 6-27, 2026 • 27 QA Positions • 15 Companies
-</p>
+            <p className="text-sm text-slate-600 mt-3">
+              Feb 6-27, 2026 • 27 QA Positions • 15 Companies
+            </p>
 
             <p className="text-sm text-subtle">
               No spam. Early users get priority access.

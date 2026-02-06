@@ -1,0 +1,145 @@
+"use client";
+
+import { cn } from "@/lib/utils";
+import AssessmentIntroduction from "./step-content/introduction";
+import ExamProcess from "./step-content/exam-process";
+import ScoreVisibilityAndPrivacy from "./step-content/score-visibility-and-privacy";
+import IntegrityAndCodeConduct from "./step-content/integrity-and-code-conduct";
+import FinalStartSection from "./step-content/final-section";
+import { Payment } from "./step-content/payment-cards";
+
+interface Topic {
+  id: string;
+  value: string;
+}
+
+export interface Assessment {
+  id: string;
+  assessment_id: string;
+  title: string;
+  slug: string;
+  category: string;
+  topics: Topic[];
+  difficulty_level?:
+    | "Beginner"
+    | "Intermediate"
+    | "Advanced"
+    | "Not Applicable";
+  duration?: number; // seconds
+  total_questions?: number;
+  status?: "PUBLISHED" | "SUBSCRIBED";
+  job_role_id?: string;
+  job_role_name?: string;
+  user_assessment_id?: string;
+  payment: {
+    initial_paid: boolean;
+    initial_payment_status: "PAID";
+    package_type: "BASIC" | "PREMIUM" | "PLATINUM";
+    purchase_status: "ACTIVE" | "INACTIVE";
+    purchased_at: number;
+  };
+  candidate_status?:
+    | "ON_GOING"
+    | "INVITED"
+    | "LATER"
+    | "COMPLETED"
+    | "ENROLLED"
+    | "PENDING";
+  is_free_plan_available: boolean;
+  sample_question_pdf_link?: string;
+  can_repurchase: boolean;
+  can_purchase_in_days: string;
+}
+
+interface StepContentProps {
+  currentStep: number;
+  className?: string;
+  isCurrentStepConfirmed: boolean;
+  onCurrentStepConfirmChange: (isConfirmed: boolean) => void;
+  assessment: Assessment;
+  onUserAssessmentIdChange?: ({
+    id,
+    payment,
+  }: {
+    id: string;
+    payment: Payment;
+  }) => void;
+  assessmentPayment?: Payment | null;
+  hasError?: boolean;
+  onPackageSelect?: (
+    packageType: "FREE" | "BASIC" | "PREMIUM" | "PLATINUM"
+  ) => void;
+  onCurrencyChange?: (currency: "INR" | "USD") => void;
+  validateSteps?: () => boolean;
+}
+
+export default function StepContent({
+  currentStep,
+  className,
+  isCurrentStepConfirmed,
+  onCurrentStepConfirmChange,
+  assessment,
+  onUserAssessmentIdChange,
+  assessmentPayment,
+  hasError,
+  onPackageSelect,
+  onCurrencyChange,
+  validateSteps,
+}: StepContentProps) {
+  return (
+    <div className={cn("flex flex-col gap-6", className)}>
+      {/* Main Content */}
+      <div className="bg-white border border-gray-200 rounded-2xl p-3 md:p-4 mb-8">
+        {currentStep === 1 && (
+          <AssessmentIntroduction
+            assessment={assessment}
+            isConfirmed={isCurrentStepConfirmed}
+            onConfirmChange={onCurrentStepConfirmChange}
+            topics={assessment.topics}
+            sample_question_pdf_link={assessment.sample_question_pdf_link}
+            hasError={hasError}
+          />
+        )}
+
+        {currentStep === 2 && (
+          <ExamProcess
+            isConfirmed={isCurrentStepConfirmed}
+            onConfirmChange={onCurrentStepConfirmChange}
+            hasError={hasError}
+          />
+        )}
+
+        {currentStep === 3 && (
+          <ScoreVisibilityAndPrivacy
+            isConfirmed={isCurrentStepConfirmed}
+            onConfirmChange={onCurrentStepConfirmChange}
+            hasError={hasError}
+          />
+        )}
+
+        {currentStep === 4 && (
+          <IntegrityAndCodeConduct
+            isConfirmed={isCurrentStepConfirmed}
+            onConfirmChange={onCurrentStepConfirmChange}
+            hasError={hasError}
+          />
+        )}
+
+        {currentStep === 5 && (
+          <FinalStartSection
+            assessment_id={assessment.assessment_id}
+            payment={assessmentPayment || (assessment.payment as Payment)}
+            onUserAssessmentIdChange={onUserAssessmentIdChange}
+            candidate_status={assessment.candidate_status}
+            is_free_plan_available={assessment.is_free_plan_available}
+            onPackageSelect={onPackageSelect}
+            onCurrencyChange={onCurrencyChange}
+            can_repurchase={assessment.can_repurchase}
+            can_purchase_in_days={assessment.can_purchase_in_days}
+            validateSteps={validateSteps}
+          />
+        )}
+      </div>
+    </div>
+  );
+}
