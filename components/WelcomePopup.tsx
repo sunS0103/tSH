@@ -7,29 +7,43 @@ import Link from 'next/link';
 
 export default function WelcomePopup() {
   const [isVisible, setIsVisible] = useState(false);
+  const [hasInitialized, setHasInitialized] = useState(false);
   const pathname = usePathname();
 
   useEffect(() => {
+    // Only run once on initial mount
+    if (hasInitialized) {
+      return;
+    }
+
     // Don't show popup on FAQ page since user is already on target page
     if (pathname === '/faqs') {
+      setHasInitialized(true);
       return;
     }
 
     // Check if popup has been shown in this session
     const hasSeenPopup = sessionStorage.getItem('tsh-welcome-popup-seen');
 
-    if (!hasSeenPopup) {
-      // Show popup after 8 seconds of user activity on page
-      const timer = setTimeout(() => {
-        setIsVisible(true);
-        // Mark as seen immediately so it won't show again on route changes
-        sessionStorage.setItem('tsh-welcome-popup-seen', 'true');
-      }, 8000);
-
-      return () => clearTimeout(timer);
+    if (hasSeenPopup) {
+      setHasInitialized(true);
+      return;
     }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
+
+    // Mark as initialized to prevent re-running
+    setHasInitialized(true);
+
+    // Show popup after 8 seconds of user activity on page
+    const timer = setTimeout(() => {
+      // Double-check sessionStorage before showing (in case it was set elsewhere)
+      if (!sessionStorage.getItem('tsh-welcome-popup-seen')) {
+        setIsVisible(true);
+        sessionStorage.setItem('tsh-welcome-popup-seen', 'true');
+      }
+    }, 8000);
+
+    return () => clearTimeout(timer);
+  }, [pathname, hasInitialized]);
 
   const handleClose = () => {
     setIsVisible(false);
@@ -54,9 +68,9 @@ export default function WelcomePopup() {
       />
       
       {/* Popup */}
-      <div className="fixed inset-0 z-50 flex items-center justify-center p-4 pointer-events-none">
-        <div 
-          className="relative bg-white rounded-2xl shadow-2xl max-w-lg w-full pointer-events-auto animate-scale-in"
+      <div className="fixed inset-0 z-50 flex items-start md:items-center justify-center p-4 pt-20 md:pt-4 pointer-events-none overflow-y-auto">
+        <div
+          className="relative bg-white rounded-2xl shadow-2xl max-w-lg w-full pointer-events-auto animate-scale-in my-auto md:my-0"
           onClick={(e) => e.stopPropagation()}
         >
           {/* Close Button */}
