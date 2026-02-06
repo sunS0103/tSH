@@ -39,6 +39,17 @@ import { toast } from "sonner";
 import z from "zod";
 import { useRouter } from "next/navigation";
 
+/** Parse "MM-dd-yyyy" to Date. Safe on all browsers including iOS/Safari. */
+function parseMMddyyyy(value: string): Date | undefined {
+  if (!value || typeof value !== "string") return undefined;
+  const parts = value.trim().split("-");
+  if (parts.length !== 3) return undefined;
+  const [month, day, year] = parts.map(Number);
+  if (!month || !day || !year) return undefined;
+  const date = new Date(year, month - 1, day);
+  return isNaN(date.getTime()) ? undefined : date;
+}
+
 export default function EditIdentityAndAccount({
   profileData,
 }: {
@@ -394,15 +405,12 @@ export default function EditIdentityAndAccount({
                             <CalendarIcon className="mr-2 h-4 w-4" />
                             {field.value ? (
                               (() => {
-                                try {
-                                  const date = new Date(field.value);
-                                  if (!isNaN(date.getTime())) {
-                                    return format(date, "MM-dd-yyyy");
-                                  }
-                                } catch {
-                                  // Invalid date, show placeholder
-                                }
-                                return <span>Pick a date</span>;
+                                const date = parseMMddyyyy(field.value);
+                                return date ? (
+                                  format(date, "MM-dd-yyyy")
+                                ) : (
+                                  <span>Pick a date</span>
+                                );
                               })()
                             ) : (
                               <span>Pick a date</span>
@@ -414,10 +422,10 @@ export default function EditIdentityAndAccount({
                         <Calendar
                           mode="single"
                           selected={
-                            field.value ? new Date(field.value) : undefined
+                            parseMMddyyyy(field.value) ?? undefined
                           }
                           defaultMonth={
-                            field.value ? new Date(field.value) : undefined
+                            parseMMddyyyy(field.value) ?? undefined
                           }
                           onSelect={(date) => {
                             if (date) {
