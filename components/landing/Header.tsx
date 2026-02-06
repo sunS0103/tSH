@@ -330,23 +330,21 @@ const Header = () => {
               <Mail className="w-5 h-5" />
               Contact Us
             </Link>
-            {(process.env.NODE_ENV !== "production" ||
-              new Date() >= new Date("2026-02-06T18:00:00Z")) && (
-              <Link
-                className="flex gap-2 items-center justify-center rounded-md px-4 py-3 mt-2 cursor-pointer bg-linear-to-r from-purple-600 via-violet-600 to-purple-700 hover:from-purple-700 hover:via-violet-700 hover:to-purple-800 text-white font-semibold shadow-md"
-                href={
-                  status === "authenticated" && session
-                    ? "/dashboard"
-                    : "/authentication"
-                }
-                onClick={() => setIsMobileMenuOpen(false)}
-              >
-                <LogIn className="w-5 h-5 mr-1" />
-                {status === "authenticated" && session
-                  ? "Dashboard"
-                  : "Signup/Signin"}
-              </Link>
-            )}
+
+            <Link
+              className="flex gap-2 items-center justify-center rounded-md px-4 py-3 mt-2 cursor-pointer bg-linear-to-r from-purple-600 via-violet-600 to-purple-700 hover:from-purple-700 hover:via-violet-700 hover:to-purple-800 text-white font-semibold shadow-md"
+              href={
+                status === "authenticated" && session
+                  ? "/dashboard"
+                  : "/authentication"
+              }
+              onClick={() => setIsMobileMenuOpen(false)}
+            >
+              <LogIn className="w-5 h-5 mr-1" />
+              {status === "authenticated" && session
+                ? "Dashboard"
+                : "Signup/Signin"}
+            </Link>
           </div>
         </motion.div>
       )}
