@@ -59,6 +59,9 @@ const employedSchema = z
       .min(1, "Total experience is required")
       .refine((val) => !isNaN(parseFloat(val)) && parseFloat(val) >= 0, {
         message: "Please enter a valid number",
+      })
+      .refine((val) => parseFloat(val) < 100, {
+        message: "Total experience must be less than 100",
       }),
     current_ctc_amount: z
       .string()

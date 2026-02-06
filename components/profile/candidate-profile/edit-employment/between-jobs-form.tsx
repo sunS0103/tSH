@@ -34,11 +34,11 @@ const betweenJobsSchema = z.object({
       message: "Please enter a valid number",
     }),
   duration_years: z
-    .number({
-      error: "Years is required",
-    })
-    .min(1, "Years must be 1 or greater")
-    .max(100, "Years must be less than 100"),
+    .number()
+    .min(0, "Years must be 0 or greater")
+    .max(100, "Years must be less than 100")
+    .optional()
+    .nullable(),
 
   duration_months: z
     .number({
@@ -108,7 +108,7 @@ export default function BetweenJobsForm({
     try {
       const response = await updateBetweenJobsStatus({
         total_years_of_experience: parseFloat(data.total_years_of_experience),
-        duration_years: data.duration_years,
+        duration_years: data.duration_years || 0,
         duration_months: data.duration_months,
         last_drawn_ctc_amount: parseFloat(data.last_drawn_ctc_amount),
         current_ctc_period_type: data.current_ctc_period_type,
@@ -232,12 +232,16 @@ export default function BetweenJobsForm({
                       min={0}
                       max={100}
                       className="h-8 border-gray-900 w-full"
-                      value={field.value || ""}
-                      onChange={(e) =>
-                        field.onChange(
-                          e.target.value ? parseFloat(e.target.value) : null
-                        )
-                      }
+                      value={field.value ?? ""}
+                      onChange={(e) => {
+                        const value = e.target.value;
+                        if (value === "") {
+                          field.onChange(null);
+                        } else {
+                          const numValue = parseFloat(value);
+                          field.onChange(numValue);
+                        }
+                      }}
                     />
                   </FormControl>
                   <FormMessage />
