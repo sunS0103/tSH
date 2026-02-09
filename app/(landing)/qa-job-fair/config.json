@@ -1,6 +1,6 @@
 {
   "event": {
-    "name": "February QA Job Fair",
+    "name": "QA Job Fair",
     "startDate": "2026-02-06T18:00:00",
     "endDate": "2026-02-27T23:59:59"
   },
@@ -20,7 +20,7 @@
       "secondary": "Start Qualifying."
     },
     "description": "Skip the resume screening. Take skill-based assessments and get shortlisted by top engineering teams instantly.",
-    "assessmentPeriod": "Feb 6 – Feb 27, 2026"
+    "assessmentPeriod": "Open Now"
   },
   "jobs": [
     {
@@ -117,7 +117,7 @@
   "cta": {
     "recruiterBadge": "For Hiring Managers",
     "recruiterTitle": "Have Open Positions to Fill?",
-    "recruiterDescription": "Join the February Job Fair and access pre-vetted, skill-verified QA talent. Skip weeks of resume screening and interview only candidates who've already proven their expertise.",
+    "recruiterDescription": "Join the Job Fair and access pre-vetted, skill-verified QA talent. Skip weeks of resume screening and interview only candidates who've already proven their expertise.",
     "recruiterButton": "Join as Recruiter",
     "recruiterSlots": "Only 10 slots available",
     "viewDetailsButton": "View Details & Signup for Exam",
@@ -127,7 +127,7 @@
   },
   "recruiterSection": {
     "badge": "For Hiring Managers",
-    "title": "Join the February Job Fair",
+    "title": "Join the Job Fair",
     "description": "Get exclusive access to pre-vetted QA talent. Limited to 10 more companies for this pilot program.",
     "benefits": [
       {

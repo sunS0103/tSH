@@ -218,6 +218,7 @@ export default function PaymentCards({
   };
 
   const basicPackageIncludedItems = [
+    "Higher Visibility with Priority Ranking in Talent Pool Search results",
     "Free exam re-take after 30 days freeze period.",
     "Skilled Certification issued if you score > 60%",
     "Custom job notifications based on your assessed skill set",
@@ -263,6 +264,7 @@ export default function PaymentCards({
       packageType: "PLATINUM",
       title: "Platinum Package",
       description: "Complete coaching + exam strategy to level up fast",
+      descriptionClassName: "text-gray-700",
       price: pricingMap[currency].PLATINUM,
       includedItems: platinumPackageIncludedItems,
       buttonText: "Upgrade to Platinum",
@@ -421,6 +423,16 @@ export default function PaymentCards({
             </div>
           </div>
 
+          {/* What's Included */}
+          <ul className="list-disc list-outside text-gray-600 px-2 marker:text-primary-100 pl-6">
+            <li className="text-xs text-gray-600 font-medium">
+              1 free attempt
+            </li>
+            <li className="text-xs text-gray-600 font-medium">
+              Your results visible to recruiters in Talent Pool (masked mode)
+            </li>
+          </ul>
+
           {/* CTA Button */}
           <div className="flex flex-col items-center gap-2">
             <Button
@@ -431,7 +443,7 @@ export default function PaymentCards({
               Start Assessment - Free
             </Button>
             <p className="text-sm text-gray-600 text-center font-normal">
-              No payment required now
+              No payment required
             </p>
           </div>
         </div>
@@ -489,7 +501,7 @@ export default function PaymentCards({
               <div className="font-semibold text-xs md:text-sm mb-1">
                 {card.title}
               </div>
-              <div className="text-xs text-gray-500 mb-2">
+              <div className={cn("text-xs mb-2", card.descriptionClassName || "text-gray-500")}>
                 {card.description}
               </div>
               <h2 className="text-lg md:text-xl font-bold">{card.price}</h2>

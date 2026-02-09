@@ -211,17 +211,17 @@ const WaitlistForm: React.FC<WaitlistFormProps> = ({ initialRole = null }) => {
                     <div className="flex-1 h-px bg-border" />
                   </div>
 
-                  {/* February Job Fair CTA */}
+                  {/* Job Fair CTA */}
                   <div className="p-5 rounded-xl bg-linear-to-br from-primary/5 to-primary/10 border-2 border-primary/20">
                     <h4 className="text-base font-bold text-foreground mb-2">
-                      Join February QA Job Fair 🎯
+                      Join the QA Job Fair 🎯
                     </h4>
                     <p className="text-sm text-subtle mb-3">
                       Access <strong>pre-vetted QA candidates</strong> with
                       verified skills through our AI-proctored assessments.
                     </p>
                     <p className="text-xs text-subtle mb-4">
-                      Skill-first hiring • No resume screening • Feb 5-27
+                      Skill-first hiring • No resume screening
                     </p>
                     <Link
                       href="/qa-job-fair"
@@ -264,14 +264,14 @@ const WaitlistForm: React.FC<WaitlistFormProps> = ({ initialRole = null }) => {
                   {/* CTA Box */}
                   <div className="p-5 rounded-xl bg-linear-to-br from-primary/5 to-primary/10 border-2 border-primary/20">
                     <h4 className="text-base font-bold text-foreground mb-2">
-                      Get Hired in February! 🚀
+                      Get Hired Now! 🚀
                     </h4>
                     <p className="text-sm text-subtle mb-3">
                       Join our <strong>QA Job Fair</strong> — get shortlisted by
                       top companies based on skills, not resumes.
                     </p>
                     <p className="text-xs text-subtle mb-4">
-                      22 Positions • 7 Companies • Feb 5-27
+                      Multiple Positions • Top Companies Hiring
                     </p>
                     <Link
                       href="/qa-job-fair"

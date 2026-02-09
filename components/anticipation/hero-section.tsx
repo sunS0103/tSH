@@ -88,12 +88,12 @@ const HeroSection = () => {
               onClick={handleJoinJobFair}
               className="inline-flex cursor-pointer items-center gap-2 px-8 py-4 rounded-xl bg-gradient-to-r from-blue-600 to-emerald-600 text-white font-bold text-lg hover:shadow-2xl transition-all hover:scale-105"
             >
-              <span>Join February QA Job Fair</span>
+              <span>Join the QA Job Fair</span>
               <ArrowRight className="w-5 h-5" />
             </button>
 
             <p className="text-sm text-slate-600 mt-3">
-              Feb 6-27, 2026 • 27 QA Positions • 15 Companies
+              Multiple QA Positions • Top Companies Hiring
             </p>
 
             <p className="text-sm text-subtle">
