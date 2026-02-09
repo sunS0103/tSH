@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState, useEffect, useRef } from "react";
+import React, { useState } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
 import {
@@ -50,69 +50,9 @@ interface SelectionStep {
   icon: React.ElementType;
 }
 
-interface TimeLeft {
-  days: number;
-  hours: number;
-  minutes: number;
-  seconds: number;
-}
-
 export default function QAJobFairClient() {
   const router = useRouter();
   const [isFormPopupOpen, setIsFormPopupOpen] = useState(false);
-  const [timeLeft, setTimeLeft] = useState<TimeLeft>({
-    days: 0,
-    hours: 0,
-    minutes: 0,
-    seconds: 0,
-  });
-  const [countdownLabel, setCountdownLabel] = useState(
-    config.countdownLabels.beforeStart,
-  );
-
-  const startDate = new Date(config.event.startDate).getTime();
-  const endDate = new Date(config.event.endDate).getTime();
-
-  // Smart countdown timer - shows time until start date, then switches to time until end date
-  useEffect(() => {
-    const timer = setInterval(() => {
-      const now = new Date().getTime();
-
-      // If before start date, count down to start
-      if (now < startDate) {
-        const distance = startDate - now;
-        setCountdownLabel(config.countdownLabels.beforeStart);
-        setTimeLeft({
-          days: Math.floor(distance / (1000 * 60 * 60 * 24)),
-          hours: Math.floor(
-            (distance % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60),
-          ),
-          minutes: Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60)),
-          seconds: Math.floor((distance % (1000 * 60)) / 1000),
-        });
-      }
-      // If after start but before end, count down to end
-      else if (now >= startDate && now < endDate) {
-        const distance = endDate - now;
-        setCountdownLabel(config.countdownLabels.during);
-        setTimeLeft({
-          days: Math.floor(distance / (1000 * 60 * 60 * 24)),
-          hours: Math.floor(
-            (distance % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60),
-          ),
-          minutes: Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60)),
-          seconds: Math.floor((distance % (1000 * 60)) / 1000),
-        });
-      }
-      // If after end date, show zeros
-      else {
-        setCountdownLabel(config.countdownLabels.ended);
-        setTimeLeft({ days: 0, hours: 0, minutes: 0, seconds: 0 });
-      }
-    }, 1000);
-
-    return () => clearInterval(timer);
-  }, [startDate, endDate]);
 
   const jobs: Job[] = config.jobs;
 
@@ -228,32 +168,6 @@ export default function QAJobFairClient() {
               </div>
             </div>
 
-            {/* Countdown Timer */}
-            <div className="max-w-2xl mx-auto mt-12">
-              <p className="text-sm uppercase tracking-wider text-slate-600 font-semibold mb-4">
-                {countdownLabel}
-              </p>
-              <div className="grid grid-cols-4 md:gap-4 gap-2">
-                {[
-                  { label: "Days", value: timeLeft.days },
-                  { label: "Hours", value: timeLeft.hours },
-                  { label: "Minutes", value: timeLeft.minutes },
-                  { label: "Seconds", value: timeLeft.seconds },
-                ].map((item, idx) => (
-                  <div
-                    key={idx}
-                    className="bg-white backdrop-blur-xl rounded-xl border-2 py-3 md:py-6 border-slate-200 shadow-lg"
-                  >
-                    <div className="text-2xl md:text-5xl font-bold bg-linear-to-r from-emerald-600 to-blue-600 bg-clip-text text-transparent">
-                      {String(item.value).padStart(2, "0")}
-                    </div>
-                    <div className="text-xs md:text-sm text-slate-600 mt-2 uppercase tracking-wider font-semibold">
-                      {item.label}
-                    </div>
-                  </div>
-                ))}
-              </div>
-            </div>
           </div>
         </div>
       </section>

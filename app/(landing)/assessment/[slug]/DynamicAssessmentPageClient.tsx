@@ -81,29 +81,6 @@ export default function DynamicAssessmentPageClient({
   const [isSubmitting, setIsSubmitting] = useState(false);
   const recaptchaRef = useRef<ReCAPTCHA>(null);
 
-  const [timeLeft, setTimeLeft] = useState({ days: 0, hours: 0, minutes: 0 });
-  const [launchDateDisplay] = useState("February 6");
-
-  useEffect(() => {
-    const launchDate = new Date("2026-02-06T18:00:00").getTime();
-
-    const timer = setInterval(() => {
-      const now = new Date().getTime();
-      const distance = launchDate - now;
-
-      if (distance > 0) {
-        setTimeLeft({
-          days: Math.floor(distance / (1000 * 60 * 60 * 24)),
-          hours: Math.floor(
-            (distance % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60)
-          ),
-          minutes: Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60)),
-        });
-      }
-    }, 1000);
-
-    return () => clearInterval(timer);
-  }, []);
 
   // Use provided config or fallback to default
   const assessmentConfig: AssessmentConfig = config || {
@@ -766,7 +743,7 @@ export default function DynamicAssessmentPageClient({
                 </div>
 
                 <p className="text-sm text-emerald-200 mt-3">
-                  Take the assessment anytime until Feb 27
+                  Take the assessment anytime
                 </p>
               </div>
 
@@ -823,7 +800,7 @@ export default function DynamicAssessmentPageClient({
                 </div>
 
                 {/* <p className="text-sm text-emerald-200 mt-3">
-                  Button will unlock automatically on Feb 6 at 6:00 PM
+                  Button will unlock automatically soon
                 </p> */}
               </div>
 
@@ -852,8 +829,7 @@ export default function DynamicAssessmentPageClient({
               {/* Trust Indicators */}
 
               <p className="text-sm text-emerald-200">
-                Take the assessment anytime between {launchDateDisplay}-27, 2026
-                {/* • Be first in line when it opens */}
+                Take the assessment anytime
               </p>
             </>
           )}

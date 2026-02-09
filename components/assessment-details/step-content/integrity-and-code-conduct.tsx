@@ -92,6 +92,67 @@ export default function IntegrityAndCodeConduct({
 
       <hr className="border-gray-200 my-4" />
 
+      <div className="flex items-center gap-2">
+        <Icon
+          icon="material-symbols:visibility-outline"
+          className="text-primary-500 size-4.5"
+        />
+        <h3 className="text-sm md:text-base font-semibold text-primary-500">
+          AI Monitoring & Behavior Rules
+        </h3>
+      </div>
+      <p className="text-xs md:text-sm text-gray-600 mb-2 font-medium">
+        External monitors are not permitted. You must look straight at the
+        screen and avoid repeatedly looking sideways or down.
+      </p>
+      <p className="text-xs md:text-sm text-gray-600 mb-4 font-medium">
+        Our AI proctoring system continuously monitors for unusual behavior.
+        Repeated sideways glances, suspicious movements, or mobile phone
+        detection are violations and may result in a{" "}
+        <span className="font-semibold">penalty deduction of up to 25%</span>{" "}
+        from your score, applied during our secondary manual review.
+      </p>
+
+      <hr className="border-gray-200 my-4" />
+
+      <div className="flex items-center gap-2">
+        <Icon
+          icon="material-symbols:shield-person-outline"
+          className="text-primary-500 size-4.5"
+        />
+        <h3 className="text-sm md:text-base font-semibold text-primary-500">
+          Random Secondary Review
+        </h3>
+      </div>
+      <p className="text-xs md:text-sm text-gray-600 mb-3 font-medium">
+        We follow a strict zero-tolerance policy toward cheating. To ensure
+        fairness, selected profiles undergo a random secondary review.
+      </p>
+
+      {postExamReviewSection({
+        title: "How it works:",
+        items: [
+          "Certain profiles may be flagged for a 5-minute verification call based on internal review filters",
+          "The call covers topics similar (not identical) to correctly answered questions, to verify skill alignment",
+        ],
+      })}
+
+      {postExamReviewSection({
+        title: "If a significant mismatch is found:",
+        items: [
+          "Your profile will be flagged and permanently removed from recruiter visibility",
+          "Platform access may be restricted",
+        ],
+      })}
+
+      <p className="text-xs md:text-sm text-gray-600 mt-3 font-medium">
+        An email will be sent to schedule the call. If there is no response
+        within <span className="font-semibold">4 business days</span>, your
+        profile will automatically be flagged and removed.
+      </p>
+
+      <hr className="border-gray-200 my-4" />
+
       <div ref={checkboxRef} className="flex flex-col gap-2">
         <div className="flex items-center gap-2">
           <Checkbox

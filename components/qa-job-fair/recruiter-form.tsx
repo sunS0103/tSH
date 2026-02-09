@@ -155,7 +155,7 @@ const RecruiterForm: React.FC<RecruiterFormProps> = () => {
 
         <div className="space-y-4 text-left">
           <p className="text-slate-700">
-            We've received your request to participate in the February QA Job
+            We've received your request to participate in the QA Job
             Fair. One of our representatives will be in touch within 24 hours to
             discuss:
           </p>
