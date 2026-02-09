@@ -3,6 +3,10 @@
 ## Project Overview
 TechSmartHire is a skill-first hiring platform connecting candidates and recruiters based on real skills via assessments. This is the frontend application.
 
+## Related Repos
+- **Backend:** `/Users/rahulshetty/tsh/techsmarthire-backend-nodejs` - Node.js/Express API server
+- See backend `CLAUDE.md` for API endpoints, database schema, and backend conventions
+
 ## Tech Stack
 - **Framework:** Next.js 16 (App Router), React 19, TypeScript 5
 - **Styling:** Tailwind CSS 4, custom CSS variables (OKLch color space)

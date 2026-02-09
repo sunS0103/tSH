@@ -71,11 +71,11 @@ export default function AnticipationPage() {
           <div className="mt-8 flex flex-wrap items-center justify-center gap-6 text-sm text-white/90">
             <div className="flex items-center gap-2">
               <CheckCircle className="w-5 h-5 text-yellow-300" />
-              <span>27 QA Positions</span>
+              <span>Multiple QA Positions</span>
             </div>
             <div className="flex items-center gap-2">
               <CheckCircle className="w-5 h-5 text-yellow-300" />
-              <span>15+ Companies</span>
+              <span>Top Companies Hiring</span>
             </div>
             <div className="flex items-center gap-2">
               <CheckCircle className="w-5 h-5 text-yellow-300" />
