@@ -73,21 +73,31 @@ export default function FinalStartSection({
             </div>
             <div className="flex-1">
               <h3 className="text-sm md:text-base font-semibold text-red-800 mb-1">
-                Assessment Currently Unavailable
+                Assessment Already Purchased
               </h3>
+              <p className="text-xs md:text-sm text-blue-700 mb-2">
+                You have already purchased this assessment by clicking the Start
+                button on this page. Please check your email — you would have
+                received the exam link at the time of purchase. Use that link to
+                begin your assessment directly.
+              </p>
+              <p className="text-xs md:text-sm text-red-700 mb-2">
+                Already completed the assessment and want to retake it? A{" "}
+                <span className="font-semibold">30-day cooling period</span>{" "}
+                applies from the date of your last attempt.
+              </p>
+              {can_purchase_in_days && (
+                <p className="text-xs md:text-sm text-red-700 mb-2">
+                  <span className="font-semibold underline">
+                    {can_purchase_in_days} remaining before you can retake.
+                  </span>
+                </p>
+              )}
+              <p className="text-xs md:text-sm text-red-700 mb-2">
+                You can retake the assessment once this period is completed.
+              </p>
               <p className="text-xs md:text-sm text-red-700 mb-3">
-                You have already purchased this assessment. A{" "}
-                <span className="font-semibold">30-day freeze period</span> is
-                required before you can retake the exam.
-                {can_purchase_in_days && (
-                  <>
-                    {" "}
-                    <span className="font-semibold">
-                      {can_purchase_in_days}
-                    </span>{" "}
-                    to retake this assessment.
-                  </>
-                )}
+                For any technical questions or support:
               </p>
               <Button
                 variant="outline"
@@ -99,7 +109,7 @@ export default function FinalStartSection({
                   icon="material-symbols:contact-support-outline-rounded"
                   className="w-4 h-4 mr-1.5"
                 />
-                Contact Us for Queries
+                Contact Us
               </Button>
             </div>
           </div>
