@@ -121,19 +121,22 @@ For example, if two candidates achieve the same score for the same assessment, t
 Early participation gives you a visibility advantage.`,
     },
     {
+      icon: Clock,
+      question: "How soon can I take an assessment? Is there a deadline?",
+      answer: `There is no fixed deadline.
+
+New job opportunities are added regularly, and roles remain active throughout the month. You can take the assessment whenever you feel confident and well-prepared.
+
+However, we recommend not delaying too long — strong opportunities move fast, and early assessment completion increases your visibility in the Talent Pool.`,
+    },
+    {
       icon: Search,
-      question: "As a candidate, can I apply for jobs using my skill score?",
-      answer: `Yes.
+      question: "As a candidate, can I also apply for jobs?",
+      answer: `Yes, absolutely.
 
-Our Jobs module will be live in March.
+You can visit the Jobs page and apply directly to roles that match your skills.
 
-This will make the platform bidirectional:
-
-• Recruiters can discover you by viewing your profile and skill score
-and
-• You can find relevant job openings and apply by showcasing your verified skill score along with your profile
-
-Your score becomes your strongest proof while applying for jobs.`,
+If the recruiter finds your profile suitable, they will accept your application. Once accepted, a Handshake is created and contact details are unmasked for both parties, allowing you to connect directly and continue the discussion offline.`,
     },
     // Assessment Process
     {
@@ -257,6 +260,17 @@ After that period:
 
 This ensures that scores reflect current, up-to-date skill levels — not outdated credentials.`,
     },
+    {
+      icon: Zap,
+      question: "What happens after I take the assessment?",
+      answer: `Once your score is generated and finalized, your profile is added to the Talent Pool in masked mode. This means recruiters can view your profile and score without seeing your contact details.
+
+Based on their job requirements, recruiters may invite you to apply if your profile matches factors such as assessment score, experience level, location, and compensation expectations.
+
+You will receive a notification via email and inside the portal.
+
+Once you accept the invitation, a "Handshake" is created and both your contact details and the recruiter's details are shared for direct communication.`,
+    },
     // Privacy & Control
     {
       icon: Lock,
@@ -268,21 +282,6 @@ Your identity and contact details are revealed only when:
 • You explicitly accept to share your details with that recruiter.
 
 Even then, your details are shared only with that specific recruiter, not publicly. Your privacy is fully in your control.`,
-    },
-    {
-      icon: EyeOff,
-      question:
-        "Can recruiters see my profile and score even if I'm currently working and don't want my employer to know?",
-      answer: `Absolutely. Your profile remains discoverable by recruiters based on your skills and preferences — but your identity (name, email, phone) stays hidden.
-
-A recruiter can only see:
-• Your masked profile
-• Your skill score
-• Your assessment name and date
-
-They cannot know who you are unless you choose to reveal your details.
-
-So even if you're employed or not actively looking, recruiters can still discover you based on your skills and reach out. You decide if you want to engage.`,
     },
     // Career Benefits & Opportunities
     {
@@ -308,12 +307,14 @@ Being an early mover gives you a strong advantage in visibility and opportunitie
     {
       icon: Globe,
       question:
-        "Can candidates from outside India take this assessment and be eligible for international positions?",
-      answer: `Yes. TechSmartHire welcomes candidates from all over the world.
+        "Can candidates and recruiters from anywhere in the world use TechSmartHire?",
+      answer: `Yes.
 
-However, we are currently launching job postings in the UAE only. If your location is UAE or if you're open to opportunities in the UAE, you'll see relevant job postings.
+TechSmartHire is a fully online, location-independent platform. Candidates from anywhere in the world can take assessments remotely, and recruiters can access the Talent Pool and hire from their own location.
 
-For other regions, we will expand job postings gradually as we onboard more recruiters from different geographies.`,
+The entire process — assessments, profile visibility, invitations, and communication — is conducted online.
+
+Geography does not limit opportunity here. Skills matter more than location.`,
     },
     {
       icon: Brain,
@@ -449,6 +450,18 @@ If an existing assessment matches your job role, you can:
 • Invite external candidates to take the test
 
 Their scores will automatically appear in your Talent Pool, where you can review and shortlist them.`,
+    },
+    {
+      icon: Globe,
+      question:
+        "Can candidates and recruiters from anywhere in the world use TechSmartHire?",
+      answer: `Yes.
+
+TechSmartHire is a fully online, location-independent platform. Candidates from anywhere in the world can take assessments remotely, and recruiters can access the Talent Pool and hire from their own location.
+
+The entire process — assessments, profile visibility, invitations, and communication — is conducted online.
+
+Geography does not limit opportunity here. Skills matter more than location.`,
     },
     {
       icon: Building2,
