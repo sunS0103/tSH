@@ -192,7 +192,7 @@ export default function TalentPoolPage() {
               title: "Years of Experience",
               items: [
                 { id: "0-1", value: "0-1 Years" },
-                { id: "1-3", value: "1-3 Years" },
+                { id: "2-3", value: "2-3 Years" },
                 { id: "4-5", value: "4-5 Years" },
                 { id: "6-10", value: "6-10 Years" },
                 { id: "10+", value: "10+ Years" },
@@ -246,6 +246,7 @@ export default function TalentPoolPage() {
       years_of_experience_max?: number;
       location?: string | string[];
       technology?: string | string[];
+      skill_assessed?: string | string[];
     } = {};
 
     // Check for favorites filter
@@ -329,6 +330,25 @@ export default function TalentPoolPage() {
           params.technology = technologyValues[0];
         } else if (technologyValues.length > 1) {
           params.technology = technologyValues;
+        }
+      }
+    }
+
+    // Extract skill assessed filters
+    const skillGroup = filterGroups.find((g) => g.title === "Skill Assessed");
+    if (skillGroup) {
+      const skillFilterIds = selectedFilters.filter((filterId) =>
+        skillGroup.items.some((item) => item.id === filterId),
+      );
+      if (skillFilterIds.length > 0) {
+        const skillValues = skillFilterIds
+          .map((id) => skillGroup.items.find((item) => item.id === id)?.id)
+          .filter((value): value is string => !!value);
+
+        if (skillValues.length === 1) {
+          params.skill_assessed = skillValues[0];
+        } else if (skillValues.length > 1) {
+          params.skill_assessed = skillValues;
         }
       }
     }
@@ -487,6 +507,7 @@ export default function TalentPoolPage() {
     // Get filters that are NOT handled by the API (skills, etc.)
     const locationGroup = filterGroups.find((g) => g.title === "Location");
     const technologyGroup = filterGroups.find((g) => g.title === "Technology");
+    const skillGroup = filterGroups.find((g) => g.title === "Skill Assessed");
 
     const clientSideFilters = selectedFilters.filter(
       (filterId) =>
@@ -494,7 +515,8 @@ export default function TalentPoolPage() {
         !filterId.match(/^\d+-\d+$|^\d+\+$/) && // Experience filters handled by API
         !locationGroup?.items.some((item) => item.id === filterId) && // Location handled by API (from filterGroups)
         !locationIdToTitleMap.has(filterId) && // Location handled by API (dynamically searched)
-        !technologyGroup?.items.some((item) => item.id === filterId), // Technology handled by API
+        !technologyGroup?.items.some((item) => item.id === filterId) && // Technology handled by API
+        !skillGroup?.items.some((item) => item.id === filterId), // Skill handled by API
     );
 
     if (clientSideFilters.length === 0) return true;
