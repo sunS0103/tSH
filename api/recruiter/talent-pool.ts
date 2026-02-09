@@ -11,6 +11,7 @@ export interface TalentPoolQueryParams {
   years_of_experience_max?: number;
   location?: string | string[];
   technology?: string | string[];
+  skill_assessed?: string | string[];
 }
 
 export interface SkillAssessed {
