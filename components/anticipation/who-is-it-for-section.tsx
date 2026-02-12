@@ -2,15 +2,28 @@
 
 import { motion } from "framer-motion";
 import { UserCircle, Briefcase, CheckCircle2 } from "lucide-react";
+import { useRouter } from "next/navigation";
+import { useSession } from "next-auth/react";
 
 interface WhoIsItForSectionProps {
-  onRoleSelect?: (role: "candidate" | "recruiter") => void;
+  onRoleSelect: (role: "candidate" | "recruiter") => void;
 }
 
-const WhoIsItForSection: React.FC<WhoIsItForSectionProps> = () => {
-  const handleButtonClick = (_role: "candidate" | "recruiter") => {
-    // Landing only: no auth page. Scroll to top.
-    window.scrollTo({ top: 0, behavior: "smooth" });
+const WhoIsItForSection: React.FC<WhoIsItForSectionProps> = ({
+  onRoleSelect,
+}) => {
+  const router = useRouter();
+  const { data: session, status } = useSession();
+  
+  const handleButtonClick = (role: "candidate" | "recruiter") => {
+    // If user is logged in, go to dashboard
+    if (status === "authenticated" && session) {
+      router.push("/");
+    } else {
+      // If not logged in, go to authentication with appropriate tab
+      const tab = role === "candidate" ? "candidate" : "recruiter";
+      router.push(`/authentication?tab=${tab}`);
+    }
   };
   
   const personas = [

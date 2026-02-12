@@ -3,14 +3,17 @@
 import { motion } from "framer-motion";
 import { ArrowDown, ArrowRight, Sparkles } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { useRouter } from "next/navigation";
+
 const HeroSection = () => {
+  const router = useRouter();
 
   const scrollToForm = () => {
     document.getElementById("waitlist")?.scrollIntoView({ behavior: "smooth" });
   };
 
   const handleJoinJobFair = () => {
-    document.getElementById("who-is-it-for")?.scrollIntoView({ behavior: "smooth" });
+    router.push("/qa-job-fair");
   };
 
   return (
