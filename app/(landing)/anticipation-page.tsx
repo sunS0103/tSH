@@ -1,6 +1,5 @@
 "use client";
 
-import { useRouter } from "next/navigation";
 import {
   MessageSquare,
   Users,
@@ -15,12 +14,6 @@ import WhySection from "@/components/anticipation/why-section";
 import CredibilityStrip from "@/components/anticipation/credibility-strip";
 
 export default function AnticipationPage() {
-  const router = useRouter();
-
-  const handleRoleSelect = (role: "candidate" | "recruiter") => {
-    // This function is no longer needed but kept for compatibility
-    // The routing is now handled in the WhoIsItForSection component
-  };
 
   return (
     <div className="min-h-screen bg-background">
@@ -61,7 +54,7 @@ export default function AnticipationPage() {
           </p>
           
           <button
-            onClick={() => router.push('/qa-job-fair')}
+            onClick={() => document.getElementById("who-is-it-for")?.scrollIntoView({ behavior: "smooth" })}
             className="group inline-flex items-center gap-3 px-10 py-5 rounded-xl bg-white text-emerald-600 font-bold text-lg md:text-xl hover:bg-yellow-300 hover:text-slate-900 hover:shadow-2xl transition-all hover:scale-105 cursor-pointer"
           >
             <span>👉 Explore the QA Job Fair</span>
@@ -103,7 +96,7 @@ export default function AnticipationPage() {
 
           <div className="flex flex-wrap items-center justify-center gap-4">
             <button
-              onClick={() => router.push('/faqs?tab=candidate')}
+              onClick={() => document.getElementById("who-is-it-for")?.scrollIntoView({ behavior: "smooth" })}
               className="group cursor-pointer inline-flex items-center gap-3 px-8 py-4 rounded-xl bg-blue-600 text-white font-bold text-lg hover:bg-blue-700 hover:shadow-xl transition-all hover:scale-105"
             >
               <Users className="w-6 h-6" />
@@ -112,7 +105,7 @@ export default function AnticipationPage() {
             </button>
 
             <button
-              onClick={() => router.push('/faqs?tab=recruiter')}
+              onClick={() => document.getElementById("who-is-it-for")?.scrollIntoView({ behavior: "smooth" })}
               className="group cursor-pointer inline-flex items-center gap-3 px-8 py-4 rounded-xl bg-emerald-600 text-white font-bold text-lg hover:bg-emerald-700 hover:shadow-xl transition-all hover:scale-105"
             >
               <Briefcase className="w-6 h-6" />
