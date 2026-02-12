@@ -11,12 +11,16 @@ const firebaseConfig = {
   appId: process.env.NEXT_PUBLIC_FIREBASE_APP_ID,
 };
 
+const isFirebaseConfigured =
+  typeof firebaseConfig.apiKey === "string" &&
+  firebaseConfig.apiKey.length > 0;
+
 // Initialize Firebase
-let app: FirebaseApp;
+let app: FirebaseApp | undefined;
 let auth: Auth;
 
-if (typeof window !== "undefined") {
-  // Client-side initialization
+if (typeof window !== "undefined" && isFirebaseConfigured) {
+  // Client-side: only init when API key is set
   if (!getApps().length) {
     app = initializeApp(firebaseConfig);
   } else {
@@ -24,10 +28,11 @@ if (typeof window !== "undefined") {
   }
   auth = getAuth(app);
 } else {
-  // Server-side: create a minimal auth object
-  // Firebase Auth doesn't work on server, but we need the types
+  // Server-side or missing config: minimal auth object for types only
   auth = {} as Auth;
 }
+
+export const hasFirebaseAuth = isFirebaseConfigured && typeof window !== "undefined";
 
 export { auth, GoogleAuthProvider };
 

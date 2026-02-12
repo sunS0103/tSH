@@ -1,7 +1,12 @@
 import { signInWithPopup, GoogleAuthProvider, User } from "firebase/auth";
-import { auth } from "./config";
+import { auth, hasFirebaseAuth } from "./config";
 
 export const signInWithGoogle = async (): Promise<User> => {
+  if (!hasFirebaseAuth) {
+    throw new Error(
+      "Firebase is not configured.",
+    );
+  }
   const provider = new GoogleAuthProvider();
   provider.setCustomParameters({
     prompt: "select_account",
@@ -12,7 +17,7 @@ export const signInWithGoogle = async (): Promise<User> => {
 };
 
 export const getIdToken = async (): Promise<string | null> => {
-  if (!auth.currentUser) {
+  if (!hasFirebaseAuth || !auth.currentUser) {
     return null;
   }
   return await auth.currentUser.getIdToken();

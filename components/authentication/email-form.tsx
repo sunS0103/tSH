@@ -169,10 +169,9 @@ export default function EmailForm({ role }: EmailFormProps) {
           setCookie("user_role", role);
 
           if (response.is_registered) {
-            router.push("/dashboard");
+            router.push("/");
           } else {
-            // Use replace to avoid preserving query parameters and ensure clean redirect
-            router.replace("/authentication/register");
+            router.replace("/authentication?tab=register");
           }
         } else {
           toast.error(response.message || "Failed to verify OTP");
@@ -214,7 +213,7 @@ export default function EmailForm({ role }: EmailFormProps) {
 
       // Create NextAuth session with Firebase user data
       await signIn("credentials", {
-        callbackUrl: "/dashboard",
+        callbackUrl: "/",
         idToken: idToken,
         email: user.email,
         name: user.displayName,
@@ -225,13 +224,7 @@ export default function EmailForm({ role }: EmailFormProps) {
 
       // Handle redirect based on registration status
       if (response?.token) {
-        if (role === "CANDIDATE") {
-          router.replace("/dashboard");
-        } else if (role === "RECRUITER") {
-          router.replace("/dashboard");
-        } else {
-          router.replace("/");
-        }
+        router.replace("/");
       }
     } catch (error) {
       console.error("Google sign-in error:", error);

@@ -34,6 +34,10 @@ import { useRouter } from "next/navigation";
 import { submitContactForm } from "@/api/contact";
 import { toast } from "sonner";
 
+const RECAPTCHA_SITE_KEY =
+  process.env.NEXT_PUBLIC_RECAPTCHA_SITE_KEY?.trim() || "";
+const isRecaptchaConfigured = RECAPTCHA_SITE_KEY.length > 0;
+
 const contactSchema = z
   .object({
     name: z.string().min(2, "Name must be at least 2 characters"),
@@ -96,7 +100,7 @@ export default function ContactClient() {
   const onSubmit = async (values: ContactFormValues) => {
     setRecaptchaError(null);
 
-    if (!recaptchaToken) {
+    if (isRecaptchaConfigured && !recaptchaToken) {
       setRecaptchaError("Please complete the reCAPTCHA challenge.");
       return;
     }
@@ -110,7 +114,7 @@ export default function ContactClient() {
         user_type: values.userType,
         company: values.company,
         message: values.message,
-        recaptcha_token: recaptchaToken,
+        recaptcha_token: isRecaptchaConfigured ? recaptchaToken! : "",
       });
 
       // Show success dialog
@@ -413,29 +417,31 @@ export default function ContactClient() {
               )}
             </AnimatePresence>
 
-            {/* reCAPTCHA */}
-            <div className="flex justify-center">
-              <ReCAPTCHA
-                ref={recaptchaRef}
-                sitekey={process.env.NEXT_PUBLIC_RECAPTCHA_SITE_KEY || ""}
-                onChange={(token: string | null) => {
-                  setRecaptchaToken(token);
-                  setRecaptchaError(null);
-                }}
-                onExpired={() => {
-                  setRecaptchaToken(null);
-                  setRecaptchaError(
-                    "reCAPTCHA expired. Please complete the challenge again."
-                  );
-                }}
-                onErrored={() => {
-                  setRecaptchaToken(null);
-                  setRecaptchaError("reCAPTCHA error. Please try again.");
-                }}
-                theme="light"
-                size="normal"
-              />
-            </div>
+            {/* reCAPTCHA - only rendered when site key is configured */}
+            {isRecaptchaConfigured && (
+              <div className="flex justify-center">
+                <ReCAPTCHA
+                  ref={recaptchaRef}
+                  sitekey={RECAPTCHA_SITE_KEY}
+                  onChange={(token: string | null) => {
+                    setRecaptchaToken(token);
+                    setRecaptchaError(null);
+                  }}
+                  onExpired={() => {
+                    setRecaptchaToken(null);
+                    setRecaptchaError(
+                      "reCAPTCHA expired. Please complete the challenge again."
+                    );
+                  }}
+                  onErrored={() => {
+                    setRecaptchaToken(null);
+                    setRecaptchaError("reCAPTCHA error. Please try again.");
+                  }}
+                  theme="light"
+                  size="normal"
+                />
+              </div>
+            )}
             {recaptchaError && (
               <p className="text-xs text-destructive text-center">
                 {recaptchaError}

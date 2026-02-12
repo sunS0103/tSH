@@ -18,7 +18,7 @@ const WhoIsItForSection: React.FC<WhoIsItForSectionProps> = ({
   const handleButtonClick = (role: "candidate" | "recruiter") => {
     // If user is logged in, go to dashboard
     if (status === "authenticated" && session) {
-      router.push("/dashboard");
+      router.push("/");
     } else {
       // If not logged in, go to authentication with appropriate tab
       const tab = role === "candidate" ? "candidate" : "recruiter";

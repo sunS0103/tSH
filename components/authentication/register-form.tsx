@@ -410,7 +410,7 @@ export default function RegisterForm({ role, email }: RegisterFormProps) {
             setCookie("token", response.token);
             setCookie("user_email", email);
             setCookie("user_role", role);
-            router.push("/dashboard");
+            router.push("/");
           } else {
             toast.error(
               response.message || "Registration failed. Please try again.",
@@ -452,7 +452,7 @@ export default function RegisterForm({ role, email }: RegisterFormProps) {
             setCookie("token", response.token);
             setCookie("user_email", email);
             setCookie("user_role", role);
-            router.push("/dashboard");
+            router.push("/");
           } else {
             toast.error(
               response.message || "Registration failed. Please try again.",
