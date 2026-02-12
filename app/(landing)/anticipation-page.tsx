@@ -18,7 +18,7 @@ export default function AnticipationPage() {
   return (
     <div className="min-h-screen bg-background">
       <HeroSection />
-      <WhoIsItForSection onRoleSelect={handleRoleSelect} />
+      <WhoIsItForSection />
       <LaunchFocus />
       <WhySection />
       <CredibilityStrip />
