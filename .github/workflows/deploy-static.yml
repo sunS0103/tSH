@@ -1,0 +1,41 @@
+# Build Next.js static export and push to a branch that Vercel deploys (0 serverless functions).
+# Vercel: deploy from branch "vercel-static", Framework Other, Build Command empty, Output Directory "."
+
+name: Deploy static to Vercel
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  build-and-push:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+          cache: "npm"
+
+      - name: Install and build
+        run: |
+          npm ci
+          npm run build
+
+      - name: Deploy to vercel-static branch
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git checkout --orphan vercel-static
+          git reset --hard
+          cp -r out/. .
+          rm -rf out
+          git add -A
+          git commit -m "Static export from main"
+          git push -f origin vercel-static
