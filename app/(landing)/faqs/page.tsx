@@ -1,6 +1,5 @@
+import { Suspense } from "react";
 import FAQsClient from "./FAQsClient";
-
-export const dynamic = "force-dynamic";
 
 export const metadata = {
   title: "FAQs - TechSmartHire",
@@ -9,5 +8,9 @@ export const metadata = {
 };
 
 export default function FAQsPage() {
-  return <FAQsClient />;
+  return (
+    <Suspense fallback={<div className="min-h-screen flex items-center justify-center">Loading...</div>}>
+      <FAQsClient />
+    </Suspense>
+  );
 }
