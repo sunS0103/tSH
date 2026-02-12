@@ -1,10 +1,8 @@
 # Deploy static export to Vercel (0 serverless functions).
-# No push to GitHub — deploys the "out" folder directly via Vercel CLI.
-#
-# Required repo secrets: VERCEL_TOKEN
-# Optional: VERCEL_ORG_ID, VERCEL_PROJECT_ID (if not linked)
+# Does NOT push to any branch — only runs "vercel deploy" with the "out" folder.
+# Required repo secret: VERCEL_TOKEN (Settings → Secrets and variables → Actions)
 
-name: Deploy static to Vercel
+name: Deploy to Vercel (static only)
 
 on:
   push:
@@ -15,6 +13,13 @@ jobs:
   deploy:
     runs-on: ubuntu-latest
     steps:
+      - name: Check VERCEL_TOKEN
+        run: |
+          if [ -z "${{ secrets.VERCEL_TOKEN }}" ]; then
+            echo "::error::Add VERCEL_TOKEN in Settings → Secrets and variables → Actions"
+            exit 1
+          fi
+
       - uses: actions/checkout@v4
 
       - name: Setup Node
