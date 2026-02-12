@@ -75,9 +75,11 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
         <NextAuthSessionProvider>
           <RouteLoader />
           <WelcomePopup />
-          {/* <Header /> */}
-          <main>{children}</main>
-          {/* <Footer /> */}
+          <div className="min-h-screen">
+            <Header />
+            <main>{children}</main>
+            <Footer />
+          </div>
           <Toaster richColors position="bottom-right" />
           <Script
             src="https://checkout.razorpay.com/v1/checkout.js"
