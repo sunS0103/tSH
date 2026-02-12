@@ -1,31 +1,37 @@
 # Deploy to Vercel (0 Serverless Functions)
 
-This project uses a **static-only** deploy to stay under Vercel Hobby's 12-function limit.
+The workflow builds the static export and deploys the `out/` folder **directly to Vercel** (no push to a GitHub branch), so you get **0 serverless functions** and no 12-function limit.
 
-## How it works
+## 1. Create a Vercel token
 
-1. **GitHub Action** (on push to `main`): runs `next build` (static export) and pushes the `out/` contents to branch **`vercel-static`**.
-2. **Vercel** deploys from branch **`vercel-static`** with **no build** — only static files, so **0 serverless functions**.
+1. Go to [vercel.com/account/tokens](https://vercel.com/account/tokens).
+2. Create a token (e.g. name: `github-actions`).
+3. Copy the token.
 
-## Vercel project settings
+## 2. Add the token as a repo secret
 
-In your Vercel project → **Settings** → **Build & Development Settings**:
+1. GitHub repo → **Settings** → **Secrets and variables** → **Actions**.
+2. **New repository secret**.
+3. Name: **`VERCEL_TOKEN`**
+4. Value: paste the token → **Add secret**.
 
-| Setting | Value |
-|--------|--------|
-| **Production Branch** | `vercel-static` |
-| **Framework Preset** | **Other** |
-| **Build Command** | *(leave empty — skip build)* |
-| **Output Directory** | `.` (root) |
-| **Install Command** | *(leave default or empty)* |
+## 3. (Optional) Link to an existing Vercel project
 
-Save. Deployments from `vercel-static` will just serve the static files — no Next.js build on Vercel, no serverless functions.
+If you want deployments to go to your existing Vercel project:
 
-## First-time setup
+1. Locally run once: `npx vercel link` in the project root and choose your org/project.
+2. That creates `.vercel/project.json` with `orgId` and `projectId`. Commit and push it so the Action uses the same project.
 
-1. Push this repo (including `.github/workflows/deploy-static.yml`) to `main`.
-2. Wait for the GitHub Action to run (Actions tab). It will create/update the `vercel-static` branch.
-3. In Vercel: set **Production Branch** to **`vercel-static`** and the settings above.
-4. Trigger a deploy (or push a small change to `main` to re-run the action and update `vercel-static`).
+If you skip this, the first run may create a new Vercel project; you can then set the production URL in Vercel.
 
-After that, every push to `main` will run the action, update `vercel-static`, and Vercel will auto-deploy that branch with 0 functions.
+## 4. Run the workflow
+
+- Push to **main** (the workflow runs automatically), or
+- **Actions** → **Deploy static to Vercel** → **Run workflow**.
+
+The Action will:
+
+1. Run `npm ci` and `npm run build` (static export → `out/`).
+2. Deploy `out/` to Vercel with `vercel deploy --prod`.
+
+No GitHub branch is pushed, so branch protection does not matter. Deployments are static only, so **0 serverless functions**.
