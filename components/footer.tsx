@@ -55,7 +55,7 @@ export default function Footer({ className }: FooterProps) {
             <div className="flex items-center h-9 md:h-20">
               <Image
                 src="/darkLogo.svg"
-                alt="techSmartHire logo"
+                alt="SmartTechHire logo"
                 className="h-full w-full max-w-72"
                 width={192}
                 height={32}

@@ -160,7 +160,7 @@ const WaitlistForm: React.FC<WaitlistFormProps> = ({ initialRole = null }) => {
 
   const recruiterSuccessTitle = "You're on the list!";
   const recruiterSuccessTitleAlreadySubscribed = "You're already on the list!";
-  const candidateSuccessTitle = "Welcome to the techSmartHire Insider List!";
+  const candidateSuccessTitle = "Welcome to the SmartTechHire Insider List!";
   const candidateSuccessTitleAlreadySubscribed = "You're already on the list!";
 
   if (submitted) {
@@ -237,7 +237,7 @@ const WaitlistForm: React.FC<WaitlistFormProps> = ({ initialRole = null }) => {
                     <p className="text-xs text-subtle">
                       Need immediate hiring support?{" "}
                       <a
-                        href="mailto:info@techsmarthire.com?subject=Pilot Program"
+                        href="mailto:info@smarttechhire.com?subject=Pilot Program"
                         className="text-primary hover:underline font-medium"
                       >
                         Contact us

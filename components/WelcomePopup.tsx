@@ -78,7 +78,7 @@ export default function WelcomePopup() {
               <div className="p-2 bg-white/20 rounded-lg backdrop-blur-sm">
                 <MessageSquare className="w-6 h-6" />
               </div>
-              <h2 className="text-2xl font-bold">Welcome to TechSmartHire!</h2>
+              <h2 className="text-2xl font-bold">Welcome to SmartTechHire!</h2>
             </div>
             <p className="text-blue-100 text-sm">
               New to our platform? Let us help you get started.

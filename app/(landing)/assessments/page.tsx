@@ -7,11 +7,11 @@ export const metadata: Metadata = {
   description:
     "Skill-based QA assessments. Take role-based exams and get shortlisted by top engineering teams.",
   openGraph: {
-    title: "Assessments - TechSmartHire",
+    title: "Assessments - SmartTechHire",
     description:
       "Skill-based QA assessments. Take role-based exams and get shortlisted by top engineering teams.",
     url: `${process.env.NEXT_PUBLIC_APP_URL || ""}/assessments`,
-    siteName: "TechSmartHire",
+    siteName: "SmartTechHire",
     locale: "en_US",
     type: "website",
   },

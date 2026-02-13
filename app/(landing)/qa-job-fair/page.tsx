@@ -10,7 +10,7 @@ export const metadata: Metadata = {
     title: 'QA Virtual Job Fair - Multiple Openings',
     description: 'Join the QA Job Fair. Multiple QA positions open across top companies in India, Dubai, and USA. Take skill-based assessments and get shortlisted by top engineering teams instantly.',
     url: `${process.env.NEXT_PUBLIC_APP_URL}/qa-job-fair`,
-    siteName: 'TechSmartHire',
+    siteName: 'SmartTechHire',
     locale: 'en_US',
     type: 'website',
     images: [
@@ -61,7 +61,7 @@ export default function Page() {
     },
     organizer: {
       '@type': 'Organization',
-      name: 'TechSmartHire',
+      name: 'SmartTechHire',
       url: process.env.NEXT_PUBLIC_APP_URL,
     },
     offers: {

@@ -23,7 +23,7 @@ export default function AnticipationPage() {
   };
 
   return (
-    <div className="min-h-screen bg-background">
+    <div className="min-h-screen">
       <HeroSection />
       <WhoIsItForSection onRoleSelect={handleRoleSelect} />
       <LaunchFocus />
@@ -97,7 +97,7 @@ export default function AnticipationPage() {
               Your Questions, <span className="bg-linear-to-r from-blue-600 to-emerald-600 bg-clip-text text-transparent">Answered</span>
             </h2>
             <p className="text-lg text-slate-600 max-w-2xl mx-auto mb-8">
-              Everything you need to know about getting hired and hiring for full-time and freelancing roles on TechSmartHire.
+              Everything you need to know about getting hired and hiring for full-time and freelancing roles on SmartTechHire.
             </p>
           </div>
 

@@ -17,11 +17,11 @@ const plusJakartaSans = Plus_Jakarta_Sans({
 
 export const metadata: Metadata = {
   title: {
-    default: "techSmartHire – Skill-Based QA Hiring Platform",
-    template: "%s | techSmartHire",
+    default: "SmartTechHire – Skill-Based QA Hiring Platform",
+    template: "%s | SmartTechHire",
   },
   description:
-    "techSmartHire is a skill-first hiring platform for QA roles. Get early access to role-based assessments, pre-vetted candidates, and faster hiring through our beta program",
+    "SmartTechHire is a skill-first hiring platform for QA roles. Get early access to role-based assessments, pre-vetted candidates, and faster hiring through our beta program",
   metadataBase: new URL(
     process.env.NEXT_PUBLIC_APP_URL || "http://localhost:3000",
   ),
@@ -33,9 +33,9 @@ export const metadata: Metadata = {
     "QA Assessment",
     "Beta Access",
   ],
-  authors: [{ name: "techSmartHire Team" }],
-  creator: "techSmartHire",
-  publisher: "techSmartHire",
+  authors: [{ name: "SmartTechHire Team" }],
+  creator: "SmartTechHire",
+  publisher: "SmartTechHire",
   robots: {
     index: true,
     follow: true,
@@ -61,7 +61,27 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
 })(window,document,'script','dataLayer','GTM-WFZ9226R');`}
         </Script>
       )}
-      <body className={`${plusJakartaSans.variable} antialiased`}>
+      <body className={`${plusJakartaSans.variable} antialiased`} style={{
+        backgroundImage: 'url(/artificial-intelligence-landing.svg)',
+        backgroundSize: 'cover',
+        backgroundPosition: 'center',
+        backgroundRepeat: 'no-repeat',
+        backgroundAttachment: 'fixed',
+        minHeight: '100vh',
+        position: 'relative',
+        backgroundColor: 'transparent'
+      } as React.CSSProperties}>
+        {/* Overlay to ensure content readability */}
+        <div style={{
+          position: 'fixed',
+          top: 0,
+          left: 0,
+          right: 0,
+          bottom: 0,
+          background: 'linear-gradient(to bottom, rgba(255, 255, 255, 0.1) 0%, rgba(255, 255, 255, 0.05) 100%)',
+          pointerEvents: 'none',
+          zIndex: 0
+        }} />
         {process.env.NEXT_PUBLIC_ENV === "production" && (
           <noscript>
             <iframe
@@ -72,18 +92,20 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
             ></iframe>
           </noscript>
         )}
-        <NextAuthSessionProvider>
-          <RouteLoader />
-          <WelcomePopup />
-          {/* <Header /> */}
-          <main>{children}</main>
-          {/* <Footer /> */}
-          <Toaster richColors position="bottom-right" />
+        <div style={{ position: 'relative', zIndex: 1 }}>
+          <NextAuthSessionProvider>
+            <RouteLoader />
+            <WelcomePopup />
+            {/* <Header /> */}
+            <main>{children}</main>
+            {/* <Footer /> */}
+            <Toaster richColors position="bottom-right" />
           <Script
             src="https://checkout.razorpay.com/v1/checkout.js"
             strategy="afterInteractive"
           />
-        </NextAuthSessionProvider>
+          </NextAuthSessionProvider>
+        </div>
       </body>
     </html>
   );

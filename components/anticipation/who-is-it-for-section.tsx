@@ -54,7 +54,7 @@ const WhoIsItForSection: React.FC<WhoIsItForSectionProps> = ({
       ],
       buttonText: "Join the Pilot Program",
       subtext:
-        "Hiring in coming weeks? Email <a href='mailto:info@techsmarthire.com' class='text-primary hover:underline font-medium'>info@techsmarthire.com</a> to get immediate access to our next Pilot Job Fair.",
+                      "Hiring in coming weeks? Email <a href='mailto:info@smarttechhire.com' class='text-primary hover:underline font-medium'>info@smarttechhire.com</a> to get immediate access to our next Pilot Job Fair.",
       role: "recruiter" as const,
       badge: "100% Proctored & AI-Proof Assessments",
     },
@@ -77,7 +77,7 @@ const WhoIsItForSection: React.FC<WhoIsItForSectionProps> = ({
           className="text-center mb-16"
         >
           <h2 className="text-3xl md:text-4xl lg:text-5xl font-bold mb-4">
-            Who Is techSmartHire <span className="gradient-text">For?</span>
+            Who Is SmartTechHire <span className="gradient-text">For?</span>
           </h2>
         </motion.div>
 

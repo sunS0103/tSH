@@ -17,7 +17,7 @@ interface Job {
 
 export default function AssessmentsClient({ jobs }: { jobs: Job[] }) {
   return (
-    <div className="min-h-screen bg-linear-to-br from-slate-50 via-white to-slate-100 text-slate-900">
+    <div className="min-h-screen text-slate-900">
       <section className="relative overflow-hidden pt-24 md:pt-28 pb-16">
         <div className="max-w-4xl mx-auto px-4 md:px-6">
           <h1 className="text-4xl md:text-5xl font-bold text-slate-900 mb-2">

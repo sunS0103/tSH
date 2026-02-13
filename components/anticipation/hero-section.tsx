@@ -66,7 +66,7 @@ const HeroSection = () => {
             className="text-lg md:text-xl text-subtle font-medium max-w-3xl mx-auto mb-4 leading-relaxed"
           >
             <p className="mb-4">
-              techSmartHire is a new hiring platform that connects candidates
+              SmartTechHire is a new hiring platform that connects candidates
               and recruiters based on{" "}
               <span className="text-foreground font-medium">real skills</span>,
               not keyword-stuffed resumes.

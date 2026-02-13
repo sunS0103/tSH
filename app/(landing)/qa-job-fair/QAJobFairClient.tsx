@@ -71,7 +71,7 @@ export default function QAJobFairClient() {
   };
 
   return (
-    <div className="min-h-screen bg-linear-to-br from-slate-50 via-white to-slate-100 text-slate-900">
+    <div className="min-h-screen text-slate-900">
       {/* Hero Section */}
       <section className="relative overflow-hidden bg-linear-to-br from-emerald-50 via-blue-50 to-white">
         {/* Animated background grid */}
@@ -504,7 +504,7 @@ export default function QAJobFairClient() {
               Your Questions, <span className="bg-linear-to-r from-blue-600 to-emerald-600 bg-clip-text text-transparent">Answered</span>
             </h2>
             <p className="text-lg text-slate-600 max-w-2xl mx-auto mb-8">
-              Everything you need to know about getting hired and hiring for full-time and freelancing roles on TechSmartHire.
+              Everything you need to know about getting hired and hiring for full-time and freelancing roles on SmartTechHire.
             </p>
           </div>
 

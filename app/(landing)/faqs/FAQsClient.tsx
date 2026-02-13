@@ -60,7 +60,7 @@ export default function FAQsClient() {
       icon: Briefcase,
       question:
         "How is this skill-first hiring platform different from traditional hiring portals?",
-      answer: `TechSmartHire replaces resume-based shortlisting with skill-based evaluation.
+      answer: `SmartTechHire replaces resume-based shortlisting with skill-based evaluation.
 
 Instead of recruiters spending hours scanning resumes filled with keywords, they can directly see:
 
@@ -94,7 +94,7 @@ You're always in control and can choose to respond only when the right opportuni
 
 Your assessment score is a verified proof of your skill level, and we plan to use it for more than just hiring.
 
-In Phase 2 of TechSmartHire, we will introduce a freelance and job-support marketplace where:
+In Phase 2 of SmartTechHire, we will introduce a freelance and job-support marketplace where:
 • Professionals and teams needing short-term help can search for talent based on skill scores
 • They can invite suitable candidates for freelance tasks, job support, or short projects
 • Once you connect, you're free to take the discussion offline and complete the work independently.
@@ -153,7 +153,7 @@ If the recruiter finds your profile suitable, they will accept your application.
       icon: GraduationCap,
       question:
         "Do I get mentorship support to prepare and clear this assessment?",
-      answer: `Yes. Once you sign up on TechSmartHire, you will see an option in the Assessment window to enroll in a Mentorship Guidance + Exam package.
+      answer: `Yes. Once you sign up on SmartTechHire, you will see an option in the Assessment window to enroll in a Mentorship Guidance + Exam package.
 
 This package is designed to help you prepare effectively, strengthen your skills, and confidently attempt the assessment.`,
     },
@@ -298,7 +298,7 @@ If your profile matches their search criteria and your score aligns with what th
       icon: Globe,
       question:
         "I don't see job postings for my location yet. What's the benefit of taking the assessment now?",
-      answer: `TechSmartHire is a newly launched platform, and we are actively onboarding recruiters from across the globe.
+      answer: `SmartTechHire is a newly launched platform, and we are actively onboarding recruiters from across the globe.
 
 If your profile already has a validated score, future recruiters will immediately see your profile higher in search results when they join the platform.
 
@@ -307,10 +307,10 @@ Being an early mover gives you a strong advantage in visibility and opportunitie
     {
       icon: Globe,
       question:
-        "Can candidates and recruiters from anywhere in the world use TechSmartHire?",
+        "Can candidates and recruiters from anywhere in the world use SmartTechHire?",
       answer: `Yes.
 
-TechSmartHire is a fully online, location-independent platform. Candidates from anywhere in the world can take assessments remotely, and recruiters can access the Talent Pool and hire from their own location.
+SmartTechHire is a fully online, location-independent platform. Candidates from anywhere in the world can take assessments remotely, and recruiters can access the Talent Pool and hire from their own location.
 
 The entire process — assessments, profile visibility, invitations, and communication — is conducted online.
 
@@ -338,7 +338,7 @@ A good score opens the door — but your complete profile helps you stand out.`,
       icon: Briefcase,
       question:
         "How is this skill-first hiring platform different from traditional hiring portals?",
-      answer: `TechSmartHire replaces resume-based shortlisting with skill-based evaluation.
+      answer: `SmartTechHire replaces resume-based shortlisting with skill-based evaluation.
 
 Instead of spending hours reviewing resumes filled with keywords, you get instant access to:
 
@@ -356,7 +356,7 @@ The result: faster screening, better quality candidates, and significantly reduc
         "As a recruiter, can I post a job and allow candidates to apply using their skill scores?",
       answer: `Yes.
 
-With the Jobs module going live in March, you will be able to post job openings directly on TechSmartHire.
+With the Jobs module going live in March, you will be able to post job openings directly on SmartTechHire.
 
 This makes the platform bidirectional:
 
@@ -454,10 +454,10 @@ Their scores will automatically appear in your Talent Pool, where you can review
     {
       icon: Globe,
       question:
-        "Can candidates and recruiters from anywhere in the world use TechSmartHire?",
+        "Can candidates and recruiters from anywhere in the world use SmartTechHire?",
       answer: `Yes.
 
-TechSmartHire is a fully online, location-independent platform. Candidates from anywhere in the world can take assessments remotely, and recruiters can access the Talent Pool and hire from their own location.
+SmartTechHire is a fully online, location-independent platform. Candidates from anywhere in the world can take assessments remotely, and recruiters can access the Talent Pool and hire from their own location.
 
 The entire process — assessments, profile visibility, invitations, and communication — is conducted online.
 
@@ -522,7 +522,7 @@ Skill scores make your referral far more credible.`,
   );
 
   return (
-    <div className="min-h-screen bg-linear-to-br from-slate-50 via-white to-blue-50">
+    <div className="min-h-screen">
       {/* Hero Section */}
       <section className="relative overflow-hidden bg-linear-to-br from-purple-600 via-violet-600 to-purple-700 text-white py-16 mt-16 md:mt-20">
         <div className="absolute inset-0 bg-[linear-gradient(to_right,#ffffff10_1px,transparent_1px),linear-gradient(to_bottom,#ffffff10_1px,transparent_1px)] bg-size-[64px_64px]"></div>
@@ -535,7 +535,7 @@ Skill scores make your referral far more credible.`,
 
             <p className="text-xl text-purple-100 max-w-3xl mx-auto">
               Find answers to common questions about assessments, hiring, and
-              the TechSmartHire platform
+              the SmartTechHire platform
             </p>
           </div>
         </div>

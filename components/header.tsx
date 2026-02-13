@@ -185,7 +185,7 @@ export default function Header() {
           <Link href="/" className="flex items-center h-8 cursor-pointer">
             <Image
               src="/Logo.svg"
-              alt="techSmartHire logo"
+              alt="SmartTechHire logo"
               className="h-full w-28 md:w-36"
               width={120}
               height={40}
